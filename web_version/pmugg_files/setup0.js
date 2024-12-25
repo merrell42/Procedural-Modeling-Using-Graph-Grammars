@@ -1,0 +1,1 @@
+var ms = {}; ms.obj = {}; ms.mtl = {};  ms.mvp = wensdd;

@@ -1,0 +1,350 @@
+<html><head>
+<title>Proc. Modeling Using Graph Grammars - Paul Merrell</title>
+
+<div id="images" /></div>
+<svg id="svg1" style="display: none"></svg>
+
+<link rel="stylesheet" href="./pmugg_files/menu.css" type="text/css">
+	<script>var ms = {}; ms.obj = {}; ms.mtl = {};  ms.mvp = true;</script>
+	<script type="text/javascript" src="./pmugg_files/thirdParty/glMatrix.js"></script>
+	<script id="shader-fs" type="x-shader/x-fragment">
+		precision mediump float;
+		varying vec4 vColor;
+		void main(void) {
+			gl_FragColor = vColor;
+		}
+	</script>  
+	<script id="shader-vs" type="x-shader/x-vertex">
+		attribute vec3 aVertexPosition;
+		attribute vec4 aVertexColor;
+		uniform mat4 uMVMatrix;
+		uniform mat4 uPMatrix;
+
+		varying vec4 vColor;
+
+		void main(void) {
+			gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+			vColor = aVertexColor;
+		}
+	</script>
+	<script id="vertex-shader" type="x-shader/x-vertex">
+		attribute vec4 a_position;
+		attribute vec2 a_texcoord;
+
+		uniform mat4 u_matrix;
+
+		varying vec2 v_texcoord;
+
+		void main() {
+			   gl_Position = u_matrix * a_position;
+			   v_texcoord = a_texcoord;
+		}
+	</script>
+	<script  id="fragment-shader" type="x-shader/x-fragment">
+		precision mediump float;
+
+		varying vec2 v_texcoord;
+		uniform vec4 vColor;
+		uniform sampler2D u_texture;
+
+		void main() {
+			gl_FragColor = texture2D(u_texture, v_texcoord);
+			gl_FragColor.rgb *= gl_FragColor.a;
+			gl_FragColor = gl_FragColor + vColor;
+		}
+	</script>
+	<script type="text/javascript" src="./pmugg_files/util/counter.js"></script>
+	<script type="text/javascript" src="./pmugg_files/mainController.js"></script>
+	<script type="text/javascript" src="./pmugg_files/exampleController.js"></script>
+	<script type="text/javascript" src="./pmugg_files/objectController.js"></script>
+	<script type="text/javascript" src="./pmugg_files/generatedController.js"></script>
+	<script type="text/javascript" src="./pmugg_files/graphController.js"></script>
+	<script type="text/javascript" src="./pmugg_files/grid/settings.js"></script>
+	<script type="text/javascript" src="./pmugg_files/setup.js"></script>
+	<script type="text/javascript" src="./pmugg_files/shape/vec2.js"></script>
+	<script type="text/javascript" src="./pmugg_files/shape/vec3.js"></script>
+	<script type="text/javascript" src="./pmugg_files/gridView.js"></script>
+	<script type="text/javascript" src="./pmugg_files/mvpSolutions.js"></script>
+	<script type="text/javascript" src="./pmugg_files/shapeView.js"></script>
+	<script type="text/javascript" src="./pmugg_files/screenSaver.js"></script>
+	<script type="text/javascript" src="./pmugg_files/testRunner.js"></script>
+	<script type="text/javascript" src="./pmugg_files/testRunnerFull.js"></script>
+	<script type="text/javascript" src="./pmugg_files/testScenario.js"></script>
+	<script type="text/javascript" src="./pmugg_files/Grammar Editor/generatedRules.js"></script>
+	<script type="text/javascript" src="./pmugg_files/Grammar Editor/modified/generatedRulesTrapezoid.js"></script>
+	<script type="text/javascript" src="./pmugg_files/Grammar Editor/modified/generatedRules.js"></script>
+	<script type="text/javascript" src="./pmugg_files/Grammar Editor/modified/generatedRulesCastle.js"></script>
+	<script type="text/javascript" src="./pmugg_files/Grammar Editor/modified/generatedRulesFactory.js"></script>
+	<script type="text/javascript" src="./pmugg_files/Grammar Editor/modified/generatedRulesGabled.js"></script>
+	<script type="text/javascript" src="./pmugg_files/Grammar Editor/modified/generatedRulesHippedFinal.js"></script>
+	<script type="text/javascript" src="./pmugg_files/Grammar Editor/modified/generatedRulesHippedRoof.js"></script>
+	<script type="text/javascript" src="./pmugg_files/Grammar Editor/modified/generatedRulesHippedRoofJutting.js"></script>
+	<script type="text/javascript" src="./pmugg_files/Grammar Editor/modified/generatedRulesOctagonCanyons.js"></script>
+	<script type="text/javascript" src="./pmugg_files/Grammar Editor/modified/generatedRulesPentagon.js"></script>
+	<script type="text/javascript" src="./pmugg_files/Grammar Editor/modified/generatedRulesRectilinear.js"></script>
+	<script type="text/javascript" src="./pmugg_files/Grammar Editor/modified/generatedRulesRectilinearAll.js"></script>
+	<script type="text/javascript" src="./pmugg_files/Grammar Editor/modified/generatedRulesRectilinearConvex.js"></script>
+	<script type="text/javascript" src="./pmugg_files/Grammar Editor/modified/generatedRulesScifiFinal.js"></script>
+	<script type="text/javascript" src="./pmugg_files/Grammar Editor/modified/generatedRulesSnakeToo.js"></script>
+	<script type="text/javascript" src="./pmugg_files/Grammar Editor/modified/generatedRulesStacked.js"></script>
+	<script type="text/javascript" src="./pmugg_files/Grammar Editor/modified/generatedRulesStackedTurned.js"></script>
+	<script type="text/javascript" src="./pmugg_files/Grammar Editor/modified/generatedRulesStackedTurnedNew.js"></script>
+	<script type="text/javascript" src="./pmugg_files/Grammar Editor/modified/generatedRulesStackedTurnedNew2.js"></script>
+	<script type="text/javascript" src="./pmugg_files/Grammar Editor/modified/generatedRulesThreeWayBroken.js"></script>
+	<script type="text/javascript" src="./pmugg_files/Grammar Editor/modified/generatedRulesThreeWayWorking.js"></script>
+	
+	<script type="text/javascript" src="./pmugg_files/view.js"></script>
+	<script type="text/javascript" src="./pmugg_files/viewport.js"></script>
+	<script type="text/javascript" src="./pmugg_files/viewport3d.js"></script>
+	<script type="text/javascript" src="./pmugg_files/viewportWebGL.js"></script>
+	<script type="text/javascript" src="./pmugg_files/optimizer.js"></script>
+	<script type="text/javascript" src="./pmugg_files/selector.js"></script>
+	<script type="text/javascript" src="./pmugg_files/edgeSelector.js"></script>
+	<script type="text/javascript" src="./pmugg_files/shapeSelector.js"></script>
+	<script type="text/javascript" src="./pmugg_files/intersector.js"></script>
+	<script type="text/javascript" src="./pmugg_files/util/fastMath.js"></script>
+	<script type="text/javascript" src="./pmugg_files/util/range.js"></script>
+	<script type="text/javascript" src="./pmugg_files/util/timer.js"></script>
+	<script type="text/javascript" src="./pmugg_files/util/util.js"></script>
+	<script type="text/javascript" src="./pmugg_files/thirdParty/xmlToJson.js"></script>
+	<script type="text/javascript" src="./pmugg_files/thirdParty/lz-string.js"></script>
+	<script type="text/javascript" src="./pmugg_files/thirdParty/numeric-1.2.6.min.js"></script>
+	<script type="text/javascript" src="./pmugg_files/thirdParty/OBJFile.js"></script>
+    <script type="text/javascript" src="./pmugg_files/thirdParty/earcut.js"></script>
+    <script type="text/javascript" src="./pmugg_files/thirdParty/m4.js"></script>
+    <script type="text/javascript" src="./pmugg_files/thirdParty/m4.js"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/samples/box.mtl"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/samples/L.mtl"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/samples/rectangle.mtl"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/samples/ribbon.obj"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/samples/ribbon.mtl"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/samples/tent.obj"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/samples/tent.mtl"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/samples/tent2.obj"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/samples/tent2.mtl"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/samples/pyramid.mtl"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/samples/triangle.obj"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/samples/triangle.mtl"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/samples/building2.obj"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/samples/building2.mtl"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/samples/twoBoxes.obj"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/samples/twoBoxes.mtl"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/samples/Lground.mtl"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/samples/flatHouse.obj"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/samples/fenceLine.obj"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/samples/boxCoplanar"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/samples/house"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/samples/house2"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/samples/house3"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/samples/houseNested"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/samples/stairs.obj"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/samples/boxJutting"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/samples/boxJutting2"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/samples/hippedSnake.txt"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/advanced/arch"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/advanced/buildingPassage.txt"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/advanced/buildingTwoSides.txt"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/advanced/hipped3way.txt"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/advanced/hipped3way2.txt"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/advanced/houseWaving.txt"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/advanced/overhang.txt"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/advanced/rampPlus.txt"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/advanced/skyscraper.txt"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/advanced/tower.txt"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/advanced/twoBoxesGround.txt"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/advanced/housePassage.txt"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/advanced/housePassage2.txt"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/advanced/houseSidePassage.txt"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/volume splicing/skywalk.txt"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/volume splicing/bridge.txt"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/house/houseAllWays.txt"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/house/wavingAllWays.txt"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/house/japanese.txt"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/house/ramp.txt"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/house/pathDeadEnds.txt"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/house/cross.txt"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/house/paris.txt"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/platform/platform.txt"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/platform/industrial.txt"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/box.obj"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/L.obj"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/rectangle.obj"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/pyramid.obj"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/Lground.obj"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/houseStacked"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/T"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/houseWaving2.txt"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/houseWings.txt"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/skywalkTwoWay.txt"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/roofJutting.txt"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/hexTower.txt"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/path.txt"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/skyscraper.txt"></script>
+	<script type="text/javascript" src="./pmugg_files/obj/spaceHex.txt"></script>
+	<script type="text/javascript" src="./pmugg_files/shapes3D/bspEdge.js"></script>
+	<script type="text/javascript" src="./pmugg_files/shapes3D/bspNode.js"></script>
+	<script type="text/javascript" src="./pmugg_files/shapes3D/bspPlane.js"></script>
+	<script type="text/javascript" src="./pmugg_files/shapes3D/bspPolygon.js"></script>
+	<script type="text/javascript" src="./pmugg_files/shapes3D/graphFinder3D.js"></script>
+	<script type="text/javascript" src="./pmugg_files/shapes3D/edgeType3D.js"></script>
+	<script type="text/javascript" src="./pmugg_files/shapes3D/faceType3D.js"></script>
+	<script type="text/javascript" src="./pmugg_files/shapes3D/shape3D.js"></script>
+	<script type="text/javascript" src="./pmugg_files/decoration/area.js"></script>
+	<script type="text/javascript" src="./pmugg_files/decoration/brush.js"></script>
+	<script type="text/javascript" src="./pmugg_files/decoration/brushCollection.js"></script>
+	<script type="text/javascript" src="./pmugg_files/decoration/brushSelector.js"></script>
+	<script type="text/javascript" src="./pmugg_files/decoration/decorationModel.js"></script>
+	<script type="text/javascript" src="./pmugg_files/decoration/decorationView.js"></script>
+	<script type="text/javascript" src="./pmugg_files/decoration/draggableLine.js"></script>
+	<script type="text/javascript" src="./pmugg_files/decoration/draggablePoint.js"></script>
+	<script type="text/javascript" src="./pmugg_files/decoration/vertexDecoration.js"></script>
+	<script type="text/javascript" src="./pmugg_files/fragment/constrainedVertex.js"></script>
+	<script type="text/javascript" src="./pmugg_files/fragment/constrainedVertexNet.js"></script>
+	<script type="text/javascript" src="./pmugg_files/fragment/familyTree.js"></script>
+	<script type="text/javascript" src="./pmugg_files/fragment/familyTreeEdge.js"></script>
+	<script type="text/javascript" src="./pmugg_files/fragment/familyTreeNode.js"></script>
+	<script type="text/javascript" src="./pmugg_files/fragment/familyTreePendingEdge.js"></script>
+	<script type="text/javascript" src="./pmugg_files/fragment/transistor.js"></script>
+	<script type="text/javascript" src="./pmugg_files/fragment/netTransistor.js"></script>
+	<script type="text/javascript" src="./pmugg_files/fragment/transistorPath.js"></script>
+	<script type="text/javascript" src="./pmugg_files/fragment/windingTreeNode.js"></script>
+	<script type="text/javascript" src="./pmugg_files/hierarchy/networkHierarchy.js"></script>
+	<script type="text/javascript" src="./pmugg_files/hierarchy/networkHierarchyFull.js"></script>
+	<script type="text/javascript" src="./pmugg_files/hierarchy/hierarchyNode.js"></script>
+	<script type="text/javascript" src="./pmugg_files/hierarchy/hierarchyEdge.js"></script>
+	<script type="text/javascript" src="./pmugg_files/chain/chainNode.js"></script>
+	<script type="text/javascript" src="./pmugg_files/chain/chainNodeMap.js"></script>
+	<script type="text/javascript" src="./pmugg_files/chain/chainEdge.js"></script>
+	<script type="text/javascript" src="./pmugg_files/graph/graph.js"></script>
+	<script type="text/javascript" src="./pmugg_files/graph/graphEdge.js"></script>
+	<script type="text/javascript" src="./pmugg_files/graph/graphEndpoint.js"></script>
+	<script type="text/javascript" src="./pmugg_files/graph/graphVertex.js"></script>
+	<script type="text/javascript" src="./pmugg_files/guidelines/angledEdge.js"></script>
+	<script type="text/javascript" src="./pmugg_files/guidelines/classifier.js"></script>
+	<script type="text/javascript" src="./pmugg_files/guidelines/collection.js"></script>
+	<script type="text/javascript" src="./pmugg_files/guidelines/edgeType.js"></script>
+	<script type="text/javascript" src="./pmugg_files/guidelines/endpoint.js"></script>
+	<script type="text/javascript" src="./pmugg_files/guidelines/exporter.js"></script>
+	<script type="text/javascript" src="./pmugg_files/guidelines/face.js"></script>
+	<script type="text/javascript" src="./pmugg_files/guidelines/faceGroup.js"></script>
+	<script type="text/javascript" src="./pmugg_files/guidelines/faceConnection.js"></script>
+	<script type="text/javascript" src="./pmugg_files/guidelines/line.js"></script>
+	<script type="text/javascript" src="./pmugg_files/guidelines/lineSegment.js"></script>
+	<script type="text/javascript" src="./pmugg_files/guidelines/lineState.js"></script>
+	<script type="text/javascript" src="./pmugg_files/guidelines/lineStateCoordinates.js"></script>
+	<script type="text/javascript" src="./pmugg_files/guidelines/guideMutator.js"></script>
+	<script type="text/javascript" src="./pmugg_files/guidelines/familyTreeMutator.js"></script>
+	<script type="text/javascript" src="./pmugg_files/guidelines/networkMutator.js"></script>
+	<script type="text/javascript" src="./pmugg_files/guidelines/vertex.js"></script>
+	<script type="text/javascript" src="./pmugg_files/guidelines/vertexState.js"></script>
+	<script type="text/javascript" src="./pmugg_files/guidelines/vertexType.js"></script>
+	<script type="text/javascript" src="./pmugg_files/node/node.js"></script>
+	<script type="text/javascript" src="./pmugg_files/node/nodeProperty.js"></script>
+	<script type="text/javascript" src="./pmugg_files/node/nodeStats.js"></script>
+	<script type="text/javascript" src="./pmugg_files/network/boundNet.js"></script>
+	<script type="text/javascript" src="./pmugg_files/network/boundNetFull.js"></script>
+	<script type="text/javascript" src="./pmugg_files/network/network.js"></script>
+	<script type="text/javascript" src="./pmugg_files/network/networkFull.js"></script>
+	<script type="text/javascript" src="./pmugg_files/network/edgeNet.js"></script>
+	<script type="text/javascript" src="./pmugg_files/network/edgeNetFull.js"></script>
+	<script type="text/javascript" src="./pmugg_files/network/vertexNet.js"></script>
+	<script type="text/javascript" src="./pmugg_files/network/halfEdgeNet.js"></script>
+	<script type="text/javascript" src="./pmugg_files/network/halfEdgeNetFull.js"></script>
+	<script type="text/javascript" src="./pmugg_files/network/faceNet.js"></script>
+	<script type="text/javascript" src="./pmugg_files/network/primalVertex.js"></script>
+	<script type="text/javascript" src="./pmugg_files/network/primalVertexFull.js"></script>
+	<script type="text/javascript" src="./pmugg_files/network/primalEdge.js"></script>
+	<script type="text/javascript" src="./pmugg_files/network/primalFace.js"></script>
+	<script type="text/javascript" src="./pmugg_files/network/primalVolume.js"></script>
+	<script type="text/javascript" src="./pmugg_files/network/networkFactory.js"></script>
+	<script type="text/javascript" src="./pmugg_files/network/netMatcher.js"></script>
+	<script type="text/javascript" src="./pmugg_files/network/netMorphismFinder.js"></script>
+	<script type="text/javascript" src="./pmugg_files/network/netMorphism.js"></script>
+	<script type="text/javascript" src="./pmugg_files/network/netMorphismState.js"></script>
+	<script type="text/javascript" src="./pmugg_files/network/netGraphMapFinder.js"></script>
+	<script type="text/javascript" src="./pmugg_files/network/netGraphMap.js"></script>
+	<script type="text/javascript" src="./pmugg_files/network/netGraphMapState.js"></script>
+	<script type="text/javascript" src="./pmugg_files/network/netTransition.js"></script>
+	<script type="text/javascript" src="./pmugg_files/network/monotonicity.js"></script>
+	<script type="text/javascript" src="./pmugg_files/network/edgePlacement.js"></script>
+	<script type="text/javascript" src="./pmugg_files/network/facePlacement.js"></script>
+	<script type="text/javascript" src="./pmugg_files/network/vertexPlacement.js"></script>
+	<script type="text/javascript" src="./pmugg_files/network/connectorGroup.js"></script>
+	<script type="text/javascript" src="./pmugg_files/rigid/leastSquares.js"></script>
+	<script type="text/javascript" src="./pmugg_files/rigid/matrix.js"></script>
+	<script type="text/javascript" src="./pmugg_files/ring/ring.js"></script>
+	<script type="text/javascript" src="./pmugg_files/ring/ringGroup.js"></script>
+	<script type="text/javascript" src="./pmugg_files/ring/ringGroupInstance.js"></script>
+	<script type="text/javascript" src="./pmugg_files/ring/ringInstance.js"></script>
+	<script type="text/javascript" src="./pmugg_files/ring/ringTransition.js"></script>
+	<script type="text/javascript" src="./pmugg_files/ring/ringTreeNode.js"></script>
+	<script type="text/javascript" src="./pmugg_files/shape/edge.js"></script>
+	<script type="text/javascript" src="./pmugg_files/shape/exampleEndpoint.js"></script>
+	<script type="text/javascript" src="./pmugg_files/shape/exampleFace.js"></script>
+	<script type="text/javascript" src="./pmugg_files/shape/exampleShape.js"></script>
+	<script type="text/javascript" src="./pmugg_files/shape/exampleVertex.js"></script>
+	<script type="text/javascript" src="./pmugg_files/shape/mover.js"></script>
+	<script type="text/javascript" src="./pmugg_files/shape/point.js"></script>
+	<script type="text/javascript" src="./pmugg_files/shape/shapeGroup.js"></script>
+	<script type="text/javascript" src="./pmugg_files/shape/shapeSet.js"></script>
+	<script type="text/javascript" src="./pmugg_files/shape/transformedShape.js"></script>
+	<script type="text/javascript" src="./pmugg_files/shape/vertexGroup.js"></script>
+	<script type="text/javascript" src="./pmugg_files/shape/shapeMaker.js"></script>
+	<script type="text/javascript" src="./pmugg_files/grid/cell.js"></script>
+    <script type="text/javascript" src="./pmugg_files/grid/model.js"></script>
+    <script type="text/javascript" src="./pmugg_files/grid/mutationArea.js"></script>
+    <script type="text/javascript" src="./pmugg_files/grid/synthesizer.js"></script>
+    <script type="text/javascript" src="./pmugg_files/grid/examples/canyon.js"></script>
+    <script type="text/javascript" src="./pmugg_files/grid/examples/castle.js"></script>
+    <script type="text/javascript" src="./pmugg_files/grid/examples/city.js"></script>
+    <script type="text/javascript" src="./pmugg_files/grid/examples/escheresque.js"></script>
+    <script type="text/javascript" src="./pmugg_files/grid/examples/gadgets.js"></script>
+    <script type="text/javascript" src="./pmugg_files/grid/examples/mountain.js"></script>
+    <script type="text/javascript" src="./pmugg_files/grid/examples/simple.js"></script>
+    <script type="text/javascript" src="./pmugg_files/grid/examples/pair.js"></script>
+    <script type="text/javascript" src="./pmugg_files/grid/examples/l-shape.js"></script>
+    <script type="text/javascript" src="./pmugg_files/webgl/cameraController.js"></script>
+    <script type="text/javascript" src="./pmugg_files/webgl/renderData.js"></script>
+    <script type="text/javascript" src="./pmugg_files/webgl/view3d.js"></script>
+    <script type="text/javascript" src="./pmugg_files/webgl/viewWebGL.js"></script>
+    <script type="text/javascript" src="./pmugg_files/thirdParty/webgl-utils.js"></script>
+</head>
+
+<body onLoad="setup();" oncontextmenu="return false;" class="no-select">
+    <canvas id="canvas1" style="border: none;" width="1200" height="540"></canvas>
+    <canvas id="canvas2" style="border: none; display: none" width="1200" height="540"></canvas>
+    <canvas id="grid-canvas" style="border: none; display: none" width="1200" height="540"></canvas>
+    <canvas id="webgl-canvas" style="border: none; display: none" width="1200" height="540"></canvas>
+    <canvas id="canvas-3d" style="border: none; display: none" width="1200" height="540"></canvas>
+    <br>
+    <div id="test-container"></div>
+    <div id="controller-switcher">
+		<span>View Example</span>
+	    <span>View Grammar</span>
+	    <span>Generate Shapes</span>
+    </div>
+    <div id="mode-switcher">
+    	<span>Polygon</span>
+    	<span>Select Rect</span>
+		<span>Lasso</span>
+    </div>
+    <div id="action-container">
+			<span>Synthesize</span>
+			<span>Freeze Selected</span>
+			<span>Freeze Unselected</span>
+			<span>Unfreeze All</span>
+			<span>Line</span>
+			<span>Triangle</span>
+			<span>Square</span>
+			<span>Z</span>
+			<span>Wave</span>
+			<span>Empty</span>
+    </div>
+    <div id="brush-selector"></div>
+    <div class='gray' id="statistics"></div>
+    <div class="right-panel">
+		<div id="settings-container"></div>
+		<div id="decoration-container"></div>
+	</div>
+    <a id="download-link"></a>
+</body></html>

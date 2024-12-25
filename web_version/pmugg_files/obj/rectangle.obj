@@ -1,0 +1,39 @@
+ms.obj['Rectangle'] = {
+xml:`
+	<decoration>
+		<vDecoration types='all'>
+			<obj name='$Sphere001' />
+		</vDecoration>
+		<edgeBrush types='all'>
+			<extrusion name='$Circle001' />
+		</edgeBrush>
+	</decoration>
+`,
+
+obj: `
+# 3ds Max Wavefront OBJ Exporter v0.97b - (c)2007 guruware
+# File Created: 06.05.2022 23:50:07
+
+mtllib rectangle.mtl
+
+#
+# object Rectangle001
+#
+
+v  -20.0000 -20.0000 0.0000
+v  20.0000 -20.0000 0.0000
+v  20.0000 20.0000 0.0000
+v  -20.0000 20.0000 0.0000
+# 4 vertices
+
+vn 0.0000 0.0000 1.0000
+# 1 vertex normals
+
+g Rectangle001
+usemtl wire_027177088
+s 1
+f 1//1 2//1 3//1 4//1 
+# 1 polygons
+
+`
+};
