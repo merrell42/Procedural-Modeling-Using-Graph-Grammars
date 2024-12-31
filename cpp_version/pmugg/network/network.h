@@ -14,8 +14,8 @@ class VertexNet;
 class EdgeNet;
 class HalfEdgeNet;
 class FaceNet;
-class ConnectorGroup;
-class BoundNet;
+// class ConnectorGroup;
+// class BoundNet;
 class View;
 class Shape3D;
 struct DrawOptions;
@@ -30,8 +30,8 @@ public:
     const std::vector<EdgeNet*>& getEdges() const { return edges; }
     const std::vector<HalfEdgeNet*>& getHalfEdges() const { return halfEdges; }
     const std::vector<FaceNet*>& getFaces() const { return faces; }
-    const std::vector<ConnectorGroup*>& getConnectorGroups() const { return connectorGroups; }
-    BoundNet* getBoundNet() const { return boundNet; }
+    // const std::vector<ConnectorGroup*>& getConnectorGroups() const { return connectorGroups; }
+    // BoundNet* getBoundNet() const { return boundNet; }
     int getId() const { return id; }
 
     // Network operations
@@ -39,28 +39,28 @@ public:
     void addEdge(EdgeNet* edge);
     void addHalfEdge(HalfEdgeNet* halfEdge);
     void addFace(FaceNet* face);
-    void addConnectorGroup(ConnectorGroup* group);
-    void setBoundNet(BoundNet* net);
+    // void addConnectorGroup(ConnectorGroup* group);
+    // void setBoundNet(BoundNet* net);
 
     void removeVertex(VertexNet* vertex);
     void removeEdge(EdgeNet* edge);
     void removeHalfEdge(HalfEdgeNet* halfEdge);
     void removeFace(FaceNet* face);
-    void removeConnectorGroup(ConnectorGroup* group);
+    // void removeConnectorGroup(ConnectorGroup* group);
 
     // Conversion methods
     VertexNet* convertVertex(Network* networkB, VertexNet* vertexB);
     EdgeNet* convertEdge(Network* networkB, EdgeNet* edgeB);
     HalfEdgeNet* convertHalfEdge(Network* networkB, HalfEdgeNet* halfEdgeB);
     FaceNet* convertFace(Network* networkB, FaceNet* faceB);
-    ConnectorGroup* convertConnectorGroup(Network* networkB, ConnectorGroup* groupB);
+    // ConnectorGroup* convertConnectorGroup(Network* networkB, ConnectorGroup* groupB);
 
     // Index methods
     int vertexIndex(VertexNet* vertex) const;
     int edgeIndex(EdgeNet* edge) const;
     int halfEdgeIndex(HalfEdgeNet* halfEdge) const;
     int faceIndex(FaceNet* face) const;
-    int connectorGroupIndex(ConnectorGroup* group) const;
+    // int connectorGroupIndex(ConnectorGroup* group) const;
 
     // State queries
     bool isBoundary() const;
@@ -85,7 +85,7 @@ private:
     std::vector<HalfEdgeNet*> halfEdges;
     std::vector<FaceNet*> faces;
     std::vector<ConnectorGroup*> connectorGroups;
-    BoundNet* boundNet;
+    // BoundNet* boundNet;
     int id;
 
     static int nextId;

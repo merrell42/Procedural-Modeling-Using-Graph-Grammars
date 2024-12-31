@@ -6,7 +6,7 @@
 #include "../network/face_net.h"
 #include "../network/bound_net.h"
 #include "../guidelines/face.h"
-#include "connector_group.h"
+// #include "connector_group.h"
 // #include "bound_net.h"
 // #include "view.h"
 #include "../util/util.h"
@@ -38,33 +38,33 @@ void Network::addFace(FaceNet* face) {
     faces.push_back(face);
 }
 
-void Network::addConnectorGroup(ConnectorGroup* group) {
-    connectorGroups.push_back(group);
-}
+//void Network::addConnectorGroup(ConnectorGroup* group) {
+//    connectorGroups.push_back(group);
+//}
 
 //void Network::setBoundNet(BoundNet* net) {
 //    boundNet = net;
 //}
 
 void Network::removeVertex(VertexNet* vertex) {
-    Util::remove(vertex, vertices);
+    vertices.erase(std::remove(vertices.begin(), vertices.end(), vertex), vertices.end());
 }
 
 void Network::removeEdge(EdgeNet* edge) {
-    Util::remove(edge, edges);
+    edges.erase(std::remove(edges.begin(), edges.end(), edge), edges.end());
 }
 
 void Network::removeHalfEdge(HalfEdgeNet* halfEdge) {
-    Util::remove(halfEdge, halfEdges);
+    halfEdges.erase(std::remove(halfEdges.begin(), halfEdges.end(), halfEdge), halfEdges.end());
 }
 
 void Network::removeFace(FaceNet* face) {
-    Util::remove(face, faces);
+    faces.erase(std::remove(faces.begin(), faces.end(), face), faces.end());
 }
 
-void Network::removeConnectorGroup(ConnectorGroup* group) {
-    Util::remove(group, connectorGroups);
-}
+//void Network::removeConnectorGroup(ConnectorGroup* group) {
+//    Util::remove(group, connectorGroups);
+//}
 
 VertexNet* Network::convertVertex(Network* networkB, VertexNet* vertexB) {
     return vertexB ? vertices[networkB->vertexIndex(vertexB)] : nullptr;
@@ -82,9 +82,9 @@ FaceNet* Network::convertFace(Network* networkB, FaceNet* faceB) {
     return faceB ? faces[networkB->faceIndex(faceB)] : nullptr;
 }
 
-ConnectorGroup* Network::convertConnectorGroup(Network* networkB, ConnectorGroup* groupB) {
-    return groupB ? connectorGroups[networkB->connectorGroupIndex(groupB)] : nullptr;
-}
+//ConnectorGroup* Network::convertConnectorGroup(Network* networkB, ConnectorGroup* groupB) {
+//    return groupB ? connectorGroups[networkB->connectorGroupIndex(groupB)] : nullptr;
+//}
 
 int Network::vertexIndex(VertexNet* vertex) const {
     return vertex ? (int)(std::find(vertices.begin(), vertices.end(), vertex) - vertices.begin()) : -1;
@@ -102,9 +102,9 @@ int Network::faceIndex(FaceNet* face) const {
     return face ? (int)(std::find(faces.begin(), faces.end(), face) - faces.begin()) : -1;
 }
 
-int Network::connectorGroupIndex(ConnectorGroup* group) const {
-    return group ? (int)(std::find(connectorGroups.begin(), connectorGroups.end(), group) - connectorGroups.begin()) : -1;
-}
+//int Network::connectorGroupIndex(ConnectorGroup* group) const {
+//    return group ? (int)(std::find(connectorGroups.begin(), connectorGroups.end(), group) - connectorGroups.begin()) : -1;
+//}
 
 //bool Network::isBoundary() const {
 //    return boundNet && boundNet->getBoundary() == this;
@@ -152,15 +152,17 @@ Network* Network::import(const Json & json, Shape3D* shape) {
     for (const auto& edge : json["edges"]) {
         (new EdgeNet())->connectNet(result);
     }
-    for (const auto& halfEdge : json["halfEdges"]) {
-        (new HalfEdgeNet(true))->connectNet(result);
+    if (json.contains("halfEdges")) {
+        for (const auto& halfEdge : json["halfEdges"]) {
+            (new HalfEdgeNet(true))->connectNet(result);
+        }
     }
     for (const auto& face : json["faces"]) {
         (new FaceNet())->connectNet(result);
     }
-    for (const auto& cGroup : json["connectorGroups"]) {
-        (new ConnectorGroup())->connectNet(result);
-    }
+    //for (const auto& cGroup : json["connectorGroups"]) {
+    //    (new ConnectorGroup())->connectNet(result);
+    //}
 
     for (size_t index = 0; index < json["vertices"].size(); ++index) {
         result->getVertices()[index]->import(json["vertices"][index]);
@@ -168,15 +170,17 @@ Network* Network::import(const Json & json, Shape3D* shape) {
     for (size_t index = 0; index < json["edges"].size(); ++index) {
         result->getEdges()[index]->import(json["edges"][index]);
     }
-    for (size_t index = 0; index < json["halfEdges"].size(); ++index) {
-        result->getHalfEdges()[index]->import(json["halfEdges"][index]);
+    if (json.contains("halfEdges")) {
+        for (size_t index = 0; index < json["halfEdges"].size(); ++index) {
+            result->getHalfEdges()[index]->import(json["halfEdges"][index]);
+        }
     }
     for (size_t index = 0; index < json["faces"].size(); ++index) {
         result->getFaces()[index]->import(json["faces"][index]);
     }
-    for (size_t index = 0; index < json["connectorGroups"].size(); ++index) {
-        result->getConnectorGroups()[index]->import(json["connectorGroups"][index]);
-    }
+    //for (size_t index = 0; index < json["connectorGroups"].size(); ++index) {
+    //    result->getConnectorGroups()[index]->import(json["connectorGroups"][index]);
+    //}
 
     return result;
 }

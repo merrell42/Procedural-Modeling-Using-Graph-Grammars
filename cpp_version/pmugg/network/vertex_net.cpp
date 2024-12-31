@@ -45,8 +45,8 @@ void VertexNet::copyConnection(const VertexNet* copy) {
     }
     
     // Copy group
-    auto* copyGroup = copy->getGroup();
-    group = copyGroup ? network->convertConnectorGroup(copyNet, copyGroup) : nullptr;
+    //auto* copyGroup = copy->getGroup();
+    //group = copyGroup ? network->convertConnectorGroup(copyNet, copyGroup) : nullptr;
 }
 
 bool VertexNet::inNetwork() const {
@@ -95,14 +95,16 @@ void VertexNet::import(const Json& json) {
     halfEdges.clear();
     auto& networkHalfEdges = network->getHalfEdges();
     
-    for (const auto& index : json["halfEdges"]) {
-        int idx = index.get<int>();
-        halfEdges.push_back(idx >= 0 ? networkHalfEdges[idx] : nullptr);
+    if (json.contains("halfEdges")) {
+        for (const auto& index : json["halfEdges"]) {
+            int idx = index.get<int>();
+            halfEdges.push_back(idx >= 0 ? networkHalfEdges[idx] : nullptr);
+        }
     }
     
     // Import group
-    int groupIndex = json["group"].get<int>();
-    group = groupIndex >= 0 ? network->getConnectorGroups()[groupIndex] : nullptr;
+    //int groupIndex = json["group"].get<int>();
+    //group = groupIndex >= 0 ? network->getConnectorGroups()[groupIndex] : nullptr;
 }
 
 } // namespace ms 

@@ -145,12 +145,14 @@ void EdgeNet::import(const Json& json) {
     halfEdges.clear();
     auto& networkHalfEdges = network->getHalfEdges();
     
-    for (const auto& arrayJson : json["halfEdges"]) {
-        std::vector<HalfEdgeNet*> halfArray;
-        for (const auto& index : arrayJson) {
-            halfArray.push_back(networkHalfEdges[index.get<int>()]);
+    if (json.contains("halfEdges")) {
+        for (const auto& arrayJson : json["halfEdges"]) {
+            std::vector<HalfEdgeNet*> halfArray;
+            for (const auto& index : arrayJson) {
+                halfArray.push_back(networkHalfEdges[index.get<int>()]);
+            }
+            halfEdges.push_back(halfArray);
         }
-        halfEdges.push_back(halfArray);
     }
 }
 

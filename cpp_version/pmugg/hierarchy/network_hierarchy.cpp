@@ -25,7 +25,7 @@ void NetworkHierarchy::reset() {
     transitions.clear();
     starterTransitions.clear();
     groundTransitions.clear();
-    grounded = globalSettings["Grounded"];
+    // grounded = globalSettings["Grounded"];
 }
 
 const std::vector<std::vector<Network*>>& NetworkHierarchy::getGenerations() const {
