@@ -1,0 +1,146 @@
+#include "half_edge_net.h"
+#include "network.h"
+#include "vertex_net.h"
+#include "edge_net.h"
+#include "face_net.h"
+#include "../util/util.h"
+
+namespace ms {
+
+int HalfEdgeNet::nextId = 0;
+
+HalfEdgeNet::HalfEdgeNet(bool forward)
+    : forward(forward)
+    , vertex(nullptr)
+    , edge(nullptr)
+    , vertexIndex(-1)
+    , edgeIndex(-1)
+    , prev(nullptr)
+    , next(nullptr)
+    , face(nullptr)
+    , network(nullptr)
+    , id(nextId++) {}
+
+HalfEdgeNet* HalfEdgeNet::connectNet(Network* net) {
+    network = net;
+    network->addHalfEdge(this);
+    return this;
+}
+
+void HalfEdgeNet::connectVertex(VertexNet* v, int index) {
+    if (index == -1) {
+        // Set to next available spot in the vertex
+        index = (int)v->getHalfEdges().size();
+    }
+    vertex = v;
+    vertexIndex = index;
+    vertex->setHalfEdge(this, index);
+}
+
+void HalfEdgeNet::disconnectHalfEdge() {
+    if (next) {
+        next->setPrev(nullptr);
+    }
+    next = nullptr;
+}
+
+void HalfEdgeNet::connectHalfEdge(HalfEdgeNet* n) {
+    next = n;
+    n->setPrev(this);
+}
+
+void HalfEdgeNet::setPrev(HalfEdgeNet* p) {
+    prev = p;
+}
+
+void HalfEdgeNet::setFace(FaceNet* f) {
+    face = f;
+}
+
+HalfEdgeNet* HalfEdgeNet::getTwin() const {
+    auto halfEdges = edge->getHalfEdges();
+    if (halfEdges.size() != 2) {
+        throw std::runtime_error("Expected two halfEdges to get a twin.");
+    }
+    return halfEdges[1 - edgeIndex][0];
+}
+
+//HalfEdgeNet* HalfEdgeNet::boundaryToInterior() const {
+//    auto* edge = getEdge();
+//    if (!edge) return nullptr;
+//
+//    auto* startHalf = edge->getPrimal()->getInterior()->getOuterComponent();
+//    if (!startHalf) return nullptr;
+//
+//    if (forward) {
+//        // Follow the chain to the end
+//        auto* endHalf = startHalf;
+//        auto* next = endHalf->getNext();
+//        while (next) {
+//            endHalf = next;
+//            next = endHalf->getNext();
+//        }
+//        return endHalf;
+//    } else {
+//        return startHalf;
+//    }
+//}
+
+bool HalfEdgeNet::isSpliced() const {
+    return edge && edge->getPrimal()->getType()->getSpliced();
+}
+
+bool HalfEdgeNet::isLoopy() const {
+    auto connected = FaceNet::getConnectedHalfEdges(this);
+    auto* last = connected.back();
+    return last->getNext() != nullptr;
+}
+
+const FaceData* HalfEdgeNet::getFaceDatum() const {
+    if (!edge) {
+        return nullptr;
+    }
+    return &edge->getPrimal()->getType()->getFaceData()[edgeIndex];
+}
+
+//Vec2 HalfEdgeNet::getDir() const {
+//    if (!edge) {
+//        return Vec2();
+//    }
+//    auto dir = edge->getPrimal()->getType()->getDir();
+//    if (!forward) {
+//        return dir.scale(-1);
+//    }
+//    return dir;
+//}
+
+void HalfEdgeNet::import(const Json& json) {
+    forward = json["forward"];
+    edgeIndex = json["edgeIndex"];
+    vertexIndex = json["vertexIndex"];
+    vertex = network->getVertices()[json["vertex"]];
+    edge = network->getEdges()[json["edge"]];
+    prev = network->getHalfEdges()[json["prev"]];
+    next = network->getHalfEdges()[json["next"]];
+    face = network->getFaces()[json["face"]];
+}
+
+//Json HalfEdgeNet::export() const {
+//    Json json;
+//    json["forward"] = forward;
+//    json["edgeIndex"] = edgeIndex;
+//    json["vertexIndex"] = vertexIndex;
+//    json["vertex"] = network->vertexIndex(vertex);
+//    json["edge"] = network->edgeIndex(edge);
+//    json["prev"] = network->halfEdgeIndex(prev);
+//    json["next"] = network->halfEdgeIndex(next);
+//    json["face"] = network->faceIndex(face);
+//    return json;
+//}
+//
+//void HalfEdgeNet::print() const {
+//    ms::highlight(getHalfEdgeSet());
+//    return id;
+//}
+
+} // namespace ms 

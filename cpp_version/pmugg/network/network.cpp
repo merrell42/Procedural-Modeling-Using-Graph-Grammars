@@ -1,0 +1,200 @@
+#include "network.h"
+#include "../shape/edge.h"
+#include "../network/half_edge_net.h"
+#include "../network/vertex_net.h"
+#include "../network/edge_net.h"
+#include "../network/face_net.h"
+#include "../network/bound_net.h"
+#include "../guidelines/face.h"
+#include "connector_group.h"
+// #include "bound_net.h"
+// #include "view.h"
+#include "../util/util.h"
+// #include "graph.h"
+#include <algorithm>
+
+namespace ms {
+
+int Network::nextId = 0;
+
+Network::Network()
+    : id(nextId++)
+    // , boundNet(nullptr)
+{}
+
+void Network::addVertex(VertexNet* vertex) {
+    vertices.push_back(vertex);
+}
+
+void Network::addEdge(EdgeNet* edge) {
+    edges.push_back(edge);
+}
+
+void Network::addHalfEdge(HalfEdgeNet* halfEdge) {
+    halfEdges.push_back(halfEdge);
+}
+
+void Network::addFace(FaceNet* face) {
+    faces.push_back(face);
+}
+
+void Network::addConnectorGroup(ConnectorGroup* group) {
+    connectorGroups.push_back(group);
+}
+
+//void Network::setBoundNet(BoundNet* net) {
+//    boundNet = net;
+//}
+
+void Network::removeVertex(VertexNet* vertex) {
+    Util::remove(vertex, vertices);
+}
+
+void Network::removeEdge(EdgeNet* edge) {
+    Util::remove(edge, edges);
+}
+
+void Network::removeHalfEdge(HalfEdgeNet* halfEdge) {
+    Util::remove(halfEdge, halfEdges);
+}
+
+void Network::removeFace(FaceNet* face) {
+    Util::remove(face, faces);
+}
+
+void Network::removeConnectorGroup(ConnectorGroup* group) {
+    Util::remove(group, connectorGroups);
+}
+
+VertexNet* Network::convertVertex(Network* networkB, VertexNet* vertexB) {
+    return vertexB ? vertices[networkB->vertexIndex(vertexB)] : nullptr;
+}
+
+EdgeNet* Network::convertEdge(Network* networkB, EdgeNet* edgeB) {
+    return edgeB ? edges[networkB->edgeIndex(edgeB)] : nullptr;
+}
+
+HalfEdgeNet* Network::convertHalfEdge(Network* networkB, HalfEdgeNet* halfEdgeB) {
+    return halfEdgeB ? halfEdges[networkB->halfEdgeIndex(halfEdgeB)] : nullptr;
+}
+
+FaceNet* Network::convertFace(Network* networkB, FaceNet* faceB) {
+    return faceB ? faces[networkB->faceIndex(faceB)] : nullptr;
+}
+
+ConnectorGroup* Network::convertConnectorGroup(Network* networkB, ConnectorGroup* groupB) {
+    return groupB ? connectorGroups[networkB->connectorGroupIndex(groupB)] : nullptr;
+}
+
+int Network::vertexIndex(VertexNet* vertex) const {
+    return vertex ? (int)(std::find(vertices.begin(), vertices.end(), vertex) - vertices.begin()) : -1;
+}
+
+int Network::edgeIndex(EdgeNet* edge) const {
+    return edge ? (int)(std::find(edges.begin(), edges.end(), edge) - edges.begin()) : -1;
+}
+
+int Network::halfEdgeIndex(HalfEdgeNet* halfEdge) const {
+    return halfEdge ? (int)(std::find(halfEdges.begin(), halfEdges.end(), halfEdge) - halfEdges.begin()) : -1;
+}
+
+int Network::faceIndex(FaceNet* face) const {
+    return face ? (int)(std::find(faces.begin(), faces.end(), face) - faces.begin()) : -1;
+}
+
+int Network::connectorGroupIndex(ConnectorGroup* group) const {
+    return group ? (int)(std::find(connectorGroups.begin(), connectorGroups.end(), group) - connectorGroups.begin()) : -1;
+}
+
+//bool Network::isBoundary() const {
+//    return boundNet && boundNet->getBoundary() == this;
+//}
+//
+//bool Network::isInterior() const {
+//    return boundNet && boundNet->getInterior() == this;
+//}
+
+//void Network::draw(View* view, const DrawOptions& options) {
+//    if (vertices.empty()) {
+//        drawEmptyNetwork(view, options);
+//    } else {
+//        drawNetworkElements(view, options);
+//    }
+//}
+//
+//void Network::highlight(View* view, const DrawOptions& options) {
+//    auto size = Graph::HIGHLIGHTED_SIZE;
+//    auto offset = options.offset.value_or(Vec2(20, view->getCanvas().height - size - 20));
+//    
+//    DrawOptions newOptions = options;
+//    newOptions.rect = {offset.x, offset.x + size, offset.y, offset.y + size, 0, 100};
+//    draw(view, newOptions);
+//}
+//
+//void Network::print() const {
+//    ms::highlight(this);
+//}
+
+bool Network::requiresShapeView() const {
+    return true;
+}
+
+//Network* Network::copy() const {
+//    return Network::import(export());
+//}
+
+Network* Network::import(const Json & json, Shape3D* shape) {
+    auto result = new Network();
+
+    for (const auto& vertex : json["vertices"]) {
+        (new VertexNet())->connectNet(result);
+    }
+    for (const auto& edge : json["edges"]) {
+        (new EdgeNet())->connectNet(result);
+    }
+    for (const auto& halfEdge : json["halfEdges"]) {
+        (new HalfEdgeNet(true))->connectNet(result);
+    }
+    for (const auto& face : json["faces"]) {
+        (new FaceNet())->connectNet(result);
+    }
+    for (const auto& cGroup : json["connectorGroups"]) {
+        (new ConnectorGroup())->connectNet(result);
+    }
+
+    for (size_t index = 0; index < json["vertices"].size(); ++index) {
+        result->getVertices()[index]->import(json["vertices"][index]);
+    }
+    for (size_t index = 0; index < json["edges"].size(); ++index) {
+        result->getEdges()[index]->import(json["edges"][index]);
+    }
+    for (size_t index = 0; index < json["halfEdges"].size(); ++index) {
+        result->getHalfEdges()[index]->import(json["halfEdges"][index]);
+    }
+    for (size_t index = 0; index < json["faces"].size(); ++index) {
+        result->getFaces()[index]->import(json["faces"][index]);
+    }
+    for (size_t index = 0; index < json["connectorGroups"].size(); ++index) {
+        result->getConnectorGroups()[index]->import(json["connectorGroups"][index]);
+    }
+
+    return result;
+}
+
+//Vec3 Network::combineTangents(const Vec3& u, const Vec3& v) {
+//    if (u.dot(v) > 0.9f) {
+//        return u;
+//    }
+//    
+//    float uv = u.dot(v);
+//    Matrix2f A({
+//        {1, uv},
+//        {uv, 1}
+//    });
+//    auto Ainv = A.inverse();
+//    auto B = Ainv * Vector2f(1, 1);
+//    
+//    return u.scale(B.x()) + v.scale(B.y());
+//}
+
+} // namespace ms 

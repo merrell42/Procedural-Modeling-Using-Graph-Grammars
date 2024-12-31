@@ -1,0 +1,316 @@
+#include "guide_mutator.h"
+#include "classifier.h"
+#include "timer.h"
+#include "model.h"
+#include "mutation_area.h"
+#include "hierarchy_mutator.h"
+#include "network_mutator.h"
+#include "family_tree_mutator.h"
+#include "settings.h"
+#include "util.h"
+#include <iostream>
+#include <chrono>
+
+namespace ms {
+
+int GuideMutator::taskCount = 0;
+bool GuideMutator::forceContinued = false;
+
+GuideMutator::GuideMutator(Classifier* classifier, Timer* timer, std::function<void(bool)> notifyFunc)
+    : classifier(classifier)
+    , timer(timer)
+    , notify(notifyFunc)
+    , tasks()
+    , status(Status::SUCCESS)
+    , breakTime(0)
+    , earlyEndTime(0)
+    , endTime(0)
+    , seedCount(0)
+    , pauseCount(-1)
+    , nodeStats()
+    , optimizer(&nodeStats)
+    , hierarchyMutator(nullptr) {
+    
+    initializeHierarchyMutator();
+    ms::globalMutator = this;  // For debugging
+}
+
+void GuideMutator::seed(MutationArea* mutationArea) {
+    hierarchyMutator->setMutationArea(mutationArea);
+    seedCount = 0;
+}
+
+Status GuideMutator::resolve(Model* outputModel) {
+    if (status == Status::PAUSED) {
+        return status;
+    }
+
+    timer->start("Guide Mutator");
+    while (true) {
+        taskCount++;
+        if (closeInspection(taskCount)) {
+            displayStats();
+            // debugger statement equivalent would go here
+        }
+
+        mutate();
+
+        auto cost = optimizer.computeCost();
+        timer->start("Accept Or Reject");
+        if (optimizer.isAccepted(cost)) {
+            accept();
+        } else {
+            reject();
+        }
+        timer->stop("Accept Or Reject");
+
+        timer->start("Save");
+        nodeStats.save();
+        timer->stop("Save");
+
+        auto now = std::chrono::system_clock::now();
+        auto currentTime = std::chrono::duration_cast<std::chrono::milliseconds>(
+            now.time_since_epoch()).count();
+
+        bool maxTimeEnabled = globalSettings.getBool("Max Time Enabled");
+        int maxIterations = globalSettings.getInt("Max Iterations");
+
+        if ((maxTimeEnabled && 
+             (currentTime > endTime || 
+              (currentTime > earlyEndTime && nodeStats.getBadVertices().empty()))) ||
+            (taskCount >= maxIterations)) {
+            timer->stop("Guide Mutator");
+            status = Status::FINISHED;
+            return status;
+        }
+
+        if (taskCount == pauseCount) {
+            pause();
+            return status;
+        }
+
+        if (currentTime > breakTime) {
+            timer->stop("Guide Mutator");
+            return Status::UNRESOLVED;
+        }
+    }
+}
+
+void GuideMutator::mutate() {
+    std::vector<int> probabilities = {1, 1, 10};
+    bool done = false;
+
+    while (!done) {
+        switch(Util::randomDistribution(probabilities)) {
+            case 0: {
+                timer->start("Add Fragment");
+                bool success = hierarchyMutator->addStartInstance();
+                timer->stop("Add Fragment");
+                if (success) {
+                    return;
+                } else {
+                    probabilities[0] = 0;
+                }
+                break;
+            }
+            case 1: {
+                timer->start("Remove Fragment");
+                bool success = hierarchyMutator->changeRandomInstance(true);
+                timer->stop("Remove Fragment");
+                if (success) {
+                    return;
+                } else {
+                    probabilities[1] = 0;
+                }
+                break;
+            }
+            case 2: {
+                timer->start("Modify Fragment");
+                bool success = hierarchyMutator->changeRandomInstance(false);
+                timer->stop("Modify Fragment");
+                if (success) {
+                    return;
+                } else {
+                    probabilities[2] = 0;
+                }
+                break;
+            }
+        }
+
+        if (globalSettings.getBool("Fewer Start Transitions") && taskCount > 1) {
+            return;
+        }
+
+        if (nodeStats.getCostChange("reject") > 0) {
+            return;
+        }
+
+        done = true;
+        for (int probability : probabilities) {
+            if (probability > 0) {
+                done = false;
+                break;
+            }
+        }
+    }
+}
+
+void GuideMutator::accept() {
+    if (nodeStats.getBadVertices().empty()) {
+        seedCount++;
+    }
+    if (closeInspection(taskCount)) {
+        std::cout << taskCount << " accepted." << std::endl;
+    }
+}
+
+void GuideMutator::reject() {
+    nodeStats.restore();
+    if (closeInspection(taskCount) || globalSettings.getBool("Debug Alerts")) {
+        optimizer.verifyCost();
+    }
+    if (closeInspection(taskCount)) {
+        std::cout << taskCount << " rejected." << std::endl;
+    }
+}
+
+void GuideMutator::save(Model* model) {
+    auto cost = optimizer.computeCost();
+    optimizer.accept(cost);
+    nodeStats.save();
+}
+
+bool GuideMutator::initializeModel(Model* model) {
+    model->setNodeStats(&nodeStats);
+    auto boundaryGroups = classifier->getBoundaryGroups();
+    
+    if (!boundaryGroups.empty()) {
+        auto emptyRing = classifier->getEmptyRing();
+        auto ringInstance = std::make_unique<RingInstance>(emptyRing, &nodeStats);
+        auto ringGroup = RingGroup::createFromRing(ringInstance->getRing());
+        auto startInstance = std::make_unique<RingGroupInstance>(ringGroup);
+        startInstance->addRingInstance(0, ringInstance.get());
+        
+        Transition transition{
+            startInstance.get(),
+            Util::pick(boundaryGroups),
+            true  // initialBoundary
+        };
+        
+        return hierarchyMutator->applyTransition(transition);
+    }
+    
+    return true;
+}
+
+void GuideMutator::reset() {
+    status = Status::UNRESOLVED;
+}
+
+void GuideMutator::pause() {
+    displayStats();
+    notify(true);
+    status = Status::PAUSED;
+}
+
+void GuideMutator::unresolve() {
+    status = Status::UNRESOLVED;
+}
+
+void GuideMutator::step(int numTasks) {
+    displayStats();
+    pauseCount = taskCount + numTasks;
+}
+
+void GuideMutator::setBreakTime(double newBreakTime) {
+    breakTime = newBreakTime;
+}
+
+void GuideMutator::setEndTime(double newEarlyEndTime, double newEndTime) {
+    earlyEndTime = newEarlyEndTime;
+    endTime = newEndTime;
+}
+
+Status GuideMutator::getStatus() const {
+    return status;
+}
+
+void GuideMutator::displayStats() {
+    std::string stats = "Iteration: " + std::to_string(taskCount) + " / " + 
+                       std::to_string(globalSettings.getInt("Max Iterations"));
+    
+    if (!globalSettings.getBool("MVP")) {
+        stats += " " + std::to_string(optimizer.getPrevCost().sum);
+    }
+    
+    // Update statistics display (implementation depends on UI system)
+    // document.getElementById('statistics').innerHTML = stats;
+}
+
+std::string GuideMutator::report() const {
+    auto cost = optimizer.getPrevCost();
+    std::string summary = std::to_string(cost.sum) + " " + 
+                         std::to_string(timer->getTiming("everything") / 1000.0) + "s " +
+                         std::to_string(taskCount / timer->getTiming("everything"));
+    
+    std::string details = cost.toString() + "\n" + timer->reportMean();
+    std::cout << "# of vertices: " << nodeStats.getCount("vertex") << std::endl;
+    
+    return summary + "\n" + details;
+}
+
+NodeStats* GuideMutator::getNodeStats() {
+    return &nodeStats;
+}
+
+Classifier* GuideMutator::getClassifier() const {
+    return classifier;
+}
+
+bool GuideMutator::closeInspection(int taskCount) {
+    if (forceContinued) {
+        return false;
+    }
+    
+    int taskStop = globalSettings.getInt("Task Stop");
+    int taskStep = globalSettings.getInt("Task Step");
+    
+    if (taskStop >= 0) {
+        return taskCount >= taskStop && ((taskCount - taskStop) % taskStep == 0);
+    }
+    
+    return globalSettings.getBool("Debug Each Task");
+}
+
+void GuideMutator::forceContinue() {
+    forceContinued = true;
+}
+
+void GuideMutator::hideStats() {
+    // Clear statistics display (implementation depends on UI system)
+    // document.getElementById('statistics').innerHTML = '';
+}
+
+Vertex* GuideMutator::findMutableVertex() {
+    auto vertexNodes = nodeStats.getNodes("vertex");
+    if (!vertexNodes.empty()) {
+        for (int i = 0; i < findMutableVertexAttempts; i++) {
+            if (auto vertex = dynamic_cast<Vertex*>(Util::pick(vertexNodes)->getElement())) {
+                if (vertex->isMoveable()) {
+                    return vertex;
+                }
+            }
+        }
+    }
+    return nullptr;
+}
+
+void GuideMutator::initializeHierarchyMutator() {
+    if (globalSettings.getBool("Use Network")) {
+        hierarchyMutator = std::make_unique<NetworkMutator>(classifier, &nodeStats);
+    } else {
+        hierarchyMutator = std::make_unique<FamilyTreeMutator>(classifier, &nodeStats);
+    }
+}
+
+} // namespace ms 
