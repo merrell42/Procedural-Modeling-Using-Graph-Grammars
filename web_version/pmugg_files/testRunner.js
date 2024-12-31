@@ -57,6 +57,7 @@ ms.testRunner = function(container, exampleShape, decorationModel, screenSaver, 
 			var scenario = is3D ? scenario3D : scenario2D;
 			this.addShape(solution.category, solution.name, [scenario], solution.data, solution.settings, solution.solution);
 		});
+		// JSON.stringify(solutions.filter((s) => s.solution.useNetworks)[5]).replaceAll('\\"', '"').replaceAll('"{', '{').replaceAll('}"', '}');
 	} else {
 		this.addShapeData(scenario2D, scenario3D);
 	}
