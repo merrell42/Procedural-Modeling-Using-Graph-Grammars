@@ -1,7 +1,7 @@
 #pragma once
-#include "vec2.h"
-#include "network_hierarchy.h"
-#include "family_tree.h"
+#include "../shape/vec2.h"
+#include "../hierarchy/network_hierarchy.h"
+// #include "family_tree.h"
 #include <vector>
 #include <memory>
 

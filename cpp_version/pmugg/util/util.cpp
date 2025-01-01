@@ -2,6 +2,7 @@
 #include <cmath>
 #include <algorithm>
 #include <stdexcept>
+#include <random>
 
 namespace ms {
 
@@ -129,6 +130,10 @@ int Util::consistentRandom(int n, int seed) {
     return x - std::floor(x);
 } */
 
+int Util::random(int count) {
+    return rand() % count;
+}
+
 void Util::updateRandomMode() {
     // This would need to be adapted based on your global settings implementation
     // The original JS version uses ms.globalSettings
@@ -198,6 +203,24 @@ int Util::maxDim(const Vec3& n) {
     return std::max_element(coords.begin(), coords.end(),
         [](const auto& a, const auto& b) { return a.first < b.first; }
     )->second;
+}
+
+int Util::randomDistribution(const std::vector<double>& probabilityMass) {
+    std::vector<double> sums;
+    double sum = 0.0;
+    for (double pm : probabilityMass) {
+        sum += pm;
+        sums.push_back(sum);
+    }
+    if (sum == 0.0) {
+        return -1;
+    }
+    double r = sum * (static_cast<double>(rand()) / RAND_MAX);
+    int index = 0;
+    while (index < sums.size() && r > sums[index]) {
+        index++;
+    }
+    return (index < sums.size()) ? index : -1;
 }
 
 } // namespace ms 

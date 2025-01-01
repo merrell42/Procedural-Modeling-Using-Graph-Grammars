@@ -17,6 +17,12 @@ class Shape3D;
 class EdgeType;
 class VertexType;
 
+struct Transition {
+    Network* startNet;
+    Network* endNet;
+    bool ground;
+};
+
 class NetworkHierarchy {
 public:
     NetworkHierarchy();
@@ -32,9 +38,9 @@ public:
     bool isGrounded() const;
 
     // Transition operations
-    /*TransitionResult getTransition();
-    TransitionResult getRemoveTransition();
-    TransitionResult getStarterTransition();*/
+    Transition getTransition();
+    Transition getRemoveTransition();
+    Transition getStarterTransition();
 
     // Generation methods
     // void partialGenerate(const std::vector<Network*>& transitionNets, NetworkSet& networks);
@@ -58,12 +64,6 @@ private:
     std::vector<NetTransition*> starterTransitions;
     std::vector<NetTransition*> groundTransitions;
     bool grounded;
-
-    struct TransitionResult {
-        Network* startNet;
-        Network* endNet;
-        bool ground;
-    };
 
     struct NetworkSet {
         std::vector<Network*> face;

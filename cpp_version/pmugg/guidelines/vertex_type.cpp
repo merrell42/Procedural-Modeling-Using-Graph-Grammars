@@ -38,7 +38,7 @@ void VertexType::addEdge(EdgeType3D* edge, bool isAtStart, float angle,
     // Angle becomes the angle going out from the vertex through the edge
     auto dir = edge->getDir();
     if (!isAtStart) {
-        angle += M_PI;
+        angle += (float)M_PI;
         dir = dir * -1.0f;
     }
     angle = ms::Util::fixAngle(angle);
@@ -71,7 +71,7 @@ void VertexType::setSpliced(bool spliced) {
 }
 
 void VertexType::computeFaceIds() {
-    int N = connections.size();
+    int N = (int)connections.size();
     for (int i = 0; i < N; i++) {
         std::vector<int> faceIds = {i, (i + 1) % N};
         if (!connections[i].isAtStart) {
