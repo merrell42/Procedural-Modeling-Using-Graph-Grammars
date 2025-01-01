@@ -52,53 +52,53 @@ bool NetworkHierarchy::isGrounded() const {
     return grounded;
 }
 
-//NetworkHierarchy::TransitionResult NetworkHierarchy::getTransition() {
-//    auto* transition = Util::pick(transitions);
-//    if (transition) {
-//        auto networks = transition->getNetworks();
-//        int n = networks.size();
-//        // Pick two unique indices
-//        int start = Util::random(n);
-//        int end = Util::random(n - 1);
-//        if (end >= start) {
-//            end++;
-//        }
-//        return {networks[start], networks[end], false};
-//    }
-//    return {nullptr, nullptr, false};
-//}
-//
-//NetworkHierarchy::TransitionResult NetworkHierarchy::getRemoveTransition() {
-//    bool grounded = starterTransitions.empty();
-//    if (grounded) {
-//        return {nullptr, nullptr, false};
-//    }
-//    auto* transition = Util::pick(starterTransitions);
-//    if (transition) {
-//        auto networks = transition->getNetworks();
-//        int n = networks.size();
-//        auto* endNet = emptyNet;
-//        auto* startNet = networks[Util::random(n - 1) + 1];
-//        return {startNet, endNet, false};
-//    }
-//    return {nullptr, nullptr, false};
-//}
-//
-//NetworkHierarchy::TransitionResult NetworkHierarchy::getStarterTransition() {
-//    bool firstTask = (guideMutator.taskCount <= 1);
-//    bool grounded = (this->grounded && firstTask) || starterTransitions.empty();
-//    auto& transitions = grounded ? groundTransitions : starterTransitions;
-//    
-//    auto* transition = Util::pick(transitions);
-//    if (transition) {
-//        auto networks = transition->getNetworks();
-//        int n = networks.size();
-//        auto* startNet = networks[0];
-//        auto* endNet = networks[Util::random(n - 1) + 1];
-//        return {startNet, endNet, transition->isGround()};
-//    }
-//    return {nullptr, nullptr, false};
-//}
+Transition NetworkHierarchy::getTransition() {
+    NetTransition* transition = transitions.empty() ? nullptr : Util::pick<NetTransition*>(transitions);
+    if (transition) {
+        auto networks = transition->getNetworks();
+        int n = networks.size();
+        // Pick two unique indices
+        int start = Util::random(n);
+        int end = Util::random(n - 1);
+        if (end >= start) {
+            end++;
+        }
+        return {networks[start], networks[end], false};
+    }
+    return {nullptr, nullptr, false};
+}
+
+Transition NetworkHierarchy::getRemoveTransition() {
+    bool grounded = starterTransitions.empty();
+    if (grounded) {
+        return {nullptr, nullptr, false};
+    }
+    auto* transition = Util::pick(starterTransitions);
+    if (transition) {
+        auto networks = transition->getNetworks();
+        int n = networks.size();
+        auto* endNet = emptyNet;
+        auto* startNet = networks[Util::random(n - 1) + 1];
+        return {startNet, endNet, false};
+    }
+    return {nullptr, nullptr, false};
+}
+
+Transition NetworkHierarchy::getStarterTransition() {
+    // bool firstTask = (guideMutator.taskCount <= 1);
+    bool grounded = (this->grounded /*&& firstTask*/) || starterTransitions.empty();
+    auto& transitions = grounded ? groundTransitions : starterTransitions;
+    
+    auto* transition = Util::pick(transitions);
+    if (transition) {
+        auto networks = transition->getNetworks();
+        int n = networks.size();
+        auto* startNet = networks[0];
+        auto* endNet = networks[Util::random(n - 1) + 1];
+        return {startNet, endNet, transition->isGround()};
+    }
+    return {nullptr, nullptr, false};
+}
 
 //void NetworkHierarchy::partialGenerate(const std::vector<Network*>& transitionNets,
 //                                     NetworkSet& networks) {

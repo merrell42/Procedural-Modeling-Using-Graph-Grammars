@@ -1,6 +1,6 @@
 #pragma once
-#include "node_stats.h"
-#include "global_settings.h"
+// #include "node_stats.h"
+#include "grid/settings.h"
 #include <cmath>
 
 namespace ms {

@@ -110,4 +110,6 @@ double Timer::toMilliseconds(const std::chrono::high_resolution_clock::duration&
     return std::chrono::duration<double, std::milli>(duration).count();
 }
 
+Timer* timer = new Timer();
+
 } // namespace ms 

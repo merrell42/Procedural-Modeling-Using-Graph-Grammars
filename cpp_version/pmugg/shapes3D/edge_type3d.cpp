@@ -90,7 +90,7 @@ int EdgeType3D::neighboringFace(int initialIndex, bool above) const {
     auto fOrder = std::find_if(angles.begin(), angles.end(),
         [initialIndex](const auto& p) { return p.second == initialIndex; }) - angles.begin();
     
-    int neighborOrder = (fOrder + (above ? 1 : -1) + angles.size()) % angles.size();
+    int neighborOrder = (int)(fOrder + (above ? 1 : -1) + angles.size()) % angles.size();
     return angles[neighborOrder].second;
 }
 

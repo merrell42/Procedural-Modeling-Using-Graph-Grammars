@@ -46,6 +46,8 @@ private:
     static double toMilliseconds(const std::chrono::high_resolution_clock::duration& duration);
 };
 
+extern Timer* timer;
+
 // Convenience macro for timing code blocks
 #define TIME_BLOCK(name) \
     ms::Timer::instance().start(name); \

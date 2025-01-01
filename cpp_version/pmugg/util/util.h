@@ -2,6 +2,7 @@
 #include <vector>
 #include <functional>
 #include <string>
+#include <random>
 #include "../shape/vec3.h"
 
 namespace ms {
@@ -34,8 +35,9 @@ public:
 
     // Random operations
     static int consistentRandom(int n, int seed);
-    static float random(int seed, int count);
+    static int random(int count);
     static void updateRandomMode();
+    static int randomDistribution(const std::vector<double>& probabilityMass);
 
     // Array utilities
     template<typename T>
@@ -57,6 +59,19 @@ public:
     static void fastConcat(std::vector<T>& allData, const std::vector<T>& newData);
 
     static int maxDim(const Vec3& n);
+
+    template <typename T>
+    static const T& pick(const std::vector<T>& vec) {
+        if (vec.empty()) {
+            throw std::invalid_argument("Cannot pick an item from an empty vector.");
+        }
+        // Initialize random number generator
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_int_distribution<> dis(0, static_cast<int>(vec.size()) - 1);
+        int index = dis(gen);
+        return vec[index];
+    }
 
     static constexpr float EPS = 1e-5f;
     static constexpr float PI = 3.14159265358979323846f;
