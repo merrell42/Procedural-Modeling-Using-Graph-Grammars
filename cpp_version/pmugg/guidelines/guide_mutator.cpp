@@ -16,8 +16,8 @@ namespace ms {
 int GuideMutator::taskCount = 0;
 // bool GuideMutator::forceContinued = false;
 
-GuideMutator::GuideMutator(NetworkMutator* networkMutator)
-    : classifier(classifier)
+GuideMutator::GuideMutator(Model* model, NetworkMutator* networkMutator)
+    : // classifier(classifier)
     // , notify(notifyFunc)
     // , tasks()
     //, status(Status::SUCCESS)
@@ -28,6 +28,7 @@ GuideMutator::GuideMutator(NetworkMutator* networkMutator)
     //, pauseCount(-1)
     // , nodeStats()
     // , optimizer(&nodeStats)
+    model(model)
     , networkMutator(networkMutator) {
     
     // initializeHierarchyMutator();
@@ -157,10 +158,12 @@ void GuideMutator::mutate() {
     }
 }
 
-void GuideMutator::accept() {}
+void GuideMutator::accept() {
+    model->accept();
+}
 
 void GuideMutator::reject() {
-    std::cout << "TODO: Restore after rejection." << std::endl;
+    model->reject();
     /*nodeStats.restore();
     if (closeInspection(taskCount) || globalSettings.getBool("Debug Alerts")) {
         optimizer.verifyCost();

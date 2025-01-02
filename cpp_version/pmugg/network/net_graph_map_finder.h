@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <memory>
-#include "vec2.h"
+#include "../shape/vec2.h"
 
 namespace ms {
 

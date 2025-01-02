@@ -2,6 +2,7 @@
 #include <vector>
 #include <memory>
 #include "../hierarchy/network_hierarchy.h"
+#include "../graph_drawing/model.h"
 
 namespace ms {
 
@@ -15,7 +16,7 @@ class NetworkHierarchy;
 
 class NetworkMutator {
 public:
-    NetworkMutator(NetworkHierarchy* hierarchy/*, NodeStats* nodeStats*/);
+    NetworkMutator(NetworkHierarchy* hierarchy, Model* model /*, NodeStats* nodeStats*/);
     ~NetworkMutator() = default;
 
     // Core functionality
@@ -29,6 +30,7 @@ public:
 private:
     std::vector<bool> edgeTypeStarted;
     NetworkHierarchy* hierarchy;
+    Model* model;
     // MutationArea* mutationArea;
     // std::unique_ptr<NetGraphMapFinder> mapFinder;
 

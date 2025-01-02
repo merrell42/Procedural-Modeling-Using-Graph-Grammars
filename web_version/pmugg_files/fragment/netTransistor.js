@@ -251,7 +251,7 @@ ms.netTransistor.prototype.createGraph = function() {
 			lineJ.getNode().destroy();
 		}
 		line0.fillFromEndpoints();
-		debugCell.addState(line0.getSegment().getStates()[0]);
+		// debugCell.addState(line0.getSegment().getStates()[0]);
 		merged.edges[i] = line0;
 		
 		if (datum.modified) {
@@ -790,7 +790,7 @@ ms.netTransistor.prototype.freeVertex = function() {
 // Frees an individual vertex.
 ms.netTransistor.prototype.freeOneVertex = function(vertex) {
 	var extents = this.model.getExtents();
-	var debugCell = this.model.getCell(extents[0] - 1, extents[1] - 1);
+	// var debugCell = this.model.getCell(extents[0] - 1, extents[1] - 1);
 	var vertexEndpoints = vertex.getEndpoints();
 	for (var i = 0; i < vertexEndpoints.length; i++) {
 		var vEndpoint = vertexEndpoints[i];
@@ -800,7 +800,7 @@ ms.netTransistor.prototype.freeOneVertex = function(vertex) {
 			this.addLine(line, true, true);
 			var lineState = line.getSegment().getStates()[0];
 			lineState.removeCells();
-			debugCell.addState(lineState);
+			// debugCell.addState(lineState);
 		}
 	}
 	var self = this;

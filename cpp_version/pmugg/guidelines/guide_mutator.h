@@ -3,6 +3,7 @@
 // #include "../optimizer.h"
 #include "../util/timer.h"
 #include "network_mutator.h"
+#include "../graph_drawing/model.h"
 #include <functional>
 #include <memory>
 #include <string>
@@ -25,7 +26,7 @@ public:
     //    FINISHED = 4
     //};
 
-    GuideMutator(NetworkMutator* networkMutator);
+    GuideMutator(Model* model, NetworkMutator* networkMutator);
     ~GuideMutator() = default;
 
     // Core functionality
@@ -60,7 +61,7 @@ public:
     static void hideStats(); */
 
 private:
-    Classifier* classifier;
+    // Classifier* classifier;
     // std::function<void(bool)> notify;
     // std::vector<void*> tasks;  // Generic tasks placeholder
     // Status status;
@@ -71,6 +72,7 @@ private:
     // int pauseCount;
     // NodeStats nodeStats;
     // Optimizer optimizer;
+    Model* model;
     std::unique_ptr<NetworkMutator> networkMutator;
     
     // Helper methods
