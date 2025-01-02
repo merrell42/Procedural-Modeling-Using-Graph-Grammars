@@ -1,0 +1,25 @@
+#pragma once
+#include "model.h"
+#include "../shape/vec3.h"
+#include "endpoint.h"
+#include <vector>
+
+class Model;
+class Endpoint;
+
+namespace ms {
+class Vertex {
+	public:
+		Vertex(Model* model, int id, Vec3 position, std::vector<int> endpointIds);
+		std::vector<Endpoint*> getEndpoints() const;
+		Endpoint* getEndpoint(int index) const;
+		Vertex* copy();
+
+	private:
+		int id;
+		Vec3 position;
+		std::vector<int> endpointIds;
+
+		Model* model;
+};
+}

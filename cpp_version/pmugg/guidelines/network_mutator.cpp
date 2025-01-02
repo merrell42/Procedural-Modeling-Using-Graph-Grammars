@@ -1,5 +1,6 @@
 #include "network_mutator.h"
 #include "../util/timer.h"
+// #include "../network/net_graph_map_finder.h"
 //#include "classifier.h"
 //#include "node_stats.h"
 //#include "net_graph_map.h"
@@ -12,12 +13,13 @@
 
 namespace ms {
 
-NetworkMutator::NetworkMutator(NetworkHierarchy* hierarchy/*, NodeStats* nodeStats*/)
+NetworkMutator::NetworkMutator(NetworkHierarchy* hierarchy, Model* model/*, NodeStats* nodeStats*/)
     : hierarchy(hierarchy)
+    , model(model)
     , edgeTypeStarted() {
     
     bool groundEnabled = hierarchy->getGroundTransitions().size() > 0;
-    // mapFinder = std::make_unique<NetGraphMapFinder>(nodeStats, groundEnabled);
+    // mapFinder = std::make_unique<NetGraphMapFinder>(model, groundEnabled);
 }
 
 //void NetworkMutator::setMutationArea(MutationArea* area) {
