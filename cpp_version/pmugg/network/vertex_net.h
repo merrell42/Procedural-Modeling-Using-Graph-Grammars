@@ -2,6 +2,7 @@
 #include <vector>
 #include <memory>
 // #include "primal_vertex.h"
+#include "../guidelines/vertex_type.h"
 #include "../third_party/json.h"
 
 using Json = nlohmann::json;
@@ -13,6 +14,7 @@ class Network;
 class HalfEdgeNet;
 class ConnectorGroup;
 class View;
+class VertexType;
 struct DrawOptions;
 
 class VertexNet {
@@ -22,6 +24,8 @@ public:
 
     // Core accessors
     const std::vector<HalfEdgeNet*>& getHalfEdges() const { return halfEdges; }
+    VertexType* getType() { return type; }
+    void setType(VertexType* type_) { type = type_; }
     // PrimalVertex* getPrimal() const { return primal; }
     Network* getNetwork() const { return network; }
     ConnectorGroup* getGroup() const { return group; }
@@ -51,6 +55,7 @@ public:
 private:
     std::vector<HalfEdgeNet*> halfEdges;
     // PrimalVertex* primal;
+    VertexType* type;
     Network* network;
     ConnectorGroup* group;
     int id;

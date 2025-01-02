@@ -2,14 +2,15 @@
 
 namespace ms {
 
-Vertex::Vertex(Model* model, int id, Vec3 position, std::vector<int> endpointIds)
+Vertex::Vertex(Model* model, int id, Vec3 position, VertexType* type, std::vector<int> endpointIds)
 	: model(model)
 	, id(id)
 	, endpointIds(endpointIds)
-	, position(position) {}
+	, position(position)
+	, type(type) {}
 
 Vertex* Vertex::copy() {
-	auto result = new Vertex(model, id, position, endpointIds);
+	auto result = new Vertex(model, id, position, type, endpointIds);
 	return result;
 }
 

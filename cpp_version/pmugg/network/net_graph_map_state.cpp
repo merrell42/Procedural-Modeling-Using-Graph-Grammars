@@ -1,10 +1,10 @@
 #include "net_graph_map_state.h"
 #include "net_graph_map_info.h"
 #include "net_graph_map.h"
-#include "half_edge.h"
-#include "vertex.h"
+#include "half_edge_net.h"
+#include "vertex_net.h"
 #include "network.h"
-#include "util.h"
+#include "../util/util.h"
 
 namespace ms {
 
@@ -13,7 +13,7 @@ NetGraphMapState::NetGraphMapState(NetGraphMapInfo* info, NetGraphMap* existingM
     if (existingMap) {
         map = std::unique_ptr<NetGraphMap>(existingMap->copy());
     } else {
-        map = std::make_unique<NetGraphMap>(info->netB);
+        map = NetGraphMap::create(*info);
     }
 }
 
@@ -22,7 +22,7 @@ void NetGraphMapState::setQueue(const std::vector<HalfEdgeData>& newQueue) {
 }
 
 void NetGraphMapState::assignVertex(Vertex* vertexA, int indexB) {
-    auto* vertexB = info->netB->getInterior()->getVertices()[indexB];
+    auto* vertexB = info->networkB->getVertices()[indexB];
     map->vertexBtoA[indexB] = vertexA;
 
     // Add all non-spliced half edges to queue and spliced ones to spliceQueue
@@ -35,11 +35,6 @@ void NetGraphMapState::assignVertex(Vertex* vertexA, int indexB) {
             queue.push_back(HalfEdgeData(halfB, vertexA));
         }
     }
-}
-
-void NetGraphMapState::assignHalf(int indexA, int indexB) {
-    map->halfAtoB[indexA] = indexB;
-    map->halfBtoA[indexB] = indexA;
 }
 
 NetGraphMapState* NetGraphMapState::copy() const {

@@ -1,6 +1,5 @@
 #include "network_mutator.h"
 #include "../util/timer.h"
-// #include "../network/net_graph_map_finder.h"
 //#include "classifier.h"
 //#include "node_stats.h"
 //#include "net_graph_map.h"
@@ -19,7 +18,7 @@ NetworkMutator::NetworkMutator(NetworkHierarchy* hierarchy, Model* model/*, Node
     , edgeTypeStarted() {
     
     bool groundEnabled = hierarchy->getGroundTransitions().size() > 0;
-    // mapFinder = std::make_unique<NetGraphMapFinder>(model, groundEnabled);
+    mapFinder = std::make_unique<NetGraphMapFinder>(model, groundEnabled);
 }
 
 //void NetworkMutator::setMutationArea(MutationArea* area) {
@@ -43,7 +42,7 @@ bool NetworkMutator::applyTransition(Transition transition) {
         return false;
     }
     timer->start("Find Transition Map");
-    // auto netGraphMap = mapFinder->findMap(transition.startNet);
+    auto netGraphMap = mapFinder->findMap(transition.startNet);
     timer->stop("Find Transition Map");
 
     //if (!netGraphMap) {

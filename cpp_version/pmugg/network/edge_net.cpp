@@ -9,7 +9,7 @@ namespace ms {
 int EdgeNet::nextId = 0;
 
 EdgeNet::EdgeNet()
-    : primal(nullptr)
+    : type(nullptr)
     , network(nullptr)
     , id(nextId++) {}
 
@@ -17,9 +17,9 @@ const std::vector<std::vector<HalfEdgeNet*>>& EdgeNet::getHalfEdges() const {
     return halfEdges;
 }
 
-PrimalEdge* EdgeNet::getPrimal() const {
-    return primal;
-}
+//PrimalEdge* EdgeNet::getPrimal() const {
+//    return primal;
+//}
 
 Network* EdgeNet::getNetwork() const {
     return network;
@@ -29,9 +29,9 @@ int EdgeNet::getId() const {
     return id;
 }
 
-void EdgeNet::setPrimal(PrimalEdge* p) {
-    primal = p;
-}
+//void EdgeNet::setPrimal(PrimalEdge* p) {
+//    primal = p;
+//}
 
 EdgeNet* EdgeNet::connectNet(Network* net) {
     network = net;
