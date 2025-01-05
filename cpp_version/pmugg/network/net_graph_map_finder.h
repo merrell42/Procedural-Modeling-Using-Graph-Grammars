@@ -2,10 +2,12 @@
 #include <vector>
 #include <memory>
 #include "../shape/vec2.h"
+#include "../network/network.h"
+#include "../graph_drawing/model.h"
 
 namespace ms {
 
-class Network;
+class Model;
 class NodeStats;
 class NetGraphMap;
 class NetGraphMapInfo;
@@ -14,10 +16,12 @@ class Face;
 class Vertex;
 class HalfEdge;
 class VertexType;
+class Endpoint;
+
 
 class NetGraphMapFinder {
 public:
-    NetGraphMapFinder(NodeStats* nodeStats, bool groundEnabled);
+    NetGraphMapFinder(Model* model, bool groundEnabled);
     ~NetGraphMapFinder() = default;
 
     // Core functionality
@@ -32,7 +36,18 @@ public:
     static constexpr float SMALL_DISTANCE = 1e-8f;
 
 private:
-    NodeStats* nodeStats;
+    struct EndpointData {
+        HalfEdge* halfB;
+        Vertex* vertexA;
+    };
+
+    /*struct RayIntersection {
+        float distance;
+        Face* face;
+        IntersectionData data;
+    };*/
+
+    Model* model;
     bool nodesModified;
     Face* groundFace;
     bool groundEnabled;
@@ -46,28 +61,17 @@ private:
     NetGraphMap* spliceEndpoint(const EndpointData& endpointData, NetGraphMapState* state);
 
     // Ray casting methods
-    Face* castVolumeRaySeries(Face* face, const std::vector<HalfEdge*>& rayHalfs, Face* goalFace);
+    /*Face* castVolumeRaySeries(Face* face, const std::vector<HalfEdge*>& rayHalfs, Face* goalFace);
     static RayIntersection castRay(const Vec2& p0, const Vec2& dir, FaceGroup* groupA, int maxDim);
-    static Endpoint* castRaySeries(HalfEdge* halfB, const Vec2& startPos, FaceGroup* groupA, int maxDim);
+    static Endpoint* castRaySeries(HalfEdge* halfB, const Vec2& startPos, FaceGroup* groupA, int maxDim);*/
 
     // Static helper methods
     static void addOuterFaces(NetGraphMap* map, Network* netB);
-    static bool neighboringHoles(Line* line, Edge* edgeB);
-    static VertexType* getVertexType(EdgeType* edgeType);
+    // static bool neighboringHoles(Line* line, Edge* edgeB);
+    static VertexType* getVertexType(EdgeType3D* edgeType);
 
     // Cache for spliced vertex types
     static std::unordered_map<int, VertexType*> splicedVertexTypes;
-
-    struct EndpointData {
-        HalfEdge* halfB;
-        Vertex* vertexA;
-    };
-
-    struct RayIntersection {
-        float distance;
-        Face* face;
-        IntersectionData data;
-    };
 };
 
 } // namespace ms 

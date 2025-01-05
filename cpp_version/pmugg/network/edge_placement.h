@@ -1,5 +1,5 @@
 #pragma once
-#include "vec2.h"
+#include "../shape/vec2.h"
 #include <vector>
 #include <memory>
 

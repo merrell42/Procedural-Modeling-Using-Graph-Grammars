@@ -3,6 +3,7 @@
 #include <memory>
 #include "../hierarchy/network_hierarchy.h"
 #include "../graph_drawing/model.h"
+#include "../network/net_graph_map_finder.h"
 
 namespace ms {
 
@@ -32,7 +33,7 @@ private:
     NetworkHierarchy* hierarchy;
     Model* model;
     // MutationArea* mutationArea;
-    // std::unique_ptr<NetGraphMapFinder> mapFinder;
+    std::unique_ptr<NetGraphMapFinder> mapFinder;
 
     // Helper methods
     bool applyTransition(Transition transition);

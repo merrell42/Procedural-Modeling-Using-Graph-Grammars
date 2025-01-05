@@ -6,13 +6,21 @@ namespace ms {
 
 class NetGraphMapInfo;
 class NetGraphMap;
-class HalfEdge;
+class HalfEdgeNet;
 class Vertex;
 
 class NetGraphMapState {
 public:
     explicit NetGraphMapState(NetGraphMapInfo* info, NetGraphMap* map = nullptr);
     ~NetGraphMapState() = default;
+
+    struct HalfEdgeData {
+        HalfEdgeNet* halfB;
+        Vertex* vertexA;
+
+        HalfEdgeData(HalfEdgeNet* half = nullptr, Vertex* vertex = nullptr)
+            : halfB(half), vertexA(vertex) {}
+    };
 
     // Core functionality
     NetGraphMapInfo* getInfo() const { return info; }
@@ -31,14 +39,6 @@ private:
     std::unique_ptr<NetGraphMap> map;
     std::vector<HalfEdgeData> queue;
     std::vector<HalfEdgeData> spliceQueue;
-
-    struct HalfEdgeData {
-        HalfEdge* halfB;
-        Vertex* vertexA;
-
-        HalfEdgeData(HalfEdge* half = nullptr, Vertex* vertex = nullptr)
-            : halfB(half), vertexA(vertex) {}
-    };
 };
 
 } // namespace ms 

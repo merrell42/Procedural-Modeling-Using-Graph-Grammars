@@ -2,7 +2,7 @@
 
 namespace ms {
 
-Line::Line(Model* model, int id, std::vector<Endpoint*> endpointIds)
+Line::Line(Model* model, int id, std::vector<int> endpointIds)
 	: model(model)
 	, id(id)
 	, endpointIds(endpointIds) {}

@@ -63,15 +63,15 @@ Transition NetworkHierarchy::getTransition() {
         if (end >= start) {
             end++;
         }
-        return {networks[start], networks[end], false};
+        return {networks[start], networks[end], nullptr, false};
     }
-    return {nullptr, nullptr, false};
+    return {nullptr, nullptr, nullptr, false};
 }
 
 Transition NetworkHierarchy::getRemoveTransition() {
     bool grounded = starterTransitions.empty();
     if (grounded) {
-        return {nullptr, nullptr, false};
+        return {nullptr, nullptr, nullptr, false};
     }
     auto* transition = Util::pick(starterTransitions);
     if (transition) {
@@ -79,9 +79,9 @@ Transition NetworkHierarchy::getRemoveTransition() {
         int n = networks.size();
         auto* endNet = emptyNet;
         auto* startNet = networks[Util::random(n - 1) + 1];
-        return {startNet, endNet, false};
+        return {startNet, endNet, nullptr, false};
     }
-    return {nullptr, nullptr, false};
+    return {nullptr, nullptr, nullptr, false};
 }
 
 Transition NetworkHierarchy::getStarterTransition() {
@@ -95,9 +95,9 @@ Transition NetworkHierarchy::getStarterTransition() {
         int n = networks.size();
         auto* startNet = networks[0];
         auto* endNet = networks[Util::random(n - 1) + 1];
-        return {startNet, endNet, transition->isGround()};
+        return {startNet, endNet, nullptr, transition->isGround()};
     }
-    return {nullptr, nullptr, false};
+    return {nullptr, nullptr, nullptr, false};
 }
 
 //void NetworkHierarchy::partialGenerate(const std::vector<Network*>& transitionNets,

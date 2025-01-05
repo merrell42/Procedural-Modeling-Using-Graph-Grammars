@@ -20,12 +20,14 @@ public:
 
     // Core functionality
     const std::vector<std::vector<HalfEdgeNet*>>& getHalfEdges() const;
-    PrimalEdge* getPrimal() const;
+    EdgeType3D* getType() { return type; }
+    void setType(EdgeType3D* type_) { type = type_; }
+    // PrimalEdge* getPrimal() const;
     Network* getNetwork() const;
     int getId() const;
 
     // Network operations
-    void setPrimal(PrimalEdge* primal);
+    // void setPrimal(PrimalEdge* primal);
     EdgeNet* connectNet(Network* network);
     void addHalfEdge(HalfEdgeNet* halfEdge, int index);
     void removeHalfEdge(HalfEdgeNet* halfEdge, int index);
@@ -35,8 +37,8 @@ public:
     bool inNetwork() const;
 
     // Drawing
-    void highlight(View* view);
-    void print() const;
+    /*void highlight(View* view);
+    void print() const;*/
     bool requiresShapeView() const;
 
     // Edge operations
@@ -48,7 +50,8 @@ public:
 
 private:
     std::vector<std::vector<HalfEdgeNet*>> halfEdges;
-    PrimalEdge* primal;
+    // PrimalEdge* primal;
+    EdgeType3D* type;
     Network* network;
     int id;
 

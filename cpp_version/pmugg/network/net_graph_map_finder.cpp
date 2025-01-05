@@ -1,122 +1,379 @@
 #include "net_graph_map_finder.h"
-#include "node_stats.h"
 #include "net_graph_map.h"
 #include "net_graph_map_info.h"
 #include "net_graph_map_state.h"
-#include "face.h"
-#include "vertex.h"
-#include "half_edge.h"
-#include "vertex_type.h"
-#include "edge_type.h"
-#include "face_group.h"
-#include "line.h"
-#include "edge.h"
-#include "util.h"
-#include "settings.h"
+//#include "face.h"
+//#include "vertex.h"
+//#include "half_edge.h"
+//#include "vertex_type.h"
+#include "../shapes3D/edge_type3d.h"
+//#include "face_group.h"
+//#include "line.h"
+//#include "edge.h"
+#include "../util/util.h"
+//#include "settings.h"
 
 namespace ms {
 
 std::unordered_map<int, VertexType*> NetGraphMapFinder::splicedVertexTypes;
 
-NetGraphMapFinder::NetGraphMapFinder(NodeStats* nodeStats, bool groundEnabled)
-    : nodeStats(nodeStats)
+NetGraphMapFinder::NetGraphMapFinder(Model* model, bool groundEnabled)
+    : model(model)
     , nodesModified(false)
     , groundFace(nullptr)
     , groundEnabled(groundEnabled) {}
 
 NetGraphMap* NetGraphMapFinder::findMap(Network* netB) {
-    if (!groundFace && groundEnabled) {
-        auto faces = nodeStats->getElements("face");
+    /*if (!groundFace && groundEnabled) {
+        auto faces = model->getCurrent()->getFaces();
         if (!faces.empty()) {
             groundFace = faces[0];
         }
-    }
+    }*/
 
-    auto verticesB = netB->getInterior()->getVertices();
+    auto verticesB = netB->getVertices();
     if (verticesB.empty()) {
         return findStarterMap(netB);
     }
 
+    // TODO: Handle non-starter transitions.
+
     // Start with a vertex that is not spliced
-    int index1 = 0;
-    while (verticesB[index1]->getPrimal()->getType()->getSpliced()) {
-        index1++;
+    //int index1 = 0;
+    //while (verticesB[index1]->getType()->getSpliced()) {
+    //    index1++;
+    //}
+    //// auto* primalB = verticesB[index1]->getPrimal();
+
+    //// bool isConnector = primalB->getBoundary() != nullptr;
+    //auto* vertexType = verticesB[index1]->getType();
+    //auto verticesA = model->getCurrent()-> // nodeStats->getElements("vertex");
+    //int N = verticesA.size();
+    //int attempts = std::min(N, vertexAttempts);
+    //int startIndex = Util::random(N);
+
+    //for (int i = 0; i < attempts; i++) {
+    //    auto* vertexA = verticesA[(startIndex + i) % N];
+    //    if ((isConnector || vertexA->getState()->getType() == vertexType)
+    //        && !vertexA->getNode()->isDestroyed()) {
+    //        nodesModified = false;
+    //        auto* info = new NetGraphMapInfo(nodeStats, netB);
+    //        auto* state = new NetGraphMapState(info);
+    //        auto* map = assignVertex(state, vertexA, index1);
+    //        
+    //        if (map) {
+    //            addOuterFaces(map, netB);
+    //            delete state;
+    //            delete info;
+    //            return map;
+    //        } else if (nodesModified) {
+    //            nodeStats->restore();
+    //        }
+    //        
+    //        delete state;
+    //        delete info;
+    //    }
+    //}
+    return nullptr;
+}
+
+//void NetGraphMapFinder::addOuterFaces(NetGraphMap* map, Network* netB) {
+//    map->outerFaces.clear();
+//    auto outerFaces = netB->getOuterFaces();
+//    for (size_t fIndex = 0; fIndex < outerFaces.size(); fIndex++) {
+//        auto* outerFaceB = outerFaces[fIndex];
+//        auto* outerHalf = outerFaceB->outerComponent;
+//        int vIndex = netB->getInterior()->vertexIndex(outerHalf->getVertex());
+//        map->outerFaces.push_back(map->vertexBtoA[vIndex]->getEndpoints()[outerHalf->vertexIndex]->getFace());
+//    }
+//}
+//
+//Face* NetGraphMapFinder::findFace(VertexType* faceType) {
+//    if (groundEnabled && faceType == groundFace->getFaceType()) {
+//        if (Util::randomUniform(0, 1) < Settings::get("Prefer Ground")) {
+//            return groundFace;
+//        }
+//    }
+//
+//    auto facesA = nodeStats->getElements("face");
+//    int N = facesA.size();
+//    int attempts = std::min(N, faceAttempts);
+//    int startIndex = Util::random(N);
+//    std::vector<Face*> options;
+//    std::vector<float> weights;
+//
+//    for (int i = 0; i < attempts; i++) {
+//        auto* faceA = facesA[(startIndex + i) % N];
+//        if (faceA->getFaceType() == faceType && !faceA->isHole()) {
+//            weights.push_back(std::abs(faceA->signedArea()));
+//            options.push_back(faceA);
+//        }
+//    }
+//
+//    if (!weights.empty()) {
+//        return options[Util::pickByWeight(weights)];
+//    }
+//    return nullptr;
+//}
+
+NetGraphMap* NetGraphMapFinder::findStarterMap(Network* netB) {
+    auto info = std::make_unique<NetGraphMapInfo>(model, netB);
+    auto state = std::make_unique<NetGraphMapState>(info.get());
+
+    // auto edges = netB->getBoundary()->getEdges();
+    auto faces = netB->getFaces();
+    if (faces.empty()) {
+        return state->getMap();
     }
-    auto* primalB = verticesB[index1]->getPrimal();
 
-    bool isConnector = primalB->getBoundary() != nullptr;
-    auto* vertexType = primalB->getType();
-    auto verticesA = nodeStats->getElements("vertex");
-    int N = verticesA.size();
-    int attempts = std::min(N, vertexAttempts);
-    int startIndex = Util::random(N);
+    /*if (!groundEnabled || nodeStats->getCount("face") == 0) {
+        return state->map;
+    }
 
-    for (int i = 0; i < attempts; i++) {
-        auto* vertexA = verticesA[(startIndex + i) % N];
-        if ((isConnector || vertexA->getState()->getType() == vertexType)
-            && !vertexA->getNode()->isDestroyed()) {
-            nodesModified = false;
-            auto* info = new NetGraphMapInfo(nodeStats, netB);
-            auto* state = new NetGraphMapState(info);
-            auto* map = assignVertex(state, vertexA, index1);
-            
-            if (map) {
-                addOuterFaces(map, netB);
-                delete state;
-                delete info;
-                return map;
-            } else if (nodesModified) {
-                nodeStats->restore();
+    Face* face = findFace(edges[0]->getPrimal()->getType());
+    if (face) {
+        state->map->outerFaces = { face };
+        if (!netB->boundary->faces[0]->innerComponents.empty()) {
+            Face* goalFace = netB->boundary->faces[1];
+            Face* intersectFace = nullptr;
+            int attempts = 0;
+
+            while (attempts < spliceRayAttempts && !intersectFace) {
+                intersectFace = castVolumeRaySeries(face,
+                    netB->boundary->faces[0]->innerComponents,
+                    goalFace);
+                attempts++;
             }
-            
-            delete state;
-            delete info;
+
+            if (!intersectFace) {
+                return nullptr;
+            }
+            else {
+                state->map->outerFaces.push_back(intersectFace);
+            }
         }
-    }
+        return state->map;
+    }*/
     return nullptr;
 }
 
-void NetGraphMapFinder::addOuterFaces(NetGraphMap* map, Network* netB) {
-    map->outerFaces.clear();
-    auto outerFaces = netB->getOuterFaces();
-    for (size_t fIndex = 0; fIndex < outerFaces.size(); fIndex++) {
-        auto* outerFaceB = outerFaces[fIndex];
-        auto* outerHalf = outerFaceB->outerComponent;
-        int vIndex = netB->getInterior()->vertexIndex(outerHalf->getVertex());
-        map->outerFaces.push_back(map->vertexBtoA[vIndex]->getEndpoints()[outerHalf->vertexIndex]->getFace());
-    }
-}
-
-Face* NetGraphMapFinder::findFace(VertexType* faceType) {
-    if (groundEnabled && faceType == groundFace->getFaceType()) {
-        if (Util::randomUniform(0, 1) < Settings::get("Prefer Ground")) {
-            return groundFace;
-        }
-    }
-
-    auto facesA = nodeStats->getElements("face");
-    int N = facesA.size();
-    int attempts = std::min(N, faceAttempts);
-    int startIndex = Util::random(N);
-    std::vector<Face*> options;
-    std::vector<float> weights;
-
-    for (int i = 0; i < attempts; i++) {
-        auto* faceA = facesA[(startIndex + i) % N];
-        if (faceA->getFaceType() == faceType && !faceA->isHole()) {
-            weights.push_back(std::abs(faceA->signedArea()));
-            options.push_back(faceA);
-        }
-    }
-
-    if (!weights.empty()) {
-        return options[Util::pickByWeight(weights)];
-    }
-    return nullptr;
-}
-
-// ... (remaining implementation follows similar pattern)
-// Implementation of remaining methods would continue with the same pattern
-// of careful memory management, strong typing, and error handling
+//Face* NetGraphMapFinder::castVolumeRaySeries(Face* face,
+//    const std::vector<HalfEdge*>& rayHalfs, Face* goalFace) {
+//
+//    if (rayHalfs.size() > 1) {
+//        // TODO: Implement multiple rays
+//        throw std::runtime_error("Multiple Rays not implemented yet.");
+//    }
+//
+//    Vector3 startPos = face->randomPoint();
+//    BspTree* tree = nodeStats->model->getBspTree();
+//    EdgeType* goalType = goalFace->outerComponent->edge->primal->type;
+//
+//    // Model ray as long polygon and intersect with BSP tree polygons
+//    FaceType* faceType = face->getFaceType();
+//    Vector3 dir = rayHalfs[0]->getDir();
+//    Vector3 u = faceType->u;
+//    Vector3 v = faceType->v;
+//
+//    Vector3 endPos = dir * Intersector::FAR_DISTANCE + startPos;
+//    Vector3 startPos2 = u * SMALL_DISTANCE + startPos;
+//    Vector3 endPos2 = u * SMALL_DISTANCE + endPos;
+//
+//    std::vector<Vector3> points = { startPos, endPos, endPos2, startPos2 };
+//    double d = v.dot(startPos);
+//
+//    BspPlane plane(v, d);
+//    auto fakePolygon = std::make_shared<Polygon>(points);
+//
+//    auto intersections = tree->add(plane, fakePolygon, true);
+//
+//    // Find closest intersection
+//    double closestDist = std::numeric_limits<double>::infinity();
+//    Intersection* closest = nullptr;
+//
+//    for (const auto& intersection : intersections) {
+//        double d = dir.dot(intersection->position);
+//        if (d < closestDist) {
+//            closest = intersection;
+//            closestDist = d;
+//        }
+//    }
+//
+//    if (closest) {
+//        Face* nextFace = closest->polygon->getFace();
+//        if (nextFace->getFaceType() == goalType && !nextFace->isHole()) {
+//            return nextFace;
+//        }
+//    }
+//
+//    return nullptr;
+//}
+//
+//NetGraphMap* NetGraphMapFinder::findContinue(NetGraphMapState* state) {
+//    if (!state->queue.empty()) {
+//        EndpointData endpointData = state->queue.front();
+//        state->queue.pop_front();
+//        return matchEndpoint(endpointData, state);
+//    }
+//    else if (!state->spliceQueue.empty()) {
+//        EndpointData endpointData = state->spliceQueue.front();
+//        state->spliceQueue.pop_front();
+//        return spliceEndpoint(endpointData, state);
+//    }
+//    return state->map;
+//}
+//
+//NetGraphMap* NetGraphMapFinder::matchEndpoint(const EndpointData& endpointData,
+//    NetGraphMapState* state) {
+//
+//    HalfEdge* halfB = endpointData.halfB;
+//    Vertex* vertexA = endpointData.vertexA;
+//
+//    auto endpointsA = vertexA->getEndpoints();
+//    Edge* edgeB = halfB->getEdge();
+//
+//    if (!edgeB) {
+//        return findContinue(state);
+//    }
+//
+//    EdgeType* typeB = edgeB->getPrimal()->getType();
+//
+//    // Find matching endpoint
+//    Endpoint* endpointA = nullptr;
+//    for (auto* ep : endpointsA) {
+//        if (ep->getEdgeType() == typeB &&
+//            ep->getIsAtStart() == halfB->getForward()) {
+//            endpointA = ep;
+//            break;
+//        }
+//    }
+//
+//    if (!endpointA) {
+//        return nullptr;
+//    }
+//
+//    // Check neighboring holes condition
+//    if (neighboringHoles(endpointA->getLine(), edgeB) &&
+//        halfB->getFace()->getPrimal()->getTurns() != 1) {
+//        return nullptr;
+//    }
+//
+//    return assignEndpoint(endpointA, halfB, state);
+//}
+//
+//NetGraphMap* NetGraphMapFinder::spliceEndpoint(const EndpointData& endpointData,
+//    NetGraphMapState* state) {
+//
+//    HalfEdge* halfB = endpointData.halfB;
+//    Vertex* vertexA = endpointData.vertexA;
+//    NetB* netB = state->info->netB;
+//
+//    // Find end of splice chain
+//    HalfEdge* endB = halfB;
+//    while (endB->isSpliced()) {
+//        endB = endB->getNext();
+//    }
+//
+//    int vIndexB = state->info->findVertexIndex(endB->getVertex());
+//    if (state->map->vertexBtoA[vIndexB]) {
+//        return findContinue(state);
+//    }
+//
+//    // Find matching endpoint
+//    EdgeType* faceTypeB = halfB->getEdge()->getPrimal()->getType()->getFaceData()[0].type;
+//    Endpoint* endpointA = nullptr;
+//
+//    for (auto* ep : vertexA->getEndpoints()) {
+//        if (ep->getFace()->getFaceType() == faceTypeB) {
+//            endpointA = ep;
+//            break;
+//        }
+//    }
+//
+//    if (!endpointA) {
+//        return nullptr;
+//    }
+//
+//    // Cast ray series
+//    FaceGroup* groupA = endpointA->getFace()->getGroup();
+//    int maxDim = faceTypeB->getMaxDim();
+//    Vector3 startPos = vertexA->getPosition();
+//
+//    int attempts = 0;
+//    Endpoint* intersectEndpoint = nullptr;
+//
+//    while (attempts < spliceRayAttempts && !intersectEndpoint) {
+//        intersectEndpoint = castRaySeries(halfB, startPos, groupA, maxDim);
+//        attempts++;
+//    }
+//
+//    if (!intersectEndpoint) {
+//        return nullptr;
+//    }
+//
+//    // Handle intersection results
+//    Vertex* vertexA0 = intersectEndpoint->getVertex();
+//    Vertex* vertexA1 = intersectEndpoint->next()->getVertex();
+//
+//    int vIndex0 = state->map->findVertexIndex(vertexA0);
+//    int vIndex1 = state->map->findVertexIndex(vertexA1);
+//    int eIndex = state->map->findEdgeIndex(intersectEndpoint->getLine());
+//
+//    if (vIndex0 < 0 && vIndex1 < 0 && eIndex < 0) {
+//        // Split once for unmatched line and vertices
+//        auto result = intersectEndpoint->getLine()->fullSplit(Util::randomUniform(0, 1));
+//        nodesModified = true;
+//        return assignVertex(state, result.newVertex, vIndexB);
+//    }
+//    else if (vIndex0 >= 0 && vIndex1 >= 0 && eIndex >= 0) {
+//        // Split three times for matched line and vertices
+//        bool isAtStart0 = intersectEndpoint->getIsAtStart();
+//        Vertex* vertexB0 = netB->getInterior()->getVertices()[vIndex0];
+//        Vertex* vertexB1 = netB->getInterior()->getVertices()[vIndex1];
+//
+//        bool isConnector0 = (vertexB0->getPrimal()->connectorIndex() >= 0);
+//        bool isConnector1 = (vertexB1->getPrimal()->connectorIndex() >= 0);
+//
+//        if (!(isConnector0 ^ isConnector1)) {
+//            throw std::runtime_error("Expected one of the vertices to be a connector.");
+//        }
+//
+//        bool connectorAtStart = isConnector0 ? isAtStart0 : !isAtStart0;
+//        nodesModified = true;
+//
+//        // Perform triple split
+//        std::vector<Line*> splitLines;
+//        std::vector<Vertex*> splitVertices;
+//        Line* lineToSplit = intersectEndpoint->getLine();
+//
+//        for (int i = 0; i < 3; i++) {
+//            auto result = lineToSplit->fullSplit(1.0 / (4 - i));
+//            splitVertices.push_back(result.newVertex);
+//            splitLines.push_back(result.split.lines[0]);
+//            lineToSplit = result.split.lines[1];
+//
+//            if (i == 2) {
+//                splitLines.push_back(lineToSplit);
+//            }
+//        }
+//
+//        int vIndexCon = isConnector0 ? vIndex0 : vIndex1;
+//        if (connectorAtStart) {
+//            state->map->vertexBtoA[vIndexCon] = splitVertices[2];
+//            state->map->edgeBtoA[eIndex] = splitLines[3];
+//            return assignVertex(state, splitVertices[0], vIndexB);
+//        }
+//        else {
+//            state->map->vertexBtoA[vIndexCon] = splitVertices[0];
+//            state->map->edgeBtoA[eIndex] = splitLines[0];
+//            return assignVertex(state, splitVertices[2], vIndexB);
+//        }
+//    }
+//    else if (vIndex0 < 0 || vIndex1 < 0 || eIndex < 0) {
+//        throw std::runtime_error("Unsure what to do about a partial match");
+//    }
+//
+//    return nullptr;
+//}
 
 } // namespace ms 

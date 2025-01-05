@@ -1,6 +1,7 @@
 #pragma once
 #include "model.h"
 #include "../shape/vec3.h"
+#include "../guidelines/vertex_type.h"
 #include "endpoint.h"
 #include <vector>
 
@@ -10,7 +11,7 @@ class Endpoint;
 namespace ms {
 class Vertex {
 	public:
-		Vertex(Model* model, int id, Vec3 position, std::vector<int> endpointIds);
+		Vertex(Model* model, int id, Vec3 position, VertexType* type, std::vector<int> endpointIds);
 		std::vector<Endpoint*> getEndpoints() const;
 		Endpoint* getEndpoint(int index) const;
 		Vertex* copy();
@@ -18,6 +19,7 @@ class Vertex {
 	private:
 		int id;
 		Vec3 position;
+		VertexType* type;
 		std::vector<int> endpointIds;
 
 		Model* model;

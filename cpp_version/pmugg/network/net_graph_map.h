@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <memory>
+#include "net_graph_map_info.h"
 
 namespace ms {
 
@@ -9,27 +10,31 @@ class Line;
 
 class NetGraphMap {
 public:
-    NetGraphMap(Network* netB, Line* line, bool groundEnabled);
+    NetGraphMap();
     ~NetGraphMap() = default;
 
+    // Static method to create a NetGraphMap instance
+    static std::unique_ptr<NetGraphMap> create(const NetGraphMapInfo& info);
+
     // Core functionality
-    bool isValid() const { return valid; }
-    const std::vector<int>& getVertexBtoA() const { return vertexBtoA; }
+    // bool isValid() const { return valid; }
+    const std::vector<Vertex*>& getVertexBtoA() const { return vertexBtoA; }
     const std::vector<int>& getEdgeBtoA() const { return edgeBtoA; }
 
     // Operations
     NetGraphMap* copy() const;
 
-private:
-    std::vector<int> vertexBtoA;
+    std::vector<Vertex*> vertexBtoA;
     std::vector<int> edgeBtoA;
-    bool valid;
 
-    // Helper methods
-    void initialize(Network* netB, Line* line, bool groundEnabled);
-    bool tryMap(Network* netB, Line* line, bool groundEnabled);
-    bool tryMapVertex(Network* netB, int vertexB, Line* line);
-    bool tryMapEdge(Network* netB, int edgeB, Line* line);
+private:
+    // bool valid;
+
+    // // Helper methods
+    // void initialize(Network* netB, Line* line, bool groundEnabled);
+    // bool tryMap(Network* netB, Line* line, bool groundEnabled);
+    // bool tryMapVertex(Network* netB, int vertexB, Line* line);
+    // bool tryMapEdge(Network* netB, int edgeB, Line* line);
 };
 
 } // namespace ms 

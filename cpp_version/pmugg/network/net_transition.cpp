@@ -39,7 +39,8 @@ void NetTransition::addNetwork(Network* network) {
 
 NetTransition* NetTransition::import(const Json& json, Shape3D* shape) {
     std::vector<Network*> importedNetworks;
-    for (const auto& networkJson : json["n"]) {
+    for (size_t index = 0; index < json["n"].size(); ++index) {
+        const auto& networkJson = json["n"][index];
         importedNetworks.push_back(Network::import(networkJson, shape));
     }
 

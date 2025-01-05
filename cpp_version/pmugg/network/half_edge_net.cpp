@@ -87,7 +87,7 @@ HalfEdgeNet* HalfEdgeNet::getTwin() const {
 //}
 
 bool HalfEdgeNet::isSpliced() const {
-    return edge && edge->getPrimal()->getType()->getSpliced();
+    return edge && edge->getType()->getSpliced();
 }
 
 bool HalfEdgeNet::isLoopy() const {
@@ -100,7 +100,7 @@ const FaceData* HalfEdgeNet::getFaceDatum() const {
     if (!edge) {
         return nullptr;
     }
-    return &edge->getPrimal()->getType()->getFaceData()[edgeIndex];
+    return &edge->getType()->getFaceData()[edgeIndex];
 }
 
 //Vec2 HalfEdgeNet::getDir() const {

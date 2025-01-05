@@ -144,43 +144,53 @@ bool Network::requiresShapeView() const {
 //}
 
 Network* Network::import(const Json & json, Shape3D* shape) {
+    auto interior = json["interior"];
+
     auto result = new Network();
 
-    for (const auto& vertex : json["vertices"]) {
+    for (const auto& vertex : interior["vertices"]) {
         (new VertexNet())->connectNet(result);
     }
-    for (const auto& edge : json["edges"]) {
+    for (const auto& edge : interior["edges"]) {
         (new EdgeNet())->connectNet(result);
     }
-    if (json.contains("halfEdges")) {
-        for (const auto& halfEdge : json["halfEdges"]) {
-            (new HalfEdgeNet(true))->connectNet(result);
-        }
+    for (const auto& halfEdge : interior["halfEdges"]) {
+        (new HalfEdgeNet(true))->connectNet(result);
     }
-    for (const auto& face : json["faces"]) {
+    for (const auto& face : interior["faces"]) {
         (new FaceNet())->connectNet(result);
     }
     //for (const auto& cGroup : json["connectorGroups"]) {
     //    (new ConnectorGroup())->connectNet(result);
     //}
 
-    for (size_t index = 0; index < json["vertices"].size(); ++index) {
-        result->getVertices()[index]->import(json["vertices"][index]);
+    for (size_t index = 0; index < interior["vertices"].size(); ++index) {
+        result->getVertices()[index]->import(interior["vertices"][index]);
     }
-    for (size_t index = 0; index < json["edges"].size(); ++index) {
-        result->getEdges()[index]->import(json["edges"][index]);
+    for (size_t index = 0; index < interior["edges"].size(); ++index) {
+        result->getEdges()[index]->import(interior["edges"][index]);
     }
-    if (json.contains("halfEdges")) {
-        for (size_t index = 0; index < json["halfEdges"].size(); ++index) {
-            result->getHalfEdges()[index]->import(json["halfEdges"][index]);
-        }
+    for (size_t index = 0; index < interior["halfEdges"].size(); ++index) {
+        result->getHalfEdges()[index]->import(interior["halfEdges"][index]);
     }
-    for (size_t index = 0; index < json["faces"].size(); ++index) {
-        result->getFaces()[index]->import(json["faces"][index]);
+    for (size_t index = 0; index < interior["faces"].size(); ++index) {
+        result->getFaces()[index]->import(interior["faces"][index]);
     }
     //for (size_t index = 0; index < json["connectorGroups"].size(); ++index) {
     //    result->getConnectorGroups()[index]->import(json["connectorGroups"][index]);
     //}
+
+    // Get the types.
+    for (size_t index = 0; index < json["vertices"].size(); ++index) {
+        auto vertexData = json["vertices"][index];
+        int type = vertexData["type"].get<int>();
+        result->getVertices()[index]->setType(shape->vertexTypes[type]);
+    }
+    for (size_t index = 0; index < json["edges"].size(); ++index) {
+        auto edgeData = json["edges"][index];
+        int type = edgeData["type"].get<int>();
+        result->getEdges()[index]->setType(shape->edgeTypes[type]);
+    }
 
     return result;
 }

@@ -1,0 +1,37 @@
+// pmugg.cpp : This file contains the 'main' function. Program execution begins and ends there.
+//
+
+#include <fstream>
+#include <iostream>
+#include <vector>
+#include "../hierarchy/network_hierarchy.h"
+#include "../guidelines/network_mutator.h"
+#include "../guidelines/guide_mutator.h"
+#include "../shapes3D/shape3d.h"
+#include "../third_party/json.h"
+#include "../graph_drawing/model.h"
+
+using namespace std;
+using namespace ms;
+using Json = nlohmann::json;
+
+int main() {
+	// ifstream file("C:/model synthesis/model_synthesis_files/Grammar Editor/graphTemplates.txt");
+	ifstream file("../data/rules1.json");
+	string content((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
+	file.close();
+
+	// vector<GraphTemplate> graphTemplates;
+	Json parsed = Json::parse(content);
+	for (int i = 0; i < parsed.size(); i++) {
+		Json parsedI = parsed[i];
+		cout << parsedI["category"] << " " << parsedI["name"] << endl;
+		// Shape3D::import(parsedI["solution"]["types"]);
+		auto hierarchy = NetworkHierarchy::import(parsedI["solution"]);
+		auto model = new ms::Model();
+		auto mutator = new GuideMutator(model, new NetworkMutator(hierarchy, model));
+		mutator->resolve();
+	}
+
+    std::cout << "Hello World!\n";
+}
