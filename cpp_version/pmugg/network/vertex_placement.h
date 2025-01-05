@@ -1,7 +1,8 @@
 #pragma once
 #include <vector>
 #include <memory>
-#include "vec3.h"
+#include "../shape/vec3.h"
+#include "face_placement.h"
 
 namespace ms {
 
@@ -9,6 +10,7 @@ class Vertex;
 class PlacementSettings;
 class Range;
 class Matrix3;
+struct ChangeMB;
 
 class VertexPlacement {
 public:
@@ -27,7 +29,7 @@ public:
 
     // Operations
     void initialize();
-    void addFixedNeighbor(Vertex* fixedFace);
+    void addFixedNeighbor(Face* fixedFace);
     void addFreeFace(int id);
     void checkThreeFaces(int id);
     int getNumConstraints() const;
@@ -36,12 +38,15 @@ public:
     bool fixPosition();
     void addConstraint();
     void constrainFace(int id);
-    void propagate(int id);
+    void propagate();
     Range getRange();
     ChangeMB getChangeMB() const;
 
     // Debug
     void print() const;
+
+    Vec3 slope;
+    Vec3 value;
 
 private:
     Vertex* vertex;
@@ -51,8 +56,6 @@ private:
     std::vector<int> unfreeFaceIds;
     std::vector<int> colinearFaceIds;
     Matrix3* M;
-    Vec3 slope;
-    Vec3 value;
 
     // Helper methods
     Matrix3* getA(const std::vector<int>& faceIds);

@@ -5,7 +5,7 @@
 //#include "net_graph_map.h"
 //#include "mutation_area.h"
 //#include "transition.h"
-//#include "net_transistor.h"
+#include "../fragment/net_transistor.h"
 //#include "settings.h"
 //#include "util.h"
 //#include <algorithm>
@@ -45,15 +45,15 @@ bool NetworkMutator::applyTransition(Transition transition) {
     auto netGraphMap = mapFinder->findMap(transition.startNet);
     timer->stop("Find Transition Map");
 
-    //if (!netGraphMap) {
-    //    return false;
-    //}
+    if (!netGraphMap) {
+        return false;
+    }
 
-    //transition->setMap(netGraphMap);
+    transition.map = netGraphMap;
 
-    //timer->start("Build Normally");
-    //auto transistor = NetTransistor::buildNormally(transition, getNodeStats(), is3D());
-    //timer->stop("Build Normally");
+    timer->start("Build Normally");
+    // auto transistor = NetTransistor::buildNormally(transition, model, true);
+    timer->stop("Build Normally");
 
     //if (!transistor) {
     //    getNodeStats()->setCostChange("reject", 1e6);

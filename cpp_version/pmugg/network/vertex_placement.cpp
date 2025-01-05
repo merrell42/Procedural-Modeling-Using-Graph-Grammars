@@ -25,7 +25,7 @@ void VertexPlacement::constrainFace(int id) {
     }
 }
 
-void VertexPlacement::propagate(int id) {
+void VertexPlacement::propagate() {
     if (unfreeFaceIds.size() >= 3) {
         settings->addToOrder(this->id, "vertex");
         

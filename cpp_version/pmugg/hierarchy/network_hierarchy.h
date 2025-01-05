@@ -5,6 +5,7 @@
 #include "../third_party/json.h"
 #include "../shapes3D/face_type3d.h"
 #include "../shapes3D/shape3d.h"
+#include "../network/net_graph_map.h"
 
 using Json = nlohmann::json;
 
@@ -20,6 +21,7 @@ class VertexType;
 struct Transition {
     Network* startNet;
     Network* endNet;
+    NetGraphMap* map;
     bool ground;
 };
 
