@@ -56,7 +56,7 @@ Transition NetworkHierarchy::getTransition() {
     NetTransition* transition = transitions.empty() ? nullptr : Util::pick<NetTransition*>(transitions);
     if (transition) {
         auto networks = transition->getNetworks();
-        int n = networks.size();
+        int n = (int)networks.size();
         // Pick two unique indices
         int start = Util::random(n);
         int end = Util::random(n - 1);

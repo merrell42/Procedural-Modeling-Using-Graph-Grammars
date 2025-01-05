@@ -45,7 +45,7 @@ ms.edgePlacement.prototype.addConstraint = function(id) {
 		this.constraints.push(id);
 	}
 	if (this.constraints.length == 2) {
-		this.settings.addToOrder(this.id, 'edge');
+		this.settings.addToOrder(this.id, 'edge', -1);
 	}
 };
 

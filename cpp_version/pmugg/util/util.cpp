@@ -71,16 +71,6 @@ float Util::fixAngleWedges(float angle) {
 }
 
 template<typename T>
-void Util::remove(const T& element, std::vector<T>& array) {
-    auto it = std::find(array.begin(), array.end(), element);
-    if (it != array.end()) {
-        array.erase(it);
-    } else {
-        throw std::runtime_error("Removing something that cannot be found.");
-    }
-}
-
-template<typename T>
 void Util::maybeRemove(const T& element, std::vector<T>& array) {
     auto it = std::find(array.begin(), array.end(), element);
     if (it != array.end()) {
@@ -107,15 +97,6 @@ void Util::addToArray(std::vector<T>& array, const std::vector<int>& indices, co
         addToArray(array[index], remainingIndices, value);
     } else {
         array[index].push_back(value);
-    }
-}
-
-template<typename T>
-void Util::union_(std::vector<T>& a, const std::vector<T>& b) {
-    for (const auto& elem : b) {
-        if (std::find(a.begin(), a.end(), elem) == a.end()) {
-            a.push_back(elem);
-        }
     }
 }
 
@@ -221,6 +202,15 @@ int Util::randomDistribution(const std::vector<double>& probabilityMass) {
         index++;
     }
     return (index < sums.size()) ? index : -1;
+}
+
+// Function definition
+double Util::randomUniform(double lower, double upper) {
+    if (lower > upper) {
+        throw std::invalid_argument("Lower bound is greater than upper bound.");
+    }
+    double s = (static_cast<double>(rand()) / RAND_MAX);
+    return s * (upper - lower) + lower;
 }
 
 } // namespace ms 

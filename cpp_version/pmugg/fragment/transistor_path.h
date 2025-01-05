@@ -7,6 +7,8 @@
 
 namespace ms {
 
+// class Edge
+
 class TransistorPath {
 public:
     struct IndexInfo {
@@ -17,11 +19,11 @@ public:
     // Static members
     static int count;
     static TransistorPath* createNet(const std::vector<Endpoint*>& endpoints,
-                                   const std::vector<Edge*>& edges,
+                                   const std::vector<Line*>& edges,
                                    const std::vector<Line*>& lines);
-    static TransistorPath* create(const std::vector<Endpoint*>& endpoints,
-                                const std::vector<Edge*>& edges,
-                                const std::vector<Line*>& lines);
+    //static TransistorPath* create(const std::vector<Endpoint*>& endpoints,
+    //                            const std::vector<Line*>& edges,
+    //                            const std::vector<Line*>& lines);
 
     // Constructor
     TransistorPath(const std::vector<IndexInfo>& indices, const std::vector<Line*>& lines);

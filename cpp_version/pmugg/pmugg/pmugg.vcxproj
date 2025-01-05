@@ -131,6 +131,8 @@
     <ClCompile Include="..\decoration\area.cpp" />
     <ClCompile Include="..\decoration\brush.cpp" />
     <ClCompile Include="..\decoration\decoration.cpp" />
+    <ClCompile Include="..\fragment\net_transistor_settings.cpp" />
+    <ClCompile Include="..\fragment\transistor_path.cpp" />
     <ClCompile Include="..\graph_drawing\endpoint.cpp" />
     <ClCompile Include="..\graph_drawing\face.cpp" />
     <ClCompile Include="..\graph_drawing\graph_drawing.cpp" />
@@ -143,6 +145,7 @@
     <ClCompile Include="..\guidelines\vertex_type.cpp" />
     <ClCompile Include="..\hierarchy\network_hierarchy.cpp" />
     <ClCompile Include="..\network\edge_net.cpp" />
+    <ClCompile Include="..\network\edge_placement.cpp" />
     <ClCompile Include="..\network\face_net.cpp" />
     <ClCompile Include="..\network\face_placement.cpp" />
     <ClCompile Include="..\network\half_edge_net.cpp" />
@@ -159,6 +162,8 @@
     <ClCompile Include="..\shapes3D\shape3d.cpp" />
     <ClCompile Include="..\shape\vec2.cpp" />
     <ClCompile Include="..\shape\vec3.cpp" />
+    <ClCompile Include="..\util\fast_math.cpp" />
+    <ClCompile Include="..\util\range.cpp" />
     <ClCompile Include="..\util\timer.cpp" />
     <ClCompile Include="..\util\util.cpp" />
     <ClCompile Include="pmugg.cpp" />
@@ -167,6 +172,8 @@
     <ClInclude Include="..\decoration\area.h" />
     <ClInclude Include="..\decoration\brush.h" />
     <ClInclude Include="..\decoration\decoration.h" />
+    <ClInclude Include="..\fragment\net_transistor_settings.h" />
+    <ClInclude Include="..\fragment\transistor_path.h" />
     <ClInclude Include="..\graph_drawing\endpoint.h" />
     <ClInclude Include="..\graph_drawing\face.h" />
     <ClInclude Include="..\graph_drawing\graph_drawing.h" />
@@ -179,6 +186,7 @@
     <ClInclude Include="..\guidelines\vertex_type.h" />
     <ClInclude Include="..\hierarchy\network_hierarchy.h" />
     <ClInclude Include="..\network\edge_net.h" />
+    <ClInclude Include="..\network\edge_placement.h" />
     <ClInclude Include="..\network\face_net.h" />
     <ClInclude Include="..\network\face_placement.h" />
     <ClInclude Include="..\network\half_edge_net.h" />
@@ -196,6 +204,8 @@
     <ClInclude Include="..\shape\vec2.h" />
     <ClInclude Include="..\shape\vec3.h" />
     <ClInclude Include="..\third_party\json.h" />
+    <ClInclude Include="..\util\fast_math.h" />
+    <ClInclude Include="..\util\range.h" />
     <ClInclude Include="..\util\timer.h" />
     <ClInclude Include="..\util\util.h" />
   </ItemGroup>

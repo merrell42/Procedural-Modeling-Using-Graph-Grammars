@@ -35,7 +35,7 @@ Range Face::dirBounds(const Vec3& dir) const {
         high = std::max(d, high);
     }
 
-    return Range(low, high);
+    return Range((float)low, (float)high);
 }
 
 }

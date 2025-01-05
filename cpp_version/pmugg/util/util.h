@@ -19,7 +19,12 @@ public:
 
     // Array operations
     template<typename T>
-    static void remove(const T& element, std::vector<T>& array);
+    static void remove(std::vector<T>& array, const T& element) {
+        auto it = std::find(array.begin(), array.end(), element);
+        if (it != array.end()) {
+            array.erase(it);
+        }
+    }
     
     template<typename T>
     static void maybeRemove(const T& element, std::vector<T>& array);
@@ -29,9 +34,15 @@ public:
     
     template<typename T>
     static void addToArray(std::vector<T>& array, const std::vector<int>& indices, const T& value);
-    
+
     template<typename T>
-    static void union_(std::vector<T>& a, const std::vector<T>& b);
+    static void union_(std::vector<T>& a, const std::vector<T>& b) {
+        for (const auto& elem : b) {
+            if (std::find(a.begin(), a.end(), elem) == a.end()) {
+                a.push_back(elem);
+            }
+        }
+    }
 
     // Random operations
     static int consistentRandom(int n, int seed);
@@ -72,6 +83,8 @@ public:
         int index = dis(gen);
         return vec[index];
     }
+
+    static double randomUniform(double lower, double upper);
 
     static constexpr float EPS = 1e-5f;
     static constexpr float PI = 3.14159265358979323846f;

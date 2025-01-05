@@ -1,6 +1,7 @@
 #include "transistor_path.h"
-#include "../util/random.h"
-#include "../util/alert.h"
+#include "../util/util.h"
+#include "../graph_drawing/endpoint.h"
+#include <iostream>
 
 namespace ms {
 
@@ -8,38 +9,40 @@ namespace ms {
 int TransistorPath::count = 0;
 
 TransistorPath* TransistorPath::createNet(const std::vector<Endpoint*>& endpoints,
-                                        const std::vector<Edge*>& edges,
+                                        const std::vector<Line*>& edges,
                                         const std::vector<Line*>& lines) {
     std::vector<IndexInfo> indices;
     for (auto* endpoint : endpoints) {
-        auto* line = endpoint->getLine();
-        auto it = std::find(edges.begin(), edges.end(), line);
+        auto it = std::find_if(edges.begin(), edges.end(),
+            [endpoint](Line* edge) {
+                return edge == endpoint->getLine();
+            });
         if (it == edges.end()) {
-            Alert::show("endpoint is not found in edges.");
+            std::cout << "endpoint is not found in edges." << std::endl;
             return nullptr;
         }
         int index = std::distance(edges.begin(), it);
-        indices.push_back({index, endpoint->isAtStart() == 0});
+        indices.push_back({index, !endpoint->getIsAtStart()});
     }
     return new TransistorPath(indices, lines);
 }
 
-TransistorPath* TransistorPath::create(const std::vector<Endpoint*>& endpoints,
-                                     const std::vector<Edge*>& edges,
-                                     const std::vector<Line*>& lines) {
-    std::vector<IndexInfo> indices;
-    for (auto* endpoint : endpoints) {
-        auto* edge = endpoint->getEdge();
-        auto it = std::find(edges.begin(), edges.end(), edge);
-        if (it == edges.end()) {
-            Alert::show("endpoint is not found in edges.");
-            return nullptr;
-        }
-        int index = std::distance(edges.begin(), it);
-        indices.push_back({index, endpoint->getEdgeIndex() == 0});
-    }
-    return new TransistorPath(indices, lines);
-}
+//TransistorPath* TransistorPath::create(const std::vector<Endpoint*>& endpoints,
+//                                     const std::vector<Line*>& edges,
+//                                     const std::vector<Line*>& lines) {
+//    std::vector<IndexInfo> indices;
+//    for (auto* endpoint : endpoints) {
+//        auto* edge = endpoint->getEdge();
+//        auto it = std::find(edges.begin(), edges.end(), edge);
+//        if (it == edges.end()) {
+//            Alert::show("endpoint is not found in edges.");
+//            return nullptr;
+//        }
+//        int index = std::distance(edges.begin(), it);
+//        indices.push_back({index, endpoint->getEdgeIndex() == 0});
+//    }
+//    return new TransistorPath(indices, lines);
+//}
 
 TransistorPath::TransistorPath(const std::vector<IndexInfo>& indices,
                              const std::vector<Line*>& lines)
@@ -62,7 +65,7 @@ Vertex* TransistorPath::randomNextVertex() {
     for (bool e : extendable) {
         probabilities.push_back(e ? 1.0 : 0.0);
     }
-    int index = Random::distribution(probabilities);
+    int index = Util::randomDistribution(probabilities);
     return endpoints[index]->getVertex();
 }
 
@@ -95,7 +98,10 @@ Line* TransistorPath::lineFromIndex(int index) {
 }
 
 TransistorPath::IndexInfo TransistorPath::indexForEndpoint(Endpoint* endpoint) {
-    auto it = std::find(lines.begin(), lines.end(), endpoint->getLine());
+    auto it = std::find_if(lines.begin(), lines.end(), 
+        [endpoint](Line* line) {
+            return line == endpoint->getLine();
+        });
     return {
         static_cast<int>(std::distance(lines.begin(), it)),
         endpoint->getIsAtStart()
@@ -128,19 +134,19 @@ void TransistorPath::merge(TransistorPath* pathB) {
     indices.insert(indices.end(), pathB->indices.begin(), pathB->indices.end());
 }
 
-void TransistorPath::highlight(Context* context,
-                             const std::function<Vec2(const Vec2&)>& convertToScreen) {
-    for (auto* endpoint : endpoints) {
-        endpoint->highlight(context, convertToScreen);
-    }
-    for (size_t i = 0; i < indices.size(); i++) {
-        lineFromIndex(i)->highlight(context, convertToScreen);
-    }
-}
-
-void TransistorPath::print() {
-    // Assuming there's a highlight function in the global scope
-    highlight(this);
-}
+//void TransistorPath::highlight(Context* context,
+//                             const std::function<Vec2(const Vec2&)>& convertToScreen) {
+//    for (auto* endpoint : endpoints) {
+//        endpoint->highlight(context, convertToScreen);
+//    }
+//    for (size_t i = 0; i < indices.size(); i++) {
+//        lineFromIndex(i)->highlight(context, convertToScreen);
+//    }
+//}
+//
+//void TransistorPath::print() {
+//    // Assuming there's a highlight function in the global scope
+//    highlight(this);
+//}
 
 } // namespace ms 

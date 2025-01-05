@@ -1,6 +1,6 @@
 #include "face_placement.h"
 #include "../graph_drawing/face.h"
-#include "../fragment/net_transistor.h"
+#include "../fragment/net_transistor_settings.h"
 #include "vertex_placement.h"
 #include "../util/util.h"
 #include "../util/range.h"
@@ -8,8 +8,9 @@
 
 namespace ms {
 
-FacePlacement::FacePlacement(const Vec3& normal, int id, NetTransistorSettings* settings)
+FacePlacement::FacePlacement(const Vec3& normal, int id, NetTransistorSettings* settings, Face* face)
     : normal(normal)
+    , face(face)
     , id(id)
     , settings(settings) {}
 
@@ -91,9 +92,9 @@ bool FacePlacement::setFromVertex(int vertexId) {
 
 void FacePlacement::makeFixed(const FixedFace& fixedFace) {
     for (int id : vertexIds) {
-        settings->getVertex(id)->addFixedNeighbor(fixedFace.faceA);
+        settings->getVertex(id)->addFixedNeighbor(fixedFace);
     }
-    constrain(true, 0); // Not sure if this ID is correct.
+    constrain(true, -1);
     std::cout << "TODO: Define face groups" << std::endl;
     // faceA.faceA->getGroup()->connectHole(face->getGroup());
 }
@@ -145,7 +146,9 @@ Range FacePlacement::getRange(int vertexId) {
 }
 
 ChangeMB FacePlacement::getChangeMB() const {
-    return {slope, value};
+    double m = slope;
+    double b = value;
+    return {m, b};
 }
 
 //void FacePlacement::print() const {

@@ -4,10 +4,10 @@
 #include "../util/range.h"
 #include "../shape/vec3.h"
 
+namespace ms {
+
 class Model;
 class Endpoint;
-
-namespace ms {
 
 class Face {
 	public:

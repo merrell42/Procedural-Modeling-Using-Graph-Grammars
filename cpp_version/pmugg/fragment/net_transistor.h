@@ -26,45 +26,6 @@ class Vertex;
 
 
 
-class VertexPlacement;
-class EdgePlacement;
-class FacePlacement;
-
-struct OrderInfo {
-    std::string type;
-    int vertexId;
-};
-
-class NetTransistorSettings {
-public:
-    explicit NetTransistorSettings(/*const MutationArea& mutationArea*/);
-
-    VertexPlacement* getVertex(int id) { return vertexPlacements[id].get(); }
-    EdgePlacement* getEdge(int id) { return edgePlacements[id].get(); }
-    FacePlacement* getFace(int id) { return facePlacements[id].get(); }
-
-    void setVertex(int id, std::unique_ptr<VertexPlacement> vPlace);
-    void setEdge(int id, std::unique_ptr<EdgePlacement> ePlace);
-    void setFace(int id, std::unique_ptr<FacePlacement> fPlace);
-
-    void addToOrder(int id, const std::string& type, int vertexId);
-    int createFace(const Vec3& normal);
-    void mergeFace(int idA, int idB);
-
-    // Member variables
-    int newFaceCounter = -1;
-    std::unordered_map<int, std::unique_ptr<VertexPlacement>> vertexPlacements;
-    std::unordered_map<int, std::unique_ptr<EdgePlacement>> edgePlacements;
-    std::unordered_map<int, std::unique_ptr<FacePlacement>> facePlacements;
-    std::vector<int> basisIds;
-    Vec3 lower;
-    Vec3 upper;
-    std::unordered_map<int, int> uniqueFaceMap;
-    std::vector<int> orderIds;
-    std::vector<OrderInfo> orderInfo;
-};
-
-
 
 
 // Helper struct for line data
@@ -82,8 +43,6 @@ public:
     static constexpr double precision = 1e-8;
     static constexpr double constraintPrecision = 1e-5;
     static constexpr double minLength = 0;
-    static constexpr double defaultLengthMin = 0.2;
-    static constexpr double defaultLengthMax = 4;
 
     // Static factory method
     static std::unique_ptr<NetTransistor> buildNormally(const Transition& transition, 

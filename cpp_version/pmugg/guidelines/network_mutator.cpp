@@ -5,7 +5,7 @@
 //#include "net_graph_map.h"
 //#include "mutation_area.h"
 //#include "transition.h"
-#include "../fragment/net_transistor.h"
+#include "../fragment/net_transistor_settings.h"
 //#include "settings.h"
 //#include "util.h"
 //#include <algorithm>

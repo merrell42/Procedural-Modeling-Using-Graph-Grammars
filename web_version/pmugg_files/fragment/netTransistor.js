@@ -381,9 +381,6 @@ ms.netTransistorSettings.prototype.setFace   = function(id, fPlace) { this.faceP
 
 ms.netTransistorSettings.prototype.addToOrder = function(id, type, vertexId) {
 	if (!this.orderIds.includes(id)) {
-		if (vertexId === undefined && type == 'face') {
-			debugger;
-		}
 		this.orderIds.push(id);
 		this.orderInfo.push({type, vertexId});
 	}

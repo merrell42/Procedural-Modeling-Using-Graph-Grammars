@@ -288,67 +288,6 @@ bool NetTransistor::setup(const MutationArea& mutationArea) {
     return success;
 }
 
-NetTransistorSettings::NetTransistorSettings(const MutationArea& mutationArea)
-    : lower(mutationArea.lowerExtent)
-    , upper(mutationArea.upperExtent) {}
-
-void NetTransistorSettings::setVertex(int id, std::unique_ptr<VertexPlacement> vPlace) {
-    vertexPlacements[id] = std::move(vPlace);
-}
-
-void NetTransistorSettings::setEdge(int id, std::unique_ptr<EdgePlacement> ePlace) {
-    edgePlacements[id] = std::move(ePlace);
-}
-
-void NetTransistorSettings::setFace(int id, std::unique_ptr<FacePlacement> fPlace) {
-    facePlacements[id] = std::move(fPlace);
-}
-
-void NetTransistorSettings::addToOrder(int id, const std::string& type, int vertexId) {
-    if (std::find(orderIds.begin(), orderIds.end(), id) == orderIds.end()) {
-        orderIds.push_back(id);
-        orderInfo.push_back({type, vertexId});
-    }
-}
-
-int NetTransistorSettings::createFace(const Vec3& normal) {
-    int id = newFaceCounter--;
-    facePlacements[id] = std::make_unique<FacePlacement>(normal, id, this);
-    return id;
-}
-
-void NetTransistorSettings::mergeFace(int idA, int idB) {
-    uniqueFaceMap[idB] = idA;
-    
-    // Update all face mappings
-    for (auto& [key, value] : uniqueFaceMap) {
-        if (value == idB) {
-            value = idA;
-        }
-    }
-
-    // Update vertex placements
-    for (auto& [key, vPlace] : vertexPlacements) {
-        for (auto& faceId : vPlace->freeFaceIds) {
-            if (faceId == idB) {
-                faceId = idA;
-                int vId = std::stoi(key);
-                Remove::fromVector(getFace(idB)->vertexIds, vId);
-                getFace(idA)->vertexIds.push_back(vId);
-            }
-        }
-        
-        for (auto& faceId : vPlace->unfreeFaceIds) {
-            if (faceId == idB) {
-                faceId = idA;
-                int vId = std::stoi(key);
-                Remove::fromVector(getFace(idB)->vertexIds, vId);
-                getFace(idA)->vertexIds.push_back(vId);
-            }
-        }
-    }
-}
-
 // Static helper function
 void NetTransistor::constrainVertexIds(std::vector<int>& vIds, NetTransistorSettings* settings) {
     while (!vIds.empty()) {

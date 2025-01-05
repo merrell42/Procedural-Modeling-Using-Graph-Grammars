@@ -5,14 +5,16 @@
 #include "endpoint.h"
 #include <vector>
 
+namespace ms {
+
 class Model;
 class Endpoint;
 
-namespace ms {
 class Vertex {
 	public:
 		Vertex(Model* model, int id, Vec3 position, VertexType* type, std::vector<int> endpointIds);
 		std::vector<Endpoint*> getEndpoints() const;
+		int getId() const { return id; }
 		Endpoint* getEndpoint(int index) const;
 		Vec3 getPosition() const { return position; }
 		Vertex* copy();

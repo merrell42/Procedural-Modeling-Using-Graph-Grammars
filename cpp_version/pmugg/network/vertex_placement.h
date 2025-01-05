@@ -3,15 +3,21 @@
 #include <memory>
 #include "../shape/vec3.h"
 #include "face_placement.h"
-#include "../fragment/net_transistor.h"
+#include "../fragment/net_transistor_settings.h"
+#include "../util/fast_math.h"
 
 namespace ms {
 
+class Endpoint;
 class Vertex;
 class NetTransistorSettings;
 class Range;
-class Matrix3;
-struct ChangeMB;
+class Matrix;
+
+struct ChangeVecMB {
+    Vec3 m;
+    Vec3 b;
+};
 
 class VertexPlacement {
 public:
@@ -30,7 +36,7 @@ public:
 
     // Operations
     void initialize();
-    void addFixedNeighbor(Face* fixedFace);
+    void addFixedNeighbor(const FixedFace& fixedFace);
     void addFreeFace(int id);
     void checkThreeFaces(int id);
     int getNumConstraints() const;
@@ -41,32 +47,27 @@ public:
     void constrainFace(int id);
     void propagate();
     Range getRange();
-    ChangeMB getChangeMB() const;
+    ChangeVecMB getChangeMB() const;
 
     // Debug
-    void print() const;
+    // void print() const;
 
     Vec3 slope;
     Vec3 value;
+    std::vector<int> freeFaceIds;
+    std::vector<int> unfreeFaceIds;
 
 private:
     Vertex* vertex;
     int id;
     NetTransistorSettings* settings;
-    std::vector<int> freeFaceIds;
-    std::vector<int> unfreeFaceIds;
     std::vector<int> colinearFaceIds;
-    Matrix3* M;
+    Matrix* M;
 
     // Helper methods
-    Matrix3* getA(const std::vector<int>& faceIds);
-    Matrix3* getM();
+    Matrix* getA(const std::vector<int>& faceIds);
+    Matrix* getM();
     void setPosition();
-
-    struct ChangeMB {
-        Vec3 m;
-        Vec3 b;
-    };
 };
 
 } // namespace ms

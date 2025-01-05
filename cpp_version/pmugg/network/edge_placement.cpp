@@ -1,16 +1,15 @@
 #include "edge_placement.h"
-#include "edge.h"
-#include "placement_settings.h"
-#include "range.h"
-#include "brush.h"
-#include "net_transistor.h"
-#include "endpoint.h"
-#include "vertex.h"
+#include "../graph_drawing/line.h"
+#include "../graph_drawing/endpoint.h"
+#include "../graph_drawing/vertex.h"
+#include "../util/range.h"
+#include "../decoration/brush.h"
+#include "../fragment/net_transistor_settings.h"
 #include "face_placement.h"
 
 namespace ms {
 
-EdgePlacement::EdgePlacement(Edge* edge, int id, PlacementSettings* settings)
+EdgePlacement::EdgePlacement(Line* edge, int id, NetTransistorSettings* settings)
     : edge(edge)
     , id(id)
     , settings(settings) {
@@ -70,7 +69,7 @@ void EdgePlacement::addConstraint(int id) {
     }
 
     if (constraints.size() == 2) {
-        settings->addToOrder(this->id, "edge");
+        settings->addToOrder(this->id, "edge", -1);
     }
 }
 
@@ -85,21 +84,21 @@ Range EdgePlacement::getRange() const {
     auto bLength = dir.dot(mb1.b - mb0.b);
 
     auto* brush = edge ? edge->getEdgeType()->getBrush() : nullptr;
-    float lengthMin = brush ? brush->get("Min Length") : NetTransistor::defaultLengthMin;
-    float lengthMax = brush ? brush->get("Max Length") : NetTransistor::defaultLengthMax;
+    float lengthMin = brush ? brush->getFloat("Min Length") : NetTransistorSettings::defaultLengthMin;
+    float lengthMax = brush ? brush->getFloat("Max Length") : NetTransistorSettings::defaultLengthMax;
     float tileLength = 0;
     
-    if (brush && brush->get("Rigid Tiled")) {
-        tileLength = brush->get("Tile Length");
+    if (brush && brush->getBool("Rigid Tiled")) {
+        tileLength = brush->getFloat("Tile Length");
     }
 
     return Range::transformCreate(mLength, bLength, Range(lengthMin, lengthMax, tileLength));
 }
 
-void EdgePlacement::print() const {
-    if (edge) {
-        edge->print();
-    }
-}
+//void EdgePlacement::print() const {
+//    if (edge) {
+//        edge->print();
+//    }
+//}
 
 } // namespace ms 

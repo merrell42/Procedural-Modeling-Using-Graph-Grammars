@@ -10,8 +10,8 @@ class FacePlacement;
 class NetTransistorSettings;
 
 struct ChangeMB {
-    double slope;
-    double value;
+    double m;
+    double b;
 };
 
 struct FixedFace {
@@ -22,7 +22,7 @@ struct FixedFace {
 
 class FacePlacement {
 public:
-    FacePlacement(const Vec3& normal, int id, NetTransistorSettings* settings);
+    FacePlacement(const Vec3& normal, int id, NetTransistorSettings* settings, Face* face);
 
     Face* getFace() const;
     double getD() const;
@@ -41,13 +41,14 @@ public:
     ChangeMB getChangeMB() const;
     // void print() const;
 
+    std::vector<int> vertexIds;
+    int id;
+
 private:
     Vec3 normal;
     Face* face;
-    int id;
     NetTransistorSettings* settings;
     bool free{true};
-    std::vector<int> vertexIds;
     std::vector<Face*> fixedNeighbors;
     double d{0.0};
     bool fixed{false};

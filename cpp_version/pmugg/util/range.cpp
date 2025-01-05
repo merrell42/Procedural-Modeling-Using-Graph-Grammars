@@ -1,8 +1,8 @@
 #include "range.h"
-#include "random.h"
 #include <cmath>
 #include <iostream>
 #include <algorithm>
+#include "util.h"
 
 namespace ms {
 
@@ -24,11 +24,11 @@ bool Range::isEmpty() const {
 
 float Range::sample() const {
     if (tileLength == 0) {
-        return Random::uniform(data[0], data[1]);
+        return Util::randomUniform(data[0], data[1]);
     } else {
         float low = std::ceil(data[0] / tileLength);
         float high = std::floor(data[1] / tileLength);
-        return low + Random::uniform(0, high - low + 1);
+        return low + Util::randomUniform(0, high - low + 1);
     }
 }
 

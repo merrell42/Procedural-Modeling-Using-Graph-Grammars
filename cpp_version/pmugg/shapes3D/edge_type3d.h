@@ -63,8 +63,9 @@ public:
     static EdgeType3D* import(const Json& json, Shape3D* shape);
     static EdgeType3D* partialImport(const Json& json, const std::vector<FaceType3D*>& faceTypes);
 
-private:
     std::vector<FaceData> faceData;
+
+private:
     Vec3 dir;
     Brush* brush;
     float angle;
