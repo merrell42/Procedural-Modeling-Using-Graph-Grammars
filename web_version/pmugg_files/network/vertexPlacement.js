@@ -109,7 +109,7 @@ ms.vertexPlacement.prototype.fixPosition = function() {
 ms.vertexPlacement.prototype.addConstraint = function() {
 	var { settings } = this;
 	var freeFaceId = this.freeFaceIds[0];
-	settings.getFace(freeFaceId).constrain(true);
+	settings.getFace(freeFaceId).constrain(true, -1);
 };
 
 ms.vertexPlacement.prototype.constrainFace = function(id) {
@@ -130,7 +130,7 @@ ms.vertexPlacement.prototype.propagate = function(id) {
 	var { settings } = this;
 	var self = this;
 	if (this.unfreeFaceIds.length >= 3) {
-		settings.addToOrder(this.id, 'vertex');
+		settings.addToOrder(this.id, 'vertex', -1);
 		var freeIds = this.freeFaceIds.concat(this.colinearFaceIds).slice();
 		freeIds.forEach((id) => {
 			var fPlace = settings.getFace(id);

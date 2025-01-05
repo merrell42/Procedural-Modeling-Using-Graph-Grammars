@@ -1,25 +1,26 @@
 #pragma once
-#include "../shape/vec2.h"
+#include "../shape/vec3.h"
+#include "../util/range.h"
 #include <vector>
 #include <memory>
 
 namespace ms {
 
 class Edge;
-class PlacementSettings;
+class NetTransistorSettings;
 class Range;
 
 class EdgePlacement {
 public:
-    EdgePlacement(Edge* edge, int id, PlacementSettings* settings);
+    EdgePlacement(Edge* edge, int id, NetTransistorSettings* settings);
     ~EdgePlacement() = default;
 
     // Core functionality
     Edge* getEdge() const { return edge; }
     int getId() const { return id; }
     const std::vector<int>& getVertexIds() const { return vertexIds; }
-    const Vec2& getDir() const { return dir; }
-    PlacementSettings* getSettings() const { return settings; }
+    const Vec3& getDir() const { return dir; }
+    NetTransistorSettings* getSettings() const { return settings; }
     const std::vector<int>& getConstraints() const { return constraints; }
 
     // Operations
@@ -34,8 +35,8 @@ private:
     Edge* edge;
     int id;
     std::vector<int> vertexIds;
-    Vec2 dir;
-    PlacementSettings* settings;
+    Vec3 dir;
+    NetTransistorSettings* settings;
     std::vector<int> constraints;
 };
 

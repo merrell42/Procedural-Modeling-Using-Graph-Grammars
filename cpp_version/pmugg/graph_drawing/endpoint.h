@@ -14,6 +14,7 @@ namespace ms {
 		Endpoint* copy();
 		Vertex* getVertex() const;
 		Face* getFace() const;
+		Vec3 getPosition() const;
 
 	private:
 		int id;

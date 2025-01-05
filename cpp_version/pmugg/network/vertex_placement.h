@@ -3,24 +3,25 @@
 #include <memory>
 #include "../shape/vec3.h"
 #include "face_placement.h"
+#include "../fragment/net_transistor.h"
 
 namespace ms {
 
 class Vertex;
-class PlacementSettings;
+class NetTransistorSettings;
 class Range;
 class Matrix3;
 struct ChangeMB;
 
 class VertexPlacement {
 public:
-    VertexPlacement(Vertex* vertex, int id, PlacementSettings* settings);
+    VertexPlacement(Vertex* vertex, int id, NetTransistorSettings* settings);
     ~VertexPlacement() = default;
 
     // Core accessors
     Vertex* getVertex() const { return vertex; }
     int getId() const { return id; }
-    PlacementSettings* getSettings() const { return settings; }
+    NetTransistorSettings* getSettings() const { return settings; }
     const std::vector<int>& getFreeFaceIds() const { return freeFaceIds; }
     const std::vector<int>& getUnfreeFaceIds() const { return unfreeFaceIds; }
     const std::vector<int>& getColinearFaceIds() const { return colinearFaceIds; }
@@ -51,7 +52,7 @@ public:
 private:
     Vertex* vertex;
     int id;
-    PlacementSettings* settings;
+    NetTransistorSettings* settings;
     std::vector<int> freeFaceIds;
     std::vector<int> unfreeFaceIds;
     std::vector<int> colinearFaceIds;

@@ -1,4 +1,6 @@
+#include "vertex_placement.h"
 
+namespace ms {
 
 void VertexPlacement::addConstraint() {
     if (freeFaceIds.empty()) {

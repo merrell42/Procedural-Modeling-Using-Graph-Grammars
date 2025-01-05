@@ -151,7 +151,6 @@
     <ClCompile Include="..\network\net_graph_map_finder.cpp" />
     <ClCompile Include="..\network\net_graph_map_info.cpp" />
     <ClCompile Include="..\network\net_graph_map_state.cpp" />
-    <ClCompile Include="..\network\net_transistor.cpp" />
     <ClCompile Include="..\network\net_transition.cpp" />
     <ClCompile Include="..\network\vertex_net.cpp" />
     <ClCompile Include="..\network\vertex_placement.cpp" />
@@ -188,9 +187,9 @@
     <ClInclude Include="..\network\net_graph_map_finder.h" />
     <ClInclude Include="..\network\net_graph_map_info.h" />
     <ClInclude Include="..\network\net_graph_map_state.h" />
-    <ClInclude Include="..\network\net_transistor.h" />
     <ClInclude Include="..\network\net_transition.h" />
     <ClInclude Include="..\network\vertex_net.h" />
+    <ClInclude Include="..\network\vertex_placement.h" />
     <ClInclude Include="..\shapes3D\edge_type3d.h" />
     <ClInclude Include="..\shapes3D\face_type3d.h" />
     <ClInclude Include="..\shapes3D\shape3d.h" />

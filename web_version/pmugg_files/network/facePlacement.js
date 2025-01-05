@@ -96,7 +96,7 @@ ms.facePlacement.prototype.makeFixed = function(faceA) {
 	this.vertexIds.forEach((id) => {
 		settings.getVertex(id).addFixedNeighbor(faceA);
 	});
-	this.constrain(true);
+	this.constrain(true, -1);
 	faceA.faceA.getGroup().connectHole(this.face.getGroup());
 };
 
@@ -107,7 +107,7 @@ ms.facePlacement.prototype.getRange = function(vertexId) {
 	var n = this.getNormal();
 	var m = 1;
 	var b = 0;
-	if (vertexId !== undefined) {
+	if (vertexId !== -1) {
 		var vPlace = settings.getVertex(vertexId);
 		m = n.dot(vPlace.slope);
 		b = n.dot(vPlace.value);

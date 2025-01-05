@@ -21,4 +21,8 @@ Face* Endpoint::getFace() const {
 	return model->getCurrent()->getFace(faceId);
 }
 
+Vec3 Endpoint::getPosition() const {
+	return getVertex()->getPosition();
+}
+
 }

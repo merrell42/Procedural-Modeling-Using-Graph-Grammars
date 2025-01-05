@@ -14,6 +14,7 @@ class Vertex {
 		Vertex(Model* model, int id, Vec3 position, VertexType* type, std::vector<int> endpointIds);
 		std::vector<Endpoint*> getEndpoints() const;
 		Endpoint* getEndpoint(int index) const;
+		Vec3 getPosition() const { return position; }
 		Vertex* copy();
 
 	private:

@@ -77,7 +77,7 @@ struct LineData {
 class NetTransistor {
 public:
     // Constants
-    static constexpr float MAX_ANGLE_DIFFERENCE = (float)45.0f / 180.0f *  M_PI;
+    static constexpr float MAX_ANGLE_DIFFERENCE = (float)(45.0f / 180.0f * M_PI);
     static constexpr int maxEffort = 10;
     static constexpr double precision = 1e-8;
     static constexpr double constraintPrecision = 1e-5;
