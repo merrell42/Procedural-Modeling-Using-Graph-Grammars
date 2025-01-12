@@ -216,4 +216,9 @@ std::vector<int> VertexPlacement::getAllFaceIds() const {
     return allFaceIds; // Return the combined vector
 }
 
+// Method to get the number of constraints
+int VertexPlacement::getNumConstraints() const {
+    return unfreeFaceIds.size();
+}
+
 } // namespace ms 

@@ -24,15 +24,22 @@ class Line;
 class Edge;
 class Vertex;
 
-
-
-
+struct Graph {
+    std::vector<Vertex*> vertices;
+    std::vector<Line*> edges;
+    std::vector<Face*> faces;
+};
 
 // Helper struct for line data
 struct LineData {
     Vec2 v;
     Line* line = nullptr;
     double length = 0;
+};
+
+struct Limits {
+    std::vector<double> min;
+    std::vector<double> max;
 };
 
 class NetTransistor {
@@ -46,31 +53,30 @@ public:
 
     // Static factory method
     static std::unique_ptr<NetTransistor> buildNormally(const Transition& transition, 
-                                                       NodeStats* nodeStats, 
-                                                       bool is3D);
+                                                       Model* model);
 
     // Constructor
     NetTransistor() = default;
 
     // Member functions
-    void create(const Transition& transition, NodeStats* nodeStats, bool is3D);
+    bool solve();
+    void setup();
+    void create(const Transition& transition, Model* model);
     void addLine(Line* line, bool includeLength, bool addToGraph);
     Graph* createGraph();
-    void setupFaceCentric(/*const MutationArea& mutationArea*/);
     void reject();
 
 private:
     // Member variables
     Network* startNet = nullptr;
     Network* endNet = nullptr;
-    std::unique_ptr<NetGraphMap> map;
-    /*Ground* ground = nullptr;*/
+    NetGraphMap* map;
+    bool ground = false;
     int dims = 2;
     
     std::vector<TransistorPath*> openPaths;
     std::vector<LineData> lineData;
     std::vector<Line*> lines;
-    NodeStats* stats = nullptr;
     Model* model = nullptr;
 
     std::vector<Vertex*> freeVertices;
@@ -80,7 +86,7 @@ private:
     Vec3* initialPosition = nullptr;
     std::vector<int> propagationOrder;
     std::vector<Edge*> basisEdges;
-    bool isInitialBoundary = false;
+    // bool isInitialBoundary = false;
     double effort = 0;
     Graph* graph = nullptr;
     float angle = 0;
@@ -88,6 +94,16 @@ private:
     // Helper functions
     void addFixedFace(Face* faceA, Face* faceB, double d);
     bool mergeDuplicateLines();
+    void setupFaceCentric();
+    bool sampleSolutionSpace();
+    void constrainVertexIds(std::vector<int>& vIds, NetTransistorSettings* settings);
+    std::vector<double> sampleFaceCentric();
+    std::vector<TransistorPath*> getFreeablePaths() const;
+    void freeVertex();
+    void freeOneVertex(Vertex* vertex);
+    bool placeVertexPositions(const std::vector<double>& positions);
+    Limits findLimits();
+    bool hasViolations(const std::vector<double>& positions, const Limits& limits);
 };
 
 } // namespace ms 

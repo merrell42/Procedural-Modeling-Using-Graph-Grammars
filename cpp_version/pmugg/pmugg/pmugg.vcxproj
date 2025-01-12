@@ -131,6 +131,7 @@
     <ClCompile Include="..\decoration\area.cpp" />
     <ClCompile Include="..\decoration\brush.cpp" />
     <ClCompile Include="..\decoration\decoration.cpp" />
+    <ClCompile Include="..\fragment\net_transistor.cpp" />
     <ClCompile Include="..\fragment\net_transistor_settings.cpp" />
     <ClCompile Include="..\fragment\transistor_path.cpp" />
     <ClCompile Include="..\graph_drawing\endpoint.cpp" />
@@ -172,6 +173,7 @@
     <ClInclude Include="..\decoration\area.h" />
     <ClInclude Include="..\decoration\brush.h" />
     <ClInclude Include="..\decoration\decoration.h" />
+    <ClInclude Include="..\fragment\net_transistor.h" />
     <ClInclude Include="..\fragment\net_transistor_settings.h" />
     <ClInclude Include="..\fragment\transistor_path.h" />
     <ClInclude Include="..\graph_drawing\endpoint.h" />

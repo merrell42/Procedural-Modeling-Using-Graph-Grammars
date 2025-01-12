@@ -12,11 +12,13 @@ namespace ms {
 			// Reject the proposed graph drawing.
 			void reject();
 			GraphDrawing* getCurrent() { return current; }
+			int newId();
 
 		private:
 			// The currently proposed graph drawing.
 			GraphDrawing* current;
 			// The saved graph drawing.
 			GraphDrawing* prev;
+			int idCounter;
 	};
 }

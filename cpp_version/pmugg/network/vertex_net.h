@@ -4,6 +4,7 @@
 // #include "primal_vertex.h"
 #include "../guidelines/vertex_type.h"
 #include "../third_party/json.h"
+#include <iostream>
 
 using Json = nlohmann::json;
 
@@ -30,6 +31,7 @@ public:
     Network* getNetwork() const { return network; }
     ConnectorGroup* getGroup() const { return group; }
     int getId() const { return id; }
+    int connectorIndex() const { std::cout << "TODO: Implement isConnector" << std::endl; return 0; }
 
     // Network operations
     // void setPrimal(PrimalVertex* primal);

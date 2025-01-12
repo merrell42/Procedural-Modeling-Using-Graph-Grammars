@@ -149,7 +149,6 @@ ms.netTransistor.prototype.createGraph = function() {
 	
 	var edgeData = [];
 	// A mapping from the core vertex to the graph vertices. Just for the outer vertices.
-	var coreToGraphV = {};
 	for (var i = 0; i < endEdges.length; i++) {
 		var endEdge = endEdges[i];
 		var edgeHalfs = endEdge.getHalfEdges();
@@ -182,16 +181,6 @@ ms.netTransistor.prototype.createGraph = function() {
 				splitLines[startIndex][lineIndex] = null;
 				coreEndpoints[e] = coreEndpoint;
 				
-				// Check if the graph vertex has already been created.
-				// This happens when two of the outer vertices match.
-				var coreVertex = coreEndpoint.getVertex();
-				var coreId = coreVertex.getNode().getId();
-				var graphVertex = coreToGraphV[coreId];
-				if (!graphVertex) {
-					graphVertex = new ms.graphVertex(coreVertex);
-					coreToGraphV[coreId] = graphVertex;
-				}
-				// coreEndpoints.push(coreEndpoint);
 				halfEdges.push(half);
 				modified = true;
 				setHalfToEndpoint(half, coreEndpoint);

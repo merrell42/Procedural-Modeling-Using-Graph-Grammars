@@ -5,7 +5,6 @@
 
 namespace ms {
 
-class Graph;
 class View;
 
 class FaceType3D {
@@ -30,7 +29,7 @@ public:
     // Operations
     float angle(const Vec3& q) const;
     float getArea(const std::vector<Vec3>& vertices) const;
-    void computeMonotonic(const std::vector<Graph*>& graphs);
+    // void computeMonotonic(const std::vector<Graph*>& graphs);
     Vec3 normalColor() const;
 
     // Import/Export

@@ -19,13 +19,13 @@ public:
     // Core functionality
     // bool isValid() const { return valid; }
     const std::vector<Vertex*>& getVertexBtoA() const { return vertexBtoA; }
-    const std::vector<int>& getEdgeBtoA() const { return edgeBtoA; }
+    const std::vector<Line*>& getEdgeBtoA() const { return edgeBtoA; }
 
     // Operations
     NetGraphMap* copy() const;
 
     std::vector<Vertex*> vertexBtoA;
-    std::vector<int> edgeBtoA;
+    std::vector<Line*> edgeBtoA;
 
 private:
     // bool valid;

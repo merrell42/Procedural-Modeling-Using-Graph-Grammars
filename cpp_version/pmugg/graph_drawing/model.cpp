@@ -6,6 +6,7 @@ namespace ms {
 Model::Model() {
 	current = new GraphDrawing();
 	prev = new GraphDrawing();
+	idCounter = 0;
 }
 
 void Model::accept() {
@@ -15,6 +16,10 @@ void Model::accept() {
 
 void Model::reject() {
 	current = prev->copy();
+}
+
+int Model::newId() {
+	return idCounter++;
 }
 
 }

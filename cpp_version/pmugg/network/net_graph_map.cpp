@@ -26,7 +26,7 @@ std::unique_ptr<NetGraphMap> NetGraphMap::create(const NetGraphMapInfo& info) {
 
     // Initialize vertexBtoA and edgeBtoA with null pointers
     map->vertexBtoA.resize(netB->getVertices().size(), nullptr);
-    map->edgeBtoA.resize(netB->getEdges().size(), -1);
+    map->edgeBtoA.resize(netB->getEdges().size(), nullptr);
 
     return map; // Return the unique_ptr
 }
