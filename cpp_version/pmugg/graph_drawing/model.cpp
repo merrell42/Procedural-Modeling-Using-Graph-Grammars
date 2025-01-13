@@ -10,12 +10,15 @@ Model::Model() {
 }
 
 void Model::accept() {
+	
 	prev = current;
-	current = prev->copy();
+	current = new GraphDrawing();
+	prev->copy();
 }
 
 void Model::reject() {
-	current = prev->copy();
+	current = new GraphDrawing();
+	prev->copy();
 }
 
 int Model::newId() {

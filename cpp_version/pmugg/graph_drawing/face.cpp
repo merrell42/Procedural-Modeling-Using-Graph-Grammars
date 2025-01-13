@@ -5,7 +5,9 @@ namespace ms {
 Face::Face(Model* model, int id, std::vector<int> endpointIds)
 	: model(model)
 	, id(id)
-	, endpointIds(endpointIds) {}
+	, endpointIds(endpointIds) {
+	model->getCurrent()->addFace(id, this);
+}
 
 Face* Face::copy() {
 	auto result = new Face(model, id, endpointIds);

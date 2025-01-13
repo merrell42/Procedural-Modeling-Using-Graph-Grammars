@@ -6,6 +6,7 @@
 //#include "mutation_area.h"
 //#include "transition.h"
 #include "../fragment/net_transistor_settings.h"
+#include "../fragment/net_transistor.h"
 //#include "settings.h"
 //#include "util.h"
 //#include <algorithm>
@@ -52,7 +53,7 @@ bool NetworkMutator::applyTransition(Transition transition) {
     transition.map = netGraphMap;
 
     timer->start("Build Normally");
-    // auto transistor = NetTransistor::buildNormally(transition, model, true);
+    auto transistor = NetTransistor::buildNormally(transition, model);
     timer->stop("Build Normally");
 
     //if (!transistor) {

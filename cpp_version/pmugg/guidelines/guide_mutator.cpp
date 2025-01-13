@@ -47,6 +47,7 @@ void GuideMutator::resolve(/*Model* outputModel*/) {
 
     timer->start("Guide Mutator");
     while (true) {
+        std::cout << taskCount << std::endl;
         taskCount++;
         //if (closeInspection(taskCount)) {
         //    displayStats();

@@ -6,7 +6,9 @@ Line::Line(Model* model, int id, EdgeType3D* type, std::vector<int> endpointIds)
 	: model(model)
 	, type(type)
 	, id(id)
-	, endpointIds(endpointIds) {}
+	, endpointIds(endpointIds) {
+	model->getCurrent()->addLine(id, this);
+}
 
 Line* Line::copy() {
 	auto result = new Line(model, id, type, endpointIds);

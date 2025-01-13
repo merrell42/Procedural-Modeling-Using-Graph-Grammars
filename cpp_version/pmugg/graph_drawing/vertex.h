@@ -14,6 +14,7 @@ class Vertex {
 	public:
 		Vertex(Model* model, int id, Vec3 position, VertexType* type, std::vector<int> endpointIds);
 		Vertex(Model* model, Vec3 position, VertexType* type);
+		void createEndpoints();
 		std::vector<Endpoint*> getEndpoints() const;
 		int getId() const { return id; }
 		Endpoint* getEndpoint(int index) const;
@@ -27,5 +28,6 @@ class Vertex {
 		std::vector<int> endpointIds;
 
 		Model* model;
+		Endpoint* createEndpoint(const Connection& connection, int vertexIndex, int faceIndex);
 };
 }

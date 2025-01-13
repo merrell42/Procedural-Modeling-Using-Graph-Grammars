@@ -26,8 +26,9 @@ std::unique_ptr<NetTransistor> NetTransistor::buildNormally(
     return result;
 }
 
-void NetTransistor::create(const Transition& transition, Model* model) {
+void NetTransistor::create(const Transition& transition, Model* model_) {
     startNet = transition.startNet;
+    model = model_;
     // endNet = transition.endNet->removeSplices();
     endNet = transition.endNet;
     // map = std::move(transition.map);
@@ -108,7 +109,8 @@ Graph* NetTransistor::createGraph() {
     }*/
 
     // Maps from half edges to merge endpoints
-    std::vector<Endpoint*> mergedEndpoints;
+    std::vector<Endpoint*> mergedEndpoints(endNetwork->getHalfEdges().size());
+    std::fill(mergedEndpoints.begin(), mergedEndpoints.end(), nullptr);
     auto halfToEndpoint = [&](HalfEdgeNet* half) -> Endpoint* {
         int index = Util::findIndex<HalfEdgeNet*>(endNetwork->getHalfEdges(), half);
         return mergedEndpoints[index];
@@ -129,7 +131,9 @@ Graph* NetTransistor::createGraph() {
     }
 
     // Create vertices
-    for (size_t i = 0; i < endVertices.size(); ++i) {
+    const int numVertices = endVertices.size();
+    merged.vertices.resize(numVertices, nullptr);
+    for (size_t i = 0; i < numVertices; ++i) {
         auto* v = endVertices[i];
 
         if (v->connectorIndex() < 0) {
@@ -137,17 +141,19 @@ Graph* NetTransistor::createGraph() {
             
             // Create random position based on dimensions
             Vec3 randomPosition;
-            if (dims == 2) {
+            /*if (dims == 2) {
                 randomPosition = Vec3(5.0 * rand() / RAND_MAX, 
                                    5.0 * rand() / RAND_MAX, 0);
-            } else {
+            } else {*/
                 randomPosition = Vec3(5.0 * rand() / RAND_MAX,
                                    5.0 * rand() / RAND_MAX,
                                    5.0 * rand() / RAND_MAX);
-            }
+            // }
 
             auto* newVertex = new Vertex(model, randomPosition, type);
+            newVertex->createEndpoints();
             merged.vertices[i] = newVertex;
+            int id17a = model->getCurrent()->getEndpoint(4)->getId();
             
             auto vEndpoints = newVertex->getEndpoints();
             auto& halfs = v->getHalfEdges();
@@ -177,7 +183,8 @@ Graph* NetTransistor::createGraph() {
         for (size_t e = 0; e < edgeHalfs.size(); ++e) {
             auto* half = edgeHalfs[e][0];
             auto* hVertex = half->getVertex();
-            auto* core = merged.vertices[Util::findIndex(endVertices, hVertex)];
+            int hIndex = Util::findIndex(endVertices, hVertex);
+            auto* core = merged.vertices[hIndex];
 
             int connectorIndex = hVertex->connectorIndex();
             if (connectorIndex >= 0) {
@@ -369,6 +376,8 @@ Graph* NetTransistor::createGraph() {
             success = success && face->updateConnection();
         }
     }*/
+
+    int id17b = model->getCurrent()->getEndpoint(17)->getId();
 
     Graph emptyGraph;
     return &(success ? merged : emptyGraph);

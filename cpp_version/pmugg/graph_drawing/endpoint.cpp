@@ -10,7 +10,9 @@ Endpoint::Endpoint(Model* model, int id, bool isAtStart, EdgeType3D* edgeType, V
     , dir(dir)
 	, vertexId(vertexId)
 	, faceId(faceId)
-	, lineId(lineId) {}
+	, lineId(lineId) {
+    model->getCurrent()->addEndpoint(id, this);
+}
 
 Endpoint* Endpoint::copy() {
 	auto result = new Endpoint(model, id, isAtStart, edgeType, dir, vertexId, faceId, lineId);

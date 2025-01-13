@@ -27,6 +27,13 @@ class GraphDrawing {
 		Line* getLine(int id) {         return lineMap[id]; }
 		Vertex* getVertex(int id) {     return vertexMap[id]; }
 
+		void addEndpoint(int id, Endpoint* endpoint) {
+
+			endpointMap[id] = endpoint;
+		}
+		void addFace    (int id, Face* face) {         faceMap[id] = face; }
+		void addLine    (int id, Line* line) {         lineMap[id] = line; }
+		void addVertex  (int id, Vertex* vertex) {     vertexMap[id] = vertex; }
 
 	private:
 		std::unordered_map<int, Endpoint*> endpointMap;

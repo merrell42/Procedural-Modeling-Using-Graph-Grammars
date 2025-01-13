@@ -7,14 +7,66 @@ namespace ms {
 		, id(id)
 		, endpointIds(endpointIds)
 		, position(position)
-		, type(type) {}
+		, type(type) {
+		model->getCurrent()->addVertex(id, this);
+	}
 
 Vertex::Vertex(Model* model, Vec3 position, VertexType* type)
 	: model(model)
 	, id(model->newId())
 	, endpointIds(type->getConnections().size(), -1)
 	, position(position)
-	, type(type) {
+	, type(type) {}
+
+void Vertex::createEndpoints() {
+	std::vector<Connection> connections = type->getConnections();
+	int vertexIndex = 0;
+
+	for (const auto& connection : connections) {
+		EdgeType3D* edgeType = connection.edge;
+		const std::vector<FaceData> faceData = edgeType->faceData;
+
+		for (size_t faceIndex = 0; faceIndex < faceData.size(); ++faceIndex) {
+			const FaceData& faceDatum = faceData[faceIndex];
+			bool position = faceDatum.onRight ^ connection.isAtStart;
+
+			if (position) {
+				createEndpoint(connection, vertexIndex, faceIndex);
+				++vertexIndex;
+			}
+		}
+	}
+}
+
+Endpoint* Vertex::createEndpoint(const Connection& connection, int vertexIndex, int faceIndex) {
+	/*if (node.isDestroyed()) {
+		std::cerr << "Error in createEndpoint." << std::endl;
+		return nullptr;
+	}*/
+
+	Vec3 dir = connection.dir.copy();
+	/*if (angle != 0) {
+		dir.rotate(angle);
+	}*/
+
+	// double adjustedAngle = ms::util::fixAngle(angle + connection.angle);
+
+	// Create the endpoint
+	const int endpointId = model->newId();
+	const int vertexId = id;
+	const int lineId = model->newId();
+	const int faceId = model->newId();
+	auto endpoint = new Endpoint(model, endpointId, connection.isAtStart, connection.edge, dir, vertexId, faceId, lineId);
+
+	// Create the line and segment
+	std::vector<int> lineEndpointIds(2, -1);
+	endpointIds[faceIndex] = endpointId;
+	auto line = new Line(model, lineId, connection.edge, lineEndpointIds);
+
+	// Add the endpoint to the vertex
+	endpointIds[vertexIndex] = endpointId;
+
+	return endpoint;
 }
 
 Vertex* Vertex::copy() {
