@@ -24,16 +24,20 @@ class GraphDrawing {
 		GraphDrawing* copy();
 		Endpoint* getEndpoint(int id) { return endpointMap[id]; }
 		Face* getFace(int id) {         return faceMap[id]; }
-		Line* getLine(int id) {         return lineMap[id]; }
+		Line* getLine(int id) {         
+			return lineMap[id];
+		}
 		Vertex* getVertex(int id) {     return vertexMap[id]; }
 
-		void addEndpoint(int id, Endpoint* endpoint) {
-
-			endpointMap[id] = endpoint;
-		}
+		void addEndpoint(int id, Endpoint* endpoint) { endpointMap[id] = endpoint; }
 		void addFace    (int id, Face* face) {         faceMap[id] = face; }
 		void addLine    (int id, Line* line) {         lineMap[id] = line; }
 		void addVertex  (int id, Vertex* vertex) {     vertexMap[id] = vertex; }
+
+		void removeEndpoint(Endpoint* endpoint);
+		void removeFace(Face* face);
+		void removeLine(Line* line);
+		void removeVertex(Vertex* vertex);
 
 	private:
 		std::unordered_map<int, Endpoint*> endpointMap;

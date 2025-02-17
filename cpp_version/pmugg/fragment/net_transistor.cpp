@@ -153,7 +153,6 @@ Graph* NetTransistor::createGraph() {
             auto* newVertex = new Vertex(model, randomPosition, type);
             newVertex->createEndpoints();
             merged.vertices[i] = newVertex;
-            int id17a = model->getCurrent()->getEndpoint(4)->getId();
             
             auto vEndpoints = newVertex->getEndpoints();
             auto& halfs = v->getHalfEdges();
@@ -248,23 +247,23 @@ Graph* NetTransistor::createGraph() {
     bool failed = false;
 
     // Process faces in end network
-    //for (FaceNet* face : endNetwork->getFaces()) {
-    //    auto halfs = face->getOuterHalfEdges();
-    //    size_t N = halfs.size();
+    for (FaceNet* face : endNetwork->getFaces()) {
+        auto halfs = face->getOuterHalfEdges();
+        size_t N = halfs.size();
 
-    //    for (size_t i = 0; i < N; i++) {
-    //        HalfEdgeNet* halfA = const_cast<HalfEdgeNet*>(halfs[i]);
-    //        HalfEdgeNet* halfB = const_cast<HalfEdgeNet*>(halfs[(i + 1) % N]);
-    //        Endpoint* endpointA = halfToEndpoint(halfA);
-    //        Endpoint* endpointB = halfToEndpoint(halfB);
+        for (size_t i = 0; i < N; i++) {
+            HalfEdgeNet* halfA = const_cast<HalfEdgeNet*>(halfs[i]);
+            HalfEdgeNet* halfB = const_cast<HalfEdgeNet*>(halfs[(i + 1) % N]);
+            Endpoint* endpointA = halfToEndpoint(halfA);
+            Endpoint* endpointB = halfToEndpoint(halfB);
 
-    //        if (!endpointA || !endpointB) {
-    //            failed = true;
-    //            continue;
-    //        }
-    //        endpointA->mergeFaces(endpointB);
-    //    }
-    //}
+            if (!endpointA || !endpointB) {
+                failed = true;
+                continue;
+            }
+            endpointA->mergeFaces(endpointB);
+        }
+    }
 
     if (failed) {
         // Handle error case
@@ -273,25 +272,26 @@ Graph* NetTransistor::createGraph() {
     }
 
     // Process edge data
-    //for (size_t i = 0; i < edgeData.size(); i++) {
-    //    EdgeData& datum = edgeData[i];
-    //    Line* line0 = datum.coreEndpoints[0]->getLine();
+    merged.edges.resize(edgeData.size());
+    for (size_t i = 0; i < edgeData.size(); i++) {
+        EdgeData& datum = edgeData[i];
+        Line* line0 = datum.coreEndpoints[0]->getLine();
 
-    //    for (size_t j = 1; j < datum.coreEndpoints.size(); j++) {
-    //        Endpoint* endpointJ = datum.coreEndpoints[j];
-    //        Line* lineJ = endpointJ->getLine();
-    //        line0->addEndpoint(endpointJ, datum.halfEdges[j]->getEdgeIndex());
-    //        lineJ->getNode()->destroy();
-    //    }
+        for (size_t j = 1; j < datum.coreEndpoints.size(); j++) {
+            Endpoint* endpointJ = datum.coreEndpoints[j];
+            Line* lineJ = endpointJ->getLine();
+            line0->addEndpoint(endpointJ, datum.halfEdges[j]->getEdgeIndex());
+            lineJ->destroy();
+        }
 
-    //    line0->fillFromEndpoints();
-    //    merged.edges[i] = line0;
+        // line0->fillFromEndpoints();
+        merged.edges[i] = line0;
 
-    //    if (datum.modified) {
-    //        merged.vertices.push_back(datum.coreEndpoints[0]->getVertex());
-    //        merged.vertices.push_back(datum.coreEndpoints[1]->getVertex());
-    //    }
-    //}
+        if (datum.modified) {
+            merged.vertices.push_back(datum.coreEndpoints[0]->getVertex());
+            merged.vertices.push_back(datum.coreEndpoints[1]->getVertex());
+        }
+    }
 
     // Process end connectors
     //auto& endConnectors = endNet->getConnectors();
@@ -332,14 +332,17 @@ Graph* NetTransistor::createGraph() {
         }
     }*/
 
+    // *** TODO: Boxes is working as far as I can tell on everything except
+    // the next code block for process faces.
+
     // Process faces
-    merged.faces.clear();
+    /*merged.faces.clear();
     for (FaceNet* face : endNetwork->getFaces()) {
         HalfEdgeNet* half = face->getOuterComponent();
         if (half) {
             merged.faces.push_back(halfToEndpoint(half)->getFace());
         }
-    }
+    }*/
 
     // TODO: Handle holes.
     // Process outer faces
@@ -376,8 +379,6 @@ Graph* NetTransistor::createGraph() {
             success = success && face->updateConnection();
         }
     }*/
-
-    int id17b = model->getCurrent()->getEndpoint(17)->getId();
 
     Graph emptyGraph;
     return &(success ? merged : emptyGraph);

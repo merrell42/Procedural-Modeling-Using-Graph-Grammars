@@ -60,4 +60,16 @@ Endpoint* Endpoint::prev() const {
     return endpoints[index - 1];
 }
 
+void Endpoint::setLine(Line* line) {
+    lineId = line->getId();
+}
+
+void Endpoint::setFace(Face* face) {
+    faceId = face->getId();
+}
+
+void Endpoint::mergeFaces(Endpoint* next) {
+    getFace()->append(next->getFace());
+}
+
 }

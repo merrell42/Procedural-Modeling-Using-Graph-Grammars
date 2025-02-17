@@ -27,4 +27,17 @@ std::vector<Endpoint*> Line::getEndpoints() const {
 	return result;
 }
 
+void Line::addEndpoint(Endpoint* endpoint, int index) {
+	setEndpoint(index, endpoint);
+	endpoint->setLine(this);
+}
+void Line::setEndpoint(int index, Endpoint* endpoint) {
+	endpointIds[index] = endpoint->getId();
+}
+
+void Line::destroy() {
+	model->getCurrent()->removeLine(this);
+	delete this;
+};
+
 }

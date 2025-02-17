@@ -2,15 +2,24 @@
 
 namespace ms {
 
-Face::Face(Model* model, int id, std::vector<int> endpointIds)
+Face::Face(Model* model, int id, std::vector<int> endpointIds, bool looped)
 	: model(model)
 	, id(id)
-	, endpointIds(endpointIds) {
+	, endpointIds(endpointIds)
+    , looped(looped){
 	model->getCurrent()->addFace(id, this);
 }
 
+Face::Face(Model* model, int id, std::vector<int> endpointIds)
+    : model(model)
+    , id(id)
+    , endpointIds(endpointIds)
+    , looped(false) {
+    model->getCurrent()->addFace(id, this);
+}
+
 Face* Face::copy() {
-	auto result = new Face(model, id, endpointIds);
+	auto result = new Face(model, id, endpointIds, looped);
 	return result;
 }
 
@@ -38,6 +47,28 @@ Range Face::dirBounds(const Vec3& dir) const {
     }
 
     return Range((float)low, (float)high);
+}
+
+void Face::append(Face* faceB) {
+    // this->dirty = true;
+
+    // Check if the current object is the same as `faceB`
+    if (this == faceB) {
+        this->setLooped(true);
+        return;
+    }
+
+    // Copy endpoints from `faceB`
+    auto endpointsB = faceB->getEndpoints(); // Assuming `getEndpoints` returns a `std::vector<Endpoint*>`
+
+    // Connect each endpoint to this face's node
+    for (auto* endpointB : endpointsB) {
+        endpointIds.push_back(endpointB->getId());
+        endpointB->setFace(this);
+    }
+
+    // Destroy the node of `faceB`
+    model->getCurrent()->removeFace(faceB);
 }
 
 }

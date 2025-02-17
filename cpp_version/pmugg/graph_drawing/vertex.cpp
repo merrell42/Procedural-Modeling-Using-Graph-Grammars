@@ -60,7 +60,7 @@ Endpoint* Vertex::createEndpoint(const Connection& connection, int vertexIndex, 
 
 	// Create the line and segment
 	std::vector<int> lineEndpointIds(2, -1);
-	endpointIds[faceIndex] = endpointId;
+	lineEndpointIds[faceIndex] = endpointId;
 	auto line = new Line(model, lineId, connection.edge, lineEndpointIds);
 
 	// Add the endpoint to the vertex

@@ -35,4 +35,14 @@ GraphDrawing* GraphDrawing::copy() {
 	return new GraphDrawing(newEndpointMap, newFaceMap, newLineMap, newVertexMap);
 }
 
+void GraphDrawing::removeEndpoint(Endpoint* endpoint) { endpointMap.erase(endpoint->getId()); }
+void GraphDrawing::removeFace(Face* face) { faceMap.erase(face->getId()); }
+void GraphDrawing::removeLine(Line* line) {
+	if (line->getId() == 38) {
+		std::cout << "a";
+	}
+	lineMap.erase(line->getId());
+}
+void GraphDrawing::removeVertex(Vertex* vertex) { vertexMap.erase(vertex->getId()); }
+
 }

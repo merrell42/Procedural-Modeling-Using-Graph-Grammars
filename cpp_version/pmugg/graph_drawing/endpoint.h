@@ -27,6 +27,9 @@ public:
 	Vec3 getPosition() const;
 	Endpoint* next() const;
 	Endpoint* prev() const;
+	void setLine(Line* line);
+	void setFace(Face* face);
+	void mergeFaces(Endpoint* next);
 
 private:
 	int id;
