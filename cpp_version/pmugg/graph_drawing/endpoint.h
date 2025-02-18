@@ -15,7 +15,7 @@ class Line;
 
 class Endpoint {
 public:
-	Endpoint(Model* model, int id, bool isAtStart, EdgeType3D*, Vec3 dir, int vertexId, int faceId, int lineId);
+	Endpoint(Model* model, int id, bool isAtStart, EdgeType3D*, Vec3 dir, int vertexId, int faceId, int lineId, bool createFace, int faceIndex);
 	Endpoint* copy();
 	bool getIsAtStart() const { return isAtStart; }
 	int getId() const { return id; };
@@ -27,14 +27,20 @@ public:
 	Vec3 getPosition() const;
 	Endpoint* next() const;
 	Endpoint* prev() const;
+	Endpoint* twin() const;
 	void setLine(Line* line);
 	void setFace(Face* face);
 	void mergeFaces(Endpoint* next);
+	FaceType3D* getFaceType();
+	/*void maybeMergeNextFace();
+	void maybeMergePrevFace();*/
 
 private:
 	int id;
 	bool isAtStart;
 	EdgeType3D* edgeType;
+	FaceType3D* faceTypeCached;
+	int faceIndex;
 	Vec3 dir;
 	int vertexId;
 	int faceId;

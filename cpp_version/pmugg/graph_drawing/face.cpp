@@ -2,24 +2,26 @@
 
 namespace ms {
 
-Face::Face(Model* model, int id, std::vector<int> endpointIds, bool looped)
+Face::Face(Model* model, int id, FaceType3D* faceType, std::vector<int> endpointIds, bool looped)
 	: model(model)
 	, id(id)
+    , faceType(faceType)
 	, endpointIds(endpointIds)
     , looped(looped){
 	model->getCurrent()->addFace(id, this);
 }
 
-Face::Face(Model* model, int id, std::vector<int> endpointIds)
+Face::Face(Model* model, int id, FaceType3D* faceType, std::vector<int> endpointIds)
     : model(model)
     , id(id)
+    , faceType(faceType)
     , endpointIds(endpointIds)
     , looped(false) {
     model->getCurrent()->addFace(id, this);
 }
 
 Face* Face::copy() {
-	auto result = new Face(model, id, endpointIds, looped);
+	auto result = new Face(model, id, faceType, endpointIds, looped);
 	return result;
 }
 

@@ -2,21 +2,23 @@
 
 namespace ms {
 
-	Vertex::Vertex(Model* model, int id, Vec3 position, VertexType* type, std::vector<int> endpointIds)
-		: model(model)
-		, id(id)
-		, endpointIds(endpointIds)
-		, position(position)
-		, type(type) {
-		model->getCurrent()->addVertex(id, this);
-	}
+Vertex::Vertex(Model* model, int id, Vec3 position, VertexType* type, std::vector<int> endpointIds)
+	: model(model)
+	, id(id)
+	, endpointIds(endpointIds)
+	, position(position)
+	, type(type) {
+	model->getCurrent()->addVertex(id, this);
+}
 
 Vertex::Vertex(Model* model, Vec3 position, VertexType* type)
 	: model(model)
 	, id(model->newId())
 	, endpointIds(type->getConnections().size(), -1)
 	, position(position)
-	, type(type) {}
+	, type(type) {
+	model->getCurrent()->addVertex(id, this);
+}
 
 void Vertex::createEndpoints() {
 	std::vector<Connection> connections = type->getConnections();
@@ -55,8 +57,8 @@ Endpoint* Vertex::createEndpoint(const Connection& connection, int vertexIndex, 
 	const int endpointId = model->newId();
 	const int vertexId = id;
 	const int lineId = model->newId();
-	const int faceId = model->newId();
-	auto endpoint = new Endpoint(model, endpointId, connection.isAtStart, connection.edge, dir, vertexId, faceId, lineId);
+	// const int faceId = model->newId();
+	auto endpoint = new Endpoint(model, endpointId, connection.isAtStart, connection.edge, dir, vertexId, -1, lineId, true, faceIndex);
 
 	// Create the line and segment
 	std::vector<int> lineEndpointIds(2, -1);
@@ -65,6 +67,12 @@ Endpoint* Vertex::createEndpoint(const Connection& connection, int vertexIndex, 
 
 	// Add the endpoint to the vertex
 	endpointIds[vertexIndex] = endpointId;
+
+	/*endpoint->maybeMergePrevFace();
+	auto twin = endpoint->twin();
+	if (twin) {
+		twin->maybeMergeNextFace();
+	}*/
 
 	return endpoint;
 }

@@ -7,6 +7,7 @@
 //#include "transition.h"
 #include "../fragment/net_transistor_settings.h"
 #include "../fragment/net_transistor.h"
+#include "../grid/settings.h"
 //#include "settings.h"
 //#include "util.h"
 //#include <algorithm>
@@ -56,32 +57,32 @@ bool NetworkMutator::applyTransition(Transition transition) {
     auto transistor = NetTransistor::buildNormally(transition, model);
     timer->stop("Build Normally");
 
-    //if (!transistor) {
+    if (!transistor) {
     //    getNodeStats()->setCostChange("reject", 1e6);
-    //    return false;
-    //}
+        return false;
+    }
 
-    //taskDebug();
-    //int effort = 0;
-    //int effortLimit = globalSettings.getInt("Mutator Effort Limit");
-    //int verticesToFree = globalSettings.getInt("Vertices to Free");
+    // taskDebug();
+    int effort = 0;
+    int effortLimit = globalSettings["Mutator Effort Limit"].get<int>();
+    int verticesToFree = globalSettings["Vertices to Free"].get<int>();
 
-    //while (effort < effortLimit) {
-    //    timer->start("Transistor Solve");
-    //    bool success = transistor->solve(mutationArea);
-    //    timer->stop("Transistor Solve");
+    while (effort < effortLimit) {
+        timer->start("Transistor Solve");
+        bool success = transistor->solve(/*mutationArea*/);
+        timer->stop("Transistor Solve");
 
-    //    if (success) {
-    //        return true;
-    //    }
+        if (success) {
+            return true;
+        }
 
-    //    for (int i = 0; i < verticesToFree; i++) {
-    //        transistor->freeVertex();
-    //    }
-    //    effort++;
-    //}
+        for (int i = 0; i < verticesToFree; i++) {
+            transistor->freeVertex();
+        }
+        effort++;
+    }
 
-    //transistor->reject();
+    transistor->reject();
     return false;
 }
 

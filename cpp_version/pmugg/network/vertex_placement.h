@@ -21,7 +21,7 @@ struct ChangeVecMB {
 
 class VertexPlacement {
 public:
-    VertexPlacement(Vertex* vertex, int id, NetTransistorSettings* settings);
+    VertexPlacement(Vertex* vertex, int id, NetTransistorSettings* settings) : vertex(vertex), id(id), settings(settings) {}
     ~VertexPlacement() = default;
 
     // Core accessors
@@ -38,7 +38,7 @@ public:
     void initialize();
     void addFixedNeighbor(const FixedFace& fixedFace);
     void addFreeFace(int id);
-    void checkThreeFaces(int id);
+    void checkThreeFaces();
     int getNumConstraints() const;
     const Vec3& getPosition() const;
     std::vector<int> getAllFaceIds() const;

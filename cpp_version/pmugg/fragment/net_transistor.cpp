@@ -96,7 +96,7 @@ Graph* NetTransistor::createGraph() {
     auto* endNetwork = endNet;
     auto& endVertices = endNetwork->getVertices();
     auto& endEdges = endNetwork->getEdges();
-    Graph merged;
+    Graph* merged = new Graph();
     
     // Save face locations
     /*if (map->outerFaces) {
@@ -132,7 +132,7 @@ Graph* NetTransistor::createGraph() {
 
     // Create vertices
     const int numVertices = endVertices.size();
-    merged.vertices.resize(numVertices, nullptr);
+    merged->vertices.resize(numVertices, nullptr);
     for (size_t i = 0; i < numVertices; ++i) {
         auto* v = endVertices[i];
 
@@ -152,7 +152,7 @@ Graph* NetTransistor::createGraph() {
 
             auto* newVertex = new Vertex(model, randomPosition, type);
             newVertex->createEndpoints();
-            merged.vertices[i] = newVertex;
+            merged->vertices[i] = newVertex;
             
             auto vEndpoints = newVertex->getEndpoints();
             auto& halfs = v->getHalfEdges();
@@ -183,7 +183,7 @@ Graph* NetTransistor::createGraph() {
             auto* half = edgeHalfs[e][0];
             auto* hVertex = half->getVertex();
             int hIndex = Util::findIndex(endVertices, hVertex);
-            auto* core = merged.vertices[hIndex];
+            auto* core = merged->vertices[hIndex];
 
             int connectorIndex = hVertex->connectorIndex();
             if (connectorIndex >= 0) {
@@ -268,11 +268,11 @@ Graph* NetTransistor::createGraph() {
     if (failed) {
         // Handle error case
         std::cerr << "Do not know how this can happen, but halfToEndpoint is missing an endpoint." << std::endl;
-        return &merged; // Return empty merged data
+        return merged; // Return empty merged data
     }
 
     // Process edge data
-    merged.edges.resize(edgeData.size());
+    merged->edges.resize(edgeData.size());
     for (size_t i = 0; i < edgeData.size(); i++) {
         EdgeData& datum = edgeData[i];
         Line* line0 = datum.coreEndpoints[0]->getLine();
@@ -285,11 +285,11 @@ Graph* NetTransistor::createGraph() {
         }
 
         // line0->fillFromEndpoints();
-        merged.edges[i] = line0;
+        merged->edges[i] = line0;
 
         if (datum.modified) {
-            merged.vertices.push_back(datum.coreEndpoints[0]->getVertex());
-            merged.vertices.push_back(datum.coreEndpoints[1]->getVertex());
+            merged->vertices.push_back(datum.coreEndpoints[0]->getVertex());
+            merged->vertices.push_back(datum.coreEndpoints[1]->getVertex());
         }
     }
 
@@ -310,7 +310,7 @@ Graph* NetTransistor::createGraph() {
     //            std::back_inserter(faceEndpointsI),
     //            [this](HalfEdgeNet* half) { return halfToEndpoint(half); });
 
-    //        TransistorPath* path = TransistorPath::createNet(faceEndpointsI, merged.edges, lines);
+    //        TransistorPath* path = TransistorPath::createNet(faceEndpointsI, merged->edges, lines);
     //        Endpoint* pathEnd = halfToEndpoint(endHalf);
     //        std::vector<Endpoint*> pathEndpoints = { faceEndpointsI[0], pathEnd };
     //        path->setEndpoints(pathEndpoints);
@@ -336,11 +336,11 @@ Graph* NetTransistor::createGraph() {
     // the next code block for process faces.
 
     // Process faces
-    /*merged.faces.clear();
+    /*merged->faces.clear();
     for (FaceNet* face : endNetwork->getFaces()) {
         HalfEdgeNet* half = face->getOuterComponent();
         if (half) {
-            merged.faces.push_back(halfToEndpoint(half)->getFace());
+            merged->faces.push_back(halfToEndpoint(half)->getFace());
         }
     }*/
 
@@ -348,11 +348,11 @@ Graph* NetTransistor::createGraph() {
     // Process outer faces
     /*size_t faceIndex = 0;
     for (Face* face : endNet->getOuterFaces()) {
-        merged.faces[faceIndex++]->setHole(true);
+        merged->faces[faceIndex++]->setHole(true);
     }*/
 
     // TODO: Add Face groups back in.
-    //for (Face* face : merged.faces) {
+    //for (Face* face : merged->faces) {
     //    if (!face->isHole() &&
     //        face->getGroup()->getFaces().indexOf(face) > 0) {
     //        face->splitGroup();
@@ -379,9 +379,7 @@ Graph* NetTransistor::createGraph() {
             success = success && face->updateConnection();
         }
     }*/
-
-    Graph emptyGraph;
-    return &(success ? merged : emptyGraph);
+    return success ? merged : new Graph();
 }
 
 bool NetTransistor::solve() {
@@ -450,37 +448,37 @@ void NetTransistor::addFixedFace(Face* fixedFaceA, Face* fixedFaceB, double d) {
 }
 
 void NetTransistor::setupFaceCentric() {
-    //auto settings = std::make_unique<NetTransistorSettings>();
-    //this->settings = std::move(settings);
+    auto settingsNew = std::make_unique<NetTransistorSettings>();
+    this->settings = std::move(settingsNew);
 
-    //std::vector<int> basisIds;
-    //std::vector<int> vertexIds;
+    std::vector<int> basisIds;
+    std::vector<int> vertexIds;
 
-    //// Process edges
-    //for (auto* edge : graph->edges) {
-    //    int id = edge->getNode()->getId();
-    //    settings->edgePlacements[id] = std::make_unique<EdgePlacement>(edge, id, settings.get());
-    //}
+    // Process edges
+    for (auto* edge : graph->edges) {
+        int id = edge->getId();
+        settings->edgePlacements[id] = std::make_unique<EdgePlacement>(edge, id, settings.get());
+    }
 
-    //// Process vertices
-    //for (auto* vertex : graph->vertices) {
-    //    int id = vertex->getId();
-    //    vertexIds.push_back(id);
-    //    freeVertices.push_back(vertex);
-    //    settings->vertexPlacements[id] = std::make_unique<VertexPlacement>(vertex, id, settings.get());
-    //    settings->vertexPlacements[id]->initialize();
-    //}
+    // Process vertices
+    for (auto* vertex : graph->vertices) {
+        int id = vertex->getId();
+        vertexIds.push_back(id);
+        freeVertices.push_back(vertex);
+        settings->vertexPlacements[id] = std::make_unique<VertexPlacement>(vertex, id, settings.get());
+        settings->vertexPlacements[id]->initialize();
+    }
 
-    //// Initialize edge placements
-    //for (auto* edge : graph->edges) {
-    //    int id = edge->getNode()->getId();
-    //    settings->edgePlacements[id]->initialize();
-    //}
+    // Initialize edge placements
+    for (auto* edge : graph->edges) {
+        int id = edge->getId();
+        settings->edgePlacements[id]->initialize();
+    }
 
-    //// Check three faces for each vertex
-    //for (int id : vertexIds) {
-    //    settings->getVertex(id)->checkThreeFaces();
-    //}
+    // Check three faces for each vertex
+    for (int id : vertexIds) {
+        settings->getVertex(id)->checkThreeFaces();
+    }
 
     //// Process fixed vertices from open paths
     //fixedVertexIds.clear();
@@ -522,18 +520,19 @@ void NetTransistor::setupFaceCentric() {
     //    }
     //}
 
-    //// Process face placements
-    //for (auto& [_, fPlace] : settings->facePlacements) {
-    //    if (auto* face = fPlace->face) {
-    //        auto* group = face->getGroup();
-    //        if (group->getFaces().size() > 1) {
-    //            auto normal = face->getFaceType()->getNormal();
-    //            auto vPosition = face->getEndpoints()[0]->getVertex()->getPosition();
-    //            double d = normal.dot(vPosition);
-    //            addFixedFace(face, face, d);
-    //        }
-    //    }
-    //}
+    // Process face placements
+    /*for (auto& [_, fPlace] : settings->facePlacements) {
+        auto face = fPlace->getFace();
+        if (face) {
+            auto* group = face->getGroup();
+            if (group->getFaces().size() > 1) {
+                auto normal = face->getFaceType()->getNormal();
+                auto vPosition = face->getEndpoints()[0]->getVertex()->getPosition();
+                double d = normal.dot(vPosition);
+                addFixedFace(face, face, d);
+            }
+        }
+    }*/
 }
 
 Limits NetTransistor::findLimits() {
@@ -675,18 +674,18 @@ std::vector<double> NetTransistor::sampleFaceCentric() {
 //    }
 //
 //    if (!success) return {};
-//
-//    std::vector<int> basisOrders;
-//    for (size_t i = 0; i < settings->basisIds.size(); i++) {
-//        auto basisOrder = std::find_if(settings->orderIds.begin(),
-//            settings->orderIds.end(),
-//            [&](const auto& id) {
-//                return id == settings->basisIds[i] &&
-//                    settings->orderInfo[i].type == "face";
-//            }) - settings->orderIds.begin();
-//            basisOrders.push_back(basisOrder);
-//    }
-//
+
+    std::vector<int> basisOrders;
+    for (size_t i = 0; i < settings->basisIds.size(); i++) {
+        auto basisOrder = std::find_if(settings->orderIds.begin(),
+            settings->orderIds.end(),
+            [&](const auto& id) {
+                return id == settings->basisIds[i] &&
+                    settings->orderInfo[i].type == "face";
+            }) - settings->orderIds.begin();
+            basisOrders.push_back(basisOrder);
+    }
+
 //    for (size_t i = 0; i < settings->basisIds.size(); i++) {
 //        int id = settings->basisIds[i];
 //        auto* fPlace = settings->facePlacements[id].get();

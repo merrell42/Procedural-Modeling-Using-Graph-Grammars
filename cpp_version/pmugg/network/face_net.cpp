@@ -79,7 +79,7 @@ void FaceNet::copyConnection(const FaceNet* copy) {
 
 void FaceNet::import(const Json & json) {
     // Assuming network is already set and has a method getHalfEdges()
-    //outerComponent = network->getHalfEdges()[json["outerComponent"]];
+    outerComponent = network->getHalfEdges()[json["outerComponent"]];
 
     //innerComponents.clear();  // Clear existing inner components
     //for (const auto& halfEdge : json["innerComponents"]) {

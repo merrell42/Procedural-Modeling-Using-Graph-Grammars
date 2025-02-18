@@ -65,6 +65,7 @@ public:
     void addLine(Line* line, bool includeLength, bool addToGraph);
     Graph* createGraph();
     void reject();
+    void freeVertex();
 
 private:
     // Member variables
@@ -99,11 +100,12 @@ private:
     void constrainVertexIds(std::vector<int>& vIds, NetTransistorSettings* settings);
     std::vector<double> sampleFaceCentric();
     std::vector<TransistorPath*> getFreeablePaths() const;
-    void freeVertex();
     void freeOneVertex(Vertex* vertex);
     bool placeVertexPositions(const std::vector<double>& positions);
     Limits findLimits();
     bool hasViolations(const std::vector<double>& positions, const Limits& limits);
+
+    std::unique_ptr<NetTransistorSettings> settings;
 };
 
 } // namespace ms 

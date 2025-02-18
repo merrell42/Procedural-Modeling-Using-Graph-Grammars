@@ -3,20 +3,23 @@
 #include "endpoint.h"
 #include "../util/range.h"
 #include "../shape/vec3.h"
+#include "../shapes3D/face_type3d.h"
 
 namespace ms {
 
 class Model;
 class Endpoint;
+class FaceType3D;
 
 class Face {
 	public:
-		Face(Model* model, int id, std::vector<int> endpointIds, bool looped);
-		Face(Model* model, int id, std::vector<int> endpointIds);
+		Face(Model* model, int id, FaceType3D* faceType, std::vector<int> endpointIds, bool looped);
+		Face(Model* model, int id, FaceType3D* faceType, std::vector<int> endpointIds);
 		Face* copy();
 		int getId() const { return id; };
 		std::vector<Endpoint*> getEndpoints() const;
 		Endpoint* getEndpoint(int index) const;
+		FaceType3D* getFaceType() const { return faceType; }
 		Range dirBounds(const Vec3& dir) const;
 		void append(Face* faceB);
 		void setLooped(bool looped_) { looped = looped_; }
@@ -25,6 +28,7 @@ class Face {
 		int id;
 		std::vector<int> endpointIds;
 		bool looped;
+		FaceType3D* faceType;
 
 		Model* model;
 	};

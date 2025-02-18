@@ -2,20 +2,40 @@
 
 namespace ms {
 
-Endpoint::Endpoint(Model* model, int id, bool isAtStart, EdgeType3D* edgeType, Vec3 dir, int vertexId, int faceId, int lineId)
+Endpoint::Endpoint(Model* model, int id, bool isAtStart, EdgeType3D* edgeType, Vec3 dir, int vertexId, int faceId_, int lineId, bool createFace, int faceIndex)
 	: model(model)
 	, id(id)
     , isAtStart(isAtStart)
     , edgeType(edgeType)
     , dir(dir)
 	, vertexId(vertexId)
-	, faceId(faceId)
+    , faceIndex(faceIndex)
+	, faceId(faceId_)
 	, lineId(lineId) {
     model->getCurrent()->addEndpoint(id, this);
+
+    faceTypeCached = nullptr;
+    if (createFace) {
+        auto faceType = getFaceType();
+        std::vector<int> endpointIds;
+        endpointIds.push_back(id);
+        faceId = model->newId();
+        auto face = new Face(model, faceId, faceType, endpointIds);
+        // face.createGroup();
+        // face.getNode().connect(this);
+    }
+}
+
+FaceType3D* Endpoint::getFaceType() {
+    if (!faceTypeCached) {
+        const auto& faceData = edgeType->faceData;
+        faceTypeCached = faceData[faceIndex].type;
+    }
+    return faceTypeCached;
 }
 
 Endpoint* Endpoint::copy() {
-	auto result = new Endpoint(model, id, isAtStart, edgeType, dir, vertexId, faceId, lineId);
+	auto result = new Endpoint(model, id, isAtStart, edgeType, dir, vertexId, faceId, lineId, false, -1);
 	return result;
 }
 
@@ -60,6 +80,19 @@ Endpoint* Endpoint::prev() const {
     return endpoints[index - 1];
 }
 
+Endpoint* Endpoint::twin() const {
+    Line* line = getLine();
+    if (line) {
+        std::vector<Endpoint*> endpoints = line->getEndpoints();
+        auto it = std::find(endpoints.begin(), endpoints.end(), this);
+        if (it != endpoints.end()) {
+            size_t index = std::distance(endpoints.begin(), it);
+            return endpoints[1 - index]; // Return the other endpoint
+        }
+    }
+    return nullptr;
+}
+
 void Endpoint::setLine(Line* line) {
     lineId = line->getId();
 }
@@ -71,5 +104,19 @@ void Endpoint::setFace(Face* face) {
 void Endpoint::mergeFaces(Endpoint* next) {
     getFace()->append(next->getFace());
 }
+
+//void Endpoint::maybeMergeNextFace() {
+//    Endpoint* nextEndpoint = next();
+//    if (nextEndpoint) {
+//        getFace()->append(nextEndpoint->getFace());
+//    }
+//}
+//
+//void Endpoint::maybeMergePrevFace() {
+//    Endpoint* prevEndpoint = prev();
+//    if (prevEndpoint) {
+//        prevEndpoint->getFace()->append(getFace());
+//    }
+//}
 
 }

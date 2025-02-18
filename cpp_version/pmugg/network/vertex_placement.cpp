@@ -2,6 +2,21 @@
 
 namespace ms {
 
+void VertexPlacement::initialize() {
+    std::vector<Endpoint*> endpoints = vertex->getEndpoints();
+
+    for (auto* endpoint : endpoints) {
+        Face* face = endpoint->getFace();
+        int id = face->getId();
+
+        if (!settings->getFace(id)) {
+            auto normal = face->getFaceType()->getNormal();
+            settings->facePlacements[id] = std::make_unique<FacePlacement>(normal, id, settings, face);
+        }
+        addFreeFace(id);
+    }
+}
+
 void VertexPlacement::addConstraint() {
     if (freeFaceIds.empty()) {
         throw std::runtime_error("No free faces available for constraint");
@@ -219,6 +234,20 @@ std::vector<int> VertexPlacement::getAllFaceIds() const {
 // Method to get the number of constraints
 int VertexPlacement::getNumConstraints() const {
     return unfreeFaceIds.size();
+}
+
+
+void VertexPlacement::checkThreeFaces() {
+    if (freeFaceIds.size() < 2) {
+        std::cerr << "Vertex should have at least two faces.\n";
+    } else if (freeFaceIds.size() == 2) {
+        Vec3 n0 = settings->getFace(freeFaceIds[0])->getNormal();
+        Vec3 n1 = settings->getFace(freeFaceIds[1])->getNormal();
+        Vec3 n2 = n0.cross(n1);
+        n2.normalize();
+        int newId = settings->createFace(n2);
+        addFreeFace(newId);
+    }
 }
 
 } // namespace ms 
