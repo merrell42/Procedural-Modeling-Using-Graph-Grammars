@@ -540,29 +540,31 @@ Limits NetTransistor::findLimits() {
     std::vector<double> maxLimit;
 
     // Handle vertex limits
-    /*for (size_t i = 0; i < freeVertices.size(); i++) {
+    for (size_t i = 0; i < freeVertices.size(); i++) {
         for (int dim = 0; dim < dims; dim++) {
-            minLimit.push_back(mutationArea.lowerExtent[dim]);
-            maxLimit.push_back(mutationArea.upperExtent[dim]);
+            // minLimit.push_back(mutationArea.lowerExtent[dim]);
+            // maxLimit.push_back(mutationArea.upperExtent[dim]);
+            minLimit.push_back(0);
+            maxLimit.push_back(10);
         }
-    }*/
+    }
 
     // Handle edge limits
-    //for (auto* edge : freeEdges) {
-    //    auto* edgeType = edge->getEdgeType();
-    //    auto* brush = edgeType->getBrush();
+    for (auto* edge : freeEdges) {
 
-    //    double minLength = minLength;
-    //    double maxLength = std::numeric_limits<double>::infinity();
+        double minLength = 0;
+        double maxLength = std::numeric_limits<double>::infinity();
 
-    //    if (brush && brush->get("Strict Length")) {
-    //        minLength = brush->get("Min Length");
-    //        maxLength = brush->get("Max Length");
-    //    }
+        /*auto* edgeType = edge->getEdgeType();
+        auto* brush = edgeType->getBrush();
+        if (brush && brush->get("Strict Length")) {
+            minLength = brush->get("Min Length");
+            maxLength = brush->get("Max Length");
+        }*/
 
-    //    minLimit.push_back(minLength);
-    //    maxLimit.push_back(maxLength);
-    //}
+        minLimit.push_back(minLength);
+        maxLimit.push_back(maxLength);
+    }
 
     return { minLimit, maxLimit };
 }
@@ -719,14 +721,14 @@ std::vector<double> NetTransistor::sampleFaceCentric() {
 //    }
 //
     std::vector<double> positions;
-//    for (auto* vertex : freeVertices) {
-//        int id = vertex->getNode()->getId();
-//        auto position = settings->vertexPlacements[id]->getPosition();
-//        for (int j = 0; j < dims; j++) {
-//            positions.push_back(position.getValue(j));
-//        }
-//    }
-//
+    for (auto* vertex : freeVertices) {
+        int id = vertex->getId();
+        auto position = settings->vertexPlacements[id]->getPosition();
+        for (int j = 0; j < dims; j++) {
+            positions.push_back(position.getValue(j));
+        }
+    }
+
     return positions;
 }
 
