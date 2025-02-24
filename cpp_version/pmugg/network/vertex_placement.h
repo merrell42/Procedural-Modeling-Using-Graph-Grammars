@@ -48,6 +48,7 @@ public:
     void propagate();
     Range getRange();
     ChangeVecMB getChangeMB() const;
+    void setPosition();
 
     // Debug
     // void print() const;
@@ -67,7 +68,6 @@ private:
     // Helper methods
     Matrix* getA(const std::vector<int>& faceIds);
     Matrix* getM();
-    void setPosition();
 };
 
 } // namespace ms

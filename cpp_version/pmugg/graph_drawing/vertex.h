@@ -19,6 +19,7 @@ class Vertex {
 		int getId() const { return id; }
 		Endpoint* getEndpoint(int index) const;
 		Vec3 getPosition() const { return position; }
+		void setPosition(Vec3 newPosition) { position = newPosition; }
 		Vertex* copy();
 
 	private:

@@ -5,6 +5,7 @@
 #include "../graph_drawing/vertex.h"
 #include "../graph_drawing/line.h"
 #include "../graph_drawing/face.h"
+#include "../grid/settings.h"
 #include "../util/timer.h"
 #include "../util/util.h"
 #include <random>
@@ -448,7 +449,10 @@ void NetTransistor::addFixedFace(Face* fixedFaceA, Face* fixedFaceB, double d) {
 }
 
 void NetTransistor::setupFaceCentric() {
-    auto settingsNew = std::make_unique<NetTransistorSettings>();
+    auto extents = globalSettings["Extents"].get<std::vector<int>>();
+    const Vec3 lower(1, 1, 0);
+    const Vec3 upper(extents[0] - 1, extents[1] - 1, extents[2]);
+    auto settingsNew = std::make_unique<NetTransistorSettings>(lower, upper);
     this->settings = std::move(settingsNew);
 
     std::vector<int> basisIds;
@@ -533,6 +537,9 @@ void NetTransistor::setupFaceCentric() {
             }
         }
     }*/
+
+    // constrainVertexIds(fixedVertexIds, settings);
+    constrainVertexIds(vertexIds, settings.get());
 }
 
 Limits NetTransistor::findLimits() {
@@ -579,46 +586,50 @@ bool NetTransistor::hasViolations(const std::vector<double>& positions, const Li
     return false;
 }
 
-//Range NetTransistor::getRange(const std::vector<int>& orderIds,
-//    const std::vector<OrderInfo>& orderInfo) {
-//    Range range(-std::numeric_limits<double>::infinity(),
-//        std::numeric_limits<double>::infinity());
-//
-//    for (size_t i = 0; i < orderIds.size(); i++) {
-//        int id = orderIds[i];
-//        const auto& info = orderInfo[i];
-//        Range rangeI;
-//
-//        if (info.type == "vertex") {
-//            rangeI = settings->getVertex(id)->getRange();
-//        }
-//        else if (info.type == "edge") {
-//            rangeI = settings->getEdge(id)->getRange();
-//        }
-//        else if (info.type == "face") {
-//            rangeI = settings->getFace(id)->getRange(info.vertexId);
-//        }
-//
-//        range = range.intersect(rangeI);
-//    }
-//
-//    return range;
-//}
+Range NetTransistor::getRange(
+    const std::vector<int>& orderIds,
+    const std::vector<OrderInfo>& orderInfo
+) {
+    Range range(-std::numeric_limits<double>::infinity(),
+        std::numeric_limits<double>::infinity());
 
-//void NetTransistor::setPlacements(const std::vector<int>& orderIds,
-//    const std::vector<OrderInfo>& orderInfo) {
-//    for (size_t i = 0; i < orderIds.size(); i++) {
-//        int id = orderIds[i];
-//        const auto& info = orderInfo[i];
-//
-//        if (info.type == "vertex") {
-//            settings->getVertex(id)->setPosition();
-//        }
-//        else if (info.type == "face") {
-//            settings->getFace(id)->setFromVertex(info.vertexId);
-//        }
-//    }
-//}
+    for (size_t i = 0; i < orderIds.size(); i++) {
+        int id = orderIds[i];
+        const auto& info = orderInfo[i];
+        Range rangeI;
+
+        if (info.type == "vertex") {
+            rangeI = settings->getVertex(id)->getRange();
+        }
+        else if (info.type == "edge") {
+            rangeI = settings->getEdge(id)->getRange();
+        }
+        else if (info.type == "face") {
+            rangeI = settings->getFace(id)->getRange(info.vertexId);
+        }
+
+        range = range.intersect(rangeI);
+    }
+
+    return range;
+}
+
+void NetTransistor::setPlacements(
+    const std::vector<int>& orderIds,
+    const std::vector<OrderInfo>& orderInfo
+) {
+    for (size_t i = 0; i < orderIds.size(); i++) {
+        int id = orderIds[i];
+        const auto& info = orderInfo[i];
+
+        if (info.type == "vertex") {
+            settings->getVertex(id)->setPosition();
+        }
+        else if (info.type == "face") {
+            settings->getFace(id)->setFromVertex(info.vertexId);
+        }
+    }
+}
 
 std::vector<double> NetTransistor::sampleFaceCentric() {
 //    if (ground) {
@@ -678,48 +689,43 @@ std::vector<double> NetTransistor::sampleFaceCentric() {
 //    if (!success) return {};
 
     std::vector<int> basisOrders;
+    for (const auto& basisId : settings->basisIds) {
+        basisOrders.push_back(settings->findBasisOrder(basisId));
+    }
+    basisOrders.push_back(settings->orderIds.size());
+
     for (size_t i = 0; i < settings->basisIds.size(); i++) {
-        auto basisOrder = std::find_if(settings->orderIds.begin(),
-            settings->orderIds.end(),
-            [&](const auto& id) {
-                return id == settings->basisIds[i] &&
-                    settings->orderInfo[i].type == "face";
-            }) - settings->orderIds.begin();
-            basisOrders.push_back(basisOrder);
+        int id = settings->basisIds[i];
+        auto* fPlace = settings->facePlacements[id].get();
+        int start = basisOrders[i];
+        int end = basisOrders[i + 1];
+
+        std::vector<int> orderIds(settings->orderIds.begin() + start,
+            settings->orderIds.begin() + end);
+        std::vector<OrderInfo> orderInfo(settings->orderInfo.begin() + start,
+            settings->orderInfo.begin() + end);
+
+        auto range = getRange(orderIds, orderInfo);
+
+        if (fPlace->getFixed() && !range.isInside(fPlace->getD())) {
+            effort = std::numeric_limits<double>::infinity();
+            return {};
+        }
+
+        if (range.isEmpty()) {
+            return {};
+        }
+
+        if (!fPlace->getFixed()) {
+            double d = range.sample();
+            fPlace->setD(d);
+        }
+
+        orderIds.erase(orderIds.begin());
+        orderInfo.erase(orderInfo.begin());
+        setPlacements(orderIds, orderInfo);
     }
 
-//    for (size_t i = 0; i < settings->basisIds.size(); i++) {
-//        int id = settings->basisIds[i];
-//        auto* fPlace = settings->facePlacements[id].get();
-//        int start = basisOrders[i];
-//        int end = basisOrders[i + 1];
-//
-//        std::vector<int> orderIds(settings->orderIds.begin() + start,
-//            settings->orderIds.begin() + end);
-//        std::vector<OrderInfo> orderInfo(settings->orderInfo.begin() + start,
-//            settings->orderInfo.begin() + end);
-//
-//        auto range = getRange(orderIds, orderInfo);
-//
-//        if (fPlace->getFixed() && !range.isInside(fPlace->getD())) {
-//            effort = std::numeric_limits<double>::infinity();
-//            return {};
-//        }
-//
-//        if (range.isEmpty()) {
-//            return {};
-//        }
-//
-//        if (!fPlace->getFixed()) {
-//            double d = range.sample();
-//            fPlace->setD(d);
-//        }
-//
-//        orderIds.erase(orderIds.begin());
-//        orderInfo.erase(orderInfo.begin());
-//        setPlacements(orderIds, orderInfo);
-//    }
-//
     std::vector<double> positions;
     for (auto* vertex : freeVertices) {
         int id = vertex->getId();
@@ -856,24 +862,24 @@ void NetTransistor::freeOneVertex(Vertex* vertex) {
 }
 
 bool NetTransistor::placeVertexPositions(const std::vector<double>& positions) {
-    //// Place vertices at their new positions
-    //for (size_t i = 0; i < freeVertices.size(); i++) {
-    //    Vec3 position;
-    //    if (dims == 2) {
-    //        position = Vec3(positions[dims * i], 
-    //                      positions[dims * i + 1], 
-    //                      0.0);
-    //    } else {
-    //        position = Vec3(positions[dims * i], 
-    //                      positions[dims * i + 1], 
-    //                      positions[dims * i + 2]);
-    //    }
-    //    
-    //    freeVertices[i]->setPosition(position);
-    //    if (!model->inBounds(position.x, position.y, position.z)) {
-    //        return false;
-    //    }
-    //}
+    // Place vertices at their new positions
+    for (size_t i = 0; i < freeVertices.size(); i++) {
+        Vec3 position;
+        if (dims == 2) {
+            position = Vec3(positions[dims * i], 
+                          positions[dims * i + 1], 
+                          0.0);
+        } else {
+            position = Vec3(positions[dims * i], 
+                          positions[dims * i + 1], 
+                          positions[dims * i + 2]);
+        }
+        
+        freeVertices[i]->setPosition(position);
+        /*if (!model->inBounds(position.x, position.y, position.z)) {
+            return false;
+        }*/
+    }
 
     //// Faces to update the face connection
     //std::set<Face*> facesToUpdate;

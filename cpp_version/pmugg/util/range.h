@@ -5,6 +5,7 @@ namespace ms {
 
 class Range {
 public:
+    Range();
     Range(float low, float high, float tileLength = 0);
     ~Range() = default;
 

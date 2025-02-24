@@ -24,7 +24,7 @@ struct OrderInfo {
 
 class NetTransistorSettings {
 public:
-    explicit NetTransistorSettings(/*const MutationArea& mutationArea*/);
+    NetTransistorSettings(Vec3 lower, Vec3 upper) : lower(lower), upper(upper) {};
 
     VertexPlacement* getVertex(int id) { return vertexPlacements[id].get(); }
     EdgePlacement* getEdge(int id) { return edgePlacements[id].get(); }
@@ -37,6 +37,7 @@ public:
     void addToOrder(int id, const std::string& type, int vertexId);
     int createFace(const Vec3& normal);
     void mergeFace(int idA, int idB);
+    int findBasisOrder(const int basisId);
 
     // Member variables
     int newFaceCounter = -1;

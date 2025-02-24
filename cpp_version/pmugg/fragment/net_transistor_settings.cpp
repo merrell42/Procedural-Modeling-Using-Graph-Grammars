@@ -3,10 +3,6 @@
 
 namespace ms {  
 
-NetTransistorSettings::NetTransistorSettings(/* const MutationArea& mutationArea */)
-    : lower(Vec3(1e10, 1e10, 1e10))
-    , upper(Vec3(-1e10, -1e10, -1e10)) {}
-
 void NetTransistorSettings::setVertex(int id, std::unique_ptr<VertexPlacement> vPlace) {
     vertexPlacements[id] = std::move(vPlace);
 }
@@ -62,6 +58,15 @@ void NetTransistorSettings::mergeFace(int idA, int idB) {
             }
         }
     }
+}
+
+int NetTransistorSettings::findBasisOrder(const int basisId) {
+    for (size_t index = 0; index < orderIds.size(); ++index) {
+        if (orderIds[index] == basisId && orderInfo[index].type == "face") {
+            return static_cast<int>(index); // Return matching index
+        }
+    }
+    return -1; // Return -1 if not found
 }
 
 }

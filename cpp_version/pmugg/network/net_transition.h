@@ -11,6 +11,7 @@ class Network;
 class View;
 class Shape3D;
 struct DrawOptions;
+struct OrderInfo;
 
 class NetTransition {
 public:

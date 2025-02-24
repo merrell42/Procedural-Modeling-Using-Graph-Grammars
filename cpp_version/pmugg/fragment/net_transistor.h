@@ -91,6 +91,7 @@ private:
     double effort = 0;
     Graph* graph = nullptr;
     float angle = 0;
+    std::unique_ptr<NetTransistorSettings> settings;
 
     // Helper functions
     void addFixedFace(Face* faceA, Face* faceB, double d);
@@ -104,8 +105,8 @@ private:
     bool placeVertexPositions(const std::vector<double>& positions);
     Limits findLimits();
     bool hasViolations(const std::vector<double>& positions, const Limits& limits);
-
-    std::unique_ptr<NetTransistorSettings> settings;
+    Range getRange(const std::vector<int>& orderIds, const std::vector<OrderInfo>& orderInfo);
+    void setPlacements(const std::vector<int>& orderIds, const std::vector<OrderInfo>& orderInfo);
 };
 
 } // namespace ms 

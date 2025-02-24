@@ -6,6 +6,10 @@
 
 namespace ms {
 
+Range::Range()
+    : data({ 0, 0 })
+    , tileLength(0) {}
+
 Range::Range(float low, float high, float tilelen)
     : data({low, high})
     , tileLength(tilelen) {}

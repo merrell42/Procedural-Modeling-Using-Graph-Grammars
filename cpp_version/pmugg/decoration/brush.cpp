@@ -64,6 +64,9 @@ Brush* Brush::import(Json json) {
         } else if (val.is_number_float()) {
             float converted_val = val.get<float>();
             brush->set(key, converted_val);
+        } else if (val.is_number_integer()) {
+            int converted_val = val.get<int>();
+            brush->set(key, (float)converted_val);
         } else if (val.is_boolean()) {
             bool converted_val = val.get<bool>();
             brush->set(key, converted_val);

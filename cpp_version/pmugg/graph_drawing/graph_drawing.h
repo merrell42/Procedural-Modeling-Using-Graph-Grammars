@@ -43,6 +43,9 @@ class GraphDrawing {
 		void removeLine(Line* line);
 		void removeVertex(Vertex* vertex);
 
+		// Save the mesh to an OBJ file.
+		void save();
+
 	private:
 		std::unordered_map<int, Endpoint*> endpointMap;
 		std::unordered_map<int, Face*>     faceMap;

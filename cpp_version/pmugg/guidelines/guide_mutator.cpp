@@ -83,6 +83,7 @@ void GuideMutator::resolve(/*Model* outputModel*/) {
             (taskCount >= maxIterations)) {*/
         if (taskCount >= maxIterations) {
             timer->stop("Guide Mutator");
+            model->getCurrent()->save();
             return;
             // status = Status::FINISHED;
             // return status;
