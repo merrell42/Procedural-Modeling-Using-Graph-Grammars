@@ -57,7 +57,12 @@ ms.testRunner = function(container, exampleShape, decorationModel, screenSaver, 
 			var scenario = is3D ? scenario3D : scenario2D;
 			this.addShape(solution.category, solution.name, [scenario], solution.data, solution.settings, solution.solution);
 		});
-		// JSON.stringify(solutions.filter((s) => s.solution.useNetworks)[5]).replaceAll('\\"', '"').replaceAll('"{', '{').replaceAll('}"', '}');
+		var exported = solutions.filter((s) => s.solution.useNetworks)[6];
+		ms.classifier.computeBoundaryMorphisms(exported.solution);
+		console.log(JSON.stringify(exported).replaceAll('\\"', '"').replaceAll('"{', '{').replaceAll('}"', '}'));
+
+		// Export JSON.
+		// console.log(JSON.stringify(solutions.filter((s) => s.solution.useNetworks)[5]).replaceAll('\\"', '"').replaceAll('"{', '{').replaceAll('}"', '}'));
 	} else {
 		this.addShapeData(scenario2D, scenario3D);
 	}
@@ -67,7 +72,7 @@ ms.testRunner = function(container, exampleShape, decorationModel, screenSaver, 
 	/******************************************************************************************************************************************************************************************************/
 	/*********************************************************************** Default Shape ****************************************************************************************************************/
 	/******************************************************************************************************************************************************************************************************/
-	this.setShape('3D Shapes', 'Box');
+	this.setShape('3D Shapes', 'L (Floating)');
 	// this.setShape('2D Branches', 'H');
 	// ms.globalSettings.set('Bend Lines', true);
 	// This gives us the old cost weights.

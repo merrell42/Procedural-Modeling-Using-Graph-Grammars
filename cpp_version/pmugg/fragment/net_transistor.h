@@ -99,7 +99,7 @@ private:
     void setupFaceCentric();
     bool sampleSolutionSpace();
     void constrainVertexIds(std::vector<int>& vIds, NetTransistorSettings* settings);
-    std::vector<double> sampleFaceCentric();
+    std::pair<std::vector<double>, bool> sampleFaceCentric();
     std::vector<TransistorPath*> getFreeablePaths() const;
     void freeOneVertex(Vertex* vertex);
     bool placeVertexPositions(const std::vector<double>& positions);

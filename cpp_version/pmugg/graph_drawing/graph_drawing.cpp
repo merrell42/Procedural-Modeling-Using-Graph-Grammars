@@ -4,10 +4,10 @@
 namespace ms {
 
 GraphDrawing::GraphDrawing(
-	std::unordered_map<int, Endpoint*> endpointMap,
-	std::unordered_map<int, Face*>     faceMap,
-	std::unordered_map<int, Line*>     lineMap,
-	std::unordered_map<int, Vertex*>   vertexMap
+	std::map<int, Endpoint*> endpointMap,
+	std::map<int, Face*>     faceMap,
+	std::map<int, Line*>     lineMap,
+	std::map<int, Vertex*>   vertexMap
 ) : endpointMap(endpointMap)
 	, faceMap(faceMap)
 	, lineMap(lineMap)
@@ -15,10 +15,10 @@ GraphDrawing::GraphDrawing(
 {}
 
 GraphDrawing* GraphDrawing::copy() {
-	std::unordered_map<int, Endpoint*> newEndpointMap;
-	std::unordered_map<int, Face*>     newFaceMap;
-	std::unordered_map<int, Line*>     newLineMap;
-	std::unordered_map<int, Vertex*>   newVertexMap;
+	std::map<int, Endpoint*> newEndpointMap;
+	std::map<int, Face*>     newFaceMap;
+	std::map<int, Line*>     newLineMap;
+	std::map<int, Vertex*>   newVertexMap;
 
 	for (const auto& [id, ptr] : endpointMap) {
 		newEndpointMap[id] = ptr->copy();

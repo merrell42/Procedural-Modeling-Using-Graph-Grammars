@@ -125,7 +125,7 @@ NetworkHierarchy* NetworkHierarchy::import(const Json& json) {
     }
     
     hierarchy->grounded = json["grounded"];
-    // hierarchy->emptyNet = BoundNet::import(json["emptyNet"], hierarchy->types);
+    hierarchy->emptyNet = Network::import(json["emptyNet"], hierarchy->shape);
     
     return hierarchy;
 }

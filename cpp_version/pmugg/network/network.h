@@ -30,6 +30,10 @@ public:
     const std::vector<EdgeNet*>& getEdges() const { return edges; }
     const std::vector<HalfEdgeNet*>& getHalfEdges() const { return halfEdges; }
     const std::vector<FaceNet*>& getFaces() const { return faces; }
+    const std::vector<VertexNet*>& getBVertices() const { return bVertices; }
+    const std::vector<HalfEdgeNet*>& getBHalfEdges() const { return bHalfEdges; }
+    EdgeNet* getEdge(int index) const { return index >= 0 ? edges[index] : nullptr; }
+    HalfEdgeNet* getHalfEdge(int index) const { return index >= 0 ? halfEdges[index] : nullptr; }
     // const std::vector<ConnectorGroup*>& getConnectorGroups() const { return connectorGroups; }
     // BoundNet* getBoundNet() const { return boundNet; }
     int getId() const { return id; }
@@ -85,7 +89,10 @@ private:
     std::vector<HalfEdgeNet*> halfEdges;
     std::vector<FaceNet*> faces;
     std::vector<ConnectorGroup*> connectorGroups;
-    // BoundNet* boundNet;
+
+    // Boundary vertices and halfEdges.
+    std::vector<VertexNet*> bVertices;
+    std::vector<HalfEdgeNet*> bHalfEdges;
     int id;
 
     static int nextId;

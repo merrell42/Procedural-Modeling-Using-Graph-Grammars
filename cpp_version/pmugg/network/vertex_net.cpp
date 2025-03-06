@@ -32,6 +32,17 @@ void VertexNet::setHalfEdge(HalfEdgeNet* halfEdge, int index) {
     halfEdges[index] = halfEdge;
 }
 
+int VertexNet::connectorIndex() const {
+    auto bVertices = network->getBVertices();
+    auto it = std::find(bVertices.begin(), bVertices.end(), this);
+    if (it != bVertices.end()) {
+        // Compute the index
+        return std::distance(bVertices.begin(), it);
+    } else {
+        return -1;
+    }
+}
+
 void VertexNet::copyConnection(const VertexNet* copy) {
     auto* copyNet = copy->getNetwork();
     

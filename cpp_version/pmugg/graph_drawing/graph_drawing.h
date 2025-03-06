@@ -16,15 +16,17 @@ class GraphDrawing {
 	public:
 		GraphDrawing() {}
 		GraphDrawing(
-			std::unordered_map<int, Endpoint*> endpointMap,
-			std::unordered_map<int, Face*>     faceMap,
-			std::unordered_map<int, Line*>     lineMap,
-			std::unordered_map<int, Vertex*>   vertexMap
+			std::map<int, Endpoint*> endpointMap,
+			std::map<int, Face*>     faceMap,
+			std::map<int, Line*>     lineMap,
+			std::map<int, Vertex*>   vertexMap
 		);
 		GraphDrawing* copy();
-		Endpoint* getEndpoint(int id) { return endpointMap[id]; }
+		Endpoint* getEndpoint(int id) {
+			return endpointMap[id];
+		}
 		Face* getFace(int id) {         return faceMap[id]; }
-		Line* getLine(int id) {         
+		Line* getLine(int id) {
 			return lineMap[id];
 		}
 		Vertex* getVertex(int id) {
@@ -43,13 +45,18 @@ class GraphDrawing {
 		void removeLine(Line* line);
 		void removeVertex(Vertex* vertex);
 
+		std::map<int, Endpoint*> getEndpointMap() { return endpointMap; }
+		std::map<int, Face*> getFaceMap() { return faceMap; }
+		std::map<int, Line*> getLineMap() { return lineMap; }
+		std::map<int, Vertex*> getVertexMap() { return vertexMap; }
+
 		// Save the mesh to an OBJ file.
 		void save();
 
 	private:
-		std::unordered_map<int, Endpoint*> endpointMap;
-		std::unordered_map<int, Face*>     faceMap;
-		std::unordered_map<int, Line*>     lineMap;
-		std::unordered_map<int, Vertex*>   vertexMap;
+		std::map<int, Endpoint*> endpointMap;
+		std::map<int, Face*>     faceMap;
+		std::map<int, Line*>     lineMap;
+		std::map<int, Vertex*>   vertexMap;
 };
 }

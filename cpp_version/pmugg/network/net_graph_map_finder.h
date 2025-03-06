@@ -14,10 +14,10 @@ class NetGraphMapInfo;
 class NetGraphMapState;
 class Face;
 class Vertex;
-class HalfEdge;
+class HalfEdgeNet;
 class VertexType;
 class Endpoint;
-
+struct EndpointData;
 
 class NetGraphMapFinder {
 public:
@@ -36,10 +36,10 @@ public:
     static constexpr float SMALL_DISTANCE = 1e-8f;
 
 private:
-    struct EndpointData {
+    /*struct EndpointData {
         HalfEdge* halfB;
         Vertex* vertexA;
-    };
+    };*/
 
     /*struct RayIntersection {
         float distance;
@@ -57,13 +57,13 @@ private:
     NetGraphMap* findContinue(NetGraphMapState* state);
     NetGraphMap* assignVertex(NetGraphMapState* state, Vertex* vertexA, int indexB);
     NetGraphMap* matchEndpoint(const EndpointData& endpointData, NetGraphMapState* state);
-    NetGraphMap* assignEndpoint(Endpoint* endpointA, HalfEdge* halfB, NetGraphMapState* state);
+    NetGraphMap* assignEndpoint(Endpoint* endpointA, HalfEdgeNet* halfB, NetGraphMapState* state);
     NetGraphMap* spliceEndpoint(const EndpointData& endpointData, NetGraphMapState* state);
 
     // Ray casting methods
-    /*Face* castVolumeRaySeries(Face* face, const std::vector<HalfEdge*>& rayHalfs, Face* goalFace);
+    /*Face* castVolumeRaySeries(Face* face, const std::vector<HalfEdgeNet*>& rayHalfs, Face* goalFace);
     static RayIntersection castRay(const Vec2& p0, const Vec2& dir, FaceGroup* groupA, int maxDim);
-    static Endpoint* castRaySeries(HalfEdge* halfB, const Vec2& startPos, FaceGroup* groupA, int maxDim);*/
+    static Endpoint* castRaySeries(HalfEdgeNet* halfB, const Vec2& startPos, FaceGroup* groupA, int maxDim);*/
 
     // Static helper methods
     static void addOuterFaces(NetGraphMap* map, Network* netB);

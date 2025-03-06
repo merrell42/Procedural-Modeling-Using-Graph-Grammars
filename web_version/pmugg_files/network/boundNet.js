@@ -141,6 +141,34 @@ ms.boundNet.prototype.getConnectors = function() {
 	return this.cachedConnectors;
 };
 
+ms.boundNet.prototype.getBoundaryMorphism = function() {
+	var indices = { halfs: [], vertices: []};
+	var self = this;
+	var faces = this.getBoundary().getFaces();
+	/* if (faces.length > 1) {
+		faces = faces.filter((f) => f.getOuterComponent().getForward());
+	} */
+	var interior = this.getInterior();
+	var interiorHalfs = interior.getHalfEdges();
+	var interiorVerts = interior.getVertices();
+	faces.forEach((face) => {
+		var outerHalfs = face ? face.getOuterHalfEdges() : [];
+		outerHalfs.forEach((half) => {
+			var halfI = half.boundaryToInterior();
+			indices.halfs.push(interiorHalfs.indexOf(halfI));
+			if (half.getNext() == half && !half.getVertex()) {
+				// This is an outer face with no connectors.
+				return;
+			}
+			var vIndex = interiorVerts.indexOf(halfI.getVertex());
+			if (!indices.vertices.includes(vIndex)) {
+				indices.vertices.push(vIndex);
+			}
+		});
+	});
+	return indices;
+};
+
 // Remove any spliced edges. They should only appear on the interior network.
 // TODO: We could probably remove this from every transition once rather than every time.
 ms.boundNet.prototype.removeSplices = function() {

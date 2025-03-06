@@ -119,9 +119,9 @@ void HalfEdgeNet::import(const Json& json) {
     edgeIndex = json["edgeIndex"];
     vertexIndex = json["vertexIndex"];
     vertex = network->getVertices()[json["vertex"]];
-    edge = network->getEdges()[json["edge"]];
-    prev = network->getHalfEdges()[json["prev"]];
-    next = network->getHalfEdges()[json["next"]];
+    edge = network->getEdge(json["edge"]);
+    prev = network->getHalfEdge(json["prev"]);
+    next = network->getHalfEdge(json["next"]);
     face = network->getFaces()[json["face"]];
 }
 

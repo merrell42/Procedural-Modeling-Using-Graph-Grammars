@@ -31,10 +31,7 @@ public:
     Network* getNetwork() const { return network; }
     ConnectorGroup* getGroup() const { return group; }
     int getId() const { return id; }
-    int connectorIndex() const {
-        // std::cout << "TODO: Implement connectorIndex" << std::endl;
-        return -1;
-    }
+    int connectorIndex() const;
 
     // Network operations
     // void setPrimal(PrimalVertex* primal);

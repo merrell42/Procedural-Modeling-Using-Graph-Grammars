@@ -20,8 +20,50 @@ ms.classifier.prototype.importSolution = function(solution) {
 		this.hierarchy = ms.networkHierarchy.partialImport(solution, xml);
 	} else if (solution.useNetworks) {
 		this.hierarchy = ms.networkHierarchy.import(solution);
+
+		this.hierarchy.transitions.forEach((transition) => {
+			transition.networks.forEach((network) => {
+				network.morphism = network.getBoundaryMorphism();
+				console.log(network.indices);
+				
+				// var indices = network.getConnectors().map((connector) => {
+					// var vertex = connector.interior[0];
+					// return vertex.network.vertices.indexOf(vertex);
+				// });
+				// console.log(indices);
+			});
+		});
+		console.log(JSON.stringify(solution).replaceAll('\\"', '"').replaceAll('"{', '{').replaceAll('}"', '}'));
 	} else {
 		this.hierarchy = ms.familyTree.import(solution);
+	}
+};
+
+ms.classifier.computeBoundaryMorphisms = function(solution) {
+	if (solution.matches) {
+		ms.alert('Not Supported');
+	} else if (solution.useNetworks) {
+		var hierarchy = ms.networkHierarchy.import(solution);
+		hierarchy.transitions.forEach((transition, index) => {
+			var sTransition = solution.transitions[index];
+			transition.networks.forEach((network, i) => {
+				sTransition.n[i].morphism = network.getBoundaryMorphism();
+			});
+		});
+		hierarchy.starterTransitions.forEach((transition, index) => {
+			var sTransition = solution.starterTransitions[index];
+			transition.networks.forEach((network, i) => {
+				sTransition.n[i].morphism = network.getBoundaryMorphism();
+			});
+		});
+		hierarchy.groundTransitions.forEach((transition, index) => {
+			var sTransition = solution.groundTransitions[index];
+			transition.networks.forEach((network, i) => {
+				sTransition.n[i].morphism = network.getBoundaryMorphism();
+			});
+		});
+	} else {
+		ms.alert('Not Supported');
 	}
 };
 

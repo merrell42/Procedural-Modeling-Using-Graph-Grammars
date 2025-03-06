@@ -11,6 +11,7 @@
 #include <random>
 #include <iostream>
 #include <set>
+#include <utility> // For std::pair
 
 namespace ms {
 
@@ -631,7 +632,7 @@ void NetTransistor::setPlacements(
     }
 }
 
-std::vector<double> NetTransistor::sampleFaceCentric() {
+std::pair<std::vector<double>, bool> NetTransistor::sampleFaceCentric() {
 //    if (ground) {
 //        std::vector<double> result;
 //        auto& vertices = endNet->getInterior()->getVertices();
@@ -709,11 +710,11 @@ std::vector<double> NetTransistor::sampleFaceCentric() {
 
         if (fPlace->getFixed() && !range.isInside(fPlace->getD())) {
             effort = std::numeric_limits<double>::infinity();
-            return {};
+            return std::make_pair(std::vector<double>(), false);
         }
 
         if (range.isEmpty()) {
-            return {};
+            return std::make_pair(std::vector<double>(), false);
         }
 
         if (!fPlace->getFixed()) {
@@ -735,7 +736,7 @@ std::vector<double> NetTransistor::sampleFaceCentric() {
         }
     }
 
-    return positions;
+    return std::make_pair(positions, true);
 }
 
 bool NetTransistor::sampleSolutionSpace() {
@@ -750,8 +751,8 @@ bool NetTransistor::sampleSolutionSpace() {
             return false;
         }
 
-        auto positions = sampleFaceCentric();
-        bool violated = positions.empty() || hasViolations(positions, limits);
+        auto [positions, success] = sampleFaceCentric();
+        bool violated = !success || hasViolations(positions, limits);
 
         if (!violated) {
             timer->stop("Sample Solutions");

@@ -21,6 +21,7 @@ class Vertex {
 		Vec3 getPosition() const { return position; }
 		void setPosition(Vec3 newPosition) { position = newPosition; }
 		Vertex* copy();
+		VertexType* getType() const { return type; }
 
 	private:
 		int id;
