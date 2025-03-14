@@ -60,6 +60,11 @@ Vec3 Endpoint::getPosition() const {
 	return getVertex()->getPosition();
 }
 
+void Endpoint::transfer(Line* replacement) {
+	int index = isAtStart ? 1 : 0;
+    replacement->addEndpoint(this, index);
+}
+
 Endpoint* Endpoint::next() const {
     std::vector<Endpoint*> endpoints = getFace()->getEndpoints();
     size_t N = endpoints.size();
@@ -103,6 +108,13 @@ void Endpoint::setFace(Face* face) {
 
 void Endpoint::mergeFaces(Endpoint* next) {
     getFace()->append(next->getFace());
+}
+
+void Endpoint::maybeMergeNextFace() {
+    Endpoint* n = next();
+    if (n) {
+        this->getFace()->append(n->getFace());
+    }
 }
 
 //void Endpoint::maybeMergeNextFace() {

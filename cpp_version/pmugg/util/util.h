@@ -7,6 +7,15 @@
 
 namespace ms {
 
+template <typename T> static
+int indexOf(const std::vector<T>& vec, const T& value) {
+    auto it = std::find(vec.begin(), vec.end(), value);
+    if (it != vec.end()) {
+        return std::distance(vec.begin(), it); // Return the index
+    }
+    return -1; // Return -1 if the value is not found
+}
+
 class Util {
 public:
     // Angle operations

@@ -3,16 +3,19 @@
 
 namespace ms {
 
-// Initialize static member with sin of MIN_ANGLE
-constexpr float Intersector::MIN_CROSS_PRODUCT = std::sin(Intersector::MIN_ANGLE);
+
+std::optional<Vec2> Intersector::intersect(
+    const Vec2& s1, const Vec2& e1,
+    const Vec2& s2, const Vec2& e2) {
+    return intersect(s1, e1, s2, e2, THICKNESS);
+}
 
 std::optional<Vec2> Intersector::intersect(
     const Vec2& s1, const Vec2& e1,
     const Vec2& s2, const Vec2& e2,
-    float thickness1,
-    const IntersectOptions& options) {
-    
-    float thickness2 = options.thickness2;
+    float thickness1
+) {
+    float thickness2 = thickness1;
 
     Vec2 r = e1 - s1;
     Vec2 s = e2 - s2;
@@ -37,12 +40,12 @@ std::optional<Vec2> Intersector::intersect(
 
         // Check if the intersection is within the thickness of both line segments
         Vec2 normal1(-r.y, r.x);
-        normal1 = normal1.normalized();
+        normal1 = normal1.normalize();
         Vec2 normal2(-s.y, s.x);
-        normal2 = normal2.normalized();
+        normal2 = normal2.normalize();
 
         float d1 = std::abs(q.dot(normal1));
-        float d2 = std::abs((-q).dot(normal2));
+        float d2 = std::abs(q.dot(normal2));
 
         if (d1 <= thickness1 && d2 <= thickness2) {
             return intersection;
@@ -109,6 +112,34 @@ std::optional<Intersector::FaceIntersection> Intersector::intersectFaces(
     }
     
     return std::nullopt;
+}
+
+std::vector<IntersectionData> Intersector::lineFaceIntersect(const Vec3& line0Start, const Vec3& line0End, const std::vector<Vec3>& fPositions, int maxDim) {
+    size_t N = fPositions.size();
+    std::vector<Vec2> fPositions2(N);
+
+    // Drop the specified dimension from fPositions
+    for (size_t i = 0; i < N; ++i) {
+        fPositions2[i] = fPositions[i].dropDim(maxDim); // Assuming dropDim is a method of Vec3
+    }
+
+    Vec2 query0 = line0Start.dropDim(maxDim); // Drop dimension from line0 start
+    Vec2 query1 = line0End.dropDim(maxDim); // Drop dimension from line0 end
+
+    std::vector<IntersectionData> intersections;
+
+    for (size_t i = 0; i < N; ++i) {
+        Vec2 v0 = fPositions2[i];
+        Vec2 v1 = fPositions2[(i + 1) % N]; // Wrap around to the first position
+
+        // Assuming intersect is a method that checks for intersection and returns a position
+        auto intersection = intersect(v0, v1, query0, query1);
+        if (intersection.has_value()) { // Check if the optional contains a value
+            intersections.push_back(IntersectionData(intersection.value(), static_cast<int>(i))); // Use intersection.value() to get the contained value
+        }
+    }
+
+    return intersections;
 }
 
 } // namespace ms 

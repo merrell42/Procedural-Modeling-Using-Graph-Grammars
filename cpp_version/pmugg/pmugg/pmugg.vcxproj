@@ -136,6 +136,7 @@
     <ClCompile Include="..\fragment\transistor_path.cpp" />
     <ClCompile Include="..\graph_drawing\endpoint.cpp" />
     <ClCompile Include="..\graph_drawing\face.cpp" />
+    <ClCompile Include="..\graph_drawing\face_group.cpp" />
     <ClCompile Include="..\graph_drawing\graph_drawing.cpp" />
     <ClCompile Include="..\graph_drawing\line.cpp" />
     <ClCompile Include="..\graph_drawing\model.cpp" />
@@ -145,6 +146,7 @@
     <ClCompile Include="..\guidelines\network_mutator.cpp" />
     <ClCompile Include="..\guidelines\vertex_type.cpp" />
     <ClCompile Include="..\hierarchy\network_hierarchy.cpp" />
+    <ClCompile Include="..\intersector.cpp" />
     <ClCompile Include="..\network\edge_net.cpp" />
     <ClCompile Include="..\network\edge_placement.cpp" />
     <ClCompile Include="..\network\face_net.cpp" />
@@ -178,6 +180,7 @@
     <ClInclude Include="..\fragment\transistor_path.h" />
     <ClInclude Include="..\graph_drawing\endpoint.h" />
     <ClInclude Include="..\graph_drawing\face.h" />
+    <ClInclude Include="..\graph_drawing\face_group.h" />
     <ClInclude Include="..\graph_drawing\graph_drawing.h" />
     <ClInclude Include="..\graph_drawing\line.h" />
     <ClInclude Include="..\graph_drawing\model.h" />
@@ -187,6 +190,7 @@
     <ClInclude Include="..\guidelines\network_mutator.h" />
     <ClInclude Include="..\guidelines\vertex_type.h" />
     <ClInclude Include="..\hierarchy\network_hierarchy.h" />
+    <ClInclude Include="..\intersector.h" />
     <ClInclude Include="..\network\edge_net.h" />
     <ClInclude Include="..\network\edge_placement.h" />
     <ClInclude Include="..\network\face_net.h" />

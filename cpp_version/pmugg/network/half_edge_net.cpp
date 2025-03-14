@@ -103,16 +103,17 @@ const FaceData* HalfEdgeNet::getFaceDatum() const {
     return &edge->getType()->getFaceData()[edgeIndex];
 }
 
-//Vec2 HalfEdgeNet::getDir() const {
-//    if (!edge) {
-//        return Vec2();
-//    }
-//    auto dir = edge->getPrimal()->getType()->getDir();
-//    if (!forward) {
-//        return dir.scale(-1);
-//    }
-//    return dir;
-//}
+Vec3 HalfEdgeNet::getDir() const {
+    if (!edge) {
+        // This maybe should be null.
+        return Vec3();
+    }
+    auto dir = edge->getType()->getDir();
+    if (!forward) {
+        return dir.scale(-1);
+    }
+    return dir;
+}
 
 void HalfEdgeNet::import(const Json& json) {
     forward = json["forward"];

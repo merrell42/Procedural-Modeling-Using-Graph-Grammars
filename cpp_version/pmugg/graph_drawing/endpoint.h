@@ -32,8 +32,9 @@ public:
 	void setFace(Face* face);
 	void mergeFaces(Endpoint* next);
 	FaceType3D* getFaceType();
-	/*void maybeMergeNextFace();
-	void maybeMergePrevFace();*/
+	void transfer(Line* replacement);
+	void maybeMergeNextFace();
+	/*void maybeMergePrevFace();*/
 
 private:
 	int id;

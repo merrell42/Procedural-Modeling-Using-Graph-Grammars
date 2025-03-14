@@ -37,7 +37,7 @@ public:
     Vec3& rotateY(float theta);
     Vec3& rotateZ(float theta);
     Vec3 copy() const;
-    Vec2 dropDim() const;
+    Vec2 dropDim(int dim) const;
     std::string toString() const;
     static Vec3 import(const Json & json);
     Vec3 swapAxes() const;

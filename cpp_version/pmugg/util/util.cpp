@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <stdexcept>
 #include <random>
+#include <vector>
 
 namespace ms {
 

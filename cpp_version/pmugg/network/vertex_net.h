@@ -25,7 +25,12 @@ public:
 
     // Core accessors
     const std::vector<HalfEdgeNet*>& getHalfEdges() const { return halfEdges; }
-    VertexType* getType() { return type; }
+    VertexType* getType() {
+        if (kind == "e") {
+            std::cout << "Edgetype" << std::endl;
+        }
+        return type;
+    }
     void setType(VertexType* type_) { type = type_; }
     // PrimalVertex* getPrimal() const { return primal; }
     Network* getNetwork() const { return network; }
@@ -54,6 +59,9 @@ public:
     // Json export() const;
     void import(const Json& json);
 
+
+    // ******** TODO: Replace with edgeType ****
+    std::string kind;
 private:
     std::vector<HalfEdgeNet*> halfEdges;
     // PrimalVertex* primal;

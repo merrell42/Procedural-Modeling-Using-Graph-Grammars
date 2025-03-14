@@ -12,6 +12,10 @@
 //#include "edge.h"
 #include "../util/util.h"
 //#include "settings.h"
+#include <algorithm> // For std::find
+#include "../intersector.h"
+#include <limits>
+#include <random>
 
 namespace ms {
 
@@ -236,12 +240,12 @@ NetGraphMap* NetGraphMapFinder::findContinue(NetGraphMapState* state) {
         EndpointData endpointData = queue.front();
         queue.erase(queue.begin());
         return matchEndpoint(endpointData, state);
-    } /* else if (!state->getSpliceQueue().empty()) {
+    } else if (!state->getSpliceQueue().empty()) {
         auto queue = state->getSpliceQueue();
         EndpointData endpointData = queue.front();
         queue.erase(queue.begin());
         return spliceEndpoint(endpointData, state);
-    } */
+    }
     return state->getMap();
 }
 
@@ -300,120 +304,122 @@ NetGraphMap* NetGraphMapFinder::matchEndpoint(
     return assignEndpoint(endpointA, halfB, state);
 }
 
-//NetGraphMap* NetGraphMapFinder::spliceEndpoint(const EndpointData& endpointData,
-//    NetGraphMapState* state) {
-//
-//    HalfEdge* halfB = endpointData.halfB;
-//    Vertex* vertexA = endpointData.vertexA;
-//    NetB* netB = state->info->netB;
-//
-//    // Find end of splice chain
-//    HalfEdge* endB = halfB;
-//    while (endB->isSpliced()) {
-//        endB = endB->getNext();
-//    }
-//
-//    int vIndexB = state->info->findVertexIndex(endB->getVertex());
-//    if (state->map->vertexBtoA[vIndexB]) {
-//        return findContinue(state);
-//    }
-//
-//    // Find matching endpoint
-//    EdgeType* faceTypeB = halfB->getEdge()->getPrimal()->getType()->getFaceData()[0].type;
-//    Endpoint* endpointA = nullptr;
-//
-//    for (auto* ep : vertexA->getEndpoints()) {
-//        if (ep->getFace()->getFaceType() == faceTypeB) {
-//            endpointA = ep;
-//            break;
-//        }
-//    }
-//
-//    if (!endpointA) {
-//        return nullptr;
-//    }
-//
-//    // Cast ray series
-//    FaceGroup* groupA = endpointA->getFace()->getGroup();
-//    int maxDim = faceTypeB->getMaxDim();
-//    Vector3 startPos = vertexA->getPosition();
-//
-//    int attempts = 0;
-//    Endpoint* intersectEndpoint = nullptr;
-//
-//    while (attempts < spliceRayAttempts && !intersectEndpoint) {
-//        intersectEndpoint = castRaySeries(halfB, startPos, groupA, maxDim);
-//        attempts++;
-//    }
-//
-//    if (!intersectEndpoint) {
-//        return nullptr;
-//    }
-//
-//    // Handle intersection results
-//    Vertex* vertexA0 = intersectEndpoint->getVertex();
-//    Vertex* vertexA1 = intersectEndpoint->next()->getVertex();
-//
-//    int vIndex0 = state->map->findVertexIndex(vertexA0);
-//    int vIndex1 = state->map->findVertexIndex(vertexA1);
-//    int eIndex = state->map->findEdgeIndex(intersectEndpoint->getLine());
-//
-//    if (vIndex0 < 0 && vIndex1 < 0 && eIndex < 0) {
-//        // Split once for unmatched line and vertices
-//        auto result = intersectEndpoint->getLine()->fullSplit(Util::randomUniform(0, 1));
-//        nodesModified = true;
-//        return assignVertex(state, result.newVertex, vIndexB);
-//    }
-//    else if (vIndex0 >= 0 && vIndex1 >= 0 && eIndex >= 0) {
-//        // Split three times for matched line and vertices
-//        bool isAtStart0 = intersectEndpoint->getIsAtStart();
-//        Vertex* vertexB0 = netB->getInterior()->getVertices()[vIndex0];
-//        Vertex* vertexB1 = netB->getInterior()->getVertices()[vIndex1];
-//
-//        bool isConnector0 = (vertexB0->getPrimal()->connectorIndex() >= 0);
-//        bool isConnector1 = (vertexB1->getPrimal()->connectorIndex() >= 0);
-//
-//        if (!(isConnector0 ^ isConnector1)) {
-//            throw std::runtime_error("Expected one of the vertices to be a connector.");
-//        }
-//
-//        bool connectorAtStart = isConnector0 ? isAtStart0 : !isAtStart0;
-//        nodesModified = true;
-//
-//        // Perform triple split
-//        std::vector<Line*> splitLines;
-//        std::vector<Vertex*> splitVertices;
-//        Line* lineToSplit = intersectEndpoint->getLine();
-//
-//        for (int i = 0; i < 3; i++) {
-//            auto result = lineToSplit->fullSplit(1.0 / (4 - i));
-//            splitVertices.push_back(result.newVertex);
-//            splitLines.push_back(result.split.lines[0]);
-//            lineToSplit = result.split.lines[1];
-//
-//            if (i == 2) {
-//                splitLines.push_back(lineToSplit);
-//            }
-//        }
-//
-//        int vIndexCon = isConnector0 ? vIndex0 : vIndex1;
-//        if (connectorAtStart) {
-//            state->map->vertexBtoA[vIndexCon] = splitVertices[2];
-//            state->map->edgeBtoA[eIndex] = splitLines[3];
-//            return assignVertex(state, splitVertices[0], vIndexB);
-//        }
-//        else {
-//            state->map->vertexBtoA[vIndexCon] = splitVertices[0];
-//            state->map->edgeBtoA[eIndex] = splitLines[0];
-//            return assignVertex(state, splitVertices[2], vIndexB);
-//        }
-//    }
-//    else if (vIndex0 < 0 || vIndex1 < 0 || eIndex < 0) {
-//        throw std::runtime_error("Unsure what to do about a partial match");
-//    }
-//
-//    return nullptr;
-//}
+NetGraphMap* NetGraphMapFinder::spliceEndpoint(
+    const EndpointData& endpointData,
+    NetGraphMapState* state
+) {
+
+    HalfEdgeNet* halfB = endpointData.halfB;
+    Vertex* vertexA = endpointData.vertexA;
+    Network* netB = state->getInfo()->networkB;
+
+    // Find end of splice chain
+    HalfEdgeNet* endB = halfB;
+    while (endB->isSpliced()) {
+        endB = endB->getNext();
+    }
+
+    int vIndexB = indexOf(state->getInfo()->verticesB, endB->getVertex());
+    if (state->getMap()->vertexBtoA[vIndexB]) {
+        return findContinue(state);
+    }
+
+    // Find matching endpoint
+    FaceType3D* faceTypeB = halfB->getEdge()->getType()->getFaceData()[0].type;
+    Endpoint* endpointA = nullptr;
+
+    for (auto* ep : vertexA->getEndpoints()) {
+        if (ep->getFace()->getFaceType() == faceTypeB) {
+            endpointA = ep;
+            break;
+        }
+    }
+
+    if (!endpointA) {
+        return nullptr;
+    }
+
+    // Cast ray series
+    FaceGroup* groupA = endpointA->getFace()->getGroup();
+    int maxDim = faceTypeB->getMaxDim();
+    const Vec3 startPos = vertexA->getPosition();
+
+    int attempts = 0;
+    Endpoint* intersectEndpoint = nullptr;
+
+    while (attempts < spliceRayAttempts && !intersectEndpoint) {
+        intersectEndpoint = castRaySeries(halfB, startPos, groupA, maxDim);
+        attempts++;
+    }
+
+    if (!intersectEndpoint) {
+        return nullptr;
+    }
+
+    // Handle intersection results
+    Vertex* vertexA0 = intersectEndpoint->getVertex();
+    Vertex* vertexA1 = intersectEndpoint->next()->getVertex();
+
+    int vIndex0 = indexOf(state->getMap()->getVertexBtoA(), vertexA0);
+    int vIndex1 = indexOf(state->getMap()->getVertexBtoA(), vertexA1);
+    int eIndex = indexOf(state->getMap()->getEdgeBtoA(), intersectEndpoint->getLine());
+
+    if (vIndex0 < 0 && vIndex1 < 0 && eIndex < 0) {
+        // Split once for unmatched line and vertices
+        auto result = intersectEndpoint->getLine()->fullSplit(Util::randomUniform(0, 1));
+        nodesModified = true;
+        return assignVertex(state, result.second, vIndexB);
+    }
+    else if (vIndex0 >= 0 && vIndex1 >= 0 && eIndex >= 0) {
+        // Split three times for matched line and vertices
+        bool isAtStart0 = intersectEndpoint->getIsAtStart();
+        VertexNet* vertexB0 = netB->getVertices()[vIndex0];
+        VertexNet* vertexB1 = netB->getVertices()[vIndex1];
+
+        bool isConnector0 = (vertexB0->connectorIndex() >= 0);
+        bool isConnector1 = (vertexB1->connectorIndex() >= 0);
+
+        if (!(isConnector0 ^ isConnector1)) {
+            throw std::runtime_error("Expected one of the vertices to be a connector.");
+        }
+
+        bool connectorAtStart = isConnector0 ? isAtStart0 : !isAtStart0;
+        nodesModified = true;
+
+        // Perform triple split
+        std::vector<Line*> splitLines;
+        std::vector<Vertex*> splitVertices;
+        Line* lineToSplit = intersectEndpoint->getLine();
+
+        for (int i = 0; i < 3; i++) {
+            auto result = lineToSplit->fullSplit(1.0 / (4 - i));
+            splitVertices.push_back(result.second);
+            splitLines.push_back(result.first.lines[0]);
+            lineToSplit = result.first.lines[1];
+
+            if (i == 2) {
+                splitLines.push_back(lineToSplit);
+            }
+        }
+
+        int vIndexCon = isConnector0 ? vIndex0 : vIndex1;
+        if (connectorAtStart) {
+            state->getMap()->vertexBtoA[vIndexCon] = splitVertices[2];
+            state->getMap()->edgeBtoA[eIndex] = splitLines[3];
+            return assignVertex(state, splitVertices[0], vIndexB);
+        }
+        else {
+            state->getMap()->vertexBtoA[vIndexCon] = splitVertices[0];
+            state->getMap()->edgeBtoA[eIndex] = splitLines[0];
+            return assignVertex(state, splitVertices[2], vIndexB);
+        }
+    }
+    else if (vIndex0 < 0 || vIndex1 < 0 || eIndex < 0) {
+        throw std::runtime_error("Unsure what to do about a partial match");
+    }
+
+    return nullptr;
+}
 
 NetGraphMap* NetGraphMapFinder::assignEndpoint(Endpoint* endpointA, HalfEdgeNet* halfB, NetGraphMapState* state) {
     auto info = state->getInfo();
@@ -426,10 +432,10 @@ NetGraphMap* NetGraphMapFinder::assignEndpoint(Endpoint* endpointA, HalfEdgeNet*
     bool isConnector = vertexB->connectorIndex() >= 0;
     auto vertexType = vertexB->getType();
 
-    //if (!isConnector && vertexType.getSpliced() && map->vertexBtoA[vIndexB] == 0) {
-    //    endpointA->getLine()->fullSplit(static_cast<double>(rand()) / RAND_MAX); // Simulating ms.randomUniform(0, 1)
-    //    nodesModified = true;
-    //}
+    if (!isConnector && vertexType->getSpliced() && map->vertexBtoA[vIndexB] == 0) {
+        endpointA->getLine()->fullSplit(static_cast<double>(rand()) / RAND_MAX); // Simulating ms.randomUniform(0, 1)
+        nodesModified = true;
+    }
 
     Line* lineA = endpointA->getLine();
     EdgeNet* edgeB = halfB->getEdge();
@@ -457,6 +463,82 @@ NetGraphMap* NetGraphMapFinder::assignEndpoint(Endpoint* endpointA, HalfEdgeNet*
         return assignVertex(state, vertexA, vIndexB);
     } else {
         return nullptr;
+    }
+}
+
+// Cast a ray and find the nearest intersection
+IntersectResult NetGraphMapFinder::castRay(const Vec3& p0, const Vec3& dir, FaceGroup* groupA, int maxDim) {
+    Vec3 p1 = dir;
+    p1.scale(Intersector::FAR_DISTANCE);
+    p1.add(p0);
+    Vec2 dir2 = dir.dropDim(maxDim);
+
+    IntersectResult nearestIntersect;
+    nearestIntersect.distance = std::numeric_limits<double>::infinity();
+    nearestIntersect.face = nullptr;
+    nearestIntersect.data = nullptr;
+
+    for (Face* faceA : groupA->getFaces()) {
+        std::vector<Vec3> fPositions = faceA->getPositions();
+
+        std::vector<IntersectionData> intersections = Intersector::lineFaceIntersect(p0, p1, fPositions, maxDim);
+        for (const IntersectionData& intersection : intersections) {
+            double distance = dir2.dot(intersection.pos);
+            if (distance < nearestIntersect.distance) {
+                nearestIntersect.distance = distance;
+                nearestIntersect.face = faceA;
+                nearestIntersect.data = new IntersectionData(intersection); // Create a copy
+            }
+        }
+    }
+    return nearestIntersect;
+}
+
+// Cast a series of rays
+Endpoint* NetGraphMapFinder::castRaySeries(HalfEdgeNet* halfB, const Vec3& startPos, FaceGroup* groupA, int maxDim) {
+    Vec3 p0 = startPos;
+    HalfEdgeNet* nextB = halfB->getNext();
+    
+    while (true) {
+        const Vec3 dir = halfB->getDir();
+        IntersectResult nearestIntersect = castRay(p0, dir, groupA, maxDim);
+
+        if (!nearestIntersect.data) {
+            return nullptr;
+        }
+        
+        if (nextB->isSpliced()) {
+            Vec2 dir2 = dir.dropDim(maxDim);
+            double scale = dir.length() / dir2.length();
+            double nearestDist = scale * nearestIntersect.distance;
+            double maxDistance = std::max(nearestDist, (double)maxRayDistance);
+            
+            // Generate random uniform value
+            std::random_device rd;
+            std::mt19937 gen(rd());
+            std::uniform_real_distribution<> dis(0, maxDistance);
+            double d = dis(gen);
+            
+            p0 = dir;
+            p0.scale(d);
+            p0.add(startPos);
+        } else {
+            Endpoint* nextA = nearestIntersect.face->getEndpoints()[nearestIntersect.data->index];
+            EdgeType3D* edgeTypeA = nextA->getEdgeType();
+            EdgeType3D* edgeTypeB = nextB->getEdge()->getType();
+            
+            if (edgeTypeA != edgeTypeB) {
+                delete nearestIntersect.data; // Clean up
+                return nullptr;
+            } else {
+                delete nearestIntersect.data; // Clean up
+                return nextA;
+            }
+        }
+
+        delete nearestIntersect.data; // Clean up
+        halfB = nextB;
+        nextB = nextB->getNext();
     }
 }
 

@@ -5,7 +5,7 @@
 #include "../network/edge_net.h"
 #include "../network/face_net.h"
 #include "../network/bound_net.h"
-#include "../guidelines/face.h"
+#include "../graph_drawing/face.h"
 // #include "connector_group.h"
 // #include "bound_net.h"
 // #include "view.h"
@@ -185,6 +185,8 @@ Network* Network::import(const Json & json, Shape3D* shape) {
         auto vertexData = json["vertices"][index];
         int type = vertexData["type"].get<int>();
         result->getVertices()[index]->setType(shape->vertexTypes[type]);
+
+        result->getVertices()[index]->kind = vertexData["kind"].get<std::string>();
     }
     for (size_t index = 0; index < json["edges"].size(); ++index) {
         auto edgeData = json["edges"][index];

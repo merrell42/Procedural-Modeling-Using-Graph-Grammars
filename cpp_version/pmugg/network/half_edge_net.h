@@ -10,6 +10,7 @@ class Network;
 class VertexNet;
 class EdgeNet;
 class FaceNet;
+class Vec3;
 struct FaceData;
 
 class HalfEdgeNet {
@@ -45,7 +46,7 @@ public:
 
     // Face data
     const FaceData* getFaceDatum() const;
-    // Vec2 getDir() const;
+    Vec3 getDir() const;
 
     // Import/Export
     void import(const Json& json);

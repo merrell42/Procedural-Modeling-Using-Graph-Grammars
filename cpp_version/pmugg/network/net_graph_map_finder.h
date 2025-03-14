@@ -4,6 +4,7 @@
 #include "../shape/vec2.h"
 #include "../network/network.h"
 #include "../graph_drawing/model.h"
+#include "../graph_drawing/face_group.h"
 
 namespace ms {
 
@@ -17,7 +18,18 @@ class Vertex;
 class HalfEdgeNet;
 class VertexType;
 class Endpoint;
+class FaceGroup;
 struct EndpointData;
+struct IntersectionData;
+
+// Structure to hold intersection results
+struct IntersectResult {
+    double distance;
+    Face* face;
+    IntersectionData* data;
+
+    IntersectResult() : distance(std::numeric_limits<double>::infinity()), face(nullptr), data(nullptr) {}
+};
 
 class NetGraphMapFinder {
 public:
@@ -61,9 +73,9 @@ private:
     NetGraphMap* spliceEndpoint(const EndpointData& endpointData, NetGraphMapState* state);
 
     // Ray casting methods
-    /*Face* castVolumeRaySeries(Face* face, const std::vector<HalfEdgeNet*>& rayHalfs, Face* goalFace);
-    static RayIntersection castRay(const Vec2& p0, const Vec2& dir, FaceGroup* groupA, int maxDim);
-    static Endpoint* castRaySeries(HalfEdgeNet* halfB, const Vec2& startPos, FaceGroup* groupA, int maxDim);*/
+    /*Face* castVolumeRaySeries(Face* face, const std::vector<HalfEdgeNet*>& rayHalfs, Face* goalFace);*/
+    static IntersectResult castRay(const Vec3& p0, const Vec3& dir, FaceGroup* groupA, int maxDim);
+    static Endpoint* castRaySeries(HalfEdgeNet* halfB, const Vec3& startPos, FaceGroup* groupA, int maxDim);
 
     // Static helper methods
     static void addOuterFaces(NetGraphMap* map, Network* netB);

@@ -10,6 +10,7 @@ namespace ms {
 class Model;
 class Endpoint;
 class FaceType3D;
+class FaceGroup;
 
 class Face {
 	public:
@@ -19,10 +20,16 @@ class Face {
 		int getId() const { return id; };
 		std::vector<Endpoint*> getEndpoints() const;
 		Endpoint* getEndpoint(int index) const;
+		std::vector<Vec3> getPositions() const;
 		FaceType3D* getFaceType() const { return faceType; }
 		Range dirBounds(const Vec3& dir) const;
 		void append(Face* faceB);
 		void setLooped(bool looped_) { looped = looped_; }
+		FaceGroup* getGroup() const;
+		void split(Endpoint* endpoint);
+		bool isHole() { return false; }
+		void destroy();
+		void insert(Endpoint* endpoint, Endpoint* prevEndpoint);
 
 	private:
 		int id;

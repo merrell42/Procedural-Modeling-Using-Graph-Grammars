@@ -155,8 +155,14 @@ Vec3 Vec3::copy() const {
     return *this;
 }
 
-Vec2 Vec3::dropDim() const {
-    return Vec2(x, y);
+Vec2 Vec3::dropDim(int dim) const {
+    if (dim == 0) {
+        return Vec2(y, z);
+    } else if (dim == 1) {
+        return Vec2(x, z);
+    } else {
+        return Vec2(x, y);
+    }
 }
 
 std::string Vec3::toString() const {
