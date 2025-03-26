@@ -4,6 +4,7 @@
 #include "face.h"
 #include "line.h"
 #include "vertex.h"
+#include <iostream>
 
 namespace ms {
 
@@ -23,7 +24,7 @@ class GraphDrawing {
 		);
 		GraphDrawing* copy();
 		Endpoint* getEndpoint(int id) {
-			return endpointMap[id];
+			return id >= 0 ? endpointMap[id] : nullptr;
 		}
 		Face* getFace(int id) {         return faceMap[id]; }
 		Line* getLine(int id) {
@@ -33,7 +34,9 @@ class GraphDrawing {
 			return vertexMap[id];
 		}
 
-		void addEndpoint(int id, Endpoint* endpoint) { endpointMap[id] = endpoint; }
+		void addEndpoint(int id, Endpoint* endpoint) {
+			endpointMap[id] = endpoint;
+		}
 		void addFace    (int id, Face* face) {         faceMap[id] = face; }
 		void addLine    (int id, Line* line) {         lineMap[id] = line; }
 		void addVertex  (int id, Vertex* vertex) {

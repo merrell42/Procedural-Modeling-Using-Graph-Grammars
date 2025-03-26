@@ -10,7 +10,7 @@ int TransistorPath::count = 0;
 
 TransistorPath* TransistorPath::createNet(const std::vector<Endpoint*>& endpoints,
                                         const std::vector<Line*>& edges,
-                                        const std::vector<Line*>& lines) {
+                                        std::vector<Line*>* lines) {
     std::vector<IndexInfo> indices;
     for (auto* endpoint : endpoints) {
         auto it = std::find_if(edges.begin(), edges.end(),
@@ -45,7 +45,7 @@ TransistorPath* TransistorPath::createNet(const std::vector<Endpoint*>& endpoint
 //}
 
 TransistorPath::TransistorPath(const std::vector<IndexInfo>& indices,
-                             const std::vector<Line*>& lines)
+                             std::vector<Line*>* lines)
     : indices(indices)
     , lines(lines)
     , extendable{true, true}
@@ -94,16 +94,16 @@ Vertex* TransistorPath::rigidNextVertex() {
 }
 
 Line* TransistorPath::lineFromIndex(int index) {
-    return lines[indices[index].index];
+    return (*lines)[indices[index].index];
 }
 
 TransistorPath::IndexInfo TransistorPath::indexForEndpoint(Endpoint* endpoint) {
-    auto it = std::find_if(lines.begin(), lines.end(), 
+    auto it = std::find_if(lines->begin(), lines->end(), 
         [endpoint](Line* line) {
             return line == endpoint->getLine();
         });
     return {
-        static_cast<int>(std::distance(lines.begin(), it)),
+        static_cast<int>(std::distance(lines->begin(), it)),
         endpoint->getIsAtStart()
     };
 }

@@ -18,11 +18,11 @@ NetGraphMap* NetGraphMap::copy() const {
     return result;
 }
 
-std::unique_ptr<NetGraphMap> NetGraphMap::create(const NetGraphMapInfo& info) {
+NetGraphMap* NetGraphMap::create(const NetGraphMapInfo& info) {
     auto netB = info.networkB; // Assuming netB is accessible from info
 
     // Create a new instance of NetGraphMap using unique_ptr
-    auto map = std::make_unique<NetGraphMap>();
+    auto map = new NetGraphMap();
 
     // Initialize vertexBtoA and edgeBtoA with null pointers
     map->vertexBtoA.resize(netB->getVertices().size(), nullptr);

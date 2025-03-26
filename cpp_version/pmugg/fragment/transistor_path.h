@@ -20,13 +20,12 @@ public:
     static int count;
     static TransistorPath* createNet(const std::vector<Endpoint*>& endpoints,
                                    const std::vector<Line*>& edges,
-                                   const std::vector<Line*>& lines);
+                                   std::vector<Line*>* lines);
     //static TransistorPath* create(const std::vector<Endpoint*>& endpoints,
     //                            const std::vector<Line*>& edges,
     //                            const std::vector<Line*>& lines);
 
-    // Constructor
-    TransistorPath(const std::vector<IndexInfo>& indices, const std::vector<Line*>& lines);
+    TransistorPath(const std::vector<IndexInfo>& indices, std::vector<Line*>* lines);
 
     // Member functions
     void setEndpoints(const std::vector<Endpoint*>& endpoints);
@@ -43,7 +42,7 @@ public:
 
     // Member variables
     std::vector<IndexInfo> indices;
-    std::vector<Line*> lines;
+    std::vector<Line*>* lines;
     std::vector<Endpoint*> endpoints;
     std::vector<bool> extendable;
     int id;

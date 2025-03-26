@@ -241,7 +241,7 @@ NetGraphMap* NetGraphMapFinder::findContinue(NetGraphMapState* state) {
         queue.erase(queue.begin());
         return matchEndpoint(endpointData, state);
     } else if (!state->getSpliceQueue().empty()) {
-        auto queue = state->getSpliceQueue();
+        std::vector<EndpointData>& queue = state->getSpliceQueue();
         EndpointData endpointData = queue.front();
         queue.erase(queue.begin());
         return spliceEndpoint(endpointData, state);
@@ -526,12 +526,11 @@ Endpoint* NetGraphMapFinder::castRaySeries(HalfEdgeNet* halfB, const Vec3& start
             Endpoint* nextA = nearestIntersect.face->getEndpoints()[nearestIntersect.data->index];
             EdgeType3D* edgeTypeA = nextA->getEdgeType();
             EdgeType3D* edgeTypeB = nextB->getEdge()->getType();
-            
+
+            delete nearestIntersect.data;
             if (edgeTypeA != edgeTypeB) {
-                delete nearestIntersect.data; // Clean up
                 return nullptr;
             } else {
-                delete nearestIntersect.data; // Clean up
                 return nextA;
             }
         }

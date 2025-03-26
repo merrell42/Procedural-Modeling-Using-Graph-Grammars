@@ -43,6 +43,9 @@ bool NetworkMutator::applyTransition(Transition transition) {
     if (!transition.startNet && !transition.endNet) {
         return false;
     }
+    if (transition.startNet->getId() == 2) {
+        return false;
+    }
     timer->start("Find Transition Map");
     auto netGraphMap = mapFinder->findMap(transition.startNet);
     timer->stop("Find Transition Map");

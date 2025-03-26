@@ -42,7 +42,7 @@ public:
     HalfEdgeNet* getTwin() const;
     // HalfEdgeNet* boundaryToInterior() const;
     bool isSpliced() const;
-    bool isLoopy() const;
+    bool isLoopy();
 
     // Face data
     const FaceData* getFaceDatum() const;

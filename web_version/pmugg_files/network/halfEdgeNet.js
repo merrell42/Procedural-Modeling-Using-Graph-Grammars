@@ -137,3 +137,46 @@ ms.halfEdgeNet.prototype.print = function() {
 	ms.highlight(this.getHalfEdgeSet());
 	return this.id;
 };
+
+ms.halfEdgeNet.prototype.getHalfEdgeSet = function(opt_drawBackwards) {
+	var interior = this.edge && this.edge.primal.getInterior();
+	if (this.edge && (interior != this.edge)) {
+		var result = interior.getHalfEdgeSet();
+		if (!this.forward) {
+			result.reverse();
+		}
+		return result;
+	} else {
+		return new ms.halfEdgeSet([this]);
+	}
+};
+
+
+
+ms.halfEdgeSet = function(halfEdges, isBackwards) {
+	this.halfEdges = halfEdges;
+	this.isBackwards = isBackwards;
+};
+
+ms.halfEdgeSet.create = function(halfEdges, isBackwards) {
+	return {halfEdgeSet: new ms.halfEdgeSet(halfEdges, isBackwards)};
+};
+
+ms.halfEdgeSet.prototype.reverse = function() {
+	this.isBackwards = new Array(this.halfEdges.length).fill(true);
+};
+
+ms.halfEdgeSet.prototype.concat = function(setB) {
+	this.halfEdges = this.halfEdges.concat(setB.halfEdges);
+	this.isBackwards = this.isBackwards.concat(setB.isBackwards);
+};
+
+ms.halfEdgeSet.prototype.highlight = function(view) {
+	var options = {halfEdgeSet: this};
+	this.halfEdges[0].network.highlight(view, options);
+};
+
+ms.halfEdgeSet.prototype.requiresShapeView = function () {
+	return true;
+};
+

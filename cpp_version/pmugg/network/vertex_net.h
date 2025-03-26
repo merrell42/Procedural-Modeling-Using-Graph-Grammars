@@ -16,6 +16,7 @@ class HalfEdgeNet;
 class ConnectorGroup;
 class View;
 class VertexType;
+class EdgeNet;
 struct DrawOptions;
 
 class VertexNet {
@@ -27,7 +28,7 @@ public:
     const std::vector<HalfEdgeNet*>& getHalfEdges() const { return halfEdges; }
     VertexType* getType() {
         if (kind == "e") {
-            std::cout << "Edgetype" << std::endl;
+            // The edge case may not be handled correctly.
         }
         return type;
     }
@@ -37,6 +38,7 @@ public:
     ConnectorGroup* getGroup() const { return group; }
     int getId() const { return id; }
     int connectorIndex() const;
+    EdgeNet* interiorEdge() const;
 
     // Network operations
     // void setPrimal(PrimalVertex* primal);

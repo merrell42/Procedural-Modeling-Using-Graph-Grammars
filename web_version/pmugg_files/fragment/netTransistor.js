@@ -148,6 +148,10 @@ ms.netTransistor.prototype.createGraph = function() {
 	ms.taskDebug();
 	
 	var edgeData = [];
+	
+	if (startNet.id == 0) {
+		debugger;
+	}
 	// A mapping from the core vertex to the graph vertices. Just for the outer vertices.
 	for (var i = 0; i < endEdges.length; i++) {
 		var endEdge = endEdges[i];
@@ -179,7 +183,7 @@ ms.netTransistor.prototype.createGraph = function() {
 				var lineIndex = half.getForward() ? 0 : 1
 				var coreEndpoint = splitLines[startIndex][lineIndex].getEndpoints()[e];
 				splitLines[startIndex][lineIndex] = null;
-				coreEndpoints[e] = coreEndpoint;
+				coreEndpoints.push(coreEndpoint);
 				
 				halfEdges.push(half);
 				modified = true;

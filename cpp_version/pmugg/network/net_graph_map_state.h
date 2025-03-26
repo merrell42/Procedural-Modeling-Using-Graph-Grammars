@@ -24,7 +24,7 @@ public:
 
     // Core functionality
     NetGraphMapInfo* getInfo() const { return info; }
-    NetGraphMap* getMap() const { return map.get(); }
+    NetGraphMap* getMap() { return map; }
     std::vector<EndpointData>& getQueue() { return queue; }
     std::vector<EndpointData>& getSpliceQueue() { return spliceQueue; }
 
@@ -36,7 +36,7 @@ public:
 
 private:
     NetGraphMapInfo* info;
-    std::unique_ptr<NetGraphMap> map;
+    NetGraphMap* map;
     std::vector<EndpointData> queue;
     std::vector<EndpointData> spliceQueue;
 };

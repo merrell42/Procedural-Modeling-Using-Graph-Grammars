@@ -14,7 +14,7 @@ public:
     ~NetGraphMap() = default;
 
     // Static method to create a NetGraphMap instance
-    static std::unique_ptr<NetGraphMap> create(const NetGraphMapInfo& info);
+    static NetGraphMap* create(const NetGraphMapInfo& info);
 
     // Core functionality
     // bool isValid() const { return valid; }

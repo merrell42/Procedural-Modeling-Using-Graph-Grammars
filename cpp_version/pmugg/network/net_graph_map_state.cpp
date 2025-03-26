@@ -11,7 +11,7 @@ namespace ms {
 NetGraphMapState::NetGraphMapState(NetGraphMapInfo* info, NetGraphMap* existingMap)
     : info(info) {
     if (existingMap) {
-        map = std::unique_ptr<NetGraphMap>(existingMap->copy());
+        map = existingMap->copy();
     } else {
         map = NetGraphMap::create(*info);
     }
@@ -38,7 +38,7 @@ void NetGraphMapState::assignVertex(Vertex* vertexA, int indexB) {
 }
 
 NetGraphMapState* NetGraphMapState::copy() const {
-    auto* result = new NetGraphMapState(info, map.get());
+    auto* result = new NetGraphMapState(info, map);
     result->queue = queue;
     result->spliceQueue = spliceQueue;
     return result;

@@ -26,10 +26,12 @@ namespace ms {
 		Line(Model* model, int id, EdgeType3D* type, std::vector<int> endpointIds);
 		Line* copy();
 		int getId() const { return id; };
+		void setId(int newId) { id = newId; };
 		Endpoint* getEndpoint(int index) const;
 		std::vector<Endpoint*> getEndpoints() const;
 		void addEndpoint(Endpoint* endpoint, int index);
 		void setEndpoint(int index, Endpoint* endpoint);
+        void setEndpointIds(const std::vector<int>& ids);
 		EdgeType3D* getEdgeType() const { return type; };
 		SplitData split();
 		std::pair<SplitData, Vertex*> fullSplit(double s);

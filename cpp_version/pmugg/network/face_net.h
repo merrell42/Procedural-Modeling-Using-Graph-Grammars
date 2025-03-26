@@ -32,10 +32,10 @@ public:
     // Json export() const;
     
     // Utility functions
-    static std::vector<const HalfEdgeNet*> getConnectedHalfEdges(const HalfEdgeNet* start);
-    std::vector<const HalfEdgeNet*> getOuterHalfEdges() const;
-    std::vector<const HalfEdgeNet*> getInnerHalfEdges() const;
-    std::vector<const HalfEdgeNet*> getHalfEdges() const;
+    static std::vector<HalfEdgeNet*> getConnectedHalfEdges(HalfEdgeNet* start);
+    std::vector<HalfEdgeNet*> getOuterHalfEdges() const;
+    std::vector<HalfEdgeNet*> getInnerHalfEdges() const;
+    std::vector<HalfEdgeNet*> getHalfEdges() const;
     // void highlight(View* view);
     void getHalfEdgeSet();
     void merge(FaceNet* faceB);

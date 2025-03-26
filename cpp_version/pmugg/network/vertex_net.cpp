@@ -66,6 +66,18 @@ bool VertexNet::inNetwork() const {
                               this) != network->getVertices().end();
 }
 
+EdgeNet* VertexNet::interiorEdge() const {
+    for (auto* halfEdge : halfEdges) {
+        if (halfEdge) {
+            auto edge = halfEdge->getEdge();
+            if (edge) {
+                return edge;
+            }
+        }
+    }
+    return nullptr;
+}
+
 //void VertexNet::highlight(View* view, const DrawOptions& options) {
 //    auto highlightOptions = HalfEdgeSet::create(halfEdges);
 //    network->highlight(view, highlightOptions);

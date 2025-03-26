@@ -53,6 +53,11 @@ bool NetworkHierarchy::isGrounded() const {
 }
 
 Transition NetworkHierarchy::getTransition() {
+    // TODO: Remove this after debugging.
+    /*if (transitions.size() >= 2) {
+        transitions.pop_back();
+    } */
+
     NetTransition* transition = transitions.empty() ? nullptr : Util::pick<NetTransition*>(transitions);
     if (transition) {
         auto networks = transition->getNetworks();

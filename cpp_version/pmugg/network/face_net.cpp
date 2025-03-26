@@ -93,9 +93,9 @@ void FaceNet::import(const Json & json) {
     //}
 }
 
-std::vector<const HalfEdgeNet*> FaceNet::getConnectedHalfEdges(const HalfEdgeNet* start) {
-    std::vector<const HalfEdgeNet*> result;
-    const HalfEdgeNet* current = start;
+std::vector<HalfEdgeNet*> FaceNet::getConnectedHalfEdges(HalfEdgeNet* start) {
+    std::vector<HalfEdgeNet*> result;
+    HalfEdgeNet* current = start;
     do {
         result.push_back(current);
         current = current->getNext();
@@ -103,15 +103,15 @@ std::vector<const HalfEdgeNet*> FaceNet::getConnectedHalfEdges(const HalfEdgeNet
     return result;
 }
 
-std::vector<const HalfEdgeNet*> FaceNet::getOuterHalfEdges() const {
+std::vector<HalfEdgeNet*> FaceNet::getOuterHalfEdges() const {
     if (outerComponent) {
         return getConnectedHalfEdges(outerComponent);
     }
-    return std::vector<const HalfEdgeNet*>();
+    return std::vector<HalfEdgeNet*>();
 }
 
-std::vector<const HalfEdgeNet*> FaceNet::getInnerHalfEdges() const {
-    std::vector<const HalfEdgeNet*> result;
+std::vector<HalfEdgeNet*> FaceNet::getInnerHalfEdges() const {
+    std::vector<HalfEdgeNet*> result;
     for (auto component : innerComponents) {
         auto connected = getConnectedHalfEdges(component);
         result.insert(result.end(), connected.begin(), connected.end());
@@ -119,7 +119,7 @@ std::vector<const HalfEdgeNet*> FaceNet::getInnerHalfEdges() const {
     return result;
 }
 
-std::vector<const HalfEdgeNet*> FaceNet::getHalfEdges() const {
+std::vector<HalfEdgeNet*> FaceNet::getHalfEdges() const {
     auto result = getOuterHalfEdges();
     auto inner = getInnerHalfEdges();
     result.insert(result.end(), inner.begin(), inner.end());

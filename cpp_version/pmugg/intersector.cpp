@@ -13,9 +13,10 @@ std::optional<Vec2> Intersector::intersect(
 std::optional<Vec2> Intersector::intersect(
     const Vec2& s1, const Vec2& e1,
     const Vec2& s2, const Vec2& e2,
+    // Thickness is currently not used.
     float thickness1
 ) {
-    float thickness2 = thickness1;
+    // float thickness2 = thickness1;
 
     Vec2 r = e1 - s1;
     Vec2 s = e2 - s2;
@@ -34,12 +35,13 @@ std::optional<Vec2> Intersector::intersect(
     float u = qxr / rxs;
 
     // Check if the intersection is within the line segments
-    if ((0 <= t && t <= 1) && (0 <= u && u <= 1)) {
+    if ((0 < t && t < 1) && (0 < u && u < 1)) {
         // Get the intersection point
         Vec2 intersection = s1 + r * t;
+        return intersection;
 
         // Check if the intersection is within the thickness of both line segments
-        Vec2 normal1(-r.y, r.x);
+        /*Vec2 normal1(-r.y, r.x);
         normal1 = normal1.normalize();
         Vec2 normal2(-s.y, s.x);
         normal2 = normal2.normalize();
@@ -47,9 +49,10 @@ std::optional<Vec2> Intersector::intersect(
         float d1 = std::abs(q.dot(normal1));
         float d2 = std::abs(q.dot(normal2));
 
+        // This is incorrect. Look at the web version.
         if (d1 <= thickness1 && d2 <= thickness2) {
             return intersection;
-        }
+        }*/
     }
 
     return std::nullopt;

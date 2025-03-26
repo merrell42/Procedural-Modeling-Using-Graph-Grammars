@@ -90,7 +90,7 @@ bool HalfEdgeNet::isSpliced() const {
     return edge && edge->getType()->getSpliced();
 }
 
-bool HalfEdgeNet::isLoopy() const {
+bool HalfEdgeNet::isLoopy() {
     auto connected = FaceNet::getConnectedHalfEdges(this);
     auto* last = connected.back();
     return last->getNext() != nullptr;

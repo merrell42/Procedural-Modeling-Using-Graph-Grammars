@@ -48,6 +48,7 @@ void NetTransistor::create(const Transition& transition, Model* model_) {
         effort = std::numeric_limits<double>::infinity();
         return;
     }*/
+
     graph = createGraph();
     timer->stop("Create Graph");
 
@@ -127,6 +128,7 @@ Graph* NetTransistor::createGraph() {
     std::vector<std::vector<Endpoint*>> splitEndpoints;
     if (map) {
         splitLines.resize(map->edgeBtoA.size());
+        splitEndpoints.resize(map->edgeBtoA.size());
         for (size_t i = 0; i < map->edgeBtoA.size(); ++i) {
             splitLines[i] = {map->edgeBtoA[i]};
         }
@@ -164,6 +166,9 @@ Graph* NetTransistor::createGraph() {
             }
         }
     }
+    if (startNet->getId() == 0) {
+        int x = 0;
+    }
 
     struct EdgeData {
         std::vector<Endpoint*> coreEndpoints;
@@ -189,10 +194,8 @@ Graph* NetTransistor::createGraph() {
 
             int connectorIndex = hVertex->connectorIndex();
             if (connectorIndex >= 0) {
-                std::cout << "Add connectors" << std::endl;
-                int startIndex = 0;
-                /*int startIndex = Util::findIndex(startNet->getEdges(),
-                    startNet->getConnectors()[connectorIndex]->interiorEdge());*/
+                int startIndex = Util::findIndex(startNet->getEdges(),
+                    startNet->getBVertices()[connectorIndex]->interiorEdge());
                 
                 if (splitLines[startIndex].size() == 1) {
                     //if (splitLines[startIndex][0]->getNode()->isDestroyed()) {
@@ -207,7 +210,7 @@ Graph* NetTransistor::createGraph() {
                 int lineIndex = half->getForward() ? 0 : 1;
                 auto* coreEndpoint = splitLines[startIndex][lineIndex]->getEndpoints()[e];
                 splitLines[startIndex][lineIndex] = nullptr;
-                coreEndpoints[e] = coreEndpoint;
+                coreEndpoints.push_back(coreEndpoint);
 
                 halfEdges.push_back(half);
                 modified = true;
@@ -223,28 +226,21 @@ Graph* NetTransistor::createGraph() {
     }
 
     // Process end edges
-    //for (size_t i = 0; i < endEdges.size(); i++) {
-    //    EdgeNet* endEdge = endEdges[i];
-    //    auto edgeHalfs = endEdge->getHalfEdges();
+    for (size_t i = 0; i < endEdges.size(); i++) {
+        EdgeNet* endEdge = endEdges[i];
+        auto edgeHalfs = endEdge->getHalfEdges();
 
-    //    for (size_t e = 0; e < edgeHalfs.size(); e++) {
-    //        HalfEdgeNet* halfNext = edgeHalfs[e][0]->getNext();
-    //        if (!halfNext->getEdge()) {
-    //            VertexNet* hVertex = halfNext->getVertex();
-    //            int connectorIndex = hVertex->connectorIndex();
-
-    //            // TODO: Add connectors
-    //            auto& startNetEdges = startNet->getEdges();
-    //            auto& startNetConnectors = startNet->getConnectors();
-
-    //            auto it = std::find(startNetEdges.begin(), startNetEdges.end(),
-    //                startNetConnectors[connectorIndex]->interiorEdge());
-    //            int index = std::distance(startNetEdges.begin(), it);
-
-    //            setHalfToEndpoint(halfNext, splitEndpoints[index][e]);
-    //        }
-    //    }
-    //}
+        for (size_t e = 0; e < edgeHalfs.size(); e++) {
+            HalfEdgeNet* halfNext = edgeHalfs[e][0]->getNext();
+            if (!halfNext->getEdge()) {
+                int boundaryIndex = indexOf(endNet->getBHalfEdges(), halfNext);
+                auto startHalf = startNet->getBHalfEdges()[boundaryIndex];
+                int edgeIndex = indexOf(startNet->getEdges(), startHalf->getPrev()->getEdge());
+                int startIndex = indexOf(startNet->getHalfEdges(), startHalf);
+                setHalfToEndpoint(halfNext, splitEndpoints[edgeIndex][e]);                
+            }
+        }
+    }
 
     bool failed = false;
 
@@ -290,35 +286,40 @@ Graph* NetTransistor::createGraph() {
         merged->edges[i] = line0;
 
         if (datum.modified) {
-            merged->vertices.push_back(datum.coreEndpoints[0]->getVertex());
-            merged->vertices.push_back(datum.coreEndpoints[1]->getVertex());
+            std::vector<Vertex*> newVertices = {
+                datum.coreEndpoints[0]->getVertex(),
+                datum.coreEndpoints[1]->getVertex()
+            };
+            Util::union_(merged->vertices, newVertices);
+            // merged->vertices.push_back(datum.coreEndpoints[0]->getVertex());
+            // merged->vertices.push_back(datum.coreEndpoints[1]->getVertex());
         }
     }
 
-    // Process end connectors
-    //auto& endConnectors = endNet->getConnectors();
-    //for (size_t i = 0; i < endConnectors.size(); i++) {
-    //    auto halfs = endConnectors[i]->getInterior()->getHalfEdges();
-    //    auto it = std::find_if(halfs.begin(), halfs.end(),
-    //        [](HalfEdgeNet* half) { return half->getEdge() != nullptr; });
+    // Process boundary vertices.
+    auto& bVertices = endNet->getBVertices();
+    for (size_t i = 0; i < bVertices.size(); i++) {
+        auto halfs = bVertices[i]->getHalfEdges();
+        auto it = std::find_if(halfs.begin(), halfs.end(),
+            [](HalfEdgeNet* half) { return half->getEdge() != nullptr; });
 
-    //    if (it != halfs.end()) {
-    //        auto faceHalfs = FaceNet::getConnectedHalfEdges(*it);
-    //        HalfEdgeNet* endHalf = const_cast<HalfEdgeNet*>(faceHalfs.back());
-    //        faceHalfs.pop_back();
+        if (it != halfs.end()) {
+            auto faceHalfs = FaceNet::getConnectedHalfEdges(*it);
+            HalfEdgeNet* endHalf = const_cast<HalfEdgeNet*>(faceHalfs.back());
+            faceHalfs.pop_back();
 
-    //        std::vector<Endpoint*> faceEndpointsI;
-    //        std::transform(faceHalfs.begin(), faceHalfs.end(),
-    //            std::back_inserter(faceEndpointsI),
-    //            [this](HalfEdgeNet* half) { return halfToEndpoint(half); });
+            std::vector<Endpoint*> faceEndpointsI;
+            for (HalfEdgeNet* half : faceHalfs) {
+                faceEndpointsI.push_back(halfToEndpoint(half));
+            }
 
-    //        TransistorPath* path = TransistorPath::createNet(faceEndpointsI, merged->edges, lines);
-    //        Endpoint* pathEnd = halfToEndpoint(endHalf);
-    //        std::vector<Endpoint*> pathEndpoints = { faceEndpointsI[0], pathEnd };
-    //        path->setEndpoints(pathEndpoints);
-    //        openPaths.push_back(path);
-    //    }
-    //}
+            TransistorPath* path = TransistorPath::createNet(faceEndpointsI, merged->edges, &lines);
+            Endpoint* pathEnd = halfToEndpoint(endHalf);
+            std::vector<Endpoint*> pathEndpoints = { faceEndpointsI[0], pathEnd };
+            path->setEndpoints(pathEndpoints);
+            openPaths.push_back(path);
+        }
+    }
 
     // Update connections
     /*std::set<Connection*> connectionsToUpdate;
@@ -381,6 +382,7 @@ Graph* NetTransistor::createGraph() {
             success = success && face->updateConnection();
         }
     }*/
+
     return success ? merged : new Graph();
 }
 
@@ -467,6 +469,9 @@ void NetTransistor::setupFaceCentric() {
 
     // Process vertices
     for (auto* vertex : graph->vertices) {
+        if (!vertex) {
+            continue;
+        }
         int id = vertex->getId();
         vertexIds.push_back(id);
         freeVertices.push_back(vertex);

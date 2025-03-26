@@ -47,6 +47,14 @@ void Line::setEndpoint(int index, Endpoint* endpoint) {
 	endpointIds[index] = endpoint->getId();
 }
 
+// New function to set endpoint IDs directly
+void Line::setEndpointIds(const std::vector<int>& ids) {
+	// Resize endpointIds to match the size of ids if necessary
+	endpointIds.resize(ids.size());
+	// Set the endpointIds directly
+	std::copy(ids.begin(), ids.end(), endpointIds.begin());
+}
+
 void Line::destroy() {
 	model->getCurrent()->removeLine(this);
 	delete this;
@@ -57,7 +65,17 @@ SplitData Line::split() {
     // auto stats = this->node->getStats(); // Get stats from the node
 
     // Create two new lines as copies of the current line
-    std::vector<Line*> newLines = { this->copy(), this->copy() };
+	Line* line0 = this->copy();
+	Line* line1 = this->copy();
+    std::vector<Line*> newLines = { line0, line1 };
+	line0->setId(model->newId());
+	line1->setId(model->newId());
+	model->getCurrent()->addLine(line0->getId(), line0);
+	model->getCurrent()->addLine(line1->getId(), line1);
+	line0->setEndpointIds({ -1, -1 });
+	line1->setEndpointIds({ -1, -1 });
+
+	
     /* newLines[0]->addSegments({ new LineSegment(stats) });
     newLines[1]->addSegments({ new LineSegment(stats) }); */
 
@@ -76,7 +94,7 @@ SplitData Line::split() {
         endpoint->transfer(newLines[endpoint->getIsAtStart() ? 0 : 1]);
     }
 
-    this->destroy();
+    destroy();
     timer->stop("split No Vertex"); // Stop the timer
 
     return SplitData(newLines, nextEndpoints); // Return the SplitData struct

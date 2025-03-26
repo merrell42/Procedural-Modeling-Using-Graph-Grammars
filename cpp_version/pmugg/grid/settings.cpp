@@ -58,7 +58,7 @@ Json globalSettings = {
     {"Debug Alerts", false},
     {"Max Time Enabled", false},
     {"Max Time", 10},
-    {"Max Iterations", 20},
+    {"Max Iterations", 2},
     {"Generations", 5},
     {"Max Connectors", 100},
     {"Winding Enabled", true},
