@@ -40,9 +40,6 @@ bool NetworkMutator::changeRandomInstance(bool justDestructible) {
 }
 
 bool NetworkMutator::applyTransition(Transition transition) {
-    if (!transition.startNet && !transition.endNet) {
-        return false;
-    }
     if (transition.startNet->getId() == 2) {
         return false;
     }

@@ -144,15 +144,11 @@ Graph* NetTransistor::createGraph() {
             auto* type = v->getType();
             
             // Create random position based on dimensions
-            Vec3 randomPosition;
-            /*if (dims == 2) {
-                randomPosition = Vec3(5.0 * rand() / RAND_MAX, 
-                                   5.0 * rand() / RAND_MAX, 0);
-            } else {*/
-                randomPosition = Vec3(5.0 * rand() / RAND_MAX,
-                                   5.0 * rand() / RAND_MAX,
-                                   5.0 * rand() / RAND_MAX);
-            // }
+            Vec3 randomPosition = Vec3(
+                5.0 * rand() / RAND_MAX,
+                5.0 * rand() / RAND_MAX,
+                5.0 * rand() / RAND_MAX
+            );
 
             auto* newVertex = new Vertex(model, randomPosition, type);
             newVertex->createEndpoints();
@@ -490,18 +486,17 @@ void NetTransistor::setupFaceCentric() {
         settings->getVertex(id)->checkThreeFaces();
     }
 
-    //// Process fixed vertices from open paths
-    //fixedVertexIds.clear();
-    //for (auto* path : openPaths) {
-    //    for (int j = 0; j < 2; ++j) {
-    //        auto* pathVertex = path->endpoints[j]->getVertex();
-    //        int id = pathVertex->getNode()->getId();
-    //        if (std::find(fixedVertexIds.begin(), fixedVertexIds.end(), id) 
-    //            == fixedVertexIds.end()) {
-    //            fixedVertexIds.push_back(id);
-    //        }
-    //    }
-    //}
+    // Process fixed vertices from open paths
+    std::vector<int> fixedVertexIds;
+    for (auto* path : openPaths) {
+        for (int j = 0; j < 2; ++j) {
+            auto* pathVertex = path->endpoints[j]->getVertex();
+            int id = pathVertex->getId();
+            if (!contains(fixedVertexIds, id)) {
+                fixedVertexIds.push_back(id);
+            }
+        }
+    }
 
     //// Process fixed faces
     //fixedFaces.clear();
@@ -544,7 +539,7 @@ void NetTransistor::setupFaceCentric() {
         }
     }*/
 
-    // constrainVertexIds(fixedVertexIds, settings);
+    constrainVertexIds(fixedVertexIds, settings.get());
     constrainVertexIds(vertexIds, settings.get());
 }
 
@@ -813,73 +808,67 @@ void NetTransistor::freeVertex() {
 }
 
 void NetTransistor::freeOneVertex(Vertex* vertex) {
-    //auto extents = model->getExtents();
-    //auto vertexEndpoints = vertex->getEndpoints();
+    auto vertexEndpoints = vertex->getEndpoints();
 
-    //// Process all vertex endpoints
-    //for (auto* vEndpoint : vertexEndpoints) {
-    //    auto* line = vEndpoint->getLine();
-    //    auto hasLine = [line](const LineData& data) { return data.line == line; };
-    //    
-    //    if (std::find_if(lineData.begin(), lineData.end(), hasLine) == lineData.end()) {
-    //        addLine(line, true, true);
-    //        auto* lineState = line->getSegment()->getStates()[0];
-    //        lineState->removeCells();
-    //    }
-    //}
+    // Process all vertex endpoints
+    for (auto* vEndpoint : vertexEndpoints) {
+        auto* line = vEndpoint->getLine();
+        auto hasLine = [line](const LineData& data) { return data.line == line; };
+        
+        if (std::find_if(lineData.begin(), lineData.end(), hasLine) == lineData.end()) {
+            addLine(line, true, true);
+            // auto* lineState = line->getSegment()->getStates()[0];
+            // lineState->removeCells();
+        }
+    }
 
-    //// Process paths for each endpoint
-    //for (auto* vEndpoint : vertexEndpoints) {
-    //    auto* line = vEndpoint->getLine();
-    //    
-    //    auto findPath0 = [vEndpoint](TransistorPath* path) { 
-    //        return path->endpoints[0] == vEndpoint; 
-    //    };
-    //    auto findPath1 = [vEndpoint](TransistorPath* path) { 
-    //        return path->endpoints[1] == vEndpoint; 
-    //    };
+    // Process paths for each endpoint
+    for (auto* vEndpoint : vertexEndpoints) {
+        auto* line = vEndpoint->getLine();
+        
+        auto findPath0 = [vEndpoint](TransistorPath* path) { 
+            return path->endpoints[0] == vEndpoint; 
+        };
+        auto findPath1 = [vEndpoint](TransistorPath* path) { 
+            return path->endpoints[1] == vEndpoint; 
+        };
 
-    //    auto* path0 = std::find_if(openPaths.begin(), openPaths.end(), findPath0);
-    //    auto* path1 = std::find_if(openPaths.begin(), openPaths.end(), findPath1);
+        auto path0 = std::find_if(openPaths.begin(), openPaths.end(), findPath0);
+        auto path1 = std::find_if(openPaths.begin(), openPaths.end(), findPath1);
 
-    //    if (path0 != openPaths.end() && path1 != openPaths.end()) {
-    //        if (*path0 == *path1) {
-    //            // Same path
-    //            (*path0)->endpoints.clear();
-    //            Remove::fromVector(openPaths, *path0);
-    //        } else {
-    //            // Different paths
-    //            (*path1)->merge(*path0);
-    //            Remove::fromVector(openPaths, *path0);
-    //        }
-    //    } else if (path0 != openPaths.end()) {
-    //        (*path0)->expandBackward();
-    //    } else if (path1 != openPaths.end()) {
-    //        (*path1)->expandForward();
-    //    } else {
-    //        // Create new path
-    //        auto* path = new TransistorPath({}, lines);
-    //        path->setEndpoints({vEndpoint, vEndpoint});
-    //        path->expandBackward();
-    //        path->expandForward();
-    //        openPaths.push_back(path);
-    //    }
-    //}
+        if (path0 != openPaths.end() && path1 != openPaths.end()) {
+            if (*path0 == *path1) {
+                // Same path
+                (*path0)->endpoints.clear();
+                Util::remove(openPaths, *path0);
+            } else {
+                // Different paths
+                (*path1)->merge(*path0);
+                Util::remove(openPaths, *path0);
+            }
+        } else if (path0 != openPaths.end()) {
+            (*path0)->expandBackward();
+        } else if (path1 != openPaths.end()) {
+            (*path1)->expandForward();
+        } else {
+            // Create new path
+            auto* path = new TransistorPath({}, &lines);
+            path->setEndpoints({vEndpoint, vEndpoint});
+            path->expandBackward();
+            path->expandForward();
+            openPaths.push_back(path);
+        }
+    }
 }
 
 bool NetTransistor::placeVertexPositions(const std::vector<double>& positions) {
     // Place vertices at their new positions
     for (size_t i = 0; i < freeVertices.size(); i++) {
-        Vec3 position;
-        if (dims == 2) {
-            position = Vec3(positions[dims * i], 
-                          positions[dims * i + 1], 
-                          0.0);
-        } else {
-            position = Vec3(positions[dims * i], 
-                          positions[dims * i + 1], 
-                          positions[dims * i + 2]);
-        }
+        Vec3 position(
+            positions[dims * i], 
+            positions[dims * i + 1], 
+            positions[dims * i + 2]
+        );
         
         freeVertices[i]->setPosition(position);
         /*if (!model->inBounds(position.x, position.y, position.z)) {

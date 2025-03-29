@@ -107,10 +107,12 @@ int Util::consistentRandom(int n, int seed) {
     return static_cast<int>(r * n);
 }
 
-/* float Util::random(int seed, int count) {
-    float x = (float)std::sin(seed + count) * (10000 + seed);
-    return x - std::floor(x);
-} */
+//int randomCount = 0;
+//
+//float Util::random(int seed, int count) {
+//    float x = (float)std::sin(seed + count) * (10000 + seed);
+//    return x - std::floor(x);
+//}
 
 int Util::random(int count) {
     return rand() % count;

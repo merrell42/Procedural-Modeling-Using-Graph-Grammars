@@ -16,6 +16,11 @@ int indexOf(const std::vector<T>& vec, const T& value) {
     return -1; // Return -1 if the value is not found
 }
 
+template <typename T> static
+bool contains(const std::vector<T>& vec, const T& value) {
+    return std::find(vec.begin(), vec.end(), value) != vec.end();
+}
+
 class Util {
 public:
     // Angle operations

@@ -114,6 +114,7 @@ void GuideMutator::mutate() {
                 if (success) {
                     return;
                 } else {
+                    reject();
                     probabilities[0] = 0;
                 }
                 break;
@@ -125,6 +126,7 @@ void GuideMutator::mutate() {
                 if (success) {
                     return;
                 } else {
+                    reject();
                     probabilities[1] = 0;
                 }
                 break;
@@ -136,6 +138,7 @@ void GuideMutator::mutate() {
                 if (success) {
                     return;
                 } else {
+                    reject();
                     probabilities[2] = 0;
                 }
                 break;
