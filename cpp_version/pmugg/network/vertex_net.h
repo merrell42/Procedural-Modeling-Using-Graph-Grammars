@@ -55,7 +55,6 @@ public:
     // Drawing
     /*void highlight(View* view, const DrawOptions& options = {});
     void print() const;*/
-    bool requiresShapeView() const { return true; }
 
     // Import/Export
     // Json export() const;

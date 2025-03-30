@@ -135,10 +135,6 @@ int Network::faceIndex(FaceNet* face) const {
 //    ms::highlight(this);
 //}
 
-bool Network::requiresShapeView() const {
-    return true;
-}
-
 //Network* Network::copy() const {
 //    return Network::import(export());
 //}
@@ -206,6 +202,50 @@ Network* Network::import(const Json & json, Shape3D* shape) {
     }
 
     return result;
+}
+
+// Remove any spliced edges.
+void Network::removeSplices() {
+    // Check if any half edges are spliced
+    bool hasSplices = std::any_of(
+        getHalfEdges().begin(),
+        getHalfEdges().end(),
+        [](HalfEdgeNet* half) { return half->isSpliced(); }
+    );
+
+    if (!hasSplices) {
+        return;
+    }
+
+    // This part is dangerous in Javascript.
+    // result->getConnectors();
+
+    auto halfEdges = getHalfEdges(); // Make a copy of the vector
+
+    // First pass: merge edges
+    for (auto* half : halfEdges) {
+        auto* next = half->getNext();
+        if (!half->isSpliced() && next && next->isSpliced()) {
+            auto* newNext = next->getTwin()->getNext();
+            half->getEdge()->merge(newNext->getEdge(), half->getForward());
+        }
+    }
+
+    // Second pass: remove spliced edges
+    halfEdges = getHalfEdges(); // Get fresh copy after merges
+    for (auto* half : halfEdges) {
+        if (half->isSpliced()) {
+            removeHalfEdge(half);
+            auto* vertex = half->getVertex();
+            if (vertex->inNetwork()) {
+                removeVertex(vertex);
+            }
+            auto* edge = half->getEdge();
+            if (edge->inNetwork()) {
+                removeEdge(edge);
+            }
+        }
+    }
 }
 
 //Vec3 Network::combineTangents(const Vec3& u, const Vec3& v) {

@@ -91,10 +91,6 @@ bool EdgeNet::inNetwork() const {
 //    }
 //}
 
-bool EdgeNet::requiresShapeView() const {
-    return true;
-}
-
 void EdgeNet::merge(EdgeNet* edgeB, bool mergeForward) {
     auto* interior = network;
 

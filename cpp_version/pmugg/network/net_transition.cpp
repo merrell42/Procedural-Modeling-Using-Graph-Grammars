@@ -8,14 +8,13 @@ namespace ms {
 
 int NetTransition::nextId = 0;
 
-NetTransition::NetTransition(const std::vector<Network*>& networks)
-    : networks(networks)
-    , ground(false)
-    , id(nextId++) {}
-
-void NetTransition::addNetwork(Network* network) {
-    networks.push_back(network);
-}
+NetTransition::NetTransition(
+    const std::vector<Network*>& startNetworks,
+    const std::vector<Network*>& endNetworks
+) : startNetworks(startNetworks),
+    endNetworks(endNetworks),
+    ground(false),
+    id(nextId++) {}
 
 //void NetTransition::highlight(View* view, const DrawOptions& options) {
 //    auto h = view->getViewport().height;
@@ -38,13 +37,20 @@ void NetTransition::addNetwork(Network* network) {
 //}
 
 NetTransition* NetTransition::import(const Json& json, Shape3D* shape) {
-    std::vector<Network*> importedNetworks;
+    std::vector<Network*> startNetworks;
+    std::vector<Network*> endNetworks;
     for (size_t index = 0; index < json["n"].size(); ++index) {
         const auto& networkJson = json["n"][index];
-        importedNetworks.push_back(Network::import(networkJson, shape));
+        startNetworks.push_back(Network::import(networkJson, shape));
+
+        // End networks are the same as start networks except the splices are removed.
+        // This could be done by copying startNetwork rather than importing it again.
+        const auto endNetwork = Network::import(networkJson, shape);
+        endNetwork->removeSplices();
+        endNetworks.push_back(endNetwork);
     }
 
-    auto* result = new NetTransition(importedNetworks);
+    auto* result = new NetTransition(startNetworks, endNetworks);
     result->ground = json["ground"];
     return result;
 }

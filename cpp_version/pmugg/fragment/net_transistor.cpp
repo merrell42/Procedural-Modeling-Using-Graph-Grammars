@@ -31,8 +31,8 @@ std::unique_ptr<NetTransistor> NetTransistor::buildNormally(
 void NetTransistor::create(const Transition& transition, Model* model_) {
     startNet = transition.startNet;
     model = model_;
-    // endNet = transition.endNet->removeSplices();
     endNet = transition.endNet;
+ 
     // map = std::move(transition.map);
     map = transition.map;
     ground = transition.ground;

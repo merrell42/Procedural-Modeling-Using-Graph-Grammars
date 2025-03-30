@@ -15,7 +15,8 @@ int VertexType::nextId = 0;
 VertexType::VertexType(/* VertexDecoration* decoration */)
     // : decoration(decoration)
     : spliced(false)
-    , id(nextId++) {}
+    , id(nextId++) {
+}
 
 const std::vector<Connection>& VertexType::getConnections() const {
     return connections;

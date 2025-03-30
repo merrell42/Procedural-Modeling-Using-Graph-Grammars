@@ -54,21 +54,22 @@ bool NetworkHierarchy::isGrounded() const {
 
 Transition NetworkHierarchy::getTransition() {
     // TODO: Remove this after debugging.
-    if (transitions.size() >= 2) {
+    /* if (transitions.size() >= 2) {
         transitions.pop_back();
-    }
+    } */
 
     NetTransition* transition = transitions.empty() ? nullptr : Util::pick<NetTransition*>(transitions);
     if (transition) {
-        auto networks = transition->getNetworks();
-        int n = (int)networks.size();
+        auto startNetworks = transition->getStartNetworks();
+        auto endNetworks = transition->getEndNetworks();
+        int n = (int)startNetworks.size();
         // Pick two unique indices
         int start = Util::random(n);
         int end = Util::random(n - 1);
         if (end >= start) {
             end++;
         }
-        return {networks[start], networks[end], nullptr, false};
+        return { startNetworks[start], endNetworks[end], nullptr, false};
     }
     return {nullptr, nullptr, nullptr, false};
 }
@@ -80,10 +81,10 @@ Transition NetworkHierarchy::getRemoveTransition() {
     }
     auto* transition = Util::pick(starterTransitions);
     if (transition) {
-        auto networks = transition->getNetworks();
-        int n = (int)networks.size();
+        auto startNetworks = transition->getStartNetworks();
+        int n = (int)startNetworks.size();
         auto* endNet = emptyNet;
-        auto* startNet = networks[Util::random(n - 1) + 1];
+        auto* startNet = startNetworks[Util::random(n - 1) + 1];
         return {startNet, endNet, nullptr, false};
     }
     return {nullptr, nullptr, nullptr, false};
@@ -96,10 +97,11 @@ Transition NetworkHierarchy::getStarterTransition() {
     
     auto* transition = Util::pick(transitions);
     if (transition) {
-        auto networks = transition->getNetworks();
-        int n = (int)networks.size();
-        auto* startNet = networks[0];
-        auto* endNet = networks[Util::random(n - 1) + 1];
+        auto startNetworks = transition->getStartNetworks();
+        auto endNetworks = transition->getEndNetworks();
+        int n = (int)endNetworks.size();
+        auto* startNet = startNetworks[0];
+        auto* endNet = endNetworks[Util::random(n - 1) + 1];
         return {startNet, endNet, nullptr, transition->isGround()};
     }
     return {nullptr, nullptr, nullptr, false};

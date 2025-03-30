@@ -53,6 +53,9 @@ NetGraphMap* NetGraphMapFinder::findMap(Network* netB) {
     auto* vertexType = verticesB[index1]->getType();
     auto vertexMap = model->getCurrent()->getVertexMap();
     int N = vertexMap.size();
+    if (N == 0) {
+        return nullptr;
+    }
     int attempts = std::min(N, vertexAttempts);
     int startIndex = Util::random(N);
 

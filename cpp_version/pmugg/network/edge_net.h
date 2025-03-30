@@ -39,7 +39,6 @@ public:
     // Drawing
     /*void highlight(View* view);
     void print() const;*/
-    bool requiresShapeView() const;
 
     // Edge operations
     void merge(EdgeNet* edgeB, bool mergeForward);

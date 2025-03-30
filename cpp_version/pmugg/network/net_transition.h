@@ -15,16 +15,17 @@ struct OrderInfo;
 
 class NetTransition {
 public:
-    explicit NetTransition(const std::vector<Network*>& networks);
+    explicit NetTransition(
+        const std::vector<Network*>& startNetworks,
+        const std::vector<Network*>& endNetworks
+    );
     ~NetTransition() = default;
 
     // Core functionality
-    const std::vector<Network*>& getNetworks() const { return networks; }
+    const std::vector<Network*>& getStartNetworks() const { return startNetworks; }
+    const std::vector<Network*>& getEndNetworks() const { return endNetworks; }
     bool isGround() const { return ground; }
     int getId() const { return id; }
-
-    // Network operations
-    void addNetwork(Network* network);
 
     // Drawing
     // void highlight(View* view, const DrawOptions& options = {});
@@ -35,7 +36,8 @@ public:
     // Json export() const;
 
 private:
-    std::vector<Network*> networks;
+    std::vector<Network*> startNetworks;
+    std::vector<Network*> endNetworks;
     bool ground;
     int id;
 

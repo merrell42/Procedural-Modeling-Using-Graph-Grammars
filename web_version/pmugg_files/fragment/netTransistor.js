@@ -135,7 +135,10 @@ ms.netTransistor.prototype.createGraph = function() {
 			var type = v.getPrimal().getType();
 			var randomPosition = this.dims == 2 ?
 				new ms.vec2(5 * Math.random(), 5 * Math.random()) :
-				new ms.vec3(5 * Math.random(), 5 * Math.random(), 5 * Math.random());
+				new ms.vec3(5 * Math.random(), 5 * Math.random(), 5 * Math.random());	
+			if (type.spliced) {
+				debugger;
+			}
 			var newVertex = ms.vertex.createWithState(this.stats, randomPosition, this.angle, 1, type);
 			merged.vertices[i] = newVertex;
 			var vEndpoints = newVertex.getEndpoints();
@@ -148,10 +151,6 @@ ms.netTransistor.prototype.createGraph = function() {
 	ms.taskDebug();
 	
 	var edgeData = [];
-	
-	if (startNet.id == 0) {
-		debugger;
-	}
 	// A mapping from the core vertex to the graph vertices. Just for the outer vertices.
 	for (var i = 0; i < endEdges.length; i++) {
 		var endEdge = endEdges[i];

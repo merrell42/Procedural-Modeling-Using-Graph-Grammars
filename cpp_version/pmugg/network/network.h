@@ -50,6 +50,7 @@ public:
     void removeEdge(EdgeNet* edge);
     void removeHalfEdge(HalfEdgeNet* halfEdge);
     void removeFace(FaceNet* face);
+    void removeSplices();
     // void removeConnectorGroup(ConnectorGroup* group);
 
     // Conversion methods
@@ -74,10 +75,9 @@ public:
     // void draw(View* view, const DrawOptions& options = {});
     // void highlight(View* view, const DrawOptions& options = {});
     void print() const;
-    bool requiresShapeView() const;
 
     // Copy operations
-    Network* copy() const;
+    // Network* copy() const;
 
     // Import/Export
     static Network* import(const Json& json, Shape3D* shape = nullptr);
