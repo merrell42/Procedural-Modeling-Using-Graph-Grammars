@@ -34,6 +34,7 @@ public:
 	FaceType3D* getFaceType();
 	void transfer(Line* replacement);
 	void maybeMergeNextFace();
+	void destroy();
 	/*void maybeMergePrevFace();*/
 
 private:

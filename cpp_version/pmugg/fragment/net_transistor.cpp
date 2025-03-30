@@ -86,6 +86,39 @@ void NetTransistor::addLine(Line* line, bool includeLength, bool addToGraph) {
     }
 }
 
+static void destroyLines(const std::vector<std::vector<Line*>>& lineGroup) {
+    std::set<Endpoint*> endpointSet;
+    std::set<Vertex*> vertexSet;
+
+    // std::set<Connection*> connectionsToUpdate;
+    for (const auto& lineGroup : lineGroup) {
+        for (Line* line : lineGroup) {
+            if (line) {
+                auto endpoints = line->getEndpoints();
+                endpointSet.insert(endpoints[0]);
+                endpointSet.insert(endpoints[1]);
+                // TODO: Add the faceConnections here and handle them.
+                // The faceConnections are only needed for shapes with holes.
+                // addConnectionsToSet(endpoints[0], connectionsToUpdate);
+                // addConnectionsToSet(endpoints[1], connectionsToUpdate);
+                line->destroy();
+            }
+        }
+    }
+    for (const auto& endpoint : endpointSet) {
+        if (endpoint) {
+            endpoint->getFace()->removeEndpoint(endpoint);
+            vertexSet.insert(endpoint->getVertex());
+            endpoint->destroy();
+        }
+    }
+    for (const auto& vertex : vertexSet) {
+        if (vertex) {
+            vertex->destroy();
+        }
+    }
+}
+
 // Helper function to add connections to the set
 //void addConnectionsToSet(Endpoint* endpoint, std::set<Connection*>& connectionsToUpdate) {
 //    if (endpoint) {
@@ -318,18 +351,7 @@ Graph* NetTransistor::createGraph() {
     }
 
     // Update connections
-    /*std::set<Connection*> connectionsToUpdate;
-    for (const auto& lineGroup : splitLines) {
-        for (Line* line : lineGroup) {
-            if (line) {
-                auto endpoints = line->getEndpoints();
-                // These are the endpoint's faceConnections.
-                addConnectionsToSet(endpoints[0], connectionsToUpdate);
-                addConnectionsToSet(endpoints[1], connectionsToUpdate);
-                line->getNode()->destroy();
-            }
-        }
-    }*/
+    destroyLines(splitLines);
 
     // *** TODO: Boxes is working as far as I can tell on everything except
     // the next code block for process faces.
@@ -365,9 +387,9 @@ Graph* NetTransistor::createGraph() {
     //        halfToEndpoint(endFace->getOuterComponent())->getFace());
     //}
 
-    // Update connections and check success
+    // Update face connections. This involves holes and check success.
     bool success = true;
-    /*for (Connection* connection : connectionsToUpdate) {
+    /* for (Connection* connection : connectionsToUpdate) {
         if (connection->getNode()->isDestroyed()) {
             continue;
         }

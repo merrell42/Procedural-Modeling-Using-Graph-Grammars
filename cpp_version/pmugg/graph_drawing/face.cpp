@@ -2,6 +2,7 @@
 #include "face_group.h"
 #include "endpoint.h"
 #include "../shapes3D/face_type3d.h"
+#include "../util/util.h"
 #include <vector>
 #include <algorithm>
 
@@ -132,6 +133,7 @@ void Face::split(Endpoint* endpoint) {
         for (auto& splitEndpoint : splitEndpoints) {
             splitEndpoint->setFace(newFace);
         }
+        endpointIds.erase(endpointIds.begin() + index, endpointIds.end());
     }
 }
 
@@ -151,6 +153,13 @@ void Face::insert(Endpoint* endpoint, Endpoint* prevEndpoint) {
     } else {
         endpointIds.insert(endpointIds.begin(), id);
         endpoint->setFace(this);
+    }
+}
+
+void Face::removeEndpoint(Endpoint* endpoint) {
+    Util::remove(endpointIds, endpoint->getId());
+    if (endpointIds.size() == 0) {
+        destroy();
     }
 }
 

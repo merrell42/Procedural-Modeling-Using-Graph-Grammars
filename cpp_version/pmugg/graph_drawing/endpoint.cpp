@@ -39,6 +39,11 @@ Endpoint* Endpoint::copy() {
 	return result;
 }
 
+void Endpoint::destroy() {
+    model->getCurrent()->removeEndpoint(this);
+    delete this;
+};
+
 EdgeType3D* Endpoint::getEdgeType() const {
     return edgeType;
 }

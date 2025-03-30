@@ -82,6 +82,11 @@ Vertex* Vertex::copy() {
 	return result;
 }
 
+void Vertex::destroy() {
+	model->getCurrent()->removeVertex(this);
+	delete this;
+};
+
 Endpoint* Vertex::getEndpoint(int index) const {
 	return model->getCurrent()->getEndpoint(endpointIds[index]);
 }

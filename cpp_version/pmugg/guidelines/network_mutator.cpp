@@ -40,9 +40,9 @@ bool NetworkMutator::changeRandomInstance(bool justDestructible) {
 }
 
 bool NetworkMutator::applyTransition(Transition transition) {
-    if (transition.startNet->getId() == 2) {
+    /* if (transition.startNet->getId() == 2) {
         return false;
-    }
+    } */
     timer->start("Find Transition Map");
     auto netGraphMap = mapFinder->findMap(transition.startNet);
     timer->stop("Find Transition Map");

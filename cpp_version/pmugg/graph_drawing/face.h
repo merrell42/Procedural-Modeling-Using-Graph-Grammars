@@ -30,6 +30,7 @@ class Face {
 		bool isHole() { return false; }
 		void destroy();
 		void insert(Endpoint* endpoint, Endpoint* prevEndpoint);
+		void removeEndpoint(Endpoint* endpoint);
 
 	private:
 		int id;

@@ -24,6 +24,7 @@ class Vertex {
 		VertexType* getType() const {
 			return type;
 		}
+		void destroy();
 
 	private:
 		int id;
