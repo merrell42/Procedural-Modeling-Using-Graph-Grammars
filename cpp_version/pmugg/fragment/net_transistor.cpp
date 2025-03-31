@@ -8,7 +8,6 @@
 #include "../grid/settings.h"
 #include "../util/timer.h"
 #include "../util/util.h"
-#include <random>
 #include <iostream>
 #include <set>
 #include <utility> // For std::pair
@@ -178,9 +177,9 @@ Graph* NetTransistor::createGraph() {
             
             // Create random position based on dimensions
             Vec3 randomPosition = Vec3(
-                5.0 * rand() / RAND_MAX,
-                5.0 * rand() / RAND_MAX,
-                5.0 * rand() / RAND_MAX
+                5.0 * random(),
+                5.0 * random(),
+                5.0 * random()
             );
 
             auto* newVertex = new Vertex(model, randomPosition, type);

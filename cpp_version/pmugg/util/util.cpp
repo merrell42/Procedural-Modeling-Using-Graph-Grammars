@@ -2,13 +2,23 @@
 #include <cmath>
 #include <algorithm>
 #include <stdexcept>
-#include <random>
+// #include <random>
 #include <vector>
+#include <iostream>
 
 namespace ms {
 
-std::function<float()> Util::originalRandom = []() { return static_cast<float>(rand()) / RAND_MAX; };
-int Util::randomCount = 0;
+int randomCount = 0;
+int randomSeed = 42;
+
+double random() {
+    // return static_cast<double>(rand()) / RAND_MAX;
+    double x = (float)std::sin(randomSeed + randomCount) * (10000 + randomSeed);
+    randomCount++;
+    double result = x - std::floor(x);
+    std::cout << randomCount << " " << result << std::endl;
+    return result;
+}
 
 float Util::fixAngle(float angle) {
     while (angle > PI) {
@@ -101,26 +111,8 @@ void Util::addToArray(std::vector<T>& array, const std::vector<int>& indices, co
     }
 }
 
-int Util::consistentRandom(int n, int seed) {
-    float x = (float)std::sin(seed) * (10000 + seed);
-    float r = x - std::floor(x);
-    return static_cast<int>(r * n);
-}
-
-//int randomCount = 0;
-//
-//float Util::random(int seed, int count) {
-//    float x = (float)std::sin(seed + count) * (10000 + seed);
-//    return x - std::floor(x);
-//}
-
-int Util::random(int count) {
-    return rand() % count;
-}
-
-void Util::updateRandomMode() {
-    // This would need to be adapted based on your global settings implementation
-    // The original JS version uses ms.globalSettings
+int Util::randomInt(int count) {
+    return static_cast<int>(random() * count);
 }
 
 template<typename T>
@@ -199,7 +191,7 @@ int Util::randomDistribution(const std::vector<double>& probabilityMass) {
     if (sum == 0.0) {
         return -1;
     }
-    double r = sum * (static_cast<double>(rand()) / RAND_MAX);
+    double r = sum * random();
     int index = 0;
     while (index < sums.size() && r > sums[index]) {
         index++;
@@ -212,7 +204,7 @@ double Util::randomUniform(double lower, double upper) {
     if (lower > upper) {
         throw std::invalid_argument("Lower bound is greater than upper bound.");
     }
-    double s = (static_cast<double>(rand()) / RAND_MAX);
+    double s = random();
     return s * (upper - lower) + lower;
 }
 

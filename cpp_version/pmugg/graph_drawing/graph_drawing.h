@@ -54,7 +54,7 @@ class GraphDrawing {
 		std::map<int, Vertex*> getVertexMap() { return vertexMap; }
 
 		// Save the mesh to an OBJ file.
-		void save();
+		void save(std::string suffix);
 
 	private:
 		std::map<int, Endpoint*> endpointMap;

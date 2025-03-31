@@ -45,8 +45,8 @@ void GraphDrawing::removeVertex(Vertex* vertex) {
 	vertexMap.erase(vertex->getId());
 }
 
-void GraphDrawing::save() {
-	const std::string filename = "graph_drawing.obj";
+void GraphDrawing::save(std::string suffix) {
+	const std::string filename = "graph_drawing" + suffix + ".obj";
 	const std::string mtlFilename = "graph_drawing.mtl";
 	std::ofstream outFile(filename);
 	if (!outFile) {
@@ -55,7 +55,7 @@ void GraphDrawing::save() {
 	}
 
 	// Reference the material file
-	outFile << "mtllib " << mtlFilename << "\n";
+	// outFile << "mtllib " << mtlFilename << "\n";
 
 	// Write vertices
 	std::vector<int> vertexIds;
@@ -72,7 +72,7 @@ void GraphDrawing::save() {
 		const std::string material = face->getFaceType()->getMaterial();
 		if (material != currentMaterial) {
 			currentMaterial = material;
-			outFile << "usemtl " << currentMaterial << "\n";
+			// outFile << "usemtl " << currentMaterial << "\n";
 		}
 
 		outFile << "f";

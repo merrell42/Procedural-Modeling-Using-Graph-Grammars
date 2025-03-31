@@ -15,7 +15,6 @@
 #include <algorithm> // For std::find
 #include "../intersector.h"
 #include <limits>
-#include <random>
 
 namespace ms {
 
@@ -57,7 +56,7 @@ NetGraphMap* NetGraphMapFinder::findMap(Network* netB) {
         return nullptr;
     }
     int attempts = std::min(N, vertexAttempts);
-    int startIndex = Util::random(N);
+    int startIndex = Util::randomInt(N);
 
     auto it = std::next(vertexMap.begin(), startIndex % vertexMap.size()); // Start at valid index
     size_t count = 0;
@@ -126,7 +125,7 @@ void NetGraphMapFinder::addOuterFaces(NetGraphMap* map, Network* netB) {
 //    auto facesA = nodeStats->getElements("face");
 //    int N = facesA.size();
 //    int attempts = std::min(N, faceAttempts);
-//    int startIndex = Util::random(N);
+//    int startIndex = Util::randomInt(N);
 //    std::vector<Face*> options;
 //    std::vector<float> weights;
 //
@@ -436,7 +435,7 @@ NetGraphMap* NetGraphMapFinder::assignEndpoint(Endpoint* endpointA, HalfEdgeNet*
     auto vertexType = vertexB->getType();
 
     if (!isConnector && vertexType->getSpliced() && map->vertexBtoA[vIndexB] == 0) {
-        endpointA->getLine()->fullSplit(static_cast<double>(rand()) / RAND_MAX); // Simulating ms.randomUniform(0, 1)
+        endpointA->getLine()->fullSplit(random()); // Simulating ms.randomUniform(0, 1)
         nodesModified = true;
     }
 
@@ -515,12 +514,7 @@ Endpoint* NetGraphMapFinder::castRaySeries(HalfEdgeNet* halfB, const Vec3& start
             double scale = dir.length() / dir2.length();
             double nearestDist = scale * nearestIntersect.distance;
             double maxDistance = std::max(nearestDist, (double)maxRayDistance);
-            
-            // Generate random uniform value
-            std::random_device rd;
-            std::mt19937 gen(rd());
-            std::uniform_real_distribution<> dis(0, maxDistance);
-            double d = dis(gen);
+            double d = Util::randomUniform(0, maxDistance);
             
             p0 = dir;
             p0.scale(d);

@@ -77,13 +77,14 @@ void GuideMutator::resolve(/*Model* outputModel*/) {
         bool maxTimeEnabled = globalSettings["Max Time Enabled"].get<bool>();
         int maxIterations = globalSettings["Max Iterations"].get<int>();
 
+        model->getCurrent()->save(std::to_string(taskCount));
         /*if ((maxTimeEnabled && 
              (currentTime > endTime || 
               (currentTime > earlyEndTime && nodeStats.getBadVertices().empty()))) ||
             (taskCount >= maxIterations)) {*/
         if (taskCount >= maxIterations) {
             timer->stop("Guide Mutator");
-            model->getCurrent()->save();
+            model->getCurrent()->save("");
             return;
             // status = Status::FINISHED;
             // return status;

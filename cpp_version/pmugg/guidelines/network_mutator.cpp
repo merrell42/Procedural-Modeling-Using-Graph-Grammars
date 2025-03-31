@@ -118,7 +118,7 @@ bool NetworkMutator::applyTransition(Transition transition) {
 //
 //    // Choose random lines to consider
 //    for (int i = 0; i < NetworkMutator::LINES_TO_CHOOSE && !nodes.empty(); i++) {
-//        int index = Util::random(nodes.size());
+//        int index = Util::randomInt(nodes.size());
 //        if (auto* line = dynamic_cast<Line*>(nodes[index]->getElement())) {
 //            lines.push_back(line);
 //        }

@@ -64,8 +64,8 @@ Transition NetworkHierarchy::getTransition() {
         auto endNetworks = transition->getEndNetworks();
         int n = (int)startNetworks.size();
         // Pick two unique indices
-        int start = Util::random(n);
-        int end = Util::random(n - 1);
+        int start = Util::randomInt(n);
+        int end = Util::randomInt(n - 1);
         if (end >= start) {
             end++;
         }
@@ -84,7 +84,7 @@ Transition NetworkHierarchy::getRemoveTransition() {
         auto startNetworks = transition->getStartNetworks();
         int n = (int)startNetworks.size();
         auto* endNet = emptyNet;
-        auto* startNet = startNetworks[Util::random(n - 1) + 1];
+        auto* startNet = startNetworks[Util::randomInt(n - 1) + 1];
         return {startNet, endNet, nullptr, false};
     }
     return {nullptr, nullptr, nullptr, false};
@@ -101,7 +101,7 @@ Transition NetworkHierarchy::getStarterTransition() {
         auto endNetworks = transition->getEndNetworks();
         int n = (int)endNetworks.size();
         auto* startNet = startNetworks[0];
-        auto* endNet = endNetworks[Util::random(n - 1) + 1];
+        auto* endNet = endNetworks[Util::randomInt(n - 1) + 1];
         return {startNet, endNet, nullptr, transition->isGround()};
     }
     return {nullptr, nullptr, nullptr, false};

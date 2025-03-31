@@ -2,7 +2,6 @@
 #include <vector>
 #include <functional>
 #include <string>
-#include <random>
 #include "../shape/vec3.h"
 
 namespace ms {
@@ -20,6 +19,9 @@ template <typename T> static
 bool contains(const std::vector<T>& vec, const T& value) {
     return std::find(vec.begin(), vec.end(), value) != vec.end();
 }
+
+// Generate a random value. Like rand(), but the same every time.
+double random();
 
 class Util {
 public:
@@ -73,9 +75,7 @@ public:
     }
 
     // Random operations
-    static int consistentRandom(int n, int seed);
-    static int random(int count);
-    static void updateRandomMode();
+    static int randomInt(int count);
     static int randomDistribution(const std::vector<double>& probabilityMass);
 
     // Array utilities
@@ -104,12 +104,13 @@ public:
         if (vec.empty()) {
             throw std::invalid_argument("Cannot pick an item from an empty vector.");
         }
+        return vec[randomInt(vec.size())];
         // Initialize random number generator
-        std::random_device rd;
+        /* std::random_device rd;
         std::mt19937 gen(rd());
         std::uniform_int_distribution<> dis(0, static_cast<int>(vec.size()) - 1);
         int index = dis(gen);
-        return vec[index];
+        return vec[index]; */
     }
 
     static double randomUniform(double lower, double upper);
