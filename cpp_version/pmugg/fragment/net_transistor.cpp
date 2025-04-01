@@ -423,7 +423,8 @@ void NetTransistor::setup() {
 }
 
 // Static helper function
-void NetTransistor::constrainVertexIds(std::vector<int>& vIds, NetTransistorSettings* settings) {
+void NetTransistor::constrainVertexIds(std::vector<int>& vertexIds, NetTransistorSettings* settings) {
+    std::vector vIds(vertexIds);
     while (!vIds.empty()) {
         std::vector<int> newVIdsToConstrain;
         VertexPlacement* mostConstrained = nullptr;
@@ -507,8 +508,8 @@ void NetTransistor::setupFaceCentric() {
         settings->getVertex(id)->checkThreeFaces();
     }
 
-    // Process fixed vertices from open paths
-    std::vector<int> fixedVertexIds;
+    // Process fixed vertices from open paths.
+    fixedVertexIds.clear();
     for (auto* path : openPaths) {
         for (int j = 0; j < 2; ++j) {
             auto* pathVertex = path->endpoints[j]->getVertex();
@@ -697,18 +698,18 @@ std::pair<std::vector<double>, bool> NetTransistor::sampleFaceCentric() {
 //            return result;
 //        }
 //    }
-//
-//    bool success = true;
-//    for (const auto& fixed : fixedFaces) {
-//        fixed.fPlace->setD(fixed.d);
-//        fixed.fPlace->setFixed(true);
-//    }
-//
-//    for (int id : fixedVertexIds) {
-//        success = success && settings->getVertex(id)->fixPosition();
-//    }
-//
-//    if (!success) return {};
+
+    bool success = true;
+    //for (const auto& fixed : fixedFaces) {
+    //    fixed.fPlace->setD(fixed.d);
+    //    fixed.fPlace->setFixed(true);
+    //}
+
+    for (int id : fixedVertexIds) {
+        success = success && settings->getVertex(id)->fixPosition();
+    }
+
+    if (!success) return {};
 
     std::vector<int> basisOrders;
     for (const auto& basisId : settings->basisIds) {

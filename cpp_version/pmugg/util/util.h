@@ -105,12 +105,6 @@ public:
             throw std::invalid_argument("Cannot pick an item from an empty vector.");
         }
         return vec[randomInt(vec.size())];
-        // Initialize random number generator
-        /* std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_int_distribution<> dis(0, static_cast<int>(vec.size()) - 1);
-        int index = dis(gen);
-        return vec[index]; */
     }
 
     static double randomUniform(double lower, double upper);

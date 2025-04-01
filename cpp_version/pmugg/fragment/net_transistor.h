@@ -87,6 +87,7 @@ private:
     Vec3* initialPosition = nullptr;
     std::vector<int> propagationOrder;
     std::vector<Edge*> basisEdges;
+    std::vector<int> fixedVertexIds;
     // bool isInitialBoundary = false;
     double effort = 0;
     Graph* graph = nullptr;

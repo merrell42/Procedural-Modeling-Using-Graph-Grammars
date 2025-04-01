@@ -15,9 +15,7 @@ double random() {
     // return static_cast<double>(rand()) / RAND_MAX;
     double x = (float)std::sin(randomSeed + randomCount) * (10000 + randomSeed);
     randomCount++;
-    double result = x - std::floor(x);
-    std::cout << randomCount << " " << result << std::endl;
-    return result;
+    return x - std::floor(x);
 }
 
 float Util::fixAngle(float angle) {

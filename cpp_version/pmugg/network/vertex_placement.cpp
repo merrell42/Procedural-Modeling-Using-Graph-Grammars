@@ -250,4 +250,17 @@ void VertexPlacement::checkThreeFaces() {
     }
 }
 
+bool VertexPlacement::fixPosition() {
+    this->slope = Vec3::ORIGIN;
+    this->value = this->vertex->getPosition();
+
+    bool success = true;
+    for (const auto& id : this->getAllFaceIds()) {
+        success = success && settings->getFace(id)->setFromVertex(this->id);
+        settings->getFace(id)->setFixed(true);
+    }
+
+    return success;
+}
+
 } // namespace ms 
