@@ -193,11 +193,13 @@ Network* Network::import(const Json & json, Shape3D* shape) {
         auto morphism = json["morphism"];
         for (size_t index = 0; index < morphism["halfs"].size(); ++index) {
             int hIndex = morphism["halfs"][index].get<int>();
-            result->bHalfEdges.push_back(result->getHalfEdges()[hIndex]);
+            auto bHalf = hIndex >= 0 ? result->getHalfEdges()[hIndex] : nullptr;
+            result->bHalfEdges.push_back(bHalf);
         }
         for (size_t index = 0; index < morphism["vertices"].size(); ++index) {
             int hIndex = morphism["vertices"][index].get<int>();
-            result->bVertices.push_back(result->getVertices()[hIndex]);
+            auto bVertex = hIndex >= 0 ? result->getVertices()[hIndex] : nullptr;
+            result->bVertices.push_back(bVertex);
         }
     }
 

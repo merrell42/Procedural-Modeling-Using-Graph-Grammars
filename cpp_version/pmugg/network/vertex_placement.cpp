@@ -6,6 +6,10 @@ void VertexPlacement::initialize() {
     std::vector<Endpoint*> endpoints = vertex->getEndpoints();
 
     for (auto* endpoint : endpoints) {
+        if (!endpoint) {
+            // Happens in the ground transition.
+            continue;
+        }
         Face* face = endpoint->getFace();
         int id = face->getId();
 

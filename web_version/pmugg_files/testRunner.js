@@ -57,7 +57,7 @@ ms.testRunner = function(container, exampleShape, decorationModel, screenSaver, 
 			var scenario = is3D ? scenario3D : scenario2D;
 			this.addShape(solution.category, solution.name, [scenario], solution.data, solution.settings, solution.solution);
 		});
-		var exported = solutions.filter((s) => s.solution.useNetworks)[6];
+		var exported = solutions.filter((s) => s.solution.useNetworks)[7];
 		ms.classifier.computeBoundaryMorphisms(exported.solution);
 		console.log(JSON.stringify(exported).replaceAll('\\"', '"').replaceAll('"{', '{').replaceAll('}"', '}'));
 

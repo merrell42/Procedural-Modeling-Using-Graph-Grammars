@@ -146,7 +146,7 @@ void Face::insert(Endpoint* endpoint, Endpoint* prevEndpoint) {
     int index = (it != endpoints.end()) ? std::distance(endpoints.begin(), it) : -1;
 
     // Insert the new endpoint at the correct position
-    int id = endpoint->getId();
+    double id = static_cast<double>(endpoint->getId()); // Convert id to double
     if (index >= 0) {
         endpointIds.insert(endpointIds.begin() + index + 1, id);
         endpoint->setFace(this);

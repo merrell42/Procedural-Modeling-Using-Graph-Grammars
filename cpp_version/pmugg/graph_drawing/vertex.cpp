@@ -14,7 +14,7 @@ Vertex::Vertex(Model* model, int id, Vec3 position, VertexType* type, std::vecto
 Vertex::Vertex(Model* model, Vec3 position, VertexType* type)
 	: model(model)
 	, id(model->newId())
-	, endpointIds(type->getConnections().size(), -1)
+	// , endpointIds(type->getConnections().size(), -1)
 	, position(position)
 	, type(type) {
 	model->getCurrent()->addVertex(id, this);
@@ -22,7 +22,6 @@ Vertex::Vertex(Model* model, Vec3 position, VertexType* type)
 
 void Vertex::createEndpoints() {
 	std::vector<Connection> connections = type->getConnections();
-	int vertexIndex = 0;
 
 	for (const auto& connection : connections) {
 		EdgeType3D* edgeType = connection.edge;
@@ -33,14 +32,13 @@ void Vertex::createEndpoints() {
 			bool position = faceDatum.onRight ^ connection.isAtStart;
 
 			if (position) {
-				createEndpoint(connection, vertexIndex, faceIndex);
-				++vertexIndex;
+				createEndpoint(connection, faceIndex);
 			}
 		}
 	}
 }
 
-Endpoint* Vertex::createEndpoint(const Connection& connection, int vertexIndex, int faceIndex) {
+Endpoint* Vertex::createEndpoint(const Connection& connection, int faceIndex) {
 	/*if (node.isDestroyed()) {
 		std::cerr << "Error in createEndpoint." << std::endl;
 		return nullptr;
@@ -65,8 +63,8 @@ Endpoint* Vertex::createEndpoint(const Connection& connection, int vertexIndex, 
 	lineEndpointIds[faceIndex] = endpointId;
 	auto line = new Line(model, lineId, connection.edge, lineEndpointIds);
 
-	// Add the endpoint to the vertex
-	endpointIds[vertexIndex] = endpointId;
+	// Add the endpoint to the vertex.
+	endpointIds.push_back(endpointId);
 
 	/*endpoint->maybeMergePrevFace();
 	auto twin = endpoint->twin();

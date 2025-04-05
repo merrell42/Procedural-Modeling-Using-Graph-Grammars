@@ -17,7 +17,10 @@ EdgePlacement::EdgePlacement(Line* edge, int id, NetTransistorSettings* settings
     // Get vertex IDs from endpoints
     auto endpoints = edge->getEndpoints();
     for (auto* endpoint : endpoints) {
-        vertexIds.push_back(endpoint->getVertex()->getId());
+        if (endpoint) {
+            // Can be null in the ground transition.
+            vertexIds.push_back(endpoint->getVertex()->getId());
+        }
     }
 
     // Handle self-loops

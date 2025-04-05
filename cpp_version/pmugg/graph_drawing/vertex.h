@@ -33,6 +33,6 @@ class Vertex {
 		std::vector<int> endpointIds;
 
 		Model* model;
-		Endpoint* createEndpoint(const Connection& connection, int vertexIndex, int faceIndex);
+		Endpoint* createEndpoint(const Connection& connection, int faceIndex);
 };
 }

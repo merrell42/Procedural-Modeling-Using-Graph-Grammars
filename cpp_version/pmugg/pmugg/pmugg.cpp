@@ -18,7 +18,8 @@ using Json = nlohmann::json;
 int main() {
 	// ifstream file("C:/model synthesis/model_synthesis_files/Grammar Editor/graphTemplates.txt");
 	// ifstream file("../data/box.json");
-	ifstream file("../data/L-floating.json");
+	// ifstream file("../data/L-floating.json");
+	ifstream file("../data/L-grounded.json");
 	string content((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
 	file.close();
 

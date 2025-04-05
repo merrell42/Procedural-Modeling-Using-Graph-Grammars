@@ -470,7 +470,7 @@ void NetTransistor::addFixedFace(Face* fixedFaceA, Face* fixedFaceB, double d) {
 }
 
 void NetTransistor::setupFaceCentric() {
-    auto extents = globalSettings["Extents"].get<std::vector<int>>();
+    auto extents = globalSettings["Extents"].get<std::vector<double>>();
     const Vec3 lower(1, 1, 0);
     const Vec3 upper(extents[0] - 1, extents[1] - 1, extents[2]);
     auto settingsNew = std::make_unique<NetTransistorSettings>(lower, upper);
@@ -568,14 +568,13 @@ void NetTransistor::setupFaceCentric() {
 Limits NetTransistor::findLimits() {
     std::vector<double> minLimit;
     std::vector<double> maxLimit;
+    auto extents = globalSettings["Extents"].get<std::vector<double>>();
 
     // Handle vertex limits
     for (size_t i = 0; i < freeVertices.size(); i++) {
         for (int dim = 0; dim < dims; dim++) {
-            // minLimit.push_back(mutationArea.lowerExtent[dim]);
-            // maxLimit.push_back(mutationArea.upperExtent[dim]);
             minLimit.push_back(0);
-            maxLimit.push_back(10);
+            maxLimit.push_back(extents[dim]);
         }
     }
 
@@ -655,49 +654,51 @@ void NetTransistor::setPlacements(
 }
 
 std::pair<std::vector<double>, bool> NetTransistor::sampleFaceCentric() {
-//    if (ground) {
-//        std::vector<double> result;
-//        auto& vertices = endNet->getInterior()->getVertices();
-//
-//        if (vertices.size() == 4) {
-//            for (auto* vertex : vertices) {
-//                if (dims == 3) {
-//                    auto dir = vertex->getHalfEdges()[0]->getDir();
-//                    if (dir.x > 0.9) {          // +X
-//                        result.insert(result.end(), { lower[0], lower[1], lower[2] + 1 });
-//                    }
-//                    else if (dir.x < -0.9) {  // -X
-//                        result.insert(result.end(), { upper[0], upper[1], lower[2] + 1 });
-//                    }
-//                    else if (dir.y > 0.9) {   // +Y
-//                        result.insert(result.end(), { upper[0], lower[1], lower[2] + 1 });
-//                    }
-//                    else if (dir.y < -0.9) {  // -Y
-//                        result.insert(result.end(), { lower[0], upper[1], lower[2] + 1 });
-//                    }
-//                }
-//                else {
-//                    int signX = 0, signY = 0;
-//                    for (int i = 0; i < 2; i++) {
-//                        auto dir = vertex->getHalfEdges()[i]->getDir();
-//                        if (dir.x > 0.9) signX = 1;
-//                        if (dir.x < -0.9) signX = -1;
-//                        if (dir.y > 0.9) signY = 1;
-//                        if (dir.y < -0.9) signY = -1;
-//                    }
-//
-//                    if (signX == 0 || signY == 0) {
-//                        Alert::show("2D boundary corner is wrong.");
-//                    }
-//
-//                    double xPos = (signX == 1) ? lower[0] + 0.1 : upper[0] - 0.1;
-//                    double yPos = (signY == 1) ? lower[1] + 0.1 : upper[1] - 0.1;
-//                    result.insert(result.end(), { xPos, yPos });
-//                }
-//            }
-//            return result;
-//        }
-//    }
+    if (ground) {
+        std::vector<double> result;
+        auto& vertices = endNet->getVertices();
+
+        if (vertices.size() == 4) {
+            std::vector<double> lower = {0, 0, 0};
+            auto upper = globalSettings["Extents"].get<std::vector<double>>();
+            for (auto* vertex : vertices) {
+                if (dims == 3) {
+                    auto dir = vertex->getHalfEdges()[0]->getDir();
+                    if (dir.x > 0.9) {          // +X
+                        result.insert(result.end(), { lower[0], lower[1], lower[2] + 1 });
+                    }
+                    else if (dir.x < -0.9) {  // -X
+                        result.insert(result.end(), { upper[0], upper[1], lower[2] + 1 });
+                    }
+                    else if (dir.y > 0.9) {   // +Y
+                        result.insert(result.end(), { upper[0], lower[1], lower[2] + 1 });
+                    }
+                    else if (dir.y < -0.9) {  // -Y
+                        result.insert(result.end(), { lower[0], upper[1], lower[2] + 1 });
+                    }
+                }
+                else {
+                    int signX = 0, signY = 0;
+                    for (int i = 0; i < 2; i++) {
+                        auto dir = vertex->getHalfEdges()[i]->getDir();
+                        if (dir.x > 0.9) signX = 1;
+                        if (dir.x < -0.9) signX = -1;
+                        if (dir.y > 0.9) signY = 1;
+                        if (dir.y < -0.9) signY = -1;
+                    }
+
+                    if (signX == 0 || signY == 0) {
+                        std::cout << "2D boundary corner is wrong." << std::endl;
+                    }
+
+                    double xPos = (signX == 1) ? lower[0] + 0.1 : upper[0] - 0.1;
+                    double yPos = (signY == 1) ? lower[1] + 0.1 : upper[1] - 0.1;
+                    result.insert(result.end(), { xPos, yPos });
+                }
+            }
+            return std::make_pair(result, true);
+        }
+    }
 
     bool success = true;
     //for (const auto& fixed : fixedFaces) {
