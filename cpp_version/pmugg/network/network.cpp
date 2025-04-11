@@ -189,6 +189,11 @@ Network* Network::import(const Json & json, Shape3D* shape) {
         int type = edgeData["type"].get<int>();
         result->getEdges()[index]->setType(shape->edgeTypes[type]);
     }
+    for (size_t index = 0; index < json["faces"].size(); ++index) {
+        auto faceData = json["faces"][index];
+        int type = faceData["type"].get<int>();
+        result->getFaces()[index]->setType(shape->faceTypes[type]);
+    }
     if (json.contains("morphism")) {
         auto morphism = json["morphism"];
         for (size_t index = 0; index < morphism["halfs"].size(); ++index) {
@@ -200,6 +205,11 @@ Network* Network::import(const Json & json, Shape3D* shape) {
             int hIndex = morphism["vertices"][index].get<int>();
             auto bVertex = hIndex >= 0 ? result->getVertices()[hIndex] : nullptr;
             result->bVertices.push_back(bVertex);
+        }
+        for (size_t index = 0; index < morphism["faces"].size(); ++index) {
+            int hIndex = morphism["faces"][index].get<int>();
+            auto bFace = hIndex >= 0 ? result->getFaces()[hIndex] : nullptr;
+            result->bFaces.push_back(bFace);
         }
     }
 

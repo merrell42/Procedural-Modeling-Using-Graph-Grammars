@@ -33,6 +33,7 @@ public:
     // void seed(MutationArea* mutationArea);
     void resolve(/*Model* outputModel*/);
     void mutate();
+    void mutateGround();
     void accept();
     void reject();
     // void save(Model* model = nullptr);

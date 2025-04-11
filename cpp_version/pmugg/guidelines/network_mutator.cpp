@@ -27,8 +27,8 @@ NetworkMutator::NetworkMutator(NetworkHierarchy* hierarchy, Model* model/*, Node
 //    mutationArea = area;
 //}
 
-bool NetworkMutator::addStartInstance() {
-    auto transition = hierarchy->getStarterTransition();
+bool NetworkMutator::addStartInstance(bool useGround) {
+    auto transition = hierarchy->getStarterTransition(useGround);
     return applyTransition(transition);
 }
 

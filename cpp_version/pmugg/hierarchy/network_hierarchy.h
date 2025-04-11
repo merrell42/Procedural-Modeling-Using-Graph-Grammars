@@ -42,7 +42,7 @@ public:
     // Transition operations
     Transition getTransition();
     Transition getRemoveTransition();
-    Transition getStarterTransition();
+    Transition getStarterTransition(bool useGround);
 
     // Generation methods
     // void partialGenerate(const std::vector<Network*>& transitionNets, NetworkSet& networks);

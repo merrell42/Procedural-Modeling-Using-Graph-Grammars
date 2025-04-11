@@ -26,6 +26,7 @@ public:
 
     std::vector<Vertex*> vertexBtoA;
     std::vector<Line*> edgeBtoA;
+    std::vector<Face*> faceBtoA;
 
 private:
     // bool valid;

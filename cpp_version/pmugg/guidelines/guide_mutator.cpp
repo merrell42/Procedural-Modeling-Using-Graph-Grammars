@@ -54,7 +54,11 @@ void GuideMutator::resolve(/*Model* outputModel*/) {
         //    // debugger statement equivalent would go here
         //}
 
-        mutate();
+        if (taskCount == 1) {
+            mutateGround();
+        } else {
+            mutate();
+        }
 
         // auto cost = optimizer.computeCost();
         timer->start("Accept Or Reject");
@@ -102,6 +106,11 @@ void GuideMutator::resolve(/*Model* outputModel*/) {
     }
 }
 
+// Add the ground plane.
+void GuideMutator::mutateGround() {
+    bool success = networkMutator->addStartInstance(true);
+};
+
 void GuideMutator::mutate() {
     std::vector<double> probabilities = {1, 1, 10};
     bool done = false;
@@ -110,7 +119,7 @@ void GuideMutator::mutate() {
         switch(Util::randomDistribution(probabilities)) {
             case 0: {
                 timer->start("Add Fragment");
-                bool success = networkMutator->addStartInstance();
+                bool success = networkMutator->addStartInstance(false);
                 timer->stop("Add Fragment");
                 if (success) {
                     return;

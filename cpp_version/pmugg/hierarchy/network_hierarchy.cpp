@@ -90,9 +90,8 @@ Transition NetworkHierarchy::getRemoveTransition() {
     return {nullptr, nullptr, nullptr, false};
 }
 
-Transition NetworkHierarchy::getStarterTransition() {
-    // bool firstTask = (guideMutator.taskCount <= 1);
-    bool grounded = (this->grounded /*&& firstTask*/) || starterTransitions.empty();
+Transition NetworkHierarchy::getStarterTransition(bool useGround) {
+    bool grounded = (this->grounded && useGround) || starterTransitions.empty();
     auto& transitions = grounded ? groundTransitions : starterTransitions;
     
     auto* transition = Util::pick(transitions);

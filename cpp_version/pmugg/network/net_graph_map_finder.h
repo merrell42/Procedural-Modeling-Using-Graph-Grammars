@@ -65,7 +65,7 @@ private:
     bool groundEnabled;
 
     // Helper methods
-    Face* findFace(VertexType* faceType);
+    Face* findFace(FaceType3D* faceType);
     NetGraphMap* findContinue(NetGraphMapState* state);
     NetGraphMap* assignVertex(NetGraphMapState* state, Vertex* vertexA, int indexB);
     NetGraphMap* matchEndpoint(const EndpointData& endpointData, NetGraphMapState* state);

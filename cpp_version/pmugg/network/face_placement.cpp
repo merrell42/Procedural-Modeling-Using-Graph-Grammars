@@ -95,7 +95,7 @@ void FacePlacement::makeFixed(const FixedFace& fixedFace) {
         settings->getVertex(id)->addFixedNeighbor(fixedFace);
     }
     constrain(true, -1);
-    std::cout << "TODO: Define face groups" << std::endl;
+    // std::cout << "TODO: Define face groups" << std::endl;
     // faceA.faceA->getGroup()->connectHole(face->getGroup());
 }
 

@@ -22,7 +22,7 @@ public:
 
     // Core functionality
     // void setMutationArea(MutationArea* area);
-    bool addStartInstance();
+    bool addStartInstance(bool useGround);
     bool changeRandomInstance(bool justDestructible = false);
 
     // Static members

@@ -1,14 +1,15 @@
 #pragma once
 #include <vector>
 #include "../third_party/json.h"
+#include "../shapes3D/face_type3d.h"
 
 using Json = nlohmann::json;
 
 namespace ms {
 
 class HalfEdgeNet;
-class PrimalFace;
 class Network;
+class FaceType3D;
 
 class FaceNet {
 public:
@@ -17,15 +18,15 @@ public:
     // Getters
     HalfEdgeNet* getOuterComponent() const;
     const std::vector<HalfEdgeNet*>& getInnerComponents() const;
-    PrimalFace* getPrimal() const;
     Network* getNetwork() const;
+    FaceType3D* getType() const { return type; }
     
     // Setters
-    void setPrimal(PrimalFace* primal);
     FaceNet* connectNet(Network* network);
     void connectOuter(const std::vector<HalfEdgeNet*>& halfEdges);
     void makeInner(HalfEdgeNet* halfEdge);
     void copyConnection(const FaceNet* copy);
+    void setType(FaceType3D* type_) { type = type_;}
     
     // Import/Export
     void import(const Json& json);
@@ -47,7 +48,7 @@ public:
 private:
     HalfEdgeNet* outerComponent;
     std::vector<HalfEdgeNet*> innerComponents;
-    PrimalFace* primal;
+    FaceType3D* type;
     Network* network;
     int id;
 };

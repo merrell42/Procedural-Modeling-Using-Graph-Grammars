@@ -142,15 +142,19 @@ ms.boundNet.prototype.getConnectors = function() {
 };
 
 ms.boundNet.prototype.getBoundaryMorphism = function() {
-	var indices = { halfs: [], vertices: []};
+	var indices = { halfs: [], vertices: [], faces: []};
 	var self = this;
 	var faces = this.getBoundary().getFaces();
+
 	/* if (faces.length > 1) {
 		faces = faces.filter((f) => f.getOuterComponent().getForward());
 	} */
 	var interior = this.getInterior();
 	var interiorHalfs = interior.getHalfEdges();
 	var interiorVerts = interior.getVertices();
+	indices.faces = this.getOuterFaces(true).map((outerFace) => (
+		interior.getFaces().indexOf(outerFace)
+	));
 	faces.forEach((face) => {
 		var outerHalfs = face ? face.getOuterHalfEdges() : [];
 		outerHalfs.forEach((half) => {
@@ -223,8 +227,12 @@ ms.boundNet.prototype.recomputeTurns = function() {
 	faces.forEach((face) => { face.getPrimal().computeTurns(); });
 };
 
-ms.boundNet.prototype.getOuterFaces = function() {
-	var faces = this.getInterior().getFaces();
+ms.boundNet.prototype.getOuterFaces = function(allowEmptyFaces) {
+	var interior = this.getInterior();
+	var faces = interior.getFaces();
+	if (allowEmptyFaces && interior.getVertices().length == 0 && interior.getEdges().length == 0) {
+		return faces;
+	}
 	return faces.filter((face) => { return face.getPrimal().getTurns() == 1 && face.isLoopy(); });
 };
 

@@ -31,6 +31,7 @@ class Face {
 		void destroy();
 		void insert(Endpoint* endpoint, Endpoint* prevEndpoint);
 		void removeEndpoint(Endpoint* endpoint);
+		double signedArea();
 
 	private:
 		int id;

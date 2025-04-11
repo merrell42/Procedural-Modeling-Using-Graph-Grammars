@@ -10,7 +10,7 @@ namespace ms {
 
 FaceNet::FaceNet() 
     : outerComponent(nullptr)
-    , primal(nullptr)
+    , type(nullptr)
     , network(nullptr) {
 }
 
@@ -22,16 +22,8 @@ const std::vector<HalfEdgeNet*>& FaceNet::getInnerComponents() const {
     return innerComponents;
 }
 
-PrimalFace* FaceNet::getPrimal() const {
-    return primal;
-}
-
 Network* FaceNet::getNetwork() const {
     return network;
-}
-
-void FaceNet::setPrimal(PrimalFace* primal) {
-    this->primal = primal;
 }
 
 FaceNet* FaceNet::connectNet(Network* network) {

@@ -30,6 +30,7 @@ public:
     void step(int taskNum);
     void startMutation();
     void mutate();
+    void mutateGround();
     void onMouseDown(float x, float y);
     std::string exportOutput();
 

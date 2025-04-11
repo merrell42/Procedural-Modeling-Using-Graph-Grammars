@@ -23,6 +23,7 @@ class Network;
 class Line;
 class Edge;
 class Vertex;
+struct FixedFace;
 
 struct Graph {
     std::vector<Vertex*> vertices;
@@ -82,6 +83,7 @@ private:
 
     std::vector<Vertex*> freeVertices;
     std::vector<Edge*> freeEdges;
+    std::vector<FixedFace> fixedFaces;
     // std::vector<EdgeBlocker*> edgeBlockers;
     // Matrix* changeBasis = nullptr;
     Vec3* initialPosition = nullptr;

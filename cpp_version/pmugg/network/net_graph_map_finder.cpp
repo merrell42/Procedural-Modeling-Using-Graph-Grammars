@@ -11,7 +11,7 @@
 //#include "line.h"
 //#include "edge.h"
 #include "../util/util.h"
-//#include "settings.h"
+#include "../grid/settings.h"
 #include <algorithm> // For std::find
 #include "../intersector.h"
 #include <limits>
@@ -27,12 +27,12 @@ NetGraphMapFinder::NetGraphMapFinder(Model* model, bool groundEnabled)
     , groundEnabled(groundEnabled) {}
 
 NetGraphMap* NetGraphMapFinder::findMap(Network* netB) {
-    /*if (!groundFace && groundEnabled) {
-        auto faces = model->getCurrent()->getFaces();
+    if (!groundFace && groundEnabled) {
+        auto faces = model->getCurrent()->getFaceMap();
         if (!faces.empty()) {
-            groundFace = faces[0];
+            groundFace = faces.begin()->second;
         }
-    }*/
+    }
 
     auto verticesB = netB->getVertices();
     if (verticesB.empty()) {
@@ -114,34 +114,41 @@ void NetGraphMapFinder::addOuterFaces(NetGraphMap* map, Network* netB) {
     }*/
 }
 
-//
-//Face* NetGraphMapFinder::findFace(VertexType* faceType) {
-//    if (groundEnabled && faceType == groundFace->getFaceType()) {
-//        if (Util::randomUniform(0, 1) < Settings::get("Prefer Ground")) {
-//            return groundFace;
-//        }
-//    }
-//
-//    auto facesA = nodeStats->getElements("face");
-//    int N = facesA.size();
-//    int attempts = std::min(N, faceAttempts);
-//    int startIndex = Util::randomInt(N);
-//    std::vector<Face*> options;
-//    std::vector<float> weights;
-//
-//    for (int i = 0; i < attempts; i++) {
-//        auto* faceA = facesA[(startIndex + i) % N];
-//        if (faceA->getFaceType() == faceType && !faceA->isHole()) {
-//            weights.push_back(std::abs(faceA->signedArea()));
-//            options.push_back(faceA);
-//        }
-//    }
-//
-//    if (!weights.empty()) {
-//        return options[Util::pickByWeight(weights)];
-//    }
-//    return nullptr;
-//}
+
+Face* NetGraphMapFinder::findFace(FaceType3D* faceType) {
+    if (groundEnabled && faceType == groundFace->getFaceType()) {
+        auto preference = globalSettings["Prefer Ground"].get<double>();
+        if (Util::randomUniform(0, 1) < preference) {
+            return groundFace;
+        }
+    }
+
+    auto facesA = model->getCurrent()->getFaceMap();
+    // TODO: This conversion from map to vector could be slow with many faces.
+    // We could just select random samples.
+    std::vector<Face*> facesVec;
+    for (const auto& [_, face] : facesA) {
+        facesVec.push_back(face);
+    }
+    int N = facesVec.size();
+    int attempts = std::min(N, faceAttempts);
+    int startIndex = Util::randomInt(N);
+    std::vector<Face*> options;
+    std::vector<double> weights;
+
+    for (int i = 0; i < attempts; i++) {
+        auto* faceA = facesVec[(startIndex + i) % N];
+        if (faceA && faceA->getFaceType() == faceType && !faceA->isHole()) {
+            weights.push_back(std::abs(faceA->signedArea()));
+            options.push_back(faceA);
+        }
+    }
+
+    if (!weights.empty()) {
+        return options[Util::randomDistribution(weights)];
+    }
+    return nullptr;
+}
 
 NetGraphMap* NetGraphMapFinder::findStarterMap(Network* netB) {
     auto info = std::make_unique<NetGraphMapInfo>(model, netB);
@@ -153,14 +160,23 @@ NetGraphMap* NetGraphMapFinder::findStarterMap(Network* netB) {
         return state->getMap();
     }
 
-    /*if (!groundEnabled || nodeStats->getCount("face") == 0) {
-        return state->map;
+    auto faceMap = model->getCurrent()->getFaceMap();
+    if (!groundEnabled || faceMap.empty()) {
+        return state->getMap();
     }
 
-    Face* face = findFace(edges[0]->getPrimal()->getType());
+    auto bFaces = netB->getBFaces();
+    if (bFaces.size() != 1) {
+        std::cout << "Expect one boundary face." << std::endl;
+    }
+    Face* face = findFace(bFaces[0]->getType());
     if (face) {
-        state->map->outerFaces = { face };
-        if (!netB->boundary->faces[0]->innerComponents.empty()) {
+        state->getMap()->faceBtoA = {face};
+
+        // This is to support cases where we have disconnected boundaries and
+        // do a volume splice. This was always hacky and shouldn't be turned
+        // on without a lot of work.
+        /* if (!netB->boundary->faces[0]->innerComponents.empty()) {
             Face* goalFace = netB->boundary->faces[1];
             Face* intersectFace = nullptr;
             int attempts = 0;
@@ -176,11 +192,11 @@ NetGraphMap* NetGraphMapFinder::findStarterMap(Network* netB) {
                 return nullptr;
             }
             else {
-                state->map->outerFaces.push_back(intersectFace);
+                state->getMap()->outerFaces.push_back(intersectFace);
             }
-        }
-        return state->map;
-    }*/
+        } */
+        return state->getMap();
+    }
     return nullptr;
 }
 

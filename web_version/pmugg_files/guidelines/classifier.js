@@ -21,7 +21,7 @@ ms.classifier.prototype.importSolution = function(solution) {
 	} else if (solution.useNetworks) {
 		this.hierarchy = ms.networkHierarchy.import(solution);
 
-		this.hierarchy.transitions.forEach((transition) => {
+		var addMorphism = (transition) => {
 			transition.networks.forEach((network) => {
 				network.morphism = network.getBoundaryMorphism();
 				console.log(network.indices);
@@ -32,7 +32,10 @@ ms.classifier.prototype.importSolution = function(solution) {
 				// });
 				// console.log(indices);
 			});
-		});
+		};
+
+		this.hierarchy.transitions.forEach(addMorphism);
+		this.hierarchy.starterTransitions.forEach(addMorphism);
 		console.log(JSON.stringify(solution).replaceAll('\\"', '"').replaceAll('"{', '{').replaceAll('}"', '}'));
 	} else {
 		this.hierarchy = ms.familyTree.import(solution);

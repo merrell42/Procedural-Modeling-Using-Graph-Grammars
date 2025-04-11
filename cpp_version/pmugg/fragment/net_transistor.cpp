@@ -352,17 +352,14 @@ Graph* NetTransistor::createGraph() {
     // Update connections
     destroyLines(splitLines);
 
-    // *** TODO: Boxes is working as far as I can tell on everything except
-    // the next code block for process faces.
-
     // Process faces
-    /*merged->faces.clear();
+    merged->faces.clear();
     for (FaceNet* face : endNetwork->getFaces()) {
         HalfEdgeNet* half = face->getOuterComponent();
         if (half) {
             merged->faces.push_back(halfToEndpoint(half)->getFace());
         }
-    }*/
+    }
 
     // TODO: Handle holes.
     // Process outer faces
@@ -452,21 +449,21 @@ void NetTransistor::constrainVertexIds(std::vector<int>& vertexIds, NetTransisto
 }
 
 void NetTransistor::addFixedFace(Face* fixedFaceA, Face* fixedFaceB, double d) {
-    //auto* fPlace = settings->getFace(fixedFaceB->getId());
+    auto* fPlace = settings->getFace(fixedFaceB->getId());
 
-    //// Check if face is already fixed
-    //auto it = std::find_if(fixedFaces.begin(), fixedFaces.end(),
-    //    [fPlace](const FixedFace& fixed) {
-    //        return fixed.fPlace == fPlace;
-    //    });
+    // Check if face is already fixed
+    auto it = std::find_if(fixedFaces.begin(), fixedFaces.end(),
+        [fPlace](const FixedFace& fixed) {
+            return fixed.fPlace == fPlace;
+        });
 
-    //if (it != fixedFaces.end()) {
-    //    return;
-    //}
+    if (it != fixedFaces.end()) {
+        return;
+    }
 
-    //FixedFace fixedFace{ fixedFaceA, fPlace, d };
-    //fixedFaces.push_back(fixedFace);
-    //fPlace->makeFixed(fixedFace);
+    FixedFace fixedFace{ fixedFaceA, fPlace, d };
+    fixedFaces.push_back(fixedFace);
+    fPlace->makeFixed(fixedFace);
 }
 
 void NetTransistor::setupFaceCentric() {
@@ -520,32 +517,32 @@ void NetTransistor::setupFaceCentric() {
         }
     }
 
-    //// Process fixed faces
-    //fixedFaces.clear();
-    //auto& outerFaces = map->outerFaces ? map->outerFaces : std::vector<Face*>();
-    //
-    //for (size_t i = 0; i < outerFaces.size(); ++i) {
-    //    auto* fixedFaceA = outerFaces[i];
-    //    auto* endFace = endNet->getOuterFaces()[i];
-    //    
-    //    if (endFace) {
-    //        int faceIndex = endNet->getInterior()->getFaceIndex(endFace);
-    //        auto* fixedFaceB = graph->faces[faceIndex];
-    //        double d;
+    // Process fixed faces
+    fixedFaces.clear();
+    auto& faceBtoA = map->faceBtoA;
+    
+    for (size_t i = 0; i < faceBtoA.size(); ++i) {
+        auto* fixedFaceA = faceBtoA[i];
+        auto* endFace = endNet->getBFaces()[i];
+        
+         if (endFace) {
+             int faceIndex = indexOf(endNet->getFaces(), endFace);
+             auto* fixedFaceB = graph->faces[faceIndex];
+             double d;
 
-    //        // Use the value from outerFacesA if fixedFaceA is destroyed.
-    //        /*if (fixedFaceA->getNode()->isDestroyed()) {
-    //            fixedFaceA = map->outerFacesA[i];
-    //            d = map->outerFacesD[i];
-    //        } else {*/
-    //            auto normal = fixedFaceB->getFaceType()->getNormal();
-    //            auto vPosition = fixedFaceA->getEndpoints()[0]->getVertex()->getPosition();
-    //            d = normal.dot(vPosition);
-    //        // }
+             // Use the value from outerFacesA if fixedFaceA is destroyed.
+             /*if (fixedFaceA->getNode()->isDestroyed()) {
+                 fixedFaceA = map->outerFacesA[i];
+                 d = map->outerFacesD[i];
+             } else {*/
+                 auto normal = fixedFaceB->getFaceType()->getNormal();
+                 auto vPosition = fixedFaceA->getEndpoints()[0]->getVertex()->getPosition();
+                 d = normal.dot(vPosition);
+             // }
 
-    //        addFixedFace(fixedFaceA, fixedFaceB, d);
-    //    }
-    //}
+             addFixedFace(fixedFaceA, fixedFaceB, d);
+         }
+    }
 
     // Process face placements
     /*for (auto& [_, fPlace] : settings->facePlacements) {
@@ -701,10 +698,10 @@ std::pair<std::vector<double>, bool> NetTransistor::sampleFaceCentric() {
     }
 
     bool success = true;
-    //for (const auto& fixed : fixedFaces) {
-    //    fixed.fPlace->setD(fixed.d);
-    //    fixed.fPlace->setFixed(true);
-    //}
+    for (const auto& fixed : fixedFaces) {
+        fixed.fPlace->setD(fixed.d);
+        fixed.fPlace->setFixed(true);
+    }
 
     for (int id : fixedVertexIds) {
         success = success && settings->getVertex(id)->fixPosition();

@@ -146,7 +146,7 @@ void Face::insert(Endpoint* endpoint, Endpoint* prevEndpoint) {
     int index = (it != endpoints.end()) ? std::distance(endpoints.begin(), it) : -1;
 
     // Insert the new endpoint at the correct position
-    double id = static_cast<double>(endpoint->getId()); // Convert id to double
+    int id = endpoint->getId();
     if (index >= 0) {
         endpointIds.insert(endpointIds.begin() + index + 1, id);
         endpoint->setFace(this);
@@ -161,6 +161,27 @@ void Face::removeEndpoint(Endpoint* endpoint) {
     if (endpointIds.size() == 0) {
         destroy();
     }
+}
+
+double Face::signedArea() {
+    auto maxDim = faceType->getMaxDim();
+
+    auto positions = getPositions();
+    std::vector<Vec2> positions2D;
+    for (const auto& p : positions) {
+        positions2D.push_back(p.dropDim(maxDim));
+    }
+
+    float sum = 0.0f;
+    int n = positions2D.size();
+    for (int i = 0; i < n; i++) {
+        float xi = positions2D[i].x;
+        float yp = positions2D[(i + 1) % n].y;
+        float yn = positions2D[(i + n - 1) % n].y;
+        sum += xi * (yn - yp);
+    }
+
+    return -sum / 2.0f;
 }
 
 }
