@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "fast_math.h"
 #include <stdexcept>
 #include <cmath>

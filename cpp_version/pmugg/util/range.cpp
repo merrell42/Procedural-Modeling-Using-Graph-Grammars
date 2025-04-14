@@ -1,8 +1,10 @@
+#include "pch.h"
 #include "range.h"
 #include <cmath>
 #include <iostream>
 #include <algorithm>
 #include "util.h"
+#include "minmax.h"
 
 namespace ms {
 
@@ -16,8 +18,8 @@ Range::Range(float low, float high, float tilelen)
 
 Range Range::intersect(const Range& rangeB) const {
     return Range(
-        std::max(data[0], rangeB.data[0]),
-        std::min(data[1], rangeB.data[1]),
+        max(data[0], rangeB.data[0]),
+        min(data[1], rangeB.data[1]),
         lcm(tileLength, rangeB.tileLength)
     );
 }

@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{ccb0e28f-74d2-4260-9846-2e98557ead80}</ProjectGuid>
+    <RootNamespace>pmuggdll</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;PMUGGDLL_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;PMUGGDLL_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;USE_PCH;PMUGGDLL_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>"."</AdditionalIncludeDirectories>
+      <LanguageStandard_C>stdc11</LanguageStandard_C>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;PMUGGDLL_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\decoration\area.h" />
+    <ClInclude Include="..\decoration\brush.h" />
+    <ClInclude Include="..\decoration\decoration.h" />
+    <ClInclude Include="..\fragment\net_transistor.h" />
+    <ClInclude Include="..\fragment\net_transistor_settings.h" />
+    <ClInclude Include="..\fragment\transistor_path.h" />
+    <ClInclude Include="..\graph_drawing\endpoint.h" />
+    <ClInclude Include="..\graph_drawing\face.h" />
+    <ClInclude Include="..\graph_drawing\face_group.h" />
+    <ClInclude Include="..\graph_drawing\graph_drawing.h" />
+    <ClInclude Include="..\graph_drawing\line.h" />
+    <ClInclude Include="..\graph_drawing\model.h" />
+    <ClInclude Include="..\graph_drawing\vertex.h" />
+    <ClInclude Include="..\grid\settings.h" />
+    <ClInclude Include="..\guidelines\guide_mutator.h" />
+    <ClInclude Include="..\guidelines\network_mutator.h" />
+    <ClInclude Include="..\guidelines\vertex_type.h" />
+    <ClInclude Include="..\hierarchy\network_hierarchy.h" />
+    <ClInclude Include="..\intersector.h" />
+    <ClInclude Include="..\network\edge_net.h" />
+    <ClInclude Include="..\network\edge_network.h" />
+    <ClInclude Include="..\network\edge_placement.h" />
+    <ClInclude Include="..\network\face_net.h" />
+    <ClInclude Include="..\network\face_network.h" />
+    <ClInclude Include="..\network\face_placement.h" />
+    <ClInclude Include="..\network\half_edge_net.h" />
+    <ClInclude Include="..\network\network.h" />
+    <ClInclude Include="..\network\net_graph_map.h" />
+    <ClInclude Include="..\network\net_graph_map_finder.h" />
+    <ClInclude Include="..\network\net_graph_map_info.h" />
+    <ClInclude Include="..\network\net_graph_map_state.h" />
+    <ClInclude Include="..\network\net_transition.h" />
+    <ClInclude Include="..\network\vertex_net.h" />
+    <ClInclude Include="..\network\vertex_network.h" />
+    <ClInclude Include="..\network\vertex_placement.h" />
+    <ClInclude Include="..\shapes3D\edge_type3d.h" />
+    <ClInclude Include="..\shapes3D\face_type3d.h" />
+    <ClInclude Include="..\shapes3D\shape3d.h" />
+    <ClInclude Include="..\shape\vec2.h" />
+    <ClInclude Include="..\shape\vec3.h" />
+    <ClInclude Include="..\third_party\earcut\earcut.h" />
+    <ClInclude Include="..\util\counter.h" />
+    <ClInclude Include="..\util\fast_math.h" />
+    <ClInclude Include="..\util\range.h" />
+    <ClInclude Include="..\util\timer.h" />
+    <ClInclude Include="..\util\util.h" />
+    <ClInclude Include="framework.h" />
+    <ClInclude Include="generate.h" />
+    <ClInclude Include="pch.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\decoration\area.cpp" />
+    <ClCompile Include="..\decoration\brush.cpp" />
+    <ClCompile Include="..\decoration\decoration.cpp" />
+    <ClCompile Include="..\fragment\net_transistor.cpp" />
+    <ClCompile Include="..\fragment\net_transistor_settings.cpp" />
+    <ClCompile Include="..\fragment\transistor_path.cpp" />
+    <ClCompile Include="..\graph_drawing\endpoint.cpp" />
+    <ClCompile Include="..\graph_drawing\face.cpp" />
+    <ClCompile Include="..\graph_drawing\face_group.cpp" />
+    <ClCompile Include="..\graph_drawing\graph_drawing.cpp" />
+    <ClCompile Include="..\graph_drawing\line.cpp" />
+    <ClCompile Include="..\graph_drawing\model.cpp" />
+    <ClCompile Include="..\graph_drawing\vertex.cpp" />
+    <ClCompile Include="..\grid\settings.cpp" />
+    <ClCompile Include="..\guidelines\guide_mutator.cpp" />
+    <ClCompile Include="..\guidelines\network_mutator.cpp" />
+    <ClCompile Include="..\guidelines\vertex_type.cpp" />
+    <ClCompile Include="..\hierarchy\network_hierarchy.cpp" />
+    <ClCompile Include="..\intersector.cpp" />
+    <ClCompile Include="..\network\edge_net.cpp" />
+    <ClCompile Include="..\network\edge_placement.cpp" />
+    <ClCompile Include="..\network\face_net.cpp" />
+    <ClCompile Include="..\network\face_placement.cpp" />
+    <ClCompile Include="..\network\half_edge_net.cpp" />
+    <ClCompile Include="..\network\network.cpp" />
+    <ClCompile Include="..\network\net_graph_map.cpp" />
+    <ClCompile Include="..\network\net_graph_map_finder.cpp" />
+    <ClCompile Include="..\network\net_graph_map_info.cpp" />
+    <ClCompile Include="..\network\net_graph_map_state.cpp" />
+    <ClCompile Include="..\network\net_transition.cpp" />
+    <ClCompile Include="..\network\vertex_net.cpp" />
+    <ClCompile Include="..\network\vertex_placement.cpp" />
+    <ClCompile Include="..\shapes3D\edge_type3d.cpp" />
+    <ClCompile Include="..\shapes3D\face_type3d.cpp" />
+    <ClCompile Include="..\shapes3D\shape3d.cpp" />
+    <ClCompile Include="..\shape\vec2.cpp" />
+    <ClCompile Include="..\shape\vec3.cpp" />
+    <ClCompile Include="..\util\counter.cpp" />
+    <ClCompile Include="..\util\fast_math.cpp" />
+    <ClCompile Include="..\util\range.cpp" />
+    <ClCompile Include="..\util\timer.cpp" />
+    <ClCompile Include="..\util\util.cpp" />
+    <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="generate.cpp" />
+    <ClCompile Include="pch.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

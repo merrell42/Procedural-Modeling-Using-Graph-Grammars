@@ -5,6 +5,8 @@ VisualStudioVersion = 17.9.34701.34
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pmugg", "pmugg\pmugg.vcxproj", "{3CF60B24-B5FC-46EE-A511-A6F1862F05C3}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pmugg dll", "pmugg dll\pmugg dll.vcxproj", "{CCB0E28F-74D2-4260-9846-2E98557EAD80}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +23,14 @@ Global
 		{3CF60B24-B5FC-46EE-A511-A6F1862F05C3}.Release|x64.Build.0 = Release|x64
 		{3CF60B24-B5FC-46EE-A511-A6F1862F05C3}.Release|x86.ActiveCfg = Release|Win32
 		{3CF60B24-B5FC-46EE-A511-A6F1862F05C3}.Release|x86.Build.0 = Release|Win32
+		{CCB0E28F-74D2-4260-9846-2E98557EAD80}.Debug|x64.ActiveCfg = Debug|x64
+		{CCB0E28F-74D2-4260-9846-2E98557EAD80}.Debug|x64.Build.0 = Debug|x64
+		{CCB0E28F-74D2-4260-9846-2E98557EAD80}.Debug|x86.ActiveCfg = Debug|Win32
+		{CCB0E28F-74D2-4260-9846-2E98557EAD80}.Debug|x86.Build.0 = Debug|Win32
+		{CCB0E28F-74D2-4260-9846-2E98557EAD80}.Release|x64.ActiveCfg = Release|x64
+		{CCB0E28F-74D2-4260-9846-2E98557EAD80}.Release|x64.Build.0 = Release|x64
+		{CCB0E28F-74D2-4260-9846-2E98557EAD80}.Release|x86.ActiveCfg = Release|Win32
+		{CCB0E28F-74D2-4260-9846-2E98557EAD80}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

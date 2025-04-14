@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "network.h"
 #include "../shape/edge.h"
 #include "../network/half_edge_net.h"

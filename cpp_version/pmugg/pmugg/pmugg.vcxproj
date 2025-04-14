@@ -70,6 +70,9 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -105,6 +108,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>"."</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -163,12 +167,15 @@
     <ClCompile Include="..\shapes3D\edge_type3d.cpp" />
     <ClCompile Include="..\shapes3D\face_type3d.cpp" />
     <ClCompile Include="..\shapes3D\shape3d.cpp" />
+    <ClCompile Include="..\shape\mesh.cpp" />
     <ClCompile Include="..\shape\vec2.cpp" />
     <ClCompile Include="..\shape\vec3.cpp" />
+    <ClCompile Include="..\util\counter.cpp" />
     <ClCompile Include="..\util\fast_math.cpp" />
     <ClCompile Include="..\util\range.cpp" />
     <ClCompile Include="..\util\timer.cpp" />
     <ClCompile Include="..\util\util.cpp" />
+    <ClCompile Include="minmax.cpp" />
     <ClCompile Include="pmugg.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -207,13 +214,18 @@
     <ClInclude Include="..\shapes3D\edge_type3d.h" />
     <ClInclude Include="..\shapes3D\face_type3d.h" />
     <ClInclude Include="..\shapes3D\shape3d.h" />
+    <ClInclude Include="..\shape\mesh.h" />
     <ClInclude Include="..\shape\vec2.h" />
     <ClInclude Include="..\shape\vec3.h" />
+    <ClInclude Include="..\shared types\vec3Data.h" />
     <ClInclude Include="..\third_party\json.h" />
+    <ClInclude Include="..\util\counter.h" />
     <ClInclude Include="..\util\fast_math.h" />
     <ClInclude Include="..\util\range.h" />
     <ClInclude Include="..\util\timer.h" />
     <ClInclude Include="..\util\util.h" />
+    <ClInclude Include="minmax.h" />
+    <ClInclude Include="pch.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

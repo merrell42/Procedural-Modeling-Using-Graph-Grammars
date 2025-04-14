@@ -63,6 +63,7 @@ public:
     static const Vec3 Y_AXIS;
     static const Vec3 Z_AXIS;
 
+private:
     float x;
     float y;
     float z;

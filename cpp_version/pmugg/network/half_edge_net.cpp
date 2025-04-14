@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "half_edge_net.h"
 #include "network.h"
 #include "vertex_net.h"

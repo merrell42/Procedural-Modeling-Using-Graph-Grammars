@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "counter.h"
 
 namespace ms {

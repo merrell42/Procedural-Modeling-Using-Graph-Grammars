@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "net_graph_map_finder.h"
 #include "net_graph_map.h"
 #include "net_graph_map_info.h"
@@ -55,7 +56,7 @@ NetGraphMap* NetGraphMapFinder::findMap(Network* netB) {
     if (N == 0) {
         return nullptr;
     }
-    int attempts = std::min(N, vertexAttempts);
+    int attempts = min(N, vertexAttempts);
     int startIndex = Util::randomInt(N);
 
     auto it = std::next(vertexMap.begin(), startIndex % vertexMap.size()); // Start at valid index
@@ -131,7 +132,7 @@ Face* NetGraphMapFinder::findFace(FaceType3D* faceType) {
         facesVec.push_back(face);
     }
     int N = facesVec.size();
-    int attempts = std::min(N, faceAttempts);
+    int attempts = min(N, faceAttempts);
     int startIndex = Util::randomInt(N);
     std::vector<Face*> options;
     std::vector<double> weights;
@@ -529,7 +530,7 @@ Endpoint* NetGraphMapFinder::castRaySeries(HalfEdgeNet* halfB, const Vec3& start
             Vec2 dir2 = dir.dropDim(maxDim);
             double scale = dir.length() / dir2.length();
             double nearestDist = scale * nearestIntersect.distance;
-            double maxDistance = std::max(nearestDist, (double)maxRayDistance);
+            double maxDistance = max(nearestDist, (double)maxRayDistance);
             double d = Util::randomUniform(0, maxDistance);
             
             p0 = dir;

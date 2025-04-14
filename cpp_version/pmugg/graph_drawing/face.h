@@ -32,6 +32,7 @@ class Face {
 		void insert(Endpoint* endpoint, Endpoint* prevEndpoint);
 		void removeEndpoint(Endpoint* endpoint);
 		double signedArea();
+		std::vector<int> getTriangleIndices();
 
 	private:
 		int id;

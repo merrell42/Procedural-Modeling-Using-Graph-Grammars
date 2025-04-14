@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "net_transistor.h"
 #include "../network/network.h"
 // #include "transition.h"
@@ -661,16 +662,16 @@ std::pair<std::vector<double>, bool> NetTransistor::sampleFaceCentric() {
             for (auto* vertex : vertices) {
                 if (dims == 3) {
                     auto dir = vertex->getHalfEdges()[0]->getDir();
-                    if (dir.x > 0.9) {          // +X
+                    if (dir.getX() > 0.9) {          // +X
                         result.insert(result.end(), { lower[0], lower[1], lower[2] + 1 });
                     }
-                    else if (dir.x < -0.9) {  // -X
+                    else if (dir.getX() < -0.9) {  // -X
                         result.insert(result.end(), { upper[0], upper[1], lower[2] + 1 });
                     }
-                    else if (dir.y > 0.9) {   // +Y
+                    else if (dir.getY() > 0.9) {   // +Y
                         result.insert(result.end(), { upper[0], lower[1], lower[2] + 1 });
                     }
-                    else if (dir.y < -0.9) {  // -Y
+                    else if (dir.getY() < -0.9) {  // -Y
                         result.insert(result.end(), { lower[0], upper[1], lower[2] + 1 });
                     }
                 }
@@ -678,10 +679,10 @@ std::pair<std::vector<double>, bool> NetTransistor::sampleFaceCentric() {
                     int signX = 0, signY = 0;
                     for (int i = 0; i < 2; i++) {
                         auto dir = vertex->getHalfEdges()[i]->getDir();
-                        if (dir.x > 0.9) signX = 1;
-                        if (dir.x < -0.9) signX = -1;
-                        if (dir.y > 0.9) signY = 1;
-                        if (dir.y < -0.9) signY = -1;
+                        if (dir.getX() > 0.9) signX = 1;
+                        if (dir.getX() < -0.9) signX = -1;
+                        if (dir.getY() > 0.9) signY = 1;
+                        if (dir.getY() < -0.9) signY = -1;
                     }
 
                     if (signX == 0 || signY == 0) {

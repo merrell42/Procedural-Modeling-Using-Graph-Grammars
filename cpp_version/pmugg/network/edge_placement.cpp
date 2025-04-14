@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "edge_placement.h"
 #include "../graph_drawing/line.h"
 #include "../graph_drawing/endpoint.h"

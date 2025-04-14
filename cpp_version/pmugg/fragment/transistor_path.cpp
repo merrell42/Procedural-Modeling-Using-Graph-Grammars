@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "transistor_path.h"
 #include "../util/util.h"
 #include "../graph_drawing/endpoint.h"

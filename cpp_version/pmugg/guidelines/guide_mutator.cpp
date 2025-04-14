@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "guide_mutator.h"
 // #include "classifier.h"
 // #include "timer.h"
@@ -13,7 +14,6 @@
 
 namespace ms {
 
-int GuideMutator::taskCount = 0;
 // bool GuideMutator::forceContinued = false;
 
 GuideMutator::GuideMutator(Model* model, NetworkMutator* networkMutator)
@@ -40,21 +40,14 @@ GuideMutator::GuideMutator(Model* model, NetworkMutator* networkMutator)
 //    seedCount = 0;
 //}
 
-void GuideMutator::resolve(/*Model* outputModel*/) {
-    /*if (status == Status::PAUSED) {
-        return status;
-    }*/
-
+void GuideMutator::iterate(int steps) {
     timer->start("Guide Mutator");
-    while (true) {
-        std::cout << taskCount << std::endl;
-        taskCount++;
-        //if (closeInspection(taskCount)) {
-        //    displayStats();
-        //    // debugger statement equivalent would go here
-        //}
 
-        if (taskCount == 1) {
+    int finishStep = model->numSteps + steps;
+    while (model->numSteps < finishStep) {
+        std::cout << model->numSteps << " " << model->getCurrent()->getFaceMap().size() << std::endl;
+
+        if (model->numSteps == 0) {
             mutateGround();
         } else {
             mutate();
@@ -71,7 +64,6 @@ void GuideMutator::resolve(/*Model* outputModel*/) {
         timer->stop("Accept Or Reject");
 
         timer->start("Save");
-        // nodeStats.save();
         timer->stop("Save");
 
         auto now = std::chrono::system_clock::now();
@@ -81,29 +73,11 @@ void GuideMutator::resolve(/*Model* outputModel*/) {
         bool maxTimeEnabled = globalSettings["Max Time Enabled"].get<bool>();
         int maxIterations = globalSettings["Max Iterations"].get<int>();
 
-        model->getCurrent()->save(std::to_string(taskCount));
-        /*if ((maxTimeEnabled && 
-             (currentTime > endTime || 
-              (currentTime > earlyEndTime && nodeStats.getBadVertices().empty()))) ||
-            (taskCount >= maxIterations)) {*/
-        if (taskCount >= maxIterations) {
-            timer->stop("Guide Mutator");
-            model->getCurrent()->save("");
-            return;
-            // status = Status::FINISHED;
-            // return status;
-        }
-
-        /*if (taskCount == pauseCount) {
-            pause();
-            return status;
-        }
-
-        if (currentTime > breakTime) {
-            timer->stop("Guide Mutator");
-            return Status::UNRESOLVED;
-        }*/
+        model->getCurrent()->save(std::to_string(model->numSteps));
+        model->numSteps++;
     }
+    timer->stop("Guide Mutator");
+    model->getCurrent()->save("");
 }
 
 // Add the ground plane.
@@ -155,7 +129,7 @@ void GuideMutator::mutate() {
             }
         }
 
-        if (globalSettings["Fewer Start Transitions"].get<bool>() && taskCount > 1) {
+        if (globalSettings["Fewer Start Transitions"].get<bool>() && model->numSteps > 1) {
             return;
         }
 
@@ -180,11 +154,11 @@ void GuideMutator::accept() {
 void GuideMutator::reject() {
     model->reject();
     /*nodeStats.restore();
-    if (closeInspection(taskCount) || globalSettings.getBool("Debug Alerts")) {
+    if (closeInspection(model->numSteps) || globalSettings.getBool("Debug Alerts")) {
         optimizer.verifyCost();
     }
-    if (closeInspection(taskCount)) {
-        std::cout << taskCount << " rejected." << std::endl;
+    if (closeInspection(model->numSteps)) {
+        std::cout << model->numSteps << " rejected." << std::endl;
     }*/
 }
 
@@ -233,7 +207,7 @@ void GuideMutator::reject() {
 //
 //void GuideMutator::step(int numTasks) {
 //    displayStats();
-//    pauseCount = taskCount + numTasks;
+//    pauseCount = model->numSteps + numTasks;
 //}
 
 //void GuideMutator::setBreakTime(double newBreakTime) {
@@ -250,7 +224,7 @@ void GuideMutator::reject() {
 //}
 
 //void GuideMutator::displayStats() {
-//    std::string stats = "Iteration: " + std::to_string(taskCount) + " / " + 
+//    std::string stats = "Iteration: " + std::to_string(model->numSteps) + " / " + 
 //                       std::to_string(globalSettings.getInt("Max Iterations"));
 //    
 //    if (!globalSettings.getBool("MVP")) {
@@ -265,7 +239,7 @@ void GuideMutator::reject() {
 //    auto cost = optimizer.getPrevCost();
 //    std::string summary = std::to_string(cost.sum) + " " + 
 //                         std::to_string(timer->getTiming("everything") / 1000.0) + "s " +
-//                         std::to_string(taskCount / timer->getTiming("everything"));
+//                         std::to_string(model->numSteps / timer->getTiming("everything"));
 //    
 //    std::string details = cost.toString() + "\n" + timer->reportMean();
 //    std::cout << "# of vertices: " << nodeStats.getCount("vertex") << std::endl;
@@ -290,7 +264,7 @@ void GuideMutator::reject() {
 //    int taskStep = globalSettings.getInt("Task Step");
 //    
 //    if (taskStop >= 0) {
-//        return taskCount >= taskStop && ((taskCount - taskStop) % taskStep == 0);
+//        return model->numSteps >= taskStop && ((model->numSteps - taskStop) % taskStep == 0);
 //    }
 //    
 //    return globalSettings.getBool("Debug Each Task");

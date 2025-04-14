@@ -5,6 +5,7 @@
 #include "line.h"
 #include "vertex.h"
 #include <iostream>
+#include "../shape/mesh.h"
 
 namespace ms {
 
@@ -53,8 +54,22 @@ class GraphDrawing {
 		std::map<int, Line*> getLineMap() { return lineMap; }
 		std::map<int, Vertex*> getVertexMap() { return vertexMap; }
 
+		// TODO: Make this more efficient.
+		int getVertexIndex(int vertexId) const {
+			int index = 0;
+			for (const auto& [id, vertex] : vertexMap) {
+				if (id == vertexId) {
+					return index;
+				}
+				index++;
+			}
+			return -1; // Return -1 if vertex ID is not found
+		}
+
 		// Save the mesh to an OBJ file.
 		void save(std::string suffix);
+
+		Mesh exportMesh();
 
 	private:
 		std::map<int, Endpoint*> endpointMap;

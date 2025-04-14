@@ -31,7 +31,7 @@ public:
 
     // Core functionality
     // void seed(MutationArea* mutationArea);
-    void resolve(/*Model* outputModel*/);
+    void iterate(int step);
     void mutate();
     void mutateGround();
     void accept();

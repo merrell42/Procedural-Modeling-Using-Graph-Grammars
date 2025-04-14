@@ -1,4 +1,5 @@
 #pragma once
+#include "../pmugg dll/pch.h"
 #include "graph_drawing.h"
 
 class GraphDrawing;
@@ -11,8 +12,12 @@ namespace ms {
 			void accept();
 			// Reject the proposed graph drawing.
 			void reject();
+			// Reset to an empty graph drawing.
+			void reset();
 			GraphDrawing* getCurrent() { return current; }
 			int newId();
+			// The number of steps we have completed.
+			int numSteps;
 
 		private:
 			// The currently proposed graph drawing.

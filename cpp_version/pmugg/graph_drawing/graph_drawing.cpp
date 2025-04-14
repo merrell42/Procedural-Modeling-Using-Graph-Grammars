@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "graph_drawing.h"
 #include <fstream>
 
@@ -61,7 +62,7 @@ void GraphDrawing::save(std::string suffix) {
 	std::vector<int> vertexIds;
 	for (const auto& [id, vertex] : vertexMap) {
 		const Vec3 v = vertex->getPosition();
-		outFile << "v " << v.x << " " << v.y << " " << v.z << "\n";
+		outFile << "v " << v.getX() << " " << v.getY() << " " << v.getZ() << "\n";
 		vertexIds.push_back(vertex->getId());
 	}
 
@@ -90,6 +91,21 @@ void GraphDrawing::save(std::string suffix) {
 
 	outFile.close();
 	std::cout << "OBJ file successfully written to " << filename << std::endl;
+}
+
+Mesh GraphDrawing::exportMesh() {
+	std::vector<Vec3> positions;
+	std::vector<int> triangles;
+
+	for (const auto& [id, vertex] : vertexMap) {
+		positions.push_back(vertex->getPosition());
+	}
+	for (const auto& [id, face] : faceMap) {
+		std::vector<int> faceIndices = face->getTriangleIndices();
+		triangles.insert(triangles.end(), faceIndices.begin(), faceIndices.end());
+	}
+
+	return createMesh(positions, triangles);
 }
 
 }

@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "vertex_placement.h"
 
 namespace ms {
@@ -89,7 +90,7 @@ Matrix* VertexPlacement::getA(const std::vector<int>& faceIds) {
         int id = faceIds[i];
         FacePlacement* fPlace = settings->getFace(id);
         Vec3 n = fPlace->getNormal();
-        A[i] = { n.x, n.y, n.z }; // Fill the matrix row with the normal components
+        A[i] = { n.getX(), n.getY(), n.getZ()}; // Fill the matrix row with the normal components
     }
 
     return new Matrix(A);

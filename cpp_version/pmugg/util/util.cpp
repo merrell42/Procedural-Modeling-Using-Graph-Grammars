@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "util.h"
 #include <cmath>
 #include <algorithm>
@@ -5,6 +6,7 @@
 // #include <random>
 #include <vector>
 #include <iostream>
+#include "minmax.h"
 
 namespace ms {
 
@@ -150,7 +152,7 @@ const T& Util::last(const std::vector<T>& array) {
 }
 
 float Util::clamp(float lower, float upper, float x) {
-    return std::max(lower, std::min(upper, x));
+    return max(lower, min(upper, x));
 }
 
 std::vector<int> Util::sequence(int a, int b) {
@@ -169,9 +171,9 @@ void Util::fastConcat(std::vector<T>& allData, const std::vector<T>& newData) {
 
 int Util::maxDim(const Vec3& n) {
     std::array<std::pair<float, int>, 3> coords = {
-        std::make_pair(std::abs(n.x), 0),
-        std::make_pair(std::abs(n.y), 1),
-        std::make_pair(std::abs(n.z), 2)
+        std::make_pair(std::abs(n.getX()), 0),
+        std::make_pair(std::abs(n.getY()), 1),
+        std::make_pair(std::abs(n.getZ()), 2)
     };
 
     return std::max_element(coords.begin(), coords.end(),

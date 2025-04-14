@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "edge_type3d.h"
 #include "face_type3d.h"
 #include "..\decoration\brush.h"

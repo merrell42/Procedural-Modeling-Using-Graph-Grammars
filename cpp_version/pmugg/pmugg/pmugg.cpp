@@ -32,6 +32,6 @@ int main() {
 		auto hierarchy = NetworkHierarchy::import(parsedI["solution"]);
 		auto model = new ms::Model();
 		auto mutator = new GuideMutator(model, new NetworkMutator(hierarchy, model));
-		mutator->resolve();
+		mutator->iterate(50);
 	}
 }

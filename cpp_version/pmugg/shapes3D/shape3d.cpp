@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "shape3d.h"
 
 namespace ms {

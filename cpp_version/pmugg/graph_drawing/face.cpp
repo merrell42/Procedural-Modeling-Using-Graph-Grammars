@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "face.h"
 #include "face_group.h"
 #include "endpoint.h"
@@ -5,6 +6,7 @@
 #include "../util/util.h"
 #include <vector>
 #include <algorithm>
+#include "../third_party/earcut/earcut.h"
 
 namespace ms {
 
@@ -55,8 +57,8 @@ Range Face::dirBounds(const Vec3& dir) const {
     std::vector<Endpoint*> endpoints = getEndpoints();
     for (const Endpoint* endpoint : endpoints) {
         double d = dir.dot(endpoint->getPosition());
-        low = std::min(d, low);
-        high = std::max(d, high);
+        low = min(d, low);
+        high = max(d, high);
     }
 
     return Range((float)low, (float)high);
@@ -182,6 +184,29 @@ double Face::signedArea() {
     }
 
     return -sum / 2.0f;
+}
+
+std::vector<int> Face::getTriangleIndices() {
+    using Point = std::array<double, 2>;
+    std::vector<std::vector<Point>> polygons;
+    std::vector<Point> polygon;
+
+    auto positions = getPositions();
+    auto maxDim = faceType->getMaxDim();
+    std::vector<std::array<double, 2>> positions2D;
+    for (const auto& p : positions) {
+        const Vec2 point = p.dropDim(maxDim);
+        polygon.push_back({ point.x, point.y });
+    }
+    polygons.push_back(polygon);
+
+    auto indices = mapbox::earcut(polygons);
+    auto endpoints = getEndpoints();
+    std::vector<int> final;
+    for (const auto& index : indices) {
+        final.push_back(model->getCurrent()->getVertexIndex(endpoints[index]->getVertex()->getId()));
+    }
+    return final;
 }
 
 }

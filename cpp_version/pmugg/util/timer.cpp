@@ -1,7 +1,9 @@
+#include "pch.h"
 #include "timer.h"
 #include <iostream>
 #include <iomanip>
 #include <algorithm>
+#include "minmax.h"
 
 namespace ms {
 
@@ -63,9 +65,9 @@ void Timer::printStats() const {
     size_t avgWidth = 12;    // Fixed width for average time
 
     for (const auto& [name, _] : timers) {
-        nameWidth = std::max(nameWidth, name.length());
+        nameWidth = max((int)nameWidth, (int)name.length());
     }
-    nameWidth = std::max(nameWidth, size_t(4));  // Minimum width for "Name"
+    nameWidth = max((int)nameWidth, (int)size_t(4));  // Minimum width for "Name"
 
     // Print header
     std::cout << std::left << std::setw(nameWidth) << "Name" << " | "

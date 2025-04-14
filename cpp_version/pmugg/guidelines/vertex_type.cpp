@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "vertex_type.h"
 #include "../shapes3D/edge_type3d.h"
 // #include "vertex_decoration.h"
