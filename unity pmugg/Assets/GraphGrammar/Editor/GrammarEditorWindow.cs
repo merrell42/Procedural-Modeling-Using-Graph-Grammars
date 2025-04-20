@@ -51,6 +51,18 @@ namespace Grammar {
             public float z;
         }
 
+        [StructLayout(LayoutKind.Sequential)]
+        public struct MeshDLL {
+            public IntPtr positions;  // float*
+            public IntPtr normals;  // float*
+            public IntPtr triangles;  // int*
+            public int numVertices;
+            public int numTriangles;
+        }
+
+        [DllImport(pmuggDll, CallingConvention = CallingConvention.Cdecl)]
+        private static extern MeshDLL getMesh();
+
         [DllImport(pmuggDll, CallingConvention = CallingConvention.Cdecl)]
         private static extern void DoubleVector();
 
@@ -59,7 +71,6 @@ namespace Grammar {
 
         [DllImport(pmuggDll, CallingConvention = CallingConvention.Cdecl)]
         private static extern Vec3DLL GetTestVector();
-
 
         [DllImport(pmuggDll, CallingConvention = CallingConvention.Cdecl)]
         private static extern int initialize();
@@ -200,6 +211,59 @@ namespace Grammar {
 
             if (GUILayout.Button("faces")) {
                 Debug.Log(getNumFaces());
+            }
+
+            if (GUILayout.Button("getMesh")) {
+                MeshDLL inputMesh = getMesh();
+                Mesh outputMesh = new Mesh();
+
+                int numVertices = inputMesh.numVertices;
+                int numTriangles = inputMesh.numTriangles;
+                Debug.Log(inputMesh.positions);
+                Debug.Log(inputMesh.triangles);
+                Debug.Log(inputMesh.numVertices);
+                Debug.Log(inputMesh.numTriangles);
+
+                // Marshal the positions array
+                float[] positions = new float[numVertices * 3];
+                Marshal.Copy(inputMesh.positions, positions, 0, numVertices * 3);
+                float[] inputNormals = new float[numVertices * 3];
+                Marshal.Copy(inputMesh.normals, inputNormals, 0, numVertices * 3);
+
+                Vector3[] vertices = new Vector3[numVertices];
+                Vector3[] normals = new Vector3[numVertices];
+                for (int i = 0; i < numVertices; i++) {
+                    // Switch the y and z coordinates.
+                    vertices[i] = new Vector3(positions[3 * i], positions[3 * i + 2], positions[3 * i + 1]);
+                    normals[i] = new Vector3(inputNormals[3 * i], inputNormals[3 * i + 2], inputNormals[3 * i + 1]);
+                    // Debug.Log(positions[3 * i] + ", " + positions[3 * i + 1] + ", " + positions[3 * i + 2]);
+                    Debug.Log(normals[i]);
+                }
+                outputMesh.vertices = vertices;
+                outputMesh.normals = normals;
+
+                // Marshal the triangles array
+                int[] triangles = new int[3 * numTriangles];
+                Marshal.Copy(inputMesh.triangles, triangles, 0, 3 * numTriangles);
+                outputMesh.triangles = triangles;
+
+                outputMesh.RecalculateNormals(); 
+                outputMesh.RecalculateBounds();
+
+                GameObject gameObject = new GameObject();
+
+                // Add required components to display a mesh.
+                MeshFilter meshFilter = gameObject.AddComponent<MeshFilter>();
+                MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();
+                var material = AssetDatabase.GetBuiltinExtraResource<Material>("Default-Material.mat");
+                meshRenderer.material = material;
+                meshFilter.mesh = outputMesh;
+                Selection.activeGameObject = gameObject;
+                
+                var creator = FindObjectOfType<GrammarCreator>();
+                if (creator) {
+                    gameObject.transform.parent = creator.transform.Find(faceGroupName);
+                }
             }
 
             if (GUILayout.Button("Generate")) {

@@ -95,17 +95,14 @@ void GraphDrawing::save(std::string suffix) {
 
 Mesh GraphDrawing::exportMesh() {
 	std::vector<Vec3> positions;
+	std::vector<Vec3> normals;
 	std::vector<int> triangles;
 
-	for (const auto& [id, vertex] : vertexMap) {
-		positions.push_back(vertex->getPosition());
-	}
 	for (const auto& [id, face] : faceMap) {
-		std::vector<int> faceIndices = face->getTriangleIndices();
-		triangles.insert(triangles.end(), faceIndices.begin(), faceIndices.end());
+		face->exportMesh(positions, normals, triangles);
 	}
 
-	return createMesh(positions, triangles);
+	return createMesh(positions, normals, triangles);
 }
 
 }

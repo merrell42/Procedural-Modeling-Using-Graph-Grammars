@@ -162,6 +162,30 @@
     <ClInclude Include="..\third_party\earcut\earcut.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\third_party\poly2tri-master\poly2tri\poly2tri.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\third_party\poly2tri-master\poly2tri\common\shapes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\third_party\poly2tri-master\poly2tri\common\utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\third_party\poly2tri-master\poly2tri\sweep\advancing_front.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\third_party\poly2tri-master\poly2tri\sweep\cdt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\third_party\poly2tri-master\poly2tri\sweep\sweep.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\third_party\poly2tri-master\poly2tri\sweep\sweep_context.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shape\mesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -297,6 +321,24 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\util\fast_math.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\third_party\poly2tri-master\poly2tri\common\shapes.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\third_party\poly2tri-master\poly2tri\sweep\advancing_front.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\third_party\poly2tri-master\poly2tri\sweep\cdt.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\third_party\poly2tri-master\poly2tri\sweep\sweep.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\third_party\poly2tri-master\poly2tri\sweep\sweep_context.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shape\mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

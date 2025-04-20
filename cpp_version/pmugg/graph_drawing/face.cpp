@@ -186,6 +186,28 @@ double Face::signedArea() {
     return -sum / 2.0f;
 }
 
+void Face::exportMesh(
+    std::vector<Vec3>& positions,
+    std::vector<Vec3>& normals,
+    std::vector<int>& triangles
+) {
+    int startIndex = positions.size();
+    auto facePositions = getPositions();
+    positions.insert(positions.end(), facePositions.begin(), facePositions.end());
+
+    auto normal = faceType->getNormal();
+    for (int i = 0; i < facePositions.size(); i++) {
+        normals.push_back(normal);
+    }
+    auto indices = getTriangleIndices();
+    for (int i = 0; i < indices.size(); i += 3) {
+        triangles.push_back(indices[i] + startIndex);
+        // Flip the order of the vertices to face outward.
+        triangles.push_back(indices[i + 2] + startIndex);
+        triangles.push_back(indices[i + 1] + startIndex);
+    }
+}
+
 std::vector<int> Face::getTriangleIndices() {
     using Point = std::array<double, 2>;
     std::vector<std::vector<Point>> polygons;
@@ -201,12 +223,13 @@ std::vector<int> Face::getTriangleIndices() {
     polygons.push_back(polygon);
 
     auto indices = mapbox::earcut(polygons);
-    auto endpoints = getEndpoints();
+    return std::vector<int>(indices.begin(), indices.end());
+    /* auto endpoints = getEndpoints();
     std::vector<int> final;
     for (const auto& index : indices) {
         final.push_back(model->getCurrent()->getVertexIndex(endpoints[index]->getVertex()->getId()));
     }
-    return final;
+    return final; */
 }
 
 }

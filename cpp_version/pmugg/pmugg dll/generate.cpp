@@ -75,5 +75,9 @@ int getNumFaces() {
 	return model->getCurrent()->getFaceMap().size();
 }
 
+Mesh getMesh() {
+	return model->getCurrent()->exportMesh();
+}
+
 
 };

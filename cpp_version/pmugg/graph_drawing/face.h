@@ -32,7 +32,11 @@ class Face {
 		void insert(Endpoint* endpoint, Endpoint* prevEndpoint);
 		void removeEndpoint(Endpoint* endpoint);
 		double signedArea();
-		std::vector<int> getTriangleIndices();
+		void exportMesh(
+			std::vector<Vec3>& positions,
+			std::vector<Vec3>& normals,
+			std::vector<int>& triangles
+		);
 
 	private:
 		int id;
@@ -41,5 +45,7 @@ class Face {
 		FaceType3D* faceType;
 
 		Model* model;
+
+		std::vector<int> getTriangleIndices();
 	};
 }

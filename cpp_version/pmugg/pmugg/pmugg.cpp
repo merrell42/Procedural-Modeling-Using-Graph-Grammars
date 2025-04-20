@@ -33,5 +33,7 @@ int main() {
 		auto model = new ms::Model();
 		auto mutator = new GuideMutator(model, new NetworkMutator(hierarchy, model));
 		mutator->iterate(50);
+		auto mesh = model->getCurrent()->exportMesh();
+		cout << "Mesh";
 	}
 }

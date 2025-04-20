@@ -10,9 +10,12 @@ class Vec3;
 // This is for exporting the graph drawing. It is not used internally.
 struct Mesh {
     float* positions;
+    float* normals;
     int* triangles;
+    int numVertices;
+    int numTriangles;
 };
 
-Mesh createMesh(std::vector<Vec3> positions, std::vector<int> triangles);
+Mesh createMesh(std::vector<Vec3> positions, std::vector<Vec3> normals, std::vector<int> triangles);
 
 }
