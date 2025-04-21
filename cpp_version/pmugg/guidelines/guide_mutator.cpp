@@ -40,6 +40,10 @@ GuideMutator::GuideMutator(Model* model, NetworkMutator* networkMutator)
 //    seedCount = 0;
 //}
 
+void GuideMutator::reset() {
+    networkMutator->reset();
+}
+
 void GuideMutator::iterate(int steps) {
     timer->start("Guide Mutator");
 

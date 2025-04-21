@@ -27,6 +27,11 @@ NetGraphMapFinder::NetGraphMapFinder(Model* model, bool groundEnabled)
     , groundFace(nullptr)
     , groundEnabled(groundEnabled) {}
 
+void NetGraphMapFinder::reset() {
+    nodesModified = false;
+    groundFace = nullptr;
+}
+
 NetGraphMap* NetGraphMapFinder::findMap(Network* netB) {
     if (!groundFace && groundEnabled) {
         auto faces = model->getCurrent()->getFaceMap();

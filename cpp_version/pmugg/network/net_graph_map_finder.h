@@ -39,6 +39,7 @@ public:
     // Core functionality
     NetGraphMap* findMap(Network* netB);
     NetGraphMap* findStarterMap(Network* netB);
+    void reset();
 
     // Static configuration
     static constexpr int vertexAttempts = 100;

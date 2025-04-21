@@ -24,6 +24,10 @@ NetworkMutator::NetworkMutator(NetworkHierarchy* hierarchy, Model* model/*, Node
     mapFinder = std::make_unique<NetGraphMapFinder>(model, groundEnabled);
 }
 
+void NetworkMutator::reset() {
+    mapFinder->reset();
+}
+
 //void NetworkMutator::setMutationArea(MutationArea* area) {
 //    mutationArea = area;
 //}

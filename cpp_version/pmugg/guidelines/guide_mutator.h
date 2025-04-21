@@ -36,6 +36,7 @@ public:
     void mutateGround();
     void accept();
     void reject();
+    void reset();
     // void save(Model* model = nullptr);
     /* bool initializeModel(Model* model);
     void reset();

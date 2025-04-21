@@ -34,6 +34,7 @@ int initialize(const char* filePath) {
 
 void reset() {
 	model->reset();
+	mutator->reset();
 }
 
 void iterate(int steps) {

@@ -24,6 +24,7 @@ public:
     // void setMutationArea(MutationArea* area);
     bool addStartInstance(bool useGround);
     bool changeRandomInstance(bool justDestructible = false);
+    void reset();
 
     // Static members
     static constexpr int LINES_TO_CHOOSE = 10;

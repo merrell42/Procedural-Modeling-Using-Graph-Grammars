@@ -50,92 +50,134 @@ namespace Grammar {
         [DllImport(pmuggDll, CallingConvention = CallingConvention.Cdecl)]
         private static extern void iterate(int steps);
 
-        [DllImport(pmuggDll, CallingConvention = CallingConvention.Cdecl)]
-        private static extern int getNumFaces();
-
         private void OnEnable() {
             titleContent = new GUIContent("Graph Grammar Generator");
         }
 
-        void OnGUI() {
-            var r = EditorGUILayout.BeginVertical();
+        private string grammarName = "";
+        private int iterationCount = 0;
+        private bool isAnimating = false;
 
-            /* GrammarEditorState.excludeRepeats = EditorGUILayout.Toggle(
-                new GUIContent("Exclude Repeats", "Exclude any rules that use the same vertex types."),
-                GrammarEditorState.excludeRepeats); */
-
-            if (GUILayout.Button("Select Grammar")) {
-                string path = EditorUtility.OpenFilePanel("Select Grammar", "", "");
-                if (!string.IsNullOrEmpty(path)) {
-                    Debug.Log("Selected file: " + path);
-                    Debug.Log(initialize(path));
-                }
+        private void StartAnimation() {
+            if (isAnimating) {
+                // Stop current animation first
+                EditorApplication.update -= AnimationUpdate;
+                isAnimating = false;
             }
 
-            if (GUILayout.Button("Initialize")) {
-                Debug.Log(initialize(""));
+            isAnimating = true;
+            EditorApplication.update += AnimationUpdate;
+        }
+
+        private void AnimationUpdate() {
+            if (!isAnimating) {
+                EditorApplication.update -= AnimationUpdate;
+                Repaint();
+                return;
             }
 
-            if (GUILayout.Button("Reset")) {
-                reset();
+            iterate(1);
+            UpdateMesh();
+            SceneView.RepaintAll();
+
+            iterationCount++;
+            
+            Repaint();
+        }
+
+        private void UpdateMesh() {
+            MeshDLL inputMesh = getMesh();
+            Mesh outputMesh = new Mesh();
+
+            int numVertices = inputMesh.numVertices;
+            int numTriangles = inputMesh.numTriangles;
+
+            // Marshal the positions array
+            float[] positions = new float[numVertices * 3];
+            Marshal.Copy(inputMesh.positions, positions, 0, numVertices * 3);
+            float[] inputNormals = new float[numVertices * 3];
+            Marshal.Copy(inputMesh.normals, inputNormals, 0, numVertices * 3);
+
+            Vector3[] vertices = new Vector3[numVertices];
+            Vector3[] normals = new Vector3[numVertices];
+            for (int i = 0; i < numVertices; i++) {
+                // Switch the y and z coordinates.
+                vertices[i] = new Vector3(positions[3 * i], positions[3 * i + 2], positions[3 * i + 1]);
+                normals[i] = new Vector3(inputNormals[3 * i], inputNormals[3 * i + 2], inputNormals[3 * i + 1]);
             }
+            outputMesh.vertices = vertices;
+            outputMesh.normals = normals;
 
-            if (GUILayout.Button("Iterate")) {
-                iterate(1);
-            }
+            // Marshal the triangles array
+            int[] triangles = new int[3 * numTriangles];
+            Marshal.Copy(inputMesh.triangles, triangles, 0, 3 * numTriangles);
+            outputMesh.triangles = triangles;
 
-            if (GUILayout.Button("Num Faces")) {
-                Debug.Log(getNumFaces());
-            }
+            // outputMesh.RecalculateNormals(); 
+            // outputMesh.RecalculateBounds();
 
-            if (GUILayout.Button("Get Mesh")) {
-                MeshDLL inputMesh = getMesh();
-                Mesh outputMesh = new Mesh();
-
-                int numVertices = inputMesh.numVertices;
-                int numTriangles = inputMesh.numTriangles;
-
-                // Marshal the positions array
-                float[] positions = new float[numVertices * 3];
-                Marshal.Copy(inputMesh.positions, positions, 0, numVertices * 3);
-                float[] inputNormals = new float[numVertices * 3];
-                Marshal.Copy(inputMesh.normals, inputNormals, 0, numVertices * 3);
-
-                Vector3[] vertices = new Vector3[numVertices];
-                Vector3[] normals = new Vector3[numVertices];
-                for (int i = 0; i < numVertices; i++) {
-                    // Switch the y and z coordinates.
-                    vertices[i] = new Vector3(positions[3 * i], positions[3 * i + 2], positions[3 * i + 1]);
-                    normals[i] = new Vector3(inputNormals[3 * i], inputNormals[3 * i + 2], inputNormals[3 * i + 1]);
-                }
-                outputMesh.vertices = vertices;
-                outputMesh.normals = normals;
-
-                // Marshal the triangles array
-                int[] triangles = new int[3 * numTriangles];
-                Marshal.Copy(inputMesh.triangles, triangles, 0, 3 * numTriangles);
-                outputMesh.triangles = triangles;
-
-                // outputMesh.RecalculateNormals(); 
-                // outputMesh.RecalculateBounds();
-
-                GameObject gameObject = new GameObject();
-
-                // Add required components to display a mesh.
+            // Check if there's an existing mesh GameObject
+            GameObject gameObject = GameObject.Find("Generated Mesh");
+            if (gameObject == null) {
+                // Create a new GameObject if one doesn't exist
+                gameObject = new GameObject("Generated Mesh");                    
                 MeshFilter meshFilter = gameObject.AddComponent<MeshFilter>();
                 MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();
                 var material = AssetDatabase.GetBuiltinExtraResource<Material>("Default-Material.mat");
                 meshRenderer.material = material;
-                meshFilter.mesh = outputMesh;
-                Selection.activeGameObject = gameObject;
-                
-                var creator = FindObjectOfType<GrammarCreator>();
-                if (creator) {
-                    gameObject.transform.parent = creator.transform;
+            }
+            
+            // Update the mesh
+            gameObject.GetComponent<MeshFilter>().mesh = outputMesh;
+            Selection.activeGameObject = gameObject;
+            
+            var creator = FindObjectOfType<GrammarCreator>();
+            if (creator) {
+                gameObject.transform.parent = creator.transform;
+            }
+        }
+
+        void OnGUI() {
+            var r = EditorGUILayout.BeginVertical();
+            
+            EditorGUILayout.LabelField($"{grammarName}    -     Step: {iterationCount}");
+
+            if (GUILayout.Button("Load Grammar")) {
+                string path = EditorUtility.OpenFilePanel("Load Grammar", "", "");
+                grammarName = Path.GetFileNameWithoutExtension(path);
+                if (!string.IsNullOrEmpty(path)) {
+                    initialize(path);
+                    iterationCount = 0;
+                    UpdateMesh();
                 }
             }
-            EditorGUILayout.EndFoldoutHeaderGroup();
+            EditorGUI.BeginDisabledGroup(string.IsNullOrEmpty(grammarName));
 
+            if (isAnimating) {
+                if (GUILayout.Button("Stop")) {
+                    EditorApplication.update -= AnimationUpdate;
+                    isAnimating = false;
+                }
+            } else {
+                if (GUILayout.Button("Play")) {
+                    StartAnimation();
+                }
+            }
+
+            if (GUILayout.Button("Reset")) {
+                reset();
+                iterationCount = 0;
+                UpdateMesh();
+            }
+
+            if (GUILayout.Button("Step")) {
+                iterate(1);
+                iterationCount++;
+                UpdateMesh();
+            }
+
+            EditorGUI.EndDisabledGroup();
+            EditorGUILayout.EndFoldoutHeaderGroup();
             EditorGUILayout.EndVertical();
         }
     }
