@@ -18,22 +18,20 @@ using Json = nlohmann::json;
 int main() {
 	// ifstream file("C:/model synthesis/model_synthesis_files/Grammar Editor/graphTemplates.txt");
 	// ifstream file("../data/box.json");
+	// ifstream file("../data/docks.json");
+	ifstream file("../data/hexTower.json");
 	// ifstream file("../data/L-floating.json");
-	ifstream file("../data/L-grounded.json");
+	// ifstream file("../data/L-grounded.json");
 	string content((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
 	file.close();
 
 	// vector<GraphTemplate> graphTemplates;
 	Json parsed = Json::parse(content);
-	for (int i = 0; i < parsed.size(); i++) {
-		Json parsedI = parsed[i];
-		cout << parsedI["category"] << " " << parsedI["name"] << endl;
-		// Shape3D::import(parsedI["solution"]["types"]);
-		auto hierarchy = NetworkHierarchy::import(parsedI["solution"]);
-		auto model = new ms::Model();
-		auto mutator = new GuideMutator(model, new NetworkMutator(hierarchy, model));
-		mutator->iterate(50);
-		auto mesh = model->getCurrent()->exportMesh();
-		cout << "Mesh";
-	}
+	cout << parsed["category"] << " " << parsed["name"] << endl;
+	// Shape3D::import(parsed["solution"]["types"]);
+	auto hierarchy = NetworkHierarchy::import(parsed["solution"]);
+	auto model = new ms::Model();
+	auto mutator = new GuideMutator(model, new NetworkMutator(hierarchy, model));
+	mutator->iterate(50);
+	auto mesh = model->getCurrent()->exportMesh();
 }

@@ -200,11 +200,21 @@ void Face::exportMesh(
         normals.push_back(normal);
     }
     auto indices = getTriangleIndices();
+    auto v10 = facePositions[indices[1]].copy().minus(facePositions[indices[0]]);
+    auto v21 = facePositions[indices[2]].copy().minus(facePositions[indices[1]]);
+    auto normalV = v10.cross(v21);
+    auto isFlipped = (normal.dot(normalV) < 0);
+
     for (int i = 0; i < indices.size(); i += 3) {
         triangles.push_back(indices[i] + startIndex);
-        // Flip the order of the vertices to face outward.
-        triangles.push_back(indices[i + 2] + startIndex);
-        triangles.push_back(indices[i + 1] + startIndex);
+        if (isFlipped) {
+            // Flip the order of the vertices to face outward.
+            triangles.push_back(indices[i + 1] + startIndex);
+            triangles.push_back(indices[i + 2] + startIndex);
+        } else {
+            triangles.push_back(indices[i + 2] + startIndex);
+            triangles.push_back(indices[i + 1] + startIndex);
+        }
     }
 }
 

@@ -57,9 +57,14 @@ ms.testRunner = function(container, exampleShape, decorationModel, screenSaver, 
 			var scenario = is3D ? scenario3D : scenario2D;
 			this.addShape(solution.category, solution.name, [scenario], solution.data, solution.settings, solution.solution);
 		});
-		var exported = solutions.filter((s) => s.solution.useNetworks)[7];
-		ms.classifier.computeBoundaryMorphisms(exported.solution);
-		console.log(JSON.stringify(exported).replaceAll('\\"', '"').replaceAll('"{', '{').replaceAll('}"', '}'));
+
+		solutions.forEach((solution) => {
+			if (solution.solution.useNetworks) {
+				console.log(solution.category, solution.name);
+				ms.classifier.computeBoundaryMorphisms(solution.solution);
+				console.log(JSON.stringify(solution).replaceAll('\\"', '"').replaceAll('"{', '{').replaceAll('}"', '}'));
+			}
+		});
 
 		// Export JSON.
 		// console.log(JSON.stringify(solutions.filter((s) => s.solution.useNetworks)[5]).replaceAll('\\"', '"').replaceAll('"{', '{').replaceAll('}"', '}'));
