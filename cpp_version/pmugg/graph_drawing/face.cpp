@@ -189,7 +189,8 @@ double Face::signedArea() {
 void Face::exportMesh(
     std::vector<Vec3>& positions,
     std::vector<Vec3>& normals,
-    std::vector<int>& triangles
+    std::vector<int>& triangles,
+    std::vector<int>& faceIndices
 ) {
     int startIndex = positions.size();
     auto facePositions = getPositions();
@@ -216,6 +217,8 @@ void Face::exportMesh(
             triangles.push_back(indices[i + 1] + startIndex);
         }
     }
+
+    faceIndices.push_back(positions.size());
 }
 
 std::vector<int> Face::getTriangleIndices() {

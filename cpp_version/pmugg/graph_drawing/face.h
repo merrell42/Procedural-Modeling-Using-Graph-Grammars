@@ -35,7 +35,8 @@ class Face {
 		void exportMesh(
 			std::vector<Vec3>& positions,
 			std::vector<Vec3>& normals,
-			std::vector<int>& triangles
+			std::vector<int>& triangles,
+			std::vector<int>& faceIndices
 		);
 
 	private:

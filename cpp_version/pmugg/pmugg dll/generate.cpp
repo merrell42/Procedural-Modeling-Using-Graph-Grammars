@@ -3,6 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <sstream>
 #include "../hierarchy/network_hierarchy.h"
 #include "../guidelines/network_mutator.h"
 #include "../guidelines/guide_mutator.h"
@@ -18,18 +19,43 @@ namespace ms {
 Model* model;
 GuideMutator* mutator;
 
-int initialize(const char* filePath) {
-	ifstream file(filePath);
-	string content((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
-	file.close();
+void initialize(const char* filePath, char* result, int len) {
+	try {
+		ifstream file(filePath);
+		if (!file.is_open()) {
+			strcpy_s(result, len, "Error: Could not open file");
+			return;
+		}
+		
+		string content((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
+		file.close();
 
-	// vector<GraphTemplate> graphTemplates;
-	// Remove array.
-	Json parsed = Json::parse(content);
-	auto hierarchy = NetworkHierarchy::import(parsed["solution"]);
-	model = new ms::Model();
-	mutator = new GuideMutator(model, new NetworkMutator(hierarchy, model));
-	return 4;
+		try {
+			Json parsed= Json::parse(content);
+			auto hierarchy = NetworkHierarchy::import(parsed["solution"]);
+			model = new ms::Model();
+			mutator = new GuideMutator(model, new NetworkMutator(hierarchy, model));
+			strcpy_s(result, len, "Success");
+		}
+		catch (const Json::exception& e) {
+			string errorMsg = "Error: JSON parsing failed - ";
+			errorMsg += e.what();
+			strcpy_s(result, len, errorMsg.c_str());
+		}
+		catch (const runtime_error& e) {
+			string errorMsg = "Error: ";
+			errorMsg += e.what();
+			strcpy_s(result, len, errorMsg.c_str());
+		}
+	}
+	catch (const std::exception& e) {
+		string errorMsg = "Error: Exception occurred - ";
+		errorMsg += e.what();
+		strcpy_s(result, len, errorMsg.c_str());
+	}
+	catch (...) {
+		strcpy_s(result, len, "Error: Unknown exception occurred");
+	}
 }
 
 void reset() {
@@ -48,6 +74,5 @@ int getNumFaces() {
 Mesh getMesh() {
 	return model->getCurrent()->exportMesh();
 }
-
 
 };

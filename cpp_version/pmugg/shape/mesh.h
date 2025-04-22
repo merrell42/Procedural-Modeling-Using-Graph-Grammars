@@ -12,10 +12,17 @@ struct Mesh {
     float* positions;
     float* normals;
     int* triangles;
+    int* faceIndices;
     int numVertices;
     int numTriangles;
+    int numFaces;
 };
 
-Mesh createMesh(std::vector<Vec3> positions, std::vector<Vec3> normals, std::vector<int> triangles);
+Mesh createMesh(
+    std::vector<Vec3> positions,
+    std::vector<Vec3> normals,
+    std::vector<int> triangles,
+    std::vector<int> faceIndices
+);
 
 }

@@ -97,12 +97,13 @@ Mesh GraphDrawing::exportMesh() {
 	std::vector<Vec3> positions;
 	std::vector<Vec3> normals;
 	std::vector<int> triangles;
+	std::vector<int> faceIndices;
 
 	for (const auto& [id, face] : faceMap) {
-		face->exportMesh(positions, normals, triangles);
+		face->exportMesh(positions, normals, triangles, faceIndices);
 	}
 
-	return createMesh(positions, normals, triangles);
+	return createMesh(positions, normals, triangles, faceIndices);
 }
 
 }
