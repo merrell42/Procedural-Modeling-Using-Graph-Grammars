@@ -13,11 +13,12 @@ class EdgeType3D;
 
 class Shape3D {
 public:
-    Shape3D();
+    Shape3D(int dims);
     Shape3D(const std::vector<VertexType*>& vertexTypes,
             const std::vector<EdgeType3D*>& edgeTypes,
             const std::vector<FaceType3D*>& faceTypes,
-            const std::string& xml);
+            const std::string& xml,
+            int dims);
 
     // Export/Import
     // std::map<std::string, std::vector<std::map<std::string, std::any>>> export_() const;
@@ -36,10 +37,10 @@ public:
     std::vector<VertexType*> vertexTypes;
     std::vector<EdgeType3D*> edgeTypes;
     std::vector<FaceType3D*> faceTypes;
+    int dims;
 
 private:
     std::map<std::string, EdgeType3D*> splicedEdgeTypes;
-    bool is3D;
     std::string xml;
 
     // Network data

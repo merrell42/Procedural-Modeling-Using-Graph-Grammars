@@ -38,6 +38,7 @@ public:
     const std::vector<NetTransition*>& getGroundTransitions() const;
     Network* getEmptyNet() const;
     bool isGrounded() const;
+    int getDims() const { return shape->dims; }
 
     // Transition operations
     Transition getTransition();

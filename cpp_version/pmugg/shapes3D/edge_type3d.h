@@ -43,7 +43,6 @@ public:
     void destroy() { destroyed = true; }
 
     // Operations
-    bool is3D() const { return false; }  // TODO: Fix this
     bool isLoopy() const;
     bool isBoundary() const;
     bool isConnected() const;

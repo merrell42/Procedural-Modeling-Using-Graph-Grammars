@@ -6,19 +6,20 @@ namespace ms {
 Shape3D::Shape3D(const std::vector<VertexType*>& vTypes,
                  const std::vector<EdgeType3D*>& eTypes,
                  const std::vector<FaceType3D*>& fTypes,
-                 const std::string& xmlData)
+                 const std::string& xmlData,
+                 int dims)
     : vertexTypes(vTypes)
     , edgeTypes(eTypes)
     , faceTypes(fTypes)
-    , is3D(true)
     , xml(xmlData)
+    , dims(dims)
     // , chainMap(nullptr)
     // , vertex(nullptr)
     // , edge(nullptr)
     // , face(nullptr)
         {}
 
-Shape3D::Shape3D() : Shape3D({}, {}, {}, "") {}
+Shape3D::Shape3D(int dims) : Shape3D({}, {}, {}, "", dims) {}
 
 //std::map<std::string, std::vector<std::map<std::string, std::any>>> Shape3D::export_() const {
 //    auto exporter = [this](const auto& x) { return x.export_(this); };
@@ -35,7 +36,11 @@ Shape3D::Shape3D() : Shape3D({}, {}, {}, "") {}
 //}
 
 Shape3D* Shape3D::import(const Json& json) {
-    auto shape = new Shape3D();
+    int dims = 3;
+    if (json.contains("dims")) {
+        dims = json.at("dims");
+    }
+    auto shape = new Shape3D(dims);
 
     std::vector<FaceType3D*> faceTypes;
     for (const auto& type : json.at("faceTypes")) {

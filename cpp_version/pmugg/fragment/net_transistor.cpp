@@ -16,10 +16,10 @@
 namespace ms {
 
 std::unique_ptr<NetTransistor> NetTransistor::buildNormally(
-    const Transition& transition, Model* model) {
+    const Transition& transition, Model* model, int dims) {
     
     auto result = std::make_unique<NetTransistor>();
-    result->create(transition, model);
+    result->create(transition, model, dims);
     
     if (result->effort > 0) {
         result->reject();
@@ -28,7 +28,7 @@ std::unique_ptr<NetTransistor> NetTransistor::buildNormally(
     return result;
 }
 
-void NetTransistor::create(const Transition& transition, Model* model_) {
+void NetTransistor::create(const Transition& transition, Model* model_, int dims_) {
     startNet = transition.startNet;
     model = model_;
     endNet = transition.endNet;
@@ -36,8 +36,7 @@ void NetTransistor::create(const Transition& transition, Model* model_) {
     // map = std::move(transition.map);
     map = transition.map;
     ground = transition.ground;
-    // dims = is3D ? 3 : 2;
-    dims = 3;
+    dims = dims_;
     
     // isInitialBoundary = transition.initialBoundary;
     effort = 0;
@@ -467,8 +466,16 @@ void NetTransistor::addFixedFace(Face* fixedFaceA, Face* fixedFaceB, double d) {
     fPlace->makeFixed(fixedFace);
 }
 
-void NetTransistor::setupFaceCentric() {
+std::vector<double> NetTransistor::getExtents() {
     auto extents = globalSettings["Extents"].get<std::vector<double>>();
+    if (dims == 2) {
+        extents[2] = 0;
+    }
+    return extents;
+}
+
+void NetTransistor::setupFaceCentric() {
+    auto extents = getExtents();
     const Vec3 lower(1, 1, 0);
     const Vec3 upper(extents[0] - 1, extents[1] - 1, extents[2]);
     auto settingsNew = std::make_unique<NetTransistorSettings>(lower, upper);
@@ -566,11 +573,11 @@ void NetTransistor::setupFaceCentric() {
 Limits NetTransistor::findLimits() {
     std::vector<double> minLimit;
     std::vector<double> maxLimit;
-    auto extents = globalSettings["Extents"].get<std::vector<double>>();
+    auto extents = getExtents();
 
     // Handle vertex limits
     for (size_t i = 0; i < freeVertices.size(); i++) {
-        for (int dim = 0; dim < dims; dim++) {
+        for (int dim = 0; dim < 3; dim++) {
             minLimit.push_back(0);
             maxLimit.push_back(extents[dim]);
         }
@@ -658,24 +665,20 @@ std::pair<std::vector<double>, bool> NetTransistor::sampleFaceCentric() {
 
         if (vertices.size() == 4) {
             std::vector<double> lower = {0, 0, 0};
-            auto upper = globalSettings["Extents"].get<std::vector<double>>();
+            auto upper = getExtents();
             for (auto* vertex : vertices) {
-                if (dims == 3) {
+                // if (dims == 3) {
                     auto dir = vertex->getHalfEdges()[0]->getDir();
                     if (dir.getX() > 0.9) {          // +X
                         result.insert(result.end(), { lower[0], lower[1], lower[2] + 1 });
-                    }
-                    else if (dir.getX() < -0.9) {  // -X
+                    } else if (dir.getX() < -0.9) {  // -X
                         result.insert(result.end(), { upper[0], upper[1], lower[2] + 1 });
-                    }
-                    else if (dir.getY() > 0.9) {   // +Y
+                    } else if (dir.getY() > 0.9) {   // +Y
                         result.insert(result.end(), { upper[0], lower[1], lower[2] + 1 });
-                    }
-                    else if (dir.getY() < -0.9) {  // -Y
+                    } else if (dir.getY() < -0.9) {  // -Y
                         result.insert(result.end(), { lower[0], upper[1], lower[2] + 1 });
                     }
-                }
-                else {
+                /* } else {
                     int signX = 0, signY = 0;
                     for (int i = 0; i < 2; i++) {
                         auto dir = vertex->getHalfEdges()[i]->getDir();
@@ -692,7 +695,7 @@ std::pair<std::vector<double>, bool> NetTransistor::sampleFaceCentric() {
                     double xPos = (signX == 1) ? lower[0] + 0.1 : upper[0] - 0.1;
                     double yPos = (signY == 1) ? lower[1] + 0.1 : upper[1] - 0.1;
                     result.insert(result.end(), { xPos, yPos });
-                }
+                } */
             }
             return std::make_pair(result, true);
         }
@@ -752,7 +755,7 @@ std::pair<std::vector<double>, bool> NetTransistor::sampleFaceCentric() {
     for (auto* vertex : freeVertices) {
         int id = vertex->getId();
         auto position = settings->vertexPlacements[id]->getPosition();
-        for (int j = 0; j < dims; j++) {
+        for (int j = 0; j < 3; j++) {
             positions.push_back(position.getValue(j));
         }
     }
@@ -886,9 +889,9 @@ bool NetTransistor::placeVertexPositions(const std::vector<double>& positions) {
     // Place vertices at their new positions
     for (size_t i = 0; i < freeVertices.size(); i++) {
         Vec3 position(
-            positions[dims * i], 
-            positions[dims * i + 1], 
-            positions[dims * i + 2]
+            positions[3 * i], 
+            positions[3 * i + 1], 
+            positions[3 * i + 2]
         );
         
         freeVertices[i]->setPosition(position);

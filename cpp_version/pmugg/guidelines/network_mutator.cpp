@@ -59,7 +59,9 @@ bool NetworkMutator::applyTransition(Transition transition) {
     transition.map = netGraphMap;
 
     timer->start("Build Normally");
-    auto transistor = NetTransistor::buildNormally(transition, model);
+
+    int dims = hierarchy->getDims();
+    auto transistor = NetTransistor::buildNormally(transition, model, dims);
     timer->stop("Build Normally");
 
     if (!transistor) {

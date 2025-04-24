@@ -54,7 +54,7 @@ public:
 
     // Static factory method
     static std::unique_ptr<NetTransistor> buildNormally(const Transition& transition, 
-                                                       Model* model);
+                                                       Model* model, int dims);
 
     // Constructor
     NetTransistor() = default;
@@ -62,11 +62,12 @@ public:
     // Member functions
     bool solve();
     void setup();
-    void create(const Transition& transition, Model* model);
+    void create(const Transition& transition, Model* model, int dims);
     void addLine(Line* line, bool includeLength, bool addToGraph);
     Graph* createGraph();
     void reject();
     void freeVertex();
+    std::vector<double> getExtents();
 
 private:
     // Member variables
