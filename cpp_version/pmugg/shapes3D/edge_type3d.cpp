@@ -151,7 +151,7 @@ EdgeType3D* EdgeType3D::import(const Json& json, Shape3D* shape) {
     
     auto* result = new EdgeType3D(fData, direction, options);
     
-    if (json.contains("brush")) {
+    if (json.contains("brush") && !json["brush"].is_null()) {
         result->brush = Brush::import(json["brush"]);
     }
     // I think edge length is only needed for old grammars that have no brushes.

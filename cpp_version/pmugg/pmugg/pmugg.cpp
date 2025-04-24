@@ -20,14 +20,15 @@ int main() {
 	// ifstream file("../data/box.json");
 	// ifstream file("../data/docks.json");
 	// ifstream file("../data/hexTower.json");
-	ifstream file("../data/house1.json");
+	// ifstream file("../data/house1.json");
+	ifstream file("../data/line.json");
 	// ifstream file("../data/L-floating.json");
 	// ifstream file("../data/L-grounded.json");
 	string content((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
 	file.close();
 
 	// vector<GraphTemplate> graphTemplates;
-	try {
+	// try {
 		Json parsed = Json::parse(content);
 		cout << parsed["category"] << " " << parsed["name"] << endl;
 		// Shape3D::import(parsed["solution"]["types"]);
@@ -36,7 +37,7 @@ int main() {
 		auto mutator = new GuideMutator(model, new NetworkMutator(hierarchy, model));
 		mutator->iterate(50);
 		// auto mesh = model->getCurrent()->exportMesh();
-	} catch (const std::exception& e) {
-		cout << "Error: " << e.what() << endl;
-	}
+	// } catch (const std::exception& e) {
+	// 	cout << "Error: " << e.what() << endl;
+	//}
 }

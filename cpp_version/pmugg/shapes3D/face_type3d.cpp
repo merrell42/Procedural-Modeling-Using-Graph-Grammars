@@ -113,10 +113,13 @@ Vec3 FaceType3D::normalColor() const {
 } */
 
 FaceType3D* FaceType3D::import(const Json& json) {
-    auto* result = new FaceType3D(
-        json["material"].get<std::string>(),
-        Vec3::import(json["normal"])
-    );
+    std::string material = "";
+    if (json.contains("material") && json["material"].is_string()) {
+        material = json["material"].get<std::string>();
+    }
+    auto normal = json.contains("normal") ?
+        Vec3::import(json["normal"]) : Vec3(0, 0, 1);
+    auto* result = new FaceType3D(material, normal);
     
     if (json["color"] != nullptr) {
         result->color = new Vec3(Vec3::import(json["color"]));
