@@ -174,6 +174,7 @@ NetGraphMap* NetGraphMapFinder::findStarterMap(Network* netB) {
     auto bFaces = netB->getBFaces();
     if (bFaces.size() != 1) {
         std::cout << "Expect one boundary face." << std::endl;
+        return nullptr;
     }
     Face* face = findFace(bFaces[0]->getType());
     if (face) {
@@ -437,9 +438,8 @@ NetGraphMap* NetGraphMapFinder::spliceEndpoint(
             state->getMap()->edgeBtoA[eIndex] = splitLines[0];
             return assignVertex(state, splitVertices[2], vIndexB);
         }
-    }
-    else if (vIndex0 < 0 || vIndex1 < 0 || eIndex < 0) {
-        throw std::runtime_error("Unsure what to do about a partial match");
+    } else if (vIndex0 < 0 || vIndex1 < 0 || eIndex < 0) {
+        std::cout << "Unsure what to do about a partial match" << std::endl;
     }
 
     return nullptr;

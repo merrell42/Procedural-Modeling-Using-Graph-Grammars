@@ -12,6 +12,8 @@ using System.Text;
 
 namespace Grammar {
     public class GrammarEditorWindow : EditorWindow {
+        private const int MAX_ITERATION = 50;
+
         [MenuItem("Window/Graph Grammar Generator")] 
         public static void Init() {
             // Get existing open window or if none, make a new one:
@@ -56,6 +58,8 @@ namespace Grammar {
             titleContent = new GUIContent("Graph Grammar Generator");
         }
 
+        private Queue<string> fileQueue = new Queue<string>();
+        private int maxIteration = MAX_ITERATION;
         private string grammarName = "";
         private int iterationCount = 0;
         private bool isAnimating = false;
@@ -76,6 +80,16 @@ namespace Grammar {
                 EditorApplication.update -= AnimationUpdate;
                 Repaint();
                 return;
+            }
+            if (iterationCount >= maxIteration && maxIteration > 0) {
+                if (fileQueue.Count > 0) {
+                    iterationCount = 0;
+                    LoadGrammarFile(fileQueue.Dequeue());
+                } else {
+                    StopAnimation();
+                    Repaint();
+                    return;
+                }
             }
 
             iterate(1);
@@ -266,26 +280,26 @@ namespace Grammar {
         }
 
         void OnGUI() {
-            var r = EditorGUILayout.BeginVertical();
-            
-            EditorGUILayout.LabelField($"{grammarName}    -     Step: {iterationCount}");
+            EditorGUILayout.BeginVertical();
+
+            string stepText = maxIteration > 0 ? $"Step: {iterationCount} / {maxIteration}" : $"Step: {iterationCount}";
+            EditorGUILayout.LabelField($"{grammarName}    -     {stepText}");
 
             if (GUILayout.Button("Load Grammar")) {
                 string path = EditorUtility.OpenFilePanel("Load Grammar", "", "");
                 if (!string.IsNullOrEmpty(path)) {
-                    StringBuilder sb = new StringBuilder(100000);
-                    initialize(path, sb, sb.Capacity);
-                    Debug.Log(sb);
-                    if (sb.ToString() == "Success") {
-                        grammarName = Path.GetFileNameWithoutExtension(path);
-                        iterationCount = 0;
-                        UpdateMesh();
-                    } else {
-                        grammarName = "";
-                        Debug.LogError(sb.ToString());
-                    }
+                    maxIteration = 0;
+                    LoadGrammarFile(path);
                 }
             }
+            
+            if (GUILayout.Button("Load Folder")) {
+                string folderPath = EditorUtility.OpenFolderPanel("Load Grammar Folder", "", "");
+                if (!string.IsNullOrEmpty(folderPath)) {
+                    LoadGrammarFolder(folderPath);
+                }
+            }
+            
             EditorGUI.BeginDisabledGroup(string.IsNullOrEmpty(grammarName));
 
             if (isAnimating) {
@@ -307,6 +321,43 @@ namespace Grammar {
             EditorGUI.EndDisabledGroup();
             EditorGUILayout.EndFoldoutHeaderGroup();
             EditorGUILayout.EndVertical();
+        }
+        
+        private void LoadGrammarFile(string path) {
+            StringBuilder sb = new StringBuilder(100000);
+            initialize(path, sb, sb.Capacity);
+            if (sb.ToString() == "Success") {
+                grammarName = Path.GetFileNameWithoutExtension(path);
+                iterationCount = 0;
+                UpdateMesh();
+            } else {
+                grammarName = "";
+                Debug.LogError(sb.ToString());
+            }
+        }
+        
+        private void LoadGrammarFolder(string folderPath) {
+            // Get all JSON files in the folder and its subfolders
+            fileQueue = new Queue<string>(Directory.GetFiles(folderPath, "*.json", SearchOption.AllDirectories));
+            
+            if (fileQueue.Count == 0) {
+                Debug.LogWarning("No JSON files found in the selected folder.");
+                return;
+            }
+
+            maxIteration = MAX_ITERATION;
+            LoadGrammarFile(fileQueue.Dequeue());
+            StartAnimation();
+        }
+        
+        private string GetRelativePath(string rootPath, string fullPath) {
+            // Remove the root path to get a relative path for display in the menu
+            string relativePath = fullPath.Substring(rootPath.Length);
+            // Remove leading slash or backslash if present
+            if (relativePath.StartsWith("/") || relativePath.StartsWith("\\")) {
+                relativePath = relativePath.Substring(1);
+            }
+            return relativePath;
         }
     }
 }

@@ -88,21 +88,24 @@ VertexType* VertexType::import(const Json& json, Shape3D* shape) {
     //     VertexDecoration::import(json["decoration"], [](){}) : nullptr;
     
     auto result = new VertexType(/*decoration*/);
-    
+    bool spliced = json["spliced"];
+    result->spliced = spliced;
+
     for (const auto& connJson : json["connections"]) {
         Connection conn;
-        conn.adjustedAngle = connJson["adjustedAngle"];
-        conn.angle = connJson["angle"];
-        conn.dir = connJson.contains("dir") ? 
-            Vec3::import(connJson["dir"]) : Vec3();
-        conn.directedId = connJson["directedId"];
         conn.edge = shape->edgeTypes[connJson["edge"].get<int>()];
         conn.faceIds = connJson["faceIds"].get<std::vector<int>>();
         conn.isAtStart = connJson["isAtStart"];
+        if (!spliced) {
+            conn.adjustedAngle = connJson["adjustedAngle"];
+            conn.angle = connJson["angle"];
+            conn.dir = connJson.contains("dir") ? 
+                Vec3::import(connJson["dir"]) : Vec3();
+            conn.directedId = connJson["directedId"];
+        }
         result->connections.push_back(conn);
     }
-    
-    result->spliced = json["spliced"];
+
     return result;
 }
 

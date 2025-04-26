@@ -178,12 +178,14 @@ Network* Network::import(const Json & json, Shape3D* shape) {
     //}
 
     // Get the types.
+    auto edgeVertex = new VertexType();
     for (size_t index = 0; index < json["vertices"].size(); ++index) {
         auto vertexData = json["vertices"][index];
         int type = vertexData["type"].get<int>();
-        result->getVertices()[index]->setType(shape->vertexTypes[type]);
-
-        result->getVertices()[index]->kind = vertexData["kind"].get<std::string>();
+        auto kind = vertexData["kind"].get<std::string>();
+        result->getVertices()[index]->kind = kind;
+        auto vertexType = (kind == "v") ? shape->vertexTypes[type] : edgeVertex;
+        result->getVertices()[index]->setType(vertexType);
     }
     for (size_t index = 0; index < json["edges"].size(); ++index) {
         auto edgeData = json["edges"][index];

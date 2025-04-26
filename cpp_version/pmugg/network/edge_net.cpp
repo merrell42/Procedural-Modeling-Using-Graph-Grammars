@@ -113,7 +113,7 @@ void EdgeNet::merge(EdgeNet* edgeB, bool mergeForward) {
                 halfB->disconnectHalfEdge();
                 prevB->connectHalfEdge(halfA);
             }
-            halfA->connectVertex(halfB->getVertex(), halfA->getVertexIndex());
+            halfA->connectVertex(halfB->getVertex(), halfB->getVertexIndex());
         }
         
         auto* face = halfB->getFace();

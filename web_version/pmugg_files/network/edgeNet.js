@@ -115,7 +115,7 @@ ms.edgeNet.prototype.merge = function(edgeB, mergeForward) {
 				halfB.disconnectHalfEdge();
 				prevB.connectHalfEdge(halfA);
 			}
-			halfA.connectVertex(halfB.getVertex(), halfA.getVertexIndex());
+			halfA.connectVertex(halfB.getVertex(), halfB.getVertexIndex());
 		}		
 		var face = halfB.getFace();
 		face.replaceHalfEdge(halfB, halfA);

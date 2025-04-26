@@ -20,7 +20,7 @@ Model* model;
 GuideMutator* mutator;
 
 void initialize(const char* filePath, char* result, int len) {
-	try {
+	// try {
 		ifstream file(filePath);
 		if (!file.is_open()) {
 			strcpy_s(result, len, "Error: Could not open file");
@@ -30,14 +30,14 @@ void initialize(const char* filePath, char* result, int len) {
 		string content((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
 		file.close();
 
-		try {
+		// try {
 			Json parsed= Json::parse(content);
 			auto hierarchy = NetworkHierarchy::import(parsed["solution"]);
 			model = new ms::Model();
 			mutator = new GuideMutator(model, new NetworkMutator(hierarchy, model));
 			strcpy_s(result, len, "Success");
-		}
-		catch (const Json::exception& e) {
+		// }
+		/*catch (const Json::exception& e) {
 			string errorMsg = "Error: JSON parsing failed - ";
 			errorMsg += e.what();
 			strcpy_s(result, len, errorMsg.c_str());
@@ -46,16 +46,16 @@ void initialize(const char* filePath, char* result, int len) {
 			string errorMsg = "Error: ";
 			errorMsg += e.what();
 			strcpy_s(result, len, errorMsg.c_str());
-		}
-	}
-	catch (const std::exception& e) {
+		} */
+	// }
+	/*catch (const std::exception& e) {
 		string errorMsg = "Error: Exception occurred - ";
 		errorMsg += e.what();
 		strcpy_s(result, len, errorMsg.c_str());
 	}
 	catch (...) {
 		strcpy_s(result, len, "Error: Unknown exception occurred");
-	}
+	}*/
 }
 
 void reset() {

@@ -16,14 +16,8 @@ using namespace ms;
 using Json = nlohmann::json;
 
 int main() {
-	// ifstream file("C:/model synthesis/model_synthesis_files/Grammar Editor/graphTemplates.txt");
-	// ifstream file("../data/box.json");
-	// ifstream file("../data/docks.json");
-	// ifstream file("../data/hexTower.json");
-	// ifstream file("../data/house1.json");
-	ifstream file("../data/line.json");
-	// ifstream file("../data/L-floating.json");
-	// ifstream file("../data/L-grounded.json");
+	// ifstream file("../../../grammar data/2D Branches/H.json");
+	ifstream file("../../../grammar data/3D Shapes/hexTower.json");
 	string content((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
 	file.close();
 
