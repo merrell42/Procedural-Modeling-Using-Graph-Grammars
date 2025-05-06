@@ -75,8 +75,9 @@ private:
 
     // Ray casting methods
     /*Face* castVolumeRaySeries(Face* face, const std::vector<HalfEdgeNet*>& rayHalfs, Face* goalFace);*/
-    static IntersectResult castRay(const Vec3& p0, const Vec3& dir, FaceGroup* groupA, int maxDim);
-    static Endpoint* castRaySeries(HalfEdgeNet* halfB, const Vec3& startPos, FaceGroup* groupA, int maxDim);
+    static IntersectResult castRay(const Vec3& p0, const Vec3& dir, FaceGroup* groupA, const std::map<int, Face*>& faceMap, int maxDim);
+    static Endpoint* castRaySeries(HalfEdgeNet* halfB, const Vec3& startPos, FaceGroup* groupA, const std::map<int, Face*>& faceMap, int maxDim);
+    static void findNearestIntersection(Face* faceA, const Vec3& p0, const Vec3& p1, const Vec2& dir2, IntersectResult& nearestIntersect, int maxDim);
 
     // Static helper methods
     static void addOuterFaces(NetGraphMap* map, Network* netB);

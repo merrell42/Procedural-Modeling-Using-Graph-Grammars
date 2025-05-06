@@ -230,7 +230,7 @@ Graph* NetTransistor::createGraph() {
                     //    // Error handling
                     //    return nullptr;
                     //}
-                    auto split = splitLines[startIndex][0]->split();
+                    auto split = splitLines[startIndex][0]->split(true);
                     splitLines[startIndex] = split.lines;
                     splitEndpoints[startIndex] = split.nextEndpoints;
                 }

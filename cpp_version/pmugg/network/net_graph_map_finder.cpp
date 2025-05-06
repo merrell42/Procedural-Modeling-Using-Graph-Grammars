@@ -373,7 +373,7 @@ NetGraphMap* NetGraphMapFinder::spliceEndpoint(
     Endpoint* intersectEndpoint = nullptr;
 
     while (attempts < spliceRayAttempts && !intersectEndpoint) {
-        intersectEndpoint = castRaySeries(halfB, startPos, groupA, maxDim);
+        intersectEndpoint = castRaySeries(halfB, startPos, groupA, model->getCurrent()->getFaceMap(), maxDim);
         attempts++;
     }
 
@@ -490,8 +490,27 @@ NetGraphMap* NetGraphMapFinder::assignEndpoint(Endpoint* endpointA, HalfEdgeNet*
     }
 }
 
+// Helper function to find the nearest intersection between a line and a face
+void NetGraphMapFinder::findNearestIntersection(Face* faceA, const Vec3& p0, const Vec3& p1, const Vec2& dir2, IntersectResult& nearestIntersect, int maxDim) {
+    std::vector<Vec3> fPositions = faceA->getPositions();
+    std::vector<IntersectionData> intersections = Intersector::lineFaceIntersect(p0, p1, fPositions, maxDim);
+    
+    for (const IntersectionData& intersection : intersections) {
+        double distance = dir2.dot(intersection.pos);
+        if (distance < nearestIntersect.distance) {
+            // Clean up previous data if it exists
+            if (nearestIntersect.data != nullptr) {
+                delete nearestIntersect.data;
+            }
+            nearestIntersect.distance = distance;
+            nearestIntersect.face = faceA;
+            nearestIntersect.data = new IntersectionData(intersection); // Create a copy
+        }
+    }
+}
+
 // Cast a ray and find the nearest intersection
-IntersectResult NetGraphMapFinder::castRay(const Vec3& p0, const Vec3& dir, FaceGroup* groupA, int maxDim) {
+IntersectResult NetGraphMapFinder::castRay(const Vec3& p0, const Vec3& dir, FaceGroup* groupA, const std::map<int, Face*>& faceMap, int maxDim) {
     Vec3 p1 = dir;
     p1.scale(Intersector::FAR_DISTANCE);
     p1.add(p0);
@@ -503,29 +522,39 @@ IntersectResult NetGraphMapFinder::castRay(const Vec3& p0, const Vec3& dir, Face
     nearestIntersect.data = nullptr;
 
     for (Face* faceA : groupA->getFaces()) {
-        std::vector<Vec3> fPositions = faceA->getPositions();
+        findNearestIntersection(faceA, p0, p1, dir2, nearestIntersect, maxDim);
+    }
+    // Closed 3D faces should have an intersection here.
+    if (nearestIntersect.face) {
+        return nearestIntersect;
+    }
 
-        std::vector<IntersectionData> intersections = Intersector::lineFaceIntersect(p0, p1, fPositions, maxDim);
-        for (const IntersectionData& intersection : intersections) {
-            double distance = dir2.dot(intersection.pos);
-            if (distance < nearestIntersect.distance) {
-                nearestIntersect.distance = distance;
-                nearestIntersect.face = faceA;
-                nearestIntersect.data = new IntersectionData(intersection); // Create a copy
-            }
+    // For 2D intersections, search random faces from the map
+    int N = faceMap.size();
+    int attempts = min(N, faceAttempts);
+    int startIndex = Util::randomInt(N);
+    
+    auto it = std::next(faceMap.begin(), startIndex % N);
+    for (int i = 0; i < attempts; i++) {
+        findNearestIntersection(it->second, p0, p1, dir2, nearestIntersect, maxDim);
+        
+        // Move to next face, wrapping around to beginning if needed
+        ++it;
+        if (it == faceMap.end()) {
+            it = faceMap.begin();
         }
     }
     return nearestIntersect;
 }
 
 // Cast a series of rays
-Endpoint* NetGraphMapFinder::castRaySeries(HalfEdgeNet* halfB, const Vec3& startPos, FaceGroup* groupA, int maxDim) {
+Endpoint* NetGraphMapFinder::castRaySeries(HalfEdgeNet* halfB, const Vec3& startPos, FaceGroup* groupA, const std::map<int, Face*>& faceMap, int maxDim) {
     Vec3 p0 = startPos;
     HalfEdgeNet* nextB = halfB->getNext();
     
     while (true) {
         const Vec3 dir = halfB->getDir();
-        IntersectResult nearestIntersect = castRay(p0, dir, groupA, maxDim);
+        IntersectResult nearestIntersect = castRay(p0, dir, groupA, faceMap, maxDim);
 
         if (!nearestIntersect.data) {
             return nullptr;

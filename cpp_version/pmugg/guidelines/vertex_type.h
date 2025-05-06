@@ -21,7 +21,7 @@ struct Connection {
     Vec3 dir;
     int directedId;
     EdgeType3D* edge;
-    std::vector<int> faceIds;
+    // std::vector<int> faceIds;
     bool isAtStart;
 
     Connection(EdgeType3D* edge = nullptr, bool isAtStart = false, float angle = 0.0f,
@@ -31,7 +31,7 @@ struct Connection {
         , dir()
         , directedId(0)
         , edge(edge)
-        , faceIds(faceIds)
+        // , faceIds(faceIds)
         , isAtStart(isAtStart) {}
 
     Connection copy() const {
@@ -41,7 +41,7 @@ struct Connection {
         result.dir = dir;
         result.directedId = directedId;
         result.edge = edge;
-        result.faceIds = faceIds;
+        // result.faceIds = faceIds;
         result.isAtStart = isAtStart;
         return result;
     }
@@ -59,9 +59,8 @@ public:
     int getId() const;
 
     // Operations
-    void addEdge(EdgeType3D* edge, bool isAtStart, float angle, const std::vector<int>& faceIds);
+    void addEdge(EdgeType3D* edge, bool isAtStart, float angle);
     void setSpliced(bool spliced);
-    void computeFaceIds();
 
     // Import/Export
     static VertexType* import(const Json& json, Shape3D* shape); 

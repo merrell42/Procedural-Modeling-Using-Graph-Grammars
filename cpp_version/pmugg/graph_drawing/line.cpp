@@ -61,7 +61,7 @@ void Line::destroy() {
 	delete this;
 };
 
-SplitData Line::split() {
+SplitData Line::split(bool splitFaces) {
     timer->start("split No Vertex"); // Start the timer
     // auto stats = this->node->getStats(); // Get stats from the node
 
@@ -87,9 +87,11 @@ SplitData Line::split() {
         nextEndpoints.push_back(endpoint->next());
     }
 
-    for (auto& endpoint : endpoints) {
-        endpoint->getFace()->split(endpoint->next());
-    }
+	if (splitFaces) {
+		for (auto& endpoint : endpoints) {
+			endpoint->getFace()->split(endpoint->next());
+		}
+	}
 
     for (auto& endpoint : endpoints) {
         endpoint->transfer(newLines[endpoint->getIsAtStart() ? 0 : 1]);
@@ -108,7 +110,7 @@ std::pair<SplitData, Vertex*> Line::fullSplit(double s) {
 
 	auto edgeType = this->getEdgeType();
 	auto modelCopy = model;
-	SplitData split = this->split();
+	SplitData split = this->split(false);
 	VertexType* vertexType = Line::getVertexType(edgeType);
 	Vertex* newVertex = new Vertex(modelCopy, middlePos, vertexType);
 	newVertex->createEndpoints();
@@ -137,8 +139,8 @@ std::pair<SplitData, Vertex*> Line::fullSplit(double s) {
 		auto startPrev0 = prevEndpoint0->getIsAtStart();
 		prevEndpoint0->getFace()->insert(startPrev0 ? endpointT : endpointF, prevEndpoint0);
 		prevEndpoint1->getFace()->insert(startPrev0 ? endpointF : endpointT, prevEndpoint1);
-		prevEndpoint0->maybeMergeNextFace();
-		prevEndpoint1->maybeMergeNextFace();
+		// prevEndpoint0->maybeMergeNextFace();
+		// prevEndpoint1->maybeMergeNextFace();
 	} else {
 		split.lines[0]->addEndpoint(endpointF, 1);
 		split.lines[1]->addEndpoint(endpointT, 0);
@@ -147,8 +149,8 @@ std::pair<SplitData, Vertex*> Line::fullSplit(double s) {
 		auto startPrev0 = prevEndpoint0->getIsAtStart();
 		prevEndpoint0->getFace()->insert(startPrev0 ? endpointT : endpointF, prevEndpoint0);
 		prevEndpoint1->getFace()->insert(startPrev0 ? endpointF : endpointT, prevEndpoint1);
-		prevEndpoint0->maybeMergeNextFace();
-		prevEndpoint1->maybeMergeNextFace();
+		// prevEndpoint0->maybeMergeNextFace();
+		// prevEndpoint1->maybeMergeNextFace();
 	}
 
 	/* split.lines[0]->fillFromEndpoints(true);
@@ -171,11 +173,10 @@ VertexType* Line::getVertexType(EdgeType3D* edgeType) {
         splitVertexTypes[id]->getConnections()[0].edge != edgeType) {
         
         VertexType* vertexType = new VertexType();
-        std::vector<int> faceIds; // Assuming faceIds is a vector of integers
 
         // Add edges to the vertex type
-        vertexType->addEdge(edgeType, true, edgeType->getAngle(), faceIds);
-        vertexType->addEdge(edgeType, false, edgeType->getAngle(), faceIds);
+        vertexType->addEdge(edgeType, true, edgeType->getAngle());
+        vertexType->addEdge(edgeType, false, edgeType->getAngle());
         vertexType->setSpliced(true);
 
         // Store the new vertex type

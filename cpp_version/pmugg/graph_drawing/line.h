@@ -33,7 +33,7 @@ namespace ms {
 		void setEndpoint(int index, Endpoint* endpoint);
         void setEndpointIds(const std::vector<int>& ids);
 		EdgeType3D* getEdgeType() const { return type; };
-		SplitData split();
+		SplitData split(bool splitFaces);
 		std::pair<SplitData, Vertex*> fullSplit(double s);
 		void destroy();
 		static VertexType* getVertexType(EdgeType3D* edgeType);

@@ -35,8 +35,7 @@ int VertexType::getId() const {
     return id;
 }
 
-void VertexType::addEdge(EdgeType3D* edge, bool isAtStart, float angle, 
-                        const std::vector<int>& faceIds) {
+void VertexType::addEdge(EdgeType3D* edge, bool isAtStart, float angle) {
     // Angle becomes the angle going out from the vertex through the edge
     auto dir = edge->getDir();
     if (!isAtStart) {
@@ -62,7 +61,6 @@ void VertexType::addEdge(EdgeType3D* edge, bool isAtStart, float angle,
     conn.dir = dir;
     conn.directedId = directedId;
     conn.edge = edge;
-    conn.faceIds = faceIds;
     conn.isAtStart = isAtStart;
 
     connections.insert(it, conn);
@@ -70,17 +68,6 @@ void VertexType::addEdge(EdgeType3D* edge, bool isAtStart, float angle,
 
 void VertexType::setSpliced(bool spliced) {
     this->spliced = spliced;
-}
-
-void VertexType::computeFaceIds() {
-    int N = (int)connections.size();
-    for (int i = 0; i < N; i++) {
-        std::vector<int> faceIds = {i, (i + 1) % N};
-        if (!connections[i].isAtStart) {
-            std::reverse(faceIds.begin(), faceIds.end());
-        }
-        connections[i].faceIds = faceIds;
-    }
 }
 
 VertexType* VertexType::import(const Json& json, Shape3D* shape) {
@@ -94,7 +81,6 @@ VertexType* VertexType::import(const Json& json, Shape3D* shape) {
     for (const auto& connJson : json["connections"]) {
         Connection conn;
         conn.edge = shape->edgeTypes[connJson["edge"].get<int>()];
-        conn.faceIds = connJson["faceIds"].get<std::vector<int>>();
         conn.isAtStart = connJson["isAtStart"];
         if (!spliced) {
             conn.adjustedAngle = connJson["adjustedAngle"];
@@ -136,7 +122,6 @@ VertexType* VertexType::import(const Json& json, Shape3D* shape) {
         Connection conn;
         conn.dir = dir;
         conn.edge = edge;
-        conn.faceIds = faceIds;
         conn.isAtStart = isAtStart;
         result->connections.push_back(conn);
     }
@@ -160,7 +145,7 @@ VertexType* VertexType::import(const Json& json, Shape3D* shape) {
         connJson["edge"] = std::find(types.edgeTypes.begin(), 
                                    types.edgeTypes.end(), 
                                    conn.edge) - types.edgeTypes.begin();
-        connJson["faceIds"] = conn.faceIds;
+        // connJson["faceIds"] = conn.faceIds;
         connJson["isAtStart"] = conn.isAtStart;
         connsJson.push_back(connJson);
     }

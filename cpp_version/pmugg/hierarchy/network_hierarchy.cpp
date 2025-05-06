@@ -45,9 +45,9 @@ const std::vector<NetTransition*>& NetworkHierarchy::getGroundTransitions() cons
     return groundTransitions;
 }
 
-Network* NetworkHierarchy::getEmptyNet() const {
+/* Network* NetworkHierarchy::getEmptyNet() const {
     return emptyNet;
-}
+} */
 
 bool NetworkHierarchy::isGrounded() const {
     return grounded;
