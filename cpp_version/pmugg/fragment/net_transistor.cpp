@@ -480,6 +480,7 @@ void NetTransistor::setupFaceCentric() {
     const Vec3 upper(extents[0] - 1, extents[1] - 1, extents[2]);
     auto settingsNew = std::make_unique<NetTransistorSettings>(lower, upper);
     this->settings = std::move(settingsNew);
+    freeVertices.clear();
 
     std::vector<int> basisIds;
     std::vector<int> vertexIds;

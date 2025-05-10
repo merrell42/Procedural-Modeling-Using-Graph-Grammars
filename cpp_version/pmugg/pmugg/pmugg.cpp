@@ -16,8 +16,8 @@ using namespace ms;
 using Json = nlohmann::json;
 
 int main() {
-	// ifstream file("../../../grammar data/2D Branches/H.json");
-	ifstream file("../../../grammar data/2D Basic Shapes/square hollow2.json");
+	ifstream file("../../../grammar data/2D Branches/H.json");
+	// ifstream file("../../../grammar data/2D Basic Shapes/square hollow.json");
 	// ifstream file("../../../grammar data/3D Shapes/hexTower.json");
 	string content((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
 	file.close();
@@ -30,7 +30,7 @@ int main() {
 		auto hierarchy = NetworkHierarchy::import(parsed["solution"]);
 		auto model = new ms::Model();
 		auto mutator = new GuideMutator(model, new NetworkMutator(hierarchy, model));
-		mutator->iterate(50);
+		mutator->iterate(100);
 		// auto mesh = model->getCurrent()->exportMesh();
 	// } catch (const std::exception& e) {
 	// 	cout << "Error: " << e.what() << endl;

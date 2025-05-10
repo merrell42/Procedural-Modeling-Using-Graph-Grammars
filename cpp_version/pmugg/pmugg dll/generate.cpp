@@ -10,6 +10,7 @@
 #include "../shapes3D/shape3d.h"
 #include "../third_party/json.h"
 #include "../graph_drawing/model.h"
+#include "../util/util.h"
 
 using namespace std;
 using Json = nlohmann::json;
@@ -20,6 +21,7 @@ Model* model;
 GuideMutator* mutator;
 
 void initialize(const char* filePath, char* result, int len) {
+	resetRandom();
 	// try {
 		ifstream file(filePath);
 		if (!file.is_open()) {
@@ -61,6 +63,7 @@ void initialize(const char* filePath, char* result, int len) {
 void reset() {
 	model->reset();
 	mutator->reset();
+	resetRandom();
 }
 
 void iterate(int steps) {

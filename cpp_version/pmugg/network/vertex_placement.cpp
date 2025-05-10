@@ -197,20 +197,21 @@ void VertexPlacement::addFreeFace(int id) {
     }
 
     FacePlacement* newFreeFace = settings->getFace(id);
-    int coplanarId = -1; // Initialize to an invalid ID
+    int coplanarId = 0;
+    bool isCoplanar = false;
     for (int existingId : freeFaceIds) {
         FacePlacement* existingFace = settings->getFace(existingId);
         if (newFreeFace->coplanar(existingFace)) {
-            coplanarId = existingId; // Found a coplanar face
+            coplanarId = existingId;
+            isCoplanar = true;
             break;
         }
     }
 
-    if (coplanarId != -1) {
+    if (isCoplanar) {
         settings->mergeFace(coplanarId, id);
         id = coplanarId; // Update id to the merged face ID
-    }
-    else {
+    } else {
         freeFaceIds.push_back(id); // Add the new face ID
     }
 

@@ -20,6 +20,10 @@ double random() {
     return x - std::floor(x);
 }
 
+void resetRandom() {
+    randomCount = 0;
+}
+
 float Util::fixAngle(float angle) {
     while (angle > PI) {
         angle -= 2 * PI;
