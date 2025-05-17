@@ -32,23 +32,21 @@ void initialize(const char* filePath, char* result, int len) {
 		string content((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
 		file.close();
 
-		// try {
+		try {
 			Json parsed= Json::parse(content);
 			auto hierarchy = NetworkHierarchy::import(parsed["solution"]);
 			model = new ms::Model();
 			mutator = new GuideMutator(model, new NetworkMutator(hierarchy, model));
 			strcpy_s(result, len, "Success");
-		// }
-		/*catch (const Json::exception& e) {
+		} catch (const Json::exception& e) {
 			string errorMsg = "Error: JSON parsing failed - ";
 			errorMsg += e.what();
 			strcpy_s(result, len, errorMsg.c_str());
-		}
-		catch (const runtime_error& e) {
+		} catch (const runtime_error& e) {
 			string errorMsg = "Error: ";
 			errorMsg += e.what();
 			strcpy_s(result, len, errorMsg.c_str());
-		} */
+		}
 	// }
 	/*catch (const std::exception& e) {
 		string errorMsg = "Error: Exception occurred - ";

@@ -405,7 +405,7 @@ NetGraphMap* NetGraphMapFinder::spliceEndpoint(
         bool isConnector1 = (vertexB1->connectorIndex() >= 0);
 
         if (!(isConnector0 ^ isConnector1)) {
-            throw std::runtime_error("Expected one of the vertices to be a connector.");
+            // throw std::runtime_error("Expected one of the vertices to be a connector.");
         }
 
         bool connectorAtStart = isConnector0 ? isAtStart0 : !isAtStart0;

@@ -16,7 +16,7 @@ using namespace ms;
 using Json = nlohmann::json;
 
 int main() {
-	ifstream file("../../../grammar data/2D Branches/H.json");
+	ifstream file("../../../grammar data/2D Branches/intersection.json");
 	// ifstream file("../../../grammar data/2D Basic Shapes/square hollow.json");
 	// ifstream file("../../../grammar data/3D Shapes/hexTower.json");
 	string content((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());

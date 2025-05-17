@@ -143,6 +143,7 @@ Graph* NetTransistor::createGraph() {
         }
     }*/
 
+
     // Maps from half edges to merge endpoints
     std::vector<Endpoint*> mergedEndpoints(endNetwork->getHalfEdges().size());
     std::fill(mergedEndpoints.begin(), mergedEndpoints.end(), nullptr);
@@ -226,10 +227,16 @@ Graph* NetTransistor::createGraph() {
                     startNet->getBVertices()[connectorIndex]->interiorEdge());
                 
                 if (splitLines[startIndex].size() == 1) {
-                    //if (splitLines[startIndex][0]->getNode()->isDestroyed()) {
-                    //    // Error handling
-                    //    return nullptr;
-                    //}
+                    int count = 0;
+                    for (int i = 0; i < splitLines.size(); i++) {
+                        if (splitLines[i][0] == splitLines[startIndex][0]) {
+                            count++;
+                            if (count >= 2) {
+                                // The same line is being split twice. This should not happen. Exiting early.
+                                throw std::runtime_error("Boundary line split mismatch");
+                            }
+                        }
+                    }
                     auto split = splitLines[startIndex][0]->split(true);
                     splitLines[startIndex] = split.lines;
                     splitEndpoints[startIndex] = split.nextEndpoints;
