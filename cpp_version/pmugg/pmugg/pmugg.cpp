@@ -10,17 +10,20 @@
 #include "../shapes3D/shape3d.h"
 #include "../third_party/json.h"
 #include "../graph_drawing/model.h"
+#include "../util/util.h"
 
 using namespace std;
 using namespace ms;
 using Json = nlohmann::json;
 
 int main() {
-	ifstream file("../../../grammar data/2D Branches/intersection.json");
+	ifstream file("../../../grammar data/2D Basic Shapes/square filled.json");
+	// ifstream file("../../../grammar data/2D Branches/intersection.json");
 	// ifstream file("../../../grammar data/2D Basic Shapes/square hollow.json");
 	// ifstream file("../../../grammar data/3D Shapes/hexTower.json");
 	string content((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
 	file.close();
+	resetRandom(9);
 
 	// vector<GraphTemplate> graphTemplates;
 	// try {

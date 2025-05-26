@@ -20,7 +20,8 @@ double random() {
     return x - std::floor(x);
 }
 
-void resetRandom() {
+void resetRandom(int seed) {
+    randomSeed = seed;
     randomCount = 0;
 }
 

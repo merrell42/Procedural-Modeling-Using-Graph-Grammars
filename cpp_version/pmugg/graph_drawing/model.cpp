@@ -21,16 +21,23 @@ void Model::reset() {
 void Model::accept() {
 	prev = current;
 	current = new GraphDrawing();
+	// The values are copied into current through the constructor of each item.
 	prev->copy();
+	current->setBspRootId(prev->getBspRootId());
 }
 
 void Model::reject() {
 	current = new GraphDrawing();
 	prev->copy();
+	current->setBspRootId(prev->getBspRootId());
 }
 
 int Model::newId() {
 	return idCounter++;
+}
+
+GraphDrawing* Model::getCurrent() {
+	return current;
 }
 
 }

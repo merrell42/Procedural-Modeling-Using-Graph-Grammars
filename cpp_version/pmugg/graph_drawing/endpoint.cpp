@@ -21,7 +21,7 @@ Endpoint::Endpoint(Model* model, int id, bool isAtStart, EdgeType3D* edgeType, V
         std::vector<int> endpointIds;
         endpointIds.push_back(id);
         faceId = model->newId();
-        auto face = new Face(model, faceId, faceType, endpointIds);
+        auto face = new Face(model, faceId, faceType, endpointIds, -1);
         // face.createGroup();
         // face.getNode().connect(this);
     }

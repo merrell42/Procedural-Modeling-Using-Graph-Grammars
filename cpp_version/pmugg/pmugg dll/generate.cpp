@@ -20,8 +20,8 @@ namespace ms {
 Model* model;
 GuideMutator* mutator;
 
-void initialize(const char* filePath, char* result, int len) {
-	resetRandom();
+void initialize(const char* filePath, char* result, int len, int seed) {
+	resetRandom(seed);
 	// try {
 		ifstream file(filePath);
 		if (!file.is_open()) {
@@ -58,10 +58,10 @@ void initialize(const char* filePath, char* result, int len) {
 	}*/
 }
 
-void reset() {
+void reset(int seed) {
 	model->reset();
 	mutator->reset();
-	resetRandom();
+	resetRandom(seed);
 }
 
 void iterate(int steps) {

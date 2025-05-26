@@ -233,7 +233,7 @@ Graph* NetTransistor::createGraph() {
                             count++;
                             if (count >= 2) {
                                 // The same line is being split twice. This should not happen. Exiting early.
-                                throw std::runtime_error("Boundary line split mismatch");
+                                return nullptr;
                             }
                         }
                     }
@@ -906,6 +906,17 @@ bool NetTransistor::placeVertexPositions(const std::vector<double>& positions) {
         /*if (!model->inBounds(position.x, position.y, position.z)) {
             return false;
         }*/
+    }
+    if (dims == 2) {
+        for (size_t i = 0; i < lines.size(); i++) {
+            bool success = lines[i]->addToBsp();
+            if (!success) {
+                for (int j = i - 1; j >= 0; j--) {
+                    lines[j]->removeFromBsp();
+                }
+                return false;
+            }
+        }
     }
 
     //// Faces to update the face connection

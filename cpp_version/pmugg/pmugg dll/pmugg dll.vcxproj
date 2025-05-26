@@ -118,6 +118,8 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>"."</AdditionalIncludeDirectories>
       <LanguageStandard_C>stdc11</LanguageStandard_C>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -145,6 +147,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\bsp\bsp_node.h" />
     <ClInclude Include="..\decoration\area.h" />
     <ClInclude Include="..\decoration\brush.h" />
     <ClInclude Include="..\decoration\decoration.h" />
@@ -204,6 +207,7 @@
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\bsp\bsp_node.cpp" />
     <ClCompile Include="..\decoration\area.cpp" />
     <ClCompile Include="..\decoration\brush.cpp" />
     <ClCompile Include="..\decoration\decoration.cpp" />

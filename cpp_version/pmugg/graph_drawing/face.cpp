@@ -10,26 +10,28 @@
 
 namespace ms {
 
-Face::Face(Model* model, int id, FaceType3D* faceType, std::vector<int> endpointIds, bool looped)
+Face::Face(Model* model, int id, FaceType3D* faceType, std::vector<int> endpointIds, bool looped, int bspNodeId)
 	: model(model)
 	, id(id)
     , faceType(faceType)
 	, endpointIds(endpointIds)
-    , looped(looped){
+    , looped(looped)
+    , bspNodeId(bspNodeId) {
 	model->getCurrent()->addFace(id, this);
 }
 
-Face::Face(Model* model, int id, FaceType3D* faceType, std::vector<int> endpointIds)
+Face::Face(Model* model, int id, FaceType3D* faceType, std::vector<int> endpointIds, int bspNodeId)
     : model(model)
     , id(id)
     , faceType(faceType)
     , endpointIds(endpointIds)
+    , bspNodeId(bspNodeId)
     , looped(false) {
     model->getCurrent()->addFace(id, this);
 }
 
 Face* Face::copy() {
-	auto result = new Face(model, id, faceType, endpointIds, looped);
+	auto result = new Face(model, id, faceType, endpointIds, looped, bspNodeId);
 	return result;
 }
 
@@ -120,7 +122,7 @@ void Face::split(Endpoint* endpoint) {
 
         std::vector<Endpoint*> splitEndpoints(endpoints.begin() + index, endpoints.end());
         std::vector<int> splitEndpointIds(endpointIds.begin() + index, endpointIds.end());
-        Face* newFace = new Face(model, model->newId(), faceType, splitEndpointIds);
+        Face* newFace = new Face(model, model->newId(), faceType, splitEndpointIds, -1);
         /* if (isHole()) {
             newFace->setHole(true);
         }
@@ -247,5 +249,14 @@ std::vector<int> Face::getTriangleIndices() {
     }
     return final; */
 }
+
+void Face::removeFromBsp() {
+    if (bspNodeId >= 0) {
+        model->getCurrent()->getBspNode(bspNodeId)->removeFace(this);
+    }
+    bspNodeId = -1;
+}
+
+bool Face::addToBsp() { return model->getCurrent()->bspAddFace(this); }
 
 }

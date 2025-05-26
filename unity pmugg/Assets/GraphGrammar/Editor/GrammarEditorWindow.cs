@@ -46,10 +46,10 @@ namespace Grammar {
         private static extern MeshDLL getMesh();
 
         [DllImport(pmuggDll, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void initialize(string filePath, StringBuilder result, int len);
+        private static extern void initialize(string filePath, StringBuilder result, int len, int seed);
 
         [DllImport(pmuggDll, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void reset();
+        private static extern void reset(int seed);
 
         [DllImport(pmuggDll, CallingConvention = CallingConvention.Cdecl)]
         private static extern void iterate(int steps);
@@ -63,6 +63,7 @@ namespace Grammar {
         private string grammarName = "";
         private int iterationCount = 0;
         private bool isAnimating = false;
+        private int seed = 0;
 
         private void StartAnimation() {
             if (isAnimating) {
@@ -228,7 +229,7 @@ namespace Grammar {
         }
 
         private void ResetGeneration() {
-            reset();
+            reset(seed);
             iterationCount = 0;
             UpdateMesh();
         }
@@ -285,6 +286,11 @@ namespace Grammar {
             string stepText = maxIteration > 0 ? $"Step: {iterationCount} / {maxIteration}" : $"Step: {iterationCount}";
             EditorGUILayout.LabelField($"{grammarName}    -     {stepText}");
 
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("Seed", GUILayout.Width(50));
+            seed = EditorGUILayout.IntField(seed);
+            EditorGUILayout.EndHorizontal();
+
             if (GUILayout.Button("Load Grammar")) {
                 string path = EditorUtility.OpenFilePanel("Load Grammar", "", "");
                 if (!string.IsNullOrEmpty(path)) {
@@ -299,7 +305,7 @@ namespace Grammar {
                     LoadGrammarFolder(folderPath);
                 }
             }
-            
+
             EditorGUI.BeginDisabledGroup(string.IsNullOrEmpty(grammarName));
 
             if (isAnimating) {
@@ -325,7 +331,7 @@ namespace Grammar {
         
         private void LoadGrammarFile(string path) {
             StringBuilder sb = new StringBuilder(100000);
-            initialize(path, sb, sb.Capacity);
+            initialize(path, sb, sb.Capacity, seed);
             if (sb.ToString() == "Success") {
                 grammarName = Path.GetFileNameWithoutExtension(path);
                 iterationCount = 0;

@@ -152,7 +152,7 @@ Endpoint* VertexState::createEndpointNet(const Connection& connection, int verte
     auto endpoint = new Endpoint(stats, connection.isAtStart, connection.edge, 
                                endpointAngle, dir, scale, true, faceIndex);
 
-    auto line = new Line(stats, connection.edge);
+    auto line = new Line(stats, connection.edge, std::vector<int>());
     auto segment = new LineSegment(stats);
     line->addSegments({segment});
     line->addEndpoint(endpoint, faceIndex);
@@ -180,7 +180,7 @@ Endpoint* VertexState::createEndpointGraph(int index) {
     auto endpoint = new Endpoint(stats, connection.isAtStart, connection.edge, 
                                endpointAngle, dir, scale, true);
 
-    auto line = new Line(stats, connection.edge);
+    auto line = new Line(stats, connection.edge, std::vector<int>());
     auto segment = new LineSegment(stats);
     line->addSegments({segment});
     line->addEndpoint(endpoint, connection.isAtStart ? 0 : 1);

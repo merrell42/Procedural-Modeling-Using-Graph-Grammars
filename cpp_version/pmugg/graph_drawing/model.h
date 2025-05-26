@@ -14,7 +14,7 @@ namespace ms {
 			void reject();
 			// Reset to an empty graph drawing.
 			void reset();
-			GraphDrawing* getCurrent() { return current; }
+			GraphDrawing* getCurrent();
 			int newId();
 			// The number of steps we have completed.
 			int numSteps;

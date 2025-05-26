@@ -8,33 +8,35 @@ GraphDrawing::GraphDrawing(
 	std::map<int, Endpoint*> endpointMap,
 	std::map<int, Face*>     faceMap,
 	std::map<int, Line*>     lineMap,
-	std::map<int, Vertex*>   vertexMap
+	std::map<int, Vertex*>   vertexMap,
+	std::map<int, BspNode*> bspNodeMap,
+	int bspRootId
 ) : endpointMap(endpointMap)
 	, faceMap(faceMap)
 	, lineMap(lineMap)
 	, vertexMap(vertexMap)
-{}
+	, bspNodeMap(bspNodeMap)
+	, bspRootId(bspRootId)
+{
+}
 
-GraphDrawing* GraphDrawing::copy() {
-	std::map<int, Endpoint*> newEndpointMap;
-	std::map<int, Face*>     newFaceMap;
-	std::map<int, Line*>     newLineMap;
-	std::map<int, Vertex*>   newVertexMap;
-
+// This will copy each item into the current model. This happen in the constructor.
+void GraphDrawing::copy() {
 	for (const auto& [id, ptr] : endpointMap) {
-		newEndpointMap[id] = ptr->copy();
+		ptr && ptr->copy();
 	}
 	for (const auto& [id, ptr] : faceMap) {
-		newFaceMap[id] = ptr->copy();
+		ptr && ptr->copy();
 	}
 	for (const auto& [id, ptr] : lineMap) {
-		newLineMap[id] = ptr->copy();
+		ptr && ptr->copy();
 	}
 	for (const auto& [id, ptr] : vertexMap) {
-		newVertexMap[id] = ptr->copy();
+		ptr && ptr->copy();
 	}
-	
-	return new GraphDrawing(newEndpointMap, newFaceMap, newLineMap, newVertexMap);
+	for (const auto& [id, ptr] : bspNodeMap) {
+		ptr && ptr->copy();
+	}
 }
 
 void GraphDrawing::removeEndpoint(Endpoint* endpoint) { endpointMap.erase(endpoint->getId()); }
@@ -44,6 +46,9 @@ void GraphDrawing::removeLine(Line* line) {
 }
 void GraphDrawing::removeVertex(Vertex* vertex) {
 	vertexMap.erase(vertex->getId());
+}
+void GraphDrawing::removeBspNode(BspNode* bspNode) {
+	bspNodeMap.erase(bspNode->getId());
 }
 
 void GraphDrawing::save(std::string suffix) {
@@ -84,7 +89,7 @@ void GraphDrawing::save(std::string suffix) {
 			if (it != vertexIds.end()) {
 				outFile << " " << (std::distance(vertexIds.begin(), it) + 1); // Compute index
 			}
-			
+
 		}
 		outFile << "\n";
 	}
@@ -104,6 +109,30 @@ Mesh GraphDrawing::exportMesh() {
 	}
 
 	return createMesh(positions, normals, triangles, faceIndices);
+}
+
+bool GraphDrawing::bspAddLine(Line* line) {
+	if (bspRootId == -1) {
+		bspRootId = 0;
+		bspNodeMap[bspRootId] = new BspNode(line->getModel(), bspRootId);
+	}
+	return bspNodeMap[bspRootId]->addLine(line);
+}
+
+void GraphDrawing::bspRemoveLine(Line* line) {
+	bspNodeMap[bspRootId]->removeLine(line);
+}
+
+bool GraphDrawing::bspAddFace(Face* face) {
+	if (bspRootId == -1) {
+		bspRootId = 0;
+		bspNodeMap[bspRootId] = new BspNode(face->getModel(), bspRootId);
+	}
+	return bspNodeMap[bspRootId]->addFace(face);
+}
+
+void GraphDrawing::bspRemoveFace(Face* face) {
+	bspNodeMap[bspRootId]->removeFace(face);
 }
 
 }

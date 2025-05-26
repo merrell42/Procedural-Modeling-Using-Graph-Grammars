@@ -1,6 +1,4 @@
 #pragma once
-#include "model.h"
-#include "endpoint.h"
 #include "../util/range.h"
 #include "../shape/vec3.h"
 #include "../shapes3D/face_type3d.h"
@@ -14,9 +12,10 @@ class FaceGroup;
 
 class Face {
 	public:
-		Face(Model* model, int id, FaceType3D* faceType, std::vector<int> endpointIds, bool looped);
-		Face(Model* model, int id, FaceType3D* faceType, std::vector<int> endpointIds);
+		Face(Model* model, int id, FaceType3D* faceType, std::vector<int> endpointIds, bool looped, int bspNodeId);
+		Face(Model* model, int id, FaceType3D* faceType, std::vector<int> endpointIds, int bspNodeId);
 		Face* copy();
+		~Face() { removeFromBsp(); }
 		int getId() const { return id; };
 		std::vector<Endpoint*> getEndpoints() const;
 		Endpoint* getEndpoint(int index) const;
@@ -38,12 +37,17 @@ class Face {
 			std::vector<int>& triangles,
 			std::vector<int>& faceIndices
 		);
+		void setBspNodeId(int bspNodeId) { bspNodeId = bspNodeId; }
+		Model* getModel() const { return model; }
+		bool addToBsp();
+		void removeFromBsp();
 
 	private:
 		int id;
 		std::vector<int> endpointIds;
 		bool looped;
 		FaceType3D* faceType;
+		int bspNodeId;
 
 		Model* model;
 

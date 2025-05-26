@@ -9,22 +9,30 @@
 #include "../guidelines/vertex_type.h"
 #include "../shapes3D/edge_type3d.h"
 #include <unordered_map>
+#include "../intersector.h"
 
 namespace ms {
 
-Line::Line(Model* model, int id, EdgeType3D* type, std::vector<int> endpointIds)
+Line::Line(Model* model, int id, EdgeType3D* type, std::vector<int> endpointIds, std::vector<int> bspNodeIds)
 	: model(model)
 	, type(type)
 	, id(id)
-	, endpointIds(endpointIds) {
+	, endpointIds(endpointIds)
+	, bspNodeIds(bspNodeIds) {
 	model->getCurrent()->addLine(id, this);
+}
+Line::~Line() {
+	if (id == 531) {
+		std::cout << "Debug";
+	}
+	removeFromBsp();
 }
 
 // Define and initialize the static member
 std::unordered_map<int, VertexType*> Line::splitVertexTypes;
 
 Line* Line::copy() {
-	auto result = new Line(model, id, type, endpointIds);
+	auto result = new Line(model, id, type, endpointIds, bspNodeIds);
 	return result;
 }
 
@@ -76,7 +84,6 @@ SplitData Line::split(bool splitFaces) {
 	line0->setEndpointIds({ -1, -1 });
 	line1->setEndpointIds({ -1, -1 });
 
-	
     /* newLines[0]->addSegments({ new LineSegment(stats) });
     newLines[1]->addSegments({ new LineSegment(stats) }); */
 
@@ -184,6 +191,42 @@ VertexType* Line::getVertexType(EdgeType3D* edgeType) {
     }
 
     return splitVertexTypes[id]; // Return the vertex type
+}
+
+bool Line::intersects(Line* lineB) {
+    auto result = Intersector::intersect(
+        this->getEndpoints()[0]->getPosition().dropDim(2),
+        this->getEndpoints()[1]->getPosition().dropDim(2),
+        lineB->getEndpoints()[0]->getPosition().dropDim(2),
+        lineB->getEndpoints()[1]->getPosition().dropDim(2)
+    );
+    return result.has_value();
+}
+
+Vec3* Line::getDirection() const {
+	Vec3 v1(getEndpoint(1)->getPosition());
+	auto normal = new Vec3(v1.minus(getEndpoint(0)->getPosition()));
+	normal->normalize();
+	return normal;
+}
+
+bool Line::addToBsp() {
+	return model->getCurrent()->bspAddLine(this);
+}
+
+void Line::removeFromBsp() {
+	for (int nodeId : bspNodeIds) {
+		auto bspNode = model->getCurrent()->getBspNode(nodeId);
+		if (bspNode) {
+			bspNode->removeLine(this);
+		}
+	}
+	bspNodeIds.clear();
+}
+
+// TODO: Check if this is needed.
+void Line::removeBspNodeId(int bspNodeId) {
+	bspNodeIds.erase(std::remove(bspNodeIds.begin(), bspNodeIds.end(), bspNodeId), bspNodeIds.end());
 }
 
 }

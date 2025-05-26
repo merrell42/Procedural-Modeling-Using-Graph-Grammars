@@ -22,7 +22,7 @@ bool contains(const std::vector<T>& vec, const T& value) {
 
 // Generate a random value. Like rand(), but the same every time.
 double random();
-void resetRandom();
+void resetRandom(int seed);
 
 class Util {
 public:
