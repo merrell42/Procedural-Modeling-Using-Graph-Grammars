@@ -30,8 +30,8 @@ class GraphDrawing {
 		void copy();
 		Endpoint* getEndpoint(int id) { return endpointMap[id]; }
 		Face* getFace(int id) {         return faceMap[id]; }
-        Line* getLine(int id) {         return lineMap[id]; }
-        Vertex* getVertex(int id) {     return vertexMap[id];}
+		Line* getLine(int id) {         return lineMap[id]; }
+		Vertex* getVertex(int id) {     return vertexMap[id];}
 		BspNode* getBspNode(int id) {   return bspNodeMap[id];}
 
 		void addEndpoint(int id, Endpoint* endpoint) {

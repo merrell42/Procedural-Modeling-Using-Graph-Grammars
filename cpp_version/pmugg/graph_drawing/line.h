@@ -32,7 +32,6 @@ namespace ms {
 		void setId(int newId) { id = newId; };
 		void setBspNodeIds(const std::vector<int>& newBspNodeIds) { bspNodeIds = newBspNodeIds; }
 		void addBspNodeId(int bspNodeId) { bspNodeIds.push_back(bspNodeId); }
-		void removeBspNodeId(int bspNodeId);
 		const std::vector<int>& getBspNodeIds() const { return bspNodeIds; }
 		bool addToBsp();
 		void removeFromBsp();

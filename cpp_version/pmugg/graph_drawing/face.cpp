@@ -14,10 +14,10 @@ Face::Face(Model* model, int id, FaceType3D* faceType, std::vector<int> endpoint
 	: model(model)
 	, id(id)
     , faceType(faceType)
-	, endpointIds(endpointIds)
+    , endpointIds(endpointIds)
     , looped(looped)
     , bspNodeId(bspNodeId) {
-	model->getCurrent()->addFace(id, this);
+    model->getCurrent()->addFace(id, this);
 }
 
 Face::Face(Model* model, int id, FaceType3D* faceType, std::vector<int> endpointIds, int bspNodeId)
@@ -257,6 +257,8 @@ void Face::removeFromBsp() {
     bspNodeId = -1;
 }
 
-bool Face::addToBsp() { return model->getCurrent()->bspAddFace(this); }
+bool Face::addToBsp() {
+    return model->getCurrent()->bspAddFace(this);
+}
 
 }

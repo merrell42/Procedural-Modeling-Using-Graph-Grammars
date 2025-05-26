@@ -21,10 +21,8 @@ Line::Line(Model* model, int id, EdgeType3D* type, std::vector<int> endpointIds,
 	, bspNodeIds(bspNodeIds) {
 	model->getCurrent()->addLine(id, this);
 }
+
 Line::~Line() {
-	if (id == 531) {
-		std::cout << "Debug";
-	}
 	removeFromBsp();
 }
 
@@ -222,11 +220,6 @@ void Line::removeFromBsp() {
 		}
 	}
 	bspNodeIds.clear();
-}
-
-// TODO: Check if this is needed.
-void Line::removeBspNodeId(int bspNodeId) {
-	bspNodeIds.erase(std::remove(bspNodeIds.begin(), bspNodeIds.end(), bspNodeId), bspNodeIds.end());
 }
 
 }

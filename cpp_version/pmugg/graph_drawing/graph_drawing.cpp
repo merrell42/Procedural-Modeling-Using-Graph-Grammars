@@ -16,9 +16,7 @@ GraphDrawing::GraphDrawing(
 	, lineMap(lineMap)
 	, vertexMap(vertexMap)
 	, bspNodeMap(bspNodeMap)
-	, bspRootId(bspRootId)
-{
-}
+	, bspRootId(bspRootId) {}
 
 // This will copy each item into the current model. This happen in the constructor.
 void GraphDrawing::copy() {
@@ -89,7 +87,6 @@ void GraphDrawing::save(std::string suffix) {
 			if (it != vertexIds.end()) {
 				outFile << " " << (std::distance(vertexIds.begin(), it) + 1); // Compute index
 			}
-
 		}
 		outFile << "\n";
 	}
