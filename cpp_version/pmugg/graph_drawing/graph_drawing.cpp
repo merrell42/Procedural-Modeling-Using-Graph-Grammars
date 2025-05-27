@@ -37,8 +37,12 @@ void GraphDrawing::copy() {
 	}
 }
 
-void GraphDrawing::removeEndpoint(Endpoint* endpoint) { endpointMap.erase(endpoint->getId()); }
-void GraphDrawing::removeFace(Face* face) { faceMap.erase(face->getId()); }
+void GraphDrawing::removeEndpoint(Endpoint* endpoint) {
+	endpointMap.erase(endpoint->getId());
+}
+void GraphDrawing::removeFace(Face* face) {
+	faceMap.erase(face->getId());
+}
 void GraphDrawing::removeLine(Line* line) {
 	lineMap.erase(line->getId());
 }

@@ -90,6 +90,7 @@ void Face::append(Face* faceB) {
 
     // Destroy the node of `faceB`
     model->getCurrent()->removeFace(faceB);
+    delete faceB;
 }
 
 std::vector<Vec3> Face::getPositions() const {
