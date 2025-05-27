@@ -54,6 +54,9 @@ namespace Grammar {
         [DllImport(pmuggDll, CallingConvention = CallingConvention.Cdecl)]
         private static extern void iterate(int steps);
 
+        [DllImport(pmuggDll, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void setSize(float x, float y, float z);
+
         private void OnEnable() {
             titleContent = new GUIContent("Graph Grammar Generator");
         }
@@ -64,6 +67,12 @@ namespace Grammar {
         private int iterationCount = 0;
         private bool isAnimating = false;
         private int seed = 0;
+        private Vector3 size = new Vector3(30, 20, 10);
+        private Vector3 previousSize;
+
+        private void HandleSizeChange() {
+            setSize(size.x, size.y, size.z);
+        }
 
         private void StartAnimation() {
             if (isAnimating) {
@@ -289,6 +298,14 @@ namespace Grammar {
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("Seed", GUILayout.Width(50));
             seed = EditorGUILayout.IntField(seed);
+            EditorGUILayout.LabelField("Size", GUILayout.Width(50));
+            EditorGUI.BeginChangeCheck();
+            size.x = EditorGUILayout.FloatField(size.x);
+            size.y = EditorGUILayout.FloatField(size.y);
+            size.z = EditorGUILayout.FloatField(size.z);
+            if (EditorGUI.EndChangeCheck()) {
+                HandleSizeChange();
+            }
             EditorGUILayout.EndHorizontal();
 
             if (GUILayout.Button("Load Grammar")) {

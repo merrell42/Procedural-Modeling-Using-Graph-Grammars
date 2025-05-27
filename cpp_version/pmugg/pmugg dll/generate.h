@@ -16,6 +16,7 @@ extern "C" {
     GENERATE_API void iterate(int steps);
     GENERATE_API int getNumFaces();
     GENERATE_API Mesh getMesh();
+    GENERATE_API void setSize(float x, float y, float z);
 }
 
 }

@@ -917,6 +917,7 @@ bool NetTransistor::placeVertexPositions(const std::vector<double>& positions) {
                 return false;
             }
         }
+        return true;
     }
 
     //// Faces to update the face connection
@@ -997,12 +998,13 @@ bool NetTransistor::placeVertexPositions(const std::vector<double>& positions) {
     ////    }
     ////}
     //// 3D case
-    //std::vector<Face*> facesToIntersect;
-    //for (const auto& [_, fPlace] : settings->facePlacements) {
-    //    if (fPlace->face) {
-    //        facesToIntersect.push_back(fPlace->face);
-    //    }
-    //}
+
+    std::vector<Face*> facesToIntersect;
+    for (const auto& [_, fPlace] : settings->facePlacements) {
+        if (fPlace->getFace()) {
+            facesToIntersect.push_back(fPlace->getFace());
+        }
+    }
 
     //// Check face containment
     //bool success = std::all_of(facesToIntersect.begin(), facesToIntersect.end(),
@@ -1034,6 +1036,21 @@ bool NetTransistor::placeVertexPositions(const std::vector<double>& positions) {
     //if (!success) {
     //    return false;
     //}
+
+    // I think this is necessary to make sure the old face locations get updated,
+    // but I'm not sure.
+    for (size_t i = 0; i < facesToIntersect.size(); i++) {
+        facesToIntersect[i]->removeFromBsp();
+    }
+    for (size_t i = 0; i < facesToIntersect.size(); i++) {
+        bool success = facesToIntersect[i]->addToBsp();
+        if (!success) {
+            for (int j = i - 1; j >= 0; j--) {
+                facesToIntersect[j]->removeFromBsp();
+            }
+            return false;
+        }
+    }
 
     //// Handle BSP tree operations
     //BspTree* tree = model->getBspTree();

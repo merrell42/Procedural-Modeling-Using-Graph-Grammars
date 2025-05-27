@@ -81,6 +81,9 @@ namespace ms {
                 return below->addFace(face);
             }
             case PlaneClassification::BOTH: {
+                if (hasFaceIntersection(face)) {
+                    return false;
+                }
                 BspNode* above = getAboveNode();
                 BspNode* below = getBelowNode();
                 return above->addFace(face) && below->addFace(face);
@@ -165,12 +168,9 @@ namespace ms {
 
     void BspNode::connectFace(Face* face) {
         faceIds.push_back(face->getId());
-        face->setBspNodeId(id);
+        face->addBspNodeId(id);
         if (!plane) {
-            auto face = model->getCurrent()->getFace(faceIds[0]);
-            auto normal =  face->getFaceType()->getNormal();
-            auto d = face->getPositions()[0].dot(normal);
-            plane = new Plane(normal, d);
+            plane = new Plane(face->getPlane());
         }
     }
 
@@ -268,13 +268,27 @@ namespace ms {
         return false;
     }
 
+    bool BspNode::hasFaceIntersection(Face* faceA) {
+        auto current = model->getCurrent();
+        // TODO: It might be more efficient to first check if the planes are parallel.
+        // We also ignore cases where the plane exactly slices an edge of the face.
+        auto intersections = faceA->getIntersections(plane);
+        for (int faceId : faceIds) {
+            Face* faceB = current->getFace(faceId);
+            for (Vec3 intersection : intersections) {
+                if (faceB->containsPoint(intersection)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     bool BspNode::isPointAbovePlane(Vec3 point) {
-        Plane* plane = getPlane();
-        return plane->normal.dot(point) > plane->d + PLANE_EPSILON;
+        return plane->isAbove(point);
     }
 
     bool BspNode::isPointBelowPlane(Vec3 point) {
-        Plane* plane = getPlane();
-        return plane->normal.dot(point) < plane->d - PLANE_EPSILON;
+        return plane->isBelow(point);
     }
 }

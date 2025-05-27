@@ -1,24 +1,16 @@
 #pragma once
 #include "../graph_drawing/line.h"
 #include "../graph_drawing/face.h"
+#include "plane.h"
 
 namespace ms {
 	class Model;
-
-	const float PLANE_EPSILON = 1e-6f;
 
 	enum class PlaneClassification {
 		BELOW = -1,
 		BOTH = 0,
 		ABOVE = 1,
 		ON_PLANE = 2
-	};
-
-	struct Plane {
-		Vec3 normal;
-		float d;
-		Plane(Vec3 normal, float d) : normal(normal), d(d) {}
-		Plane(Plane* plane) : normal(plane->normal), d(plane->d) {}
 	};
 
 	class BspNode {
@@ -51,6 +43,7 @@ namespace ms {
 			BspNode* getAboveNode();
 			BspNode* getBelowNode();
 			bool hasLineIntersection(Line* line);
+			bool hasFaceIntersection(Face* face);
 
 			PlaneClassification classifyLine(Line* line);
 			PlaneClassification classifyFace(Face* face);

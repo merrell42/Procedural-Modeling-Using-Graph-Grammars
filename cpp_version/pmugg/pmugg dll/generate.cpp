@@ -11,6 +11,7 @@
 #include "../third_party/json.h"
 #include "../graph_drawing/model.h"
 #include "../util/util.h"
+#include "../grid/settings.h"
 
 using namespace std;
 using Json = nlohmann::json;
@@ -74,6 +75,11 @@ int getNumFaces() {
 
 Mesh getMesh() {
 	return model->getCurrent()->exportMesh();
+}
+
+void setSize(float x, float y, float z) {
+	std::vector<double> extents = {x, y, z};
+	globalSettings["Extents"] = extents;
 }
 
 };

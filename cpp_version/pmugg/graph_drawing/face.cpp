@@ -10,28 +10,32 @@
 
 namespace ms {
 
-Face::Face(Model* model, int id, FaceType3D* faceType, std::vector<int> endpointIds, bool looped, int bspNodeId)
+Face::Face(Model* model, int id, FaceType3D* faceType, std::vector<int> endpointIds, bool looped, std::vector<int> bspNodeIds)
 	: model(model)
 	, id(id)
     , faceType(faceType)
     , endpointIds(endpointIds)
     , looped(looped)
-    , bspNodeId(bspNodeId) {
+    , bspNodeIds(bspNodeIds) {
     model->getCurrent()->addFace(id, this);
 }
 
-Face::Face(Model* model, int id, FaceType3D* faceType, std::vector<int> endpointIds, int bspNodeId)
+Face::Face(Model* model, int id, FaceType3D* faceType, std::vector<int> endpointIds, std::vector<int> bspNodeIds)
     : model(model)
     , id(id)
     , faceType(faceType)
     , endpointIds(endpointIds)
-    , bspNodeId(bspNodeId)
+    , bspNodeIds(bspNodeIds)
     , looped(false) {
     model->getCurrent()->addFace(id, this);
 }
 
+Face::~Face() {
+    removeFromBsp();
+}
+
 Face* Face::copy() {
-	auto result = new Face(model, id, faceType, endpointIds, looped, bspNodeId);
+	auto result = new Face(model, id, faceType, endpointIds, looped, bspNodeIds);
 	return result;
 }
 
@@ -99,6 +103,16 @@ std::vector<Vec3> Face::getPositions() const {
     return positions; // Return the vector of positions
 }
 
+std::vector<Vec2> Face::getPositions2D() const {
+    auto positions = getPositions();
+    auto maxDim = faceType->getMaxDim();
+    std::vector<Vec2> positions2D;
+    for (const auto& p : positions) {
+        positions2D.push_back(p.dropDim(maxDim));
+    }
+    return positions2D;
+}
+
 FaceGroup* Face::getGroup() const {
     FaceGroup* group = new FaceGroup();
     group->addFace(const_cast<Face*>(this));
@@ -122,7 +136,7 @@ void Face::split(Endpoint* endpoint) {
 
         std::vector<Endpoint*> splitEndpoints(endpoints.begin() + index, endpoints.end());
         std::vector<int> splitEndpointIds(endpointIds.begin() + index, endpointIds.end());
-        Face* newFace = new Face(model, model->newId(), faceType, splitEndpointIds, -1);
+        Face* newFace = new Face(model, model->newId(), faceType, splitEndpointIds, std::vector<int>());
         /* if (isHole()) {
             newFace->setHole(true);
         }
@@ -168,14 +182,7 @@ void Face::removeEndpoint(Endpoint* endpoint) {
 }
 
 double Face::signedArea() {
-    auto maxDim = faceType->getMaxDim();
-
-    auto positions = getPositions();
-    std::vector<Vec2> positions2D;
-    for (const auto& p : positions) {
-        positions2D.push_back(p.dropDim(maxDim));
-    }
-
+    auto positions2D = getPositions2D();
     float sum = 0.0f;
     int n = positions2D.size();
     for (int i = 0; i < n; i++) {
@@ -251,14 +258,74 @@ std::vector<int> Face::getTriangleIndices() {
 }
 
 void Face::removeFromBsp() {
-    if (bspNodeId >= 0) {
+    for (int bspNodeId : bspNodeIds) {
         model->getCurrent()->getBspNode(bspNodeId)->removeFace(this);
     }
-    bspNodeId = -1;
+    bspNodeIds.clear();
 }
 
 bool Face::addToBsp() {
     return model->getCurrent()->bspAddFace(this);
+}
+
+Plane Face::getPlane() const {
+    Vec3 normal = faceType->getNormal();
+    auto positions = getPositions();
+    float d = normal.dot(positions[0]);
+    return Plane(normal, d);
+}
+
+std::vector<Vec3> Face::getIntersections(Plane* plane) {
+    auto positions = getPositions();
+    int n = positions.size();
+    std::vector<bool> isAbove(n);
+    std::vector<bool> isBelow(n);
+    for (int i = 0; i < n; i++) {
+        isAbove[i] = plane->isAbove(positions[i]);
+        isBelow[i] = plane->isBelow(positions[i]);
+    }
+    std::vector<Vec3> intersections;
+    for (int i = 0; i < n; i++) {
+        int i2 = (i + 1) % n;
+        if ((isAbove[i] && isBelow[i2]) || (isBelow[i] && isAbove[i2])) {
+            auto p1 = positions[i];
+            auto p2 = positions[i2];
+            auto intersection = plane->intersectLine(p1, p2);
+            intersections.push_back(intersection);
+        }
+    }
+    return intersections;
+}
+
+bool Face::containsPoint(Vec3 point) {
+    int maxDim = faceType->getMaxDim();
+    Vec2 point2D = point.dropDim(maxDim);
+    auto positions = getPositions2D();
+    int n = positions.size();
+
+    std::vector<bool> isAbove(n);
+    std::vector<bool> isBelow(n);
+    float y = point2D.getY();
+    for (int i = 0; i < n; i++) {
+        isAbove[i] = positions[i].getY() > y;
+        isBelow[i] = positions[i].getY() < y;
+    }
+    int count = 0;
+    for (int i = 0; i < n; i++) {
+        int i2 = (i + 1) % n;
+        if ((isAbove[i] && isBelow[i2]) || (isBelow[i] && isAbove[i2])) {
+            float x1 = positions[i].getX();
+            float x2 = positions[i2].getX();
+            float y1 = positions[i].getY();
+            float y2 = positions[i2].getY();
+            float s = (y - y1) / (y2 - y1);
+            float x = x1 + (x2 - x1) * s;
+            if (point2D.getX() < x) {
+                count++;
+            }
+        }
+    }
+    return (count % 2) == 1;
 }
 
 }
