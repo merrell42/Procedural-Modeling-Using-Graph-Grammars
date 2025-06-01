@@ -35,7 +35,6 @@ public:
 	void transfer(Line* replacement);
 	void maybeMergeNextFace();
 	void destroy();
-	/*void maybeMergePrevFace();*/
 
 private:
 	int id;

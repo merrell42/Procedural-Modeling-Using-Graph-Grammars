@@ -45,8 +45,6 @@ NetGraphMap* NetGraphMapFinder::findMap(Network* netB) {
         return findStarterMap(netB);
     }
 
-    // TODO: Handle non-starter transitions.
-
     // Start with a vertex that is not spliced
     int index1 = 0;
     while (verticesB[index1]->getType()->getSpliced()) {

@@ -54,7 +54,6 @@ class Face {
 		void setHole(bool newHole) { hole = newHole; }
 		bool isHole() const { return hole; }
 
-
 	private:
 		int id;
 		std::vector<int> endpointIds;

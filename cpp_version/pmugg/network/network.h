@@ -24,8 +24,8 @@ class Network {
 public:
     Network();
     ~Network() = default;
+    static Network* import(const Json& json, Shape3D* shape = nullptr);
 
-    // Core accessors
     const std::vector<VertexNet*>& getVertices() const { return vertices; }
     const std::vector<EdgeNet*>& getEdges() const { return edges; }
     const std::vector<HalfEdgeNet*>& getHalfEdges() const { return halfEdges; }
@@ -35,8 +35,6 @@ public:
     const std::vector<FaceNet*>& getBFaces() const { return bFaces; }
     EdgeNet* getEdge(int index) const { return index >= 0 ? edges[index] : nullptr; }
     HalfEdgeNet* getHalfEdge(int index) const { return index >= 0 ? halfEdges[index] : nullptr; }
-    // const std::vector<ConnectorGroup*>& getConnectorGroups() const { return connectorGroups; }
-    // BoundNet* getBoundNet() const { return boundNet; }
     int getId() const { return id; }
 
     // Network operations
@@ -44,45 +42,22 @@ public:
     void addEdge(EdgeNet* edge);
     void addHalfEdge(HalfEdgeNet* halfEdge);
     void addFace(FaceNet* face);
-    // void addConnectorGroup(ConnectorGroup* group);
-    // void setBoundNet(BoundNet* net);
 
     void removeVertex(VertexNet* vertex);
     void removeEdge(EdgeNet* edge);
     void removeHalfEdge(HalfEdgeNet* halfEdge);
     void removeFace(FaceNet* face);
     void removeSplices();
-    // void removeConnectorGroup(ConnectorGroup* group);
 
-    // Conversion methods
     VertexNet* convertVertex(Network* networkB, VertexNet* vertexB);
     EdgeNet* convertEdge(Network* networkB, EdgeNet* edgeB);
     HalfEdgeNet* convertHalfEdge(Network* networkB, HalfEdgeNet* halfEdgeB);
     FaceNet* convertFace(Network* networkB, FaceNet* faceB);
-    // ConnectorGroup* convertConnectorGroup(Network* networkB, ConnectorGroup* groupB);
 
-    // Index methods
     int vertexIndex(VertexNet* vertex) const;
     int edgeIndex(EdgeNet* edge) const;
     int halfEdgeIndex(HalfEdgeNet* halfEdge) const;
     int faceIndex(FaceNet* face) const;
-    // int connectorGroupIndex(ConnectorGroup* group) const;
-
-    // State queries
-    bool isBoundary() const;
-    bool isInterior() const;
-
-    // Drawing
-    // void draw(View* view, const DrawOptions& options = {});
-    // void highlight(View* view, const DrawOptions& options = {});
-    void print() const;
-
-    // Copy operations
-    // Network* copy() const;
-
-    // Import/Export
-    static Network* import(const Json& json, Shape3D* shape = nullptr);
-    // Json export() const;
 
 private:
     std::vector<VertexNet*> vertices;
@@ -98,11 +73,6 @@ private:
     int id;
 
     static int nextId;
-
-    // Helper methods
-    /*void drawEmptyNetwork(View* view, const DrawOptions& options) const;
-    void drawNetworkElements(View* view, const DrawOptions& options) const;
-    static Vec3 combineTangents(const Vec3& u, const Vec3& v);*/
 };
 
 } // namespace ms 

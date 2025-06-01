@@ -19,21 +19,13 @@ public:
         const std::vector<Network*>& startNetworks,
         const std::vector<Network*>& endNetworks
     );
+    static NetTransition* import(const Json& json, Shape3D* shape);
     ~NetTransition() = default;
 
-    // Core functionality
     const std::vector<Network*>& getStartNetworks() const { return startNetworks; }
     const std::vector<Network*>& getEndNetworks() const { return endNetworks; }
     bool isGround() const { return ground; }
     int getId() const { return id; }
-
-    // Drawing
-    // void highlight(View* view, const DrawOptions& options = {});
-    // void print() const;
-
-    // Import/Export
-    static NetTransition* import(const Json& json, Shape3D* shape);
-    // Json export() const;
 
 private:
     std::vector<Network*> startNetworks;

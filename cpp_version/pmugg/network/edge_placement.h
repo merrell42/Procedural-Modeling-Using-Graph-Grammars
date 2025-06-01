@@ -15,7 +15,6 @@ public:
     EdgePlacement(Line* edge, int id, NetTransistorSettings* settings);
     ~EdgePlacement() = default;
 
-    // Core functionality
     Line* getEdge() const { return edge; }
     int getId() const { return id; }
     const std::vector<int>& getVertexIds() const { return vertexIds; }
@@ -23,13 +22,9 @@ public:
     NetTransistorSettings* getSettings() const { return settings; }
     const std::vector<int>& getConstraints() const { return constraints; }
 
-    // Operations
     void initialize();
     void addConstraint(int id);
     Range getRange() const;
-
-    // Debug
-    // void print() const;
 
 private:
     Line* edge;

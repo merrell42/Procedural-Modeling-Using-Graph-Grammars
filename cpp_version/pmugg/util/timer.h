@@ -11,18 +11,15 @@ public:
     Timer();
     ~Timer() = default;
 
-    // Core operations
     void start(const std::string& name);
     void stop(const std::string& name);
     void reset();
 
-    // Statistics
     double getTime(const std::string& name) const;
     int getCount(const std::string& name) const;
     double getAverage(const std::string& name) const;
     void printStats() const;
 
-    // Static instance
     static Timer& instance();
 
 private:
@@ -41,7 +38,6 @@ private:
     std::map<std::string, TimerData> timers;
     std::vector<std::string> order;
 
-    // Helper methods
     void ensureTimer(const std::string& name);
     static double toMilliseconds(const std::chrono::high_resolution_clock::duration& duration);
 };

@@ -45,6 +45,8 @@ struct Limits {
 
 class NetTransistor {
 public:
+    NetTransistor() = default;
+
     // Constants
     static constexpr float MAX_ANGLE_DIFFERENCE = (float)(45.0f / 180.0f * M_PI);
     static constexpr int maxEffort = 10;
@@ -56,10 +58,6 @@ public:
     static std::unique_ptr<NetTransistor> buildNormally(const Transition& transition, 
                                                        Model* model, int dims);
 
-    // Constructor
-    NetTransistor() = default;
-
-    // Member functions
     bool solve();
     void setup();
     void create(const Transition& transition, Model* model, int dims);
@@ -70,7 +68,6 @@ public:
     std::vector<double> getExtents();
 
 private:
-    // Member variables
     Network* startNet = nullptr;
     Network* endNet = nullptr;
     NetGraphMap* map;
@@ -85,13 +82,10 @@ private:
     std::vector<Vertex*> freeVertices;
     std::vector<Edge*> freeEdges;
     std::vector<FixedFace> fixedFaces;
-    // std::vector<EdgeBlocker*> edgeBlockers;
-    // Matrix* changeBasis = nullptr;
     Vec3* initialPosition = nullptr;
     std::vector<int> propagationOrder;
     std::vector<Edge*> basisEdges;
     std::vector<int> fixedVertexIds;
-    // bool isInitialBoundary = false;
     double effort = 0;
     Graph* graph = nullptr;
     float angle = 0;
@@ -99,7 +93,7 @@ private:
 
     // Helper functions
     void addFixedFace(Face* faceA, Face* faceB, double d);
-    bool mergeDuplicateLines();
+    // bool mergeDuplicateLines();
     void setupFaceCentric();
     bool sampleSolutionSpace();
     void constrainVertexIds(std::vector<int>& vIds, NetTransistorSettings* settings);

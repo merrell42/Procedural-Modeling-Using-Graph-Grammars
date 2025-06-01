@@ -22,16 +22,13 @@ public:
     explicit NetGraphMapState(NetGraphMapInfo* info, NetGraphMap* map = nullptr);
     ~NetGraphMapState() = default;
 
-    // Core functionality
     NetGraphMapInfo* getInfo() const { return info; }
     NetGraphMap* getMap() { return map; }
     std::vector<EndpointData>& getQueue() { return queue; }
     std::vector<EndpointData>& getSpliceQueue() { return spliceQueue; }
 
-    // Operations
     void setQueue(const std::vector<EndpointData>& newQueue);
     void assignVertex(Vertex* vertexA, int indexB);
-    void assignHalf(int indexA, int indexB);
     NetGraphMapState* copy() const;
 
 private:

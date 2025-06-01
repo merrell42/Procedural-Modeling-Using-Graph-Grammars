@@ -22,12 +22,9 @@ public:
     const std::vector<std::vector<HalfEdgeNet*>>& getHalfEdges() const;
     EdgeType3D* getType() { return type; }
     void setType(EdgeType3D* type_) { type = type_; }
-    // PrimalEdge* getPrimal() const;
     Network* getNetwork() const;
     int getId() const;
 
-    // Network operations
-    // void setPrimal(PrimalEdge* primal);
     EdgeNet* connectNet(Network* network);
     void addHalfEdge(HalfEdgeNet* halfEdge, int index);
     void removeHalfEdge(HalfEdgeNet* halfEdge, int index);
@@ -35,21 +32,11 @@ public:
 
     // Validation
     bool inNetwork() const;
-
-    // Drawing
-    /*void highlight(View* view);
-    void print() const;*/
-
-    // Edge operations
     void merge(EdgeNet* edgeB, bool mergeForward);
-
-    // Import/Export
-    // Json export() const;
     void import(const Json& json);
 
 private:
     std::vector<std::vector<HalfEdgeNet*>> halfEdges;
-    // PrimalEdge* primal;
     EdgeType3D* type;
     Network* network;
     int id;

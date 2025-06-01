@@ -13,7 +13,6 @@ namespace ms {
 
 class EdgeType3D;
 class Shape3D;
-// class VertexDecoration;
 
 struct Connection {
     float adjustedAngle;
@@ -21,7 +20,6 @@ struct Connection {
     Vec3 dir;
     int directedId;
     EdgeType3D* edge;
-    // std::vector<int> faceIds;
     bool isAtStart;
 
     Connection(EdgeType3D* edge = nullptr, bool isAtStart = false, float angle = 0.0f,
@@ -31,7 +29,6 @@ struct Connection {
         , dir()
         , directedId(0)
         , edge(edge)
-        // , faceIds(faceIds)
         , isAtStart(isAtStart) {}
 
     Connection copy() const {
@@ -41,7 +38,6 @@ struct Connection {
         result.dir = dir;
         result.directedId = directedId;
         result.edge = edge;
-        // result.faceIds = faceIds;
         result.isAtStart = isAtStart;
         return result;
     }
@@ -49,34 +45,25 @@ struct Connection {
 
 class VertexType {
 public:
-    VertexType(/* VertexDecoration* decoration = nullptr */);
+    VertexType();
     ~VertexType() = default;
+    static VertexType* import(const Json& json, Shape3D* shape);
 
-    // Core functionality
     const std::vector<Connection>& getConnections() const;
-    // VertexDecoration* getDecoration() const;
     bool getSpliced() const;
     int getId() const;
 
-    // Operations
     void addEdge(EdgeType3D* edge, bool isAtStart, float angle);
     void setSpliced(bool spliced);
 
-    // Import/Export
-    static VertexType* import(const Json& json, Shape3D* shape); 
-    // static VertexType* partialImport(const Json& json, const std::vector<EdgeType*>& edgeTypes);
-    // Json export(const Types& types) const;
-
 private:
     std::vector<Connection> connections;
-    // VertexDecoration* decoration;
     bool spliced;
     int id;
 
     static int nextId;
     static constexpr float ANGLE_EPSILON = 1e-5f;
 
-    // Helper methods
     static float getAdjustedAngle(float angle, EdgeType3D* edge, bool isAtStart);
 };
 

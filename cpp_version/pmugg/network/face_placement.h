@@ -39,7 +39,6 @@ public:
     void makeFixed(const FixedFace& faceA);
     Range getRange(int vertexId = -1);
     ChangeMB getChangeMB() const;
-    // void print() const;
 
     std::vector<int> vertexIds;
     int id;

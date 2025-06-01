@@ -53,14 +53,7 @@ public:
     std::string boundaryString() const;
     int neighboringFace(int initialIndex, bool above) const;
 
-    // Area operations
-    std::string getLeftArea() const;
-    std::string getRightArea() const;
-
-    // Import/Export
-    // Json export(const Types& types) const;
     static EdgeType3D* import(const Json& json, Shape3D* shape);
-    static EdgeType3D* partialImport(const Json& json, const std::vector<FaceType3D*>& faceTypes);
 
     std::vector<FaceData> faceData;
 

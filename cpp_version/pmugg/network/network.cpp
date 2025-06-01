@@ -252,10 +252,12 @@ void Network::removeSplices() {
         if (half->isSpliced()) {
             removeHalfEdge(half);
             auto* vertex = half->getVertex();
+            // TODO: I'm not sure if this check is necessary.
             if (vertex->inNetwork()) {
                 removeVertex(vertex);
             }
             auto* edge = half->getEdge();
+            // TODO: I'm not sure if this check is necessary.
             if (edge->inNetwork()) {
                 removeEdge(edge);
             }

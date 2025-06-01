@@ -128,13 +128,4 @@ FaceType3D* FaceType3D::import(const Json& json) {
     return result;
 }
 
-FaceType3D* FaceType3D::partialImport(const Json& json) {
-    auto* result = new FaceType3D(
-        "",  // Empty material for partial import
-        Vec3::import(json["normal"]).swapAxes()
-    );
-    result->id = json["signature"];
-    return result;
-}
-
 } // namespace ms 

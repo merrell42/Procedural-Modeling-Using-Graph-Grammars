@@ -17,6 +17,7 @@ class HalfEdgeNet {
 public:
     explicit HalfEdgeNet(bool forward);
     ~HalfEdgeNet() = default;
+    void import(const Json& json);
 
     // Core accessors
     bool getForward() const { return forward; }
@@ -24,6 +25,7 @@ public:
     EdgeNet* getEdge() const { return edge; }
     HalfEdgeNet* getPrev() const { return prev; }
     HalfEdgeNet* getNext() const { return next; }
+    HalfEdgeNet* getTwin() const;
     FaceNet* getFace() const { return face; }
     Network* getNetwork() const { return network; }
     int getVertexIndex() const { return vertexIndex; }
@@ -38,22 +40,10 @@ public:
     void setPrev(HalfEdgeNet* p);
     void setFace(FaceNet* f);
 
-    // Edge operations
-    HalfEdgeNet* getTwin() const;
-    // HalfEdgeNet* boundaryToInterior() const;
     bool isSpliced() const;
     bool isLoopy();
-
-    // Face data
     const FaceData* getFaceDatum() const;
     Vec3 getDir() const;
-
-    // Import/Export
-    void import(const Json& json);
-    // Json export() const;
-
-    // Debug
-    void print() const;
 
 private:
     bool forward;

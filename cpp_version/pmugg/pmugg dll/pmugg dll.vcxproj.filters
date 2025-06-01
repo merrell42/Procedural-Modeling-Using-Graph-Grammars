@@ -66,16 +66,10 @@
     <ClInclude Include="..\network\edge_net.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\network\edge_network.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\network\edge_placement.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\network\face_net.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\network\face_network.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\network\face_placement.h">
@@ -105,22 +99,13 @@
     <ClInclude Include="..\network\vertex_net.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\network\vertex_network.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\network\vertex_placement.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\util\counter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\util\range.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\util\util.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\decoration\area.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\decoration\brush.h">
@@ -157,30 +142,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\util\fast_math.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\third_party\earcut\earcut.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\third_party\poly2tri-master\poly2tri\poly2tri.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\third_party\poly2tri-master\poly2tri\common\shapes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\third_party\poly2tri-master\poly2tri\common\utils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\third_party\poly2tri-master\poly2tri\sweep\advancing_front.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\third_party\poly2tri-master\poly2tri\sweep\cdt.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\third_party\poly2tri-master\poly2tri\sweep\sweep.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\third_party\poly2tri-master\poly2tri\sweep\sweep_context.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\shape\mesh.h">
@@ -281,16 +242,10 @@
     <ClCompile Include="..\network\vertex_placement.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\util\counter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\util\range.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\util\util.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\decoration\area.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\shape\vec2.cpp">
@@ -324,21 +279,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\util\fast_math.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\third_party\poly2tri-master\poly2tri\common\shapes.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\third_party\poly2tri-master\poly2tri\sweep\advancing_front.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\third_party\poly2tri-master\poly2tri\sweep\cdt.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\third_party\poly2tri-master\poly2tri\sweep\sweep.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\third_party\poly2tri-master\poly2tri\sweep\sweep_context.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\shape\mesh.cpp">

@@ -24,7 +24,6 @@ public:
     VertexPlacement(Vertex* vertex, int id, NetTransistorSettings* settings) : vertex(vertex), id(id), settings(settings) {}
     ~VertexPlacement() = default;
 
-    // Core accessors
     Vertex* getVertex() const { return vertex; }
     int getId() const { return id; }
     NetTransistorSettings* getSettings() const { return settings; }
@@ -34,7 +33,6 @@ public:
     const Vec3& getSlope() const { return slope; }
     const Vec3& getValue() const { return value; }
 
-    // Operations
     void initialize();
     void addFixedNeighbor(const FixedFace& fixedFace);
     void addFreeFace(int id);
@@ -50,9 +48,6 @@ public:
     ChangeVecMB getChangeMB() const;
     void setPosition();
 
-    // Debug
-    // void print() const;
-
     Vec3 slope;
     Vec3 value;
     std::vector<int> freeFaceIds;
@@ -65,7 +60,6 @@ private:
     std::vector<int> colinearFaceIds;
     Matrix* M;
 
-    // Helper methods
     Matrix* getA(const std::vector<int>& faceIds);
     Matrix* getM();
 };

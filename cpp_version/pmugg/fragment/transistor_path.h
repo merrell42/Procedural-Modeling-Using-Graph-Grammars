@@ -16,18 +16,13 @@ public:
         bool isForward;
     };
 
-    // Static members
     static int count;
     static TransistorPath* createNet(const std::vector<Endpoint*>& endpoints,
                                    const std::vector<Line*>& edges,
                                    std::vector<Line*>* lines);
-    //static TransistorPath* create(const std::vector<Endpoint*>& endpoints,
-    //                            const std::vector<Line*>& edges,
-    //                            const std::vector<Line*>& lines);
 
     TransistorPath(const std::vector<IndexInfo>& indices, std::vector<Line*>* lines);
 
-    // Member functions
     void setEndpoints(const std::vector<Endpoint*>& endpoints);
     int extendableness() const;
     Vertex* randomNextVertex();
@@ -37,8 +32,6 @@ public:
     void expandBackward();
     void expandForward();
     void merge(TransistorPath* pathB);
-    // void highlight(Context* context, const std::function<Vec2(const Vec2&)>& convertToScreen);
-    /// void print();
 
     // Member variables
     std::vector<IndexInfo> indices;

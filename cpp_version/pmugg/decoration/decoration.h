@@ -23,9 +23,6 @@ public:
     std::string getFillStyle() const { return fillStyle; }
     std::string getStrokeStyle() const { return strokeStyle; }
 
-    // Drawing
-    // virtual void draw(Context* context, const std::function<Vec2(const Vec2&)>& transform) = 0;
-
 protected:
     std::string fillStyle;
     std::string strokeStyle;

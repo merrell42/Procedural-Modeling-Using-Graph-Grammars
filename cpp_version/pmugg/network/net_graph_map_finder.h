@@ -49,17 +49,6 @@ public:
     static constexpr float SMALL_DISTANCE = 1e-8f;
 
 private:
-    /*struct EndpointData {
-        HalfEdge* halfB;
-        Vertex* vertexA;
-    };*/
-
-    /*struct RayIntersection {
-        float distance;
-        Face* face;
-        IntersectionData data;
-    };*/
-
     Model* model;
     bool nodesModified;
     Face* groundFace;
@@ -81,8 +70,6 @@ private:
 
     // Static helper methods
     static void addOuterFaces(NetGraphMap* map, Network* netB);
-    // static bool neighboringHoles(Line* line, Edge* edgeB);
-    static VertexType* getVertexType(EdgeType3D* edgeType);
 
     // Cache for spliced vertex types
     static std::unordered_map<int, VertexType*> splicedVertexTypes;

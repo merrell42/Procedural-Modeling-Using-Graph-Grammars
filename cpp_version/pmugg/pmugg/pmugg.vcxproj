@@ -133,7 +133,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\bsp\bsp_node.cpp" />
-    <ClCompile Include="..\decoration\area.cpp" />
     <ClCompile Include="..\decoration\brush.cpp" />
     <ClCompile Include="..\decoration\decoration.cpp" />
     <ClCompile Include="..\fragment\net_transistor.cpp" />
@@ -171,7 +170,6 @@
     <ClCompile Include="..\shape\mesh.cpp" />
     <ClCompile Include="..\shape\vec2.cpp" />
     <ClCompile Include="..\shape\vec3.cpp" />
-    <ClCompile Include="..\util\counter.cpp" />
     <ClCompile Include="..\util\fast_math.cpp" />
     <ClCompile Include="..\util\range.cpp" />
     <ClCompile Include="..\util\timer.cpp" />
@@ -181,7 +179,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\bsp\bsp_node.h" />
-    <ClInclude Include="..\decoration\area.h" />
     <ClInclude Include="..\decoration\brush.h" />
     <ClInclude Include="..\decoration\decoration.h" />
     <ClInclude Include="..\fragment\net_transistor.h" />
@@ -221,7 +218,6 @@
     <ClInclude Include="..\shape\vec3.h" />
     <ClInclude Include="..\shared types\vec3Data.h" />
     <ClInclude Include="..\third_party\json.h" />
-    <ClInclude Include="..\util\counter.h" />
     <ClInclude Include="..\util\fast_math.h" />
     <ClInclude Include="..\util\range.h" />
     <ClInclude Include="..\util\timer.h" />

@@ -10,9 +10,10 @@ template <typename T> static
 int indexOf(const std::vector<T>& vec, const T& value) {
     auto it = std::find(vec.begin(), vec.end(), value);
     if (it != vec.end()) {
-        return std::distance(vec.begin(), it); // Return the index
+        return std::distance(vec.begin(), it);
     }
-    return -1; // Return -1 if the value is not found
+    // Return -1 if not found
+    return -1; 
 }
 
 template <typename T> static
@@ -63,16 +64,12 @@ public:
 
     template <typename T>
     static int findIndex(const std::vector<T>& vec, const T& item) {
-        // Use std::find to locate the item in the vector
         auto it = std::find(vec.begin(), vec.end(), item);
-
-        // If the item is found, calculate and return the index
         if (it != vec.end()) {
             return std::distance(vec.begin(), it);
         }
-
-        // If the item is not found, return -1 or any other indicator
-        return -1; // Indicating that the item was not found
+        // Item not found.
+        return -1;
     }
 
     // Random operations
@@ -118,7 +115,5 @@ private:
     static std::function<float()> originalRandom;
     static int randomCount;
 };
-
-// std::function<void()> noop = []() {};
 
 } // namespace ms   

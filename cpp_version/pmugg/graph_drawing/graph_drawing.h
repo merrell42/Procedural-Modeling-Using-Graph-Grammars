@@ -68,7 +68,7 @@ class GraphDrawing {
 				}
 				index++;
 			}
-			return -1; // Return -1 if vertex ID is not found
+			return -1;
 		}
 
 		// Save the mesh to an OBJ file.

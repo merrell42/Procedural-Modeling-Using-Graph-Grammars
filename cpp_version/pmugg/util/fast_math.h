@@ -4,12 +4,14 @@
 
 namespace ms {
 
-// class FastMath {
-// public:
 class Matrix {
 public:
     Matrix(const std::vector<std::vector<double>>& data);
     ~Matrix() = default;
+
+    // Matrix creation
+    static Matrix matrix(const std::vector<std::vector<double>>& data);
+    static Matrix* zeros(int size0, int size1);
 
     // Core accessors
     const std::vector<std::vector<double>>& valueOf() const { return data; }
@@ -20,10 +22,6 @@ public:
     double get(const std::vector<int>& index) const;
     Matrix subset(const std::vector<std::vector<int>>& indices, const Matrix* replacement = nullptr);
     Matrix& concat(const Matrix& B);
-
-    // Matrix creation
-    static Matrix matrix(const std::vector<std::vector<double>>& data);
-    static Matrix* zeros(int size0, int size1);
 
     // Matrix operations
     static Matrix* add(const Matrix* A, const Matrix* B);
@@ -44,9 +42,5 @@ private:
     std::vector<std::vector<double>> data;
     std::vector<int> size;
 };
-
-//     private:
-//     static constexpr double EPSILON = 1e-10;
-// };
 
 } // namespace ms 

@@ -95,18 +95,6 @@ int EdgeType3D::neighboringFace(int initialIndex, bool above) const {
     return angles[neighborOrder].second;
 }
 
-std::string EdgeType3D::getLeftArea() const {
-    auto it = std::find_if(faceData.begin(), faceData.end(),
-        [](const FaceData& f) { return !f.onRight; });
-    return it != faceData.end() ? it->type->getMaterial() : "";
-}
-
-std::string EdgeType3D::getRightArea() const {
-    auto it = std::find_if(faceData.begin(), faceData.end(),
-        [](const FaceData& f) { return f.onRight; });
-    return it != faceData.end() ? it->type->getMaterial() : "";
-}
-
 /* Json EdgeType3D::export(const Types& types) const {
     Json json;
     
@@ -163,24 +151,6 @@ EdgeType3D* EdgeType3D::import(const Json& json, Shape3D* shape) {
         result->offset = new Vec3(Vec3::import(json["offset"]));
     }
     result->setSpliced(json["spliced"]);
-    
-    return result;
-}
-
-EdgeType3D* EdgeType3D::partialImport(const Json& json, const std::vector<FaceType3D*>& faceTypes) {
-    std::vector<FaceData> fData;
-    for (const auto& f : json["faceData"]) {
-        fData.push_back({
-            faceTypes[f["type"]],
-            f["onRight"]
-        });
-    }
-    
-    Vec3 direction = Vec3::import(json["dir"]).swapAxes();
-    auto* brush = new Brush("#000", "#000");
-    
-    auto* result = new EdgeType3D(fData, direction, {{"brush", brush}});
-    result->id = json["id"];
     
     return result;
 }

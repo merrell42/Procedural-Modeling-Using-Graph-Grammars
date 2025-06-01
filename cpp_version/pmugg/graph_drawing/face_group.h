@@ -16,6 +16,7 @@ public:
     FaceGroup(Model* model, int id);
     FaceGroup(Model* model, int id, std::vector<int> faceIds);
     FaceGroup* copy();
+
     int getId() const { return id; };
     void addFace(Face* face);
     void insertFace(Face* face, int index);
