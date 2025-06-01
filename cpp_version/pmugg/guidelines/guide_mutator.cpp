@@ -11,6 +11,7 @@
 #include "../util/util.h"
 #include <iostream>
 #include <chrono>
+#include <fstream>
 
 namespace ms {
 
@@ -70,9 +71,9 @@ void GuideMutator::iterate(int steps) {
         timer->start("Save");
         timer->stop("Save");
 
-        auto now = std::chrono::system_clock::now();
-        auto currentTime = std::chrono::duration_cast<std::chrono::milliseconds>(
-            now.time_since_epoch()).count();
+        // auto now = std::chrono::system_clock::now();
+        // auto currentTime = std::chrono::duration_cast<std::chrono::milliseconds>(
+        //     now.time_since_epoch()).count();
 
         bool maxTimeEnabled = globalSettings["Max Time Enabled"].get<bool>();
         int maxIterations = globalSettings["Max Iterations"].get<int>();

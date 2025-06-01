@@ -16,6 +16,7 @@ void Model::reset() {
 	current = new GraphDrawing();
 	prev = new GraphDrawing();
 	numSteps = 0;
+	idCounter = 0;
 }
 
 void Model::accept() {
