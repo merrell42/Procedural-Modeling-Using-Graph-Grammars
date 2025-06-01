@@ -46,15 +46,6 @@ std::string Brush::getString(const std::string& name) const {
     return it != stringProperties.end() ? it->second : "";
 }
 
-/* void Brush::draw(Context* context,
-                const std::function<Vec2(const Vec2&)>& transform) {
-    // Drawing implementation for brush
-    context->setStrokeStyle(strokeStyle);
-    context->setFillStyle(fillStyle);
-    context->setLineWidth(getFloat("Width"));
-    // Additional drawing logic...
-} */
-
 Brush* Brush::import(Json json) {
     auto brush = new Brush("", "");
     

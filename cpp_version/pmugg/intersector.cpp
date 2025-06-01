@@ -122,27 +122,22 @@ std::vector<IntersectionData> Intersector::lineFaceIntersect(const Vec3& line0St
     size_t N = fPositions.size();
     std::vector<Vec2> fPositions2(N);
 
-    // Drop the specified dimension from fPositions
+    // Drop dimension from the positions.
     for (size_t i = 0; i < N; ++i) {
-        fPositions2[i] = fPositions[i].dropDim(maxDim); // Assuming dropDim is a method of Vec3
+        fPositions2[i] = fPositions[i].dropDim(maxDim);
     }
-
-    Vec2 query0 = line0Start.dropDim(maxDim); // Drop dimension from line0 start
-    Vec2 query1 = line0End.dropDim(maxDim); // Drop dimension from line0 end
+    Vec2 query0 = line0Start.dropDim(maxDim);
+    Vec2 query1 = line0End.dropDim(maxDim);
 
     std::vector<IntersectionData> intersections;
-
     for (size_t i = 0; i < N; ++i) {
         Vec2 v0 = fPositions2[i];
-        Vec2 v1 = fPositions2[(i + 1) % N]; // Wrap around to the first position
-
-        // Assuming intersect is a method that checks for intersection and returns a position
+        Vec2 v1 = fPositions2[(i + 1) % N];
         auto intersection = intersect(v0, v1, query0, query1);
-        if (intersection.has_value()) { // Check if the optional contains a value
-            intersections.push_back(IntersectionData(intersection.value(), static_cast<int>(i))); // Use intersection.value() to get the contained value
+        if (intersection.has_value()) {
+            intersections.push_back(IntersectionData(intersection.value(), static_cast<int>(i)));
         }
     }
-
     return intersections;
 }
 

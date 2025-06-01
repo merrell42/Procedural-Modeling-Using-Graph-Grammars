@@ -99,10 +99,4 @@ Range EdgePlacement::getRange() const {
     return Range::transformCreate(mLength, bLength, Range(lengthMin, lengthMax, tileLength));
 }
 
-//void EdgePlacement::print() const {
-//    if (edge) {
-//        edge->print();
-//    }
-//}
-
 } // namespace ms 

@@ -2,9 +2,7 @@
 #include "face_net.h"
 #include "half_edge_net.h"
 #include "network.h"
-// #include "view.h"
 #include "bound_net.h"
-#include "half_edge_net.h"
 #include "../shape/vec3.h"
 
 namespace ms {
@@ -57,33 +55,19 @@ void FaceNet::copyConnection(const FaceNet* copy) {
     }
 }
 
-//Json FaceNet::export() const {
-//    Json json;
-//    json["outerComponent"] = network->halfEdgeIndex(getOuterComponent());
-//    
-//    std::vector<Json> innerComps;
-//    for (auto halfEdge : getInnerComponents()) {
-//        innerComps.push_back(halfEdge->getDir().export());
-//    }
-//    json["innerComponents"] = innerComps;
-//    
-//    return json;
-//}
-
 void FaceNet::import(const Json & json) {
     auto halfEdges = network->getHalfEdges();
     if (halfEdges.size() == 0) {
         return;
     }
-    // Assuming network is already set and has a method getHalfEdges()
     outerComponent = network->getHalfEdges()[json["outerComponent"]];
 
-    //innerComponents.clear();  // Clear existing inner components
-    //for (const auto& halfEdge : json["innerComponents"]) {
-    //    Vec3 dir = Vec3::import(halfEdge);  // Assuming Vec3 has an import method
+    // innerComponents.clear();
+    // for (const auto& halfEdge : json["innerComponents"]) {
+    //    Vec3 dir = Vec3::import(halfEdge);
     //    // Create a lambda to mimic the getDir behavior
-    //    innerComponents.push_back(new HalfEdgeNet(dir));  // Assuming HalfEdge can be constructed with a direction
-    //}
+    //    innerComponents.push_back(new HalfEdgeNet(dir));
+    // }
 }
 
 std::vector<HalfEdgeNet*> FaceNet::getConnectedHalfEdges(HalfEdgeNet* start) {
@@ -119,43 +103,6 @@ std::vector<HalfEdgeNet*> FaceNet::getHalfEdges() const {
     return result;
 }
 
-//void FaceNet::highlight(View* view) {
-//    DrawOptions options;
-//    options.halfEdges = getHalfEdges();
-//    options.drawBackwards = false;  // TODO: Handle tempDrawBacks
-//    network->highlight(view, options);
-//}
-
-//void FaceNet::getHalfEdgeSet() {
-//    auto halfEdges = getHalfEdges();
-//    if (!primal->interior) {
-//        HalfEdgeSet result({}, {});
-//        for (auto halfEdge : halfEdges) {
-//            result.concat(halfEdge->getHalfEdgeSet());
-//        }
-//        return result;
-//    } else {
-//        return HalfEdgeSet(halfEdges);
-//    }
-//}
-
-//void FaceNet::merge(FaceNet* faceB) {
-//    auto bInner = faceB->getInnerComponents();
-//    innerComponents.insert(innerComponents.end(), bInner.begin(), bInner.end());
-//    
-//    auto halfEdges = getConnectedHalfEdges(faceB->getOuterComponent());
-//    for (auto inner : bInner) {
-//        auto connected = getConnectedHalfEdges(inner);
-//        halfEdges.insert(halfEdges.end(), connected.begin(), connected.end());
-//    }
-//    
-//    for (auto halfEdge : halfEdges) {
-//        halfEdge->setFace(this);
-//    }
-//    
-//    BoundNet::mergeInto(this, faceB);
-//}
-
 void FaceNet::replaceHalfEdge(HalfEdgeNet* a, HalfEdgeNet* b, bool force) {
     if ((outerComponent == a) || (force && outerComponent)) {
         outerComponent = b;
@@ -166,7 +113,6 @@ void FaceNet::replaceHalfEdge(HalfEdgeNet* a, HalfEdgeNet* b, bool force) {
             innerComponents[i] = b;
         }
     }
-    
     b->setFace(this);
 }
 

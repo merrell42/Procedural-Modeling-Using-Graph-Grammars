@@ -95,32 +95,6 @@ int EdgeType3D::neighboringFace(int initialIndex, bool above) const {
     return angles[neighborOrder].second;
 }
 
-/* Json EdgeType3D::export(const Types& types) const {
-    Json json;
-    
-    json["faceData"] = Json::array();
-    for (const auto& f : faceData) {
-        json["faceData"].push_back({
-            {"type", types.faceTypes.indexOf(f.type)},
-            {"onRight", f.onRight}
-        });
-    }
-    
-    if (brush && brush->export_) {
-        json["brush"] = brush->export_();
-    }
-    
-    json["dir"] = dir.export();
-    json["isRigid"] = isRigid;
-    json["isRigidTiled"] = isRigidTiled;
-    json["edgeLength"] = edgeLength;
-    json["angle"] = angle;
-    json["offset"] = offset ? offset->export() : nullptr;
-    json["spliced"] = spliced;
-    
-    return json;
-} */
-
 EdgeType3D* EdgeType3D::import(const Json& json, Shape3D* shape) {
     std::vector<FaceData> fData;
     for (const auto& f : json["faceData"]) {

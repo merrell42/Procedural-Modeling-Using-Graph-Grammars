@@ -23,7 +23,7 @@ FaceType3D::FaceType3D(const std::string& mat, const Vec3& n)
 }
 
 void FaceType3D::computeOrthonormalBasis() {
-    // Find the least significant component of the normal
+    // Find the smallest component of the normal.
     int minDim = 0;
     float minVal = std::abs(normal[0]);
     for (int i = 1; i < 3; i++) {
@@ -32,13 +32,10 @@ void FaceType3D::computeOrthonormalBasis() {
             minVal = std::abs(normal[i]);
         }
     }
-
-    // Create a vector orthogonal to the normal
+    // Create two vectors orthogonal to the normal.
     u = Vec3();
     u.setValue(1.0f, minDim);
     u = normal.cross(u).normalize();
-
-    // Complete the orthonormal basis
     v = normal.cross(u).normalize();
 }
 
@@ -47,7 +44,7 @@ float FaceType3D::angle(const Vec3& q) const {
     float dy = v.dot(q);
     float angle = std::atan2(dy, dx);
     
-    // Angles near pi wrap to -pi
+    // Angles near pi wrap to -pi.
     if (angle > M_PI - EPS) {
         return -angle;
     }
@@ -72,27 +69,6 @@ float FaceType3D::polygonArea(const std::vector<Vec2>& points) const {
     return area / 2;
 }
 
-//void FaceType3D::computeMonotonic(const std::vector<Graph*>& graphs) {
-//    bool positive = false;
-//    bool negative = false;
-//
-//    for (const auto* graph : graphs) {
-//        for (const auto* endpoint : graph->getOuterEndpoints()) {
-//            if (endpoint->getFaceTypes().contains(this) && endpoint->oriented(this)) {
-//                auto trace = graph->traceToExit3D(endpoint, this);
-//                if (trace.winding > 0) {
-//                    positive = true;
-//                }
-//                if (trace.winding < 0) {
-//                    negative = true;
-//                }
-//            }
-//        }
-//    }
-//
-//    monotonic = positive ^ negative;  // XOR operation
-//}
-
 Vec3 FaceType3D::normalColor() const {
     if (color) {
         return *color;
@@ -103,14 +79,6 @@ Vec3 FaceType3D::normalColor() const {
         0.5f * normal.getZ() + 0.5f
     );
 }
-
-/* Json FaceType3D::export() const {
-    Json json;
-    json["color"] = color ? color->export() : nullptr;
-    json["material"] = material;
-    json["normal"] = normal.export();
-    return json;
-} */
 
 FaceType3D* FaceType3D::import(const Json& json) {
     std::string material = "";

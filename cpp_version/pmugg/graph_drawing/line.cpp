@@ -54,11 +54,9 @@ void Line::setEndpoint(int index, Endpoint* endpoint) {
 	endpointIds[index] = endpoint->getId();
 }
 
-// New function to set endpoint IDs directly
+// New function to set endpoint IDs directly.
 void Line::setEndpointIds(const std::vector<int>& ids) {
-	// Resize endpointIds to match the size of ids if necessary
 	endpointIds.resize(ids.size());
-	// Set the endpointIds directly
 	std::copy(ids.begin(), ids.end(), endpointIds.begin());
 }
 
@@ -68,10 +66,9 @@ void Line::destroy() {
 };
 
 SplitData Line::split(bool splitFaces) {
-    timer->start("split No Vertex"); // Start the timer
-    // auto stats = this->node->getStats(); // Get stats from the node
+    timer->start("split No Vertex");
 
-    // Create two new lines as copies of the current line
+    // Create two new lines as copies of the current line.
 	Line* line0 = this->copy();
 	Line* line1 = this->copy();
     std::vector<Line*> newLines = { line0, line1 };
@@ -82,30 +79,25 @@ SplitData Line::split(bool splitFaces) {
 	line0->setEndpointIds({ -1, -1 });
 	line1->setEndpointIds({ -1, -1 });
 
-    /* newLines[0]->addSegments({ new LineSegment(stats) });
-    newLines[1]->addSegments({ new LineSegment(stats) }); */
-
-    // Get old endpoints and set new ones
+    // Get old endpoints and set new ones.
     std::vector<Endpoint*> endpoints = this->getEndpoints();
     std::vector<Endpoint*> nextEndpoints;
     for (auto& endpoint : endpoints) {
         nextEndpoints.push_back(endpoint->next());
     }
-
 	if (splitFaces) {
 		for (auto& endpoint : endpoints) {
 			endpoint->getFace()->split(endpoint->next());
 		}
 	}
-
     for (auto& endpoint : endpoints) {
         endpoint->transfer(newLines[endpoint->getIsAtStart() ? 0 : 1]);
     }
 
     destroy();
-    timer->stop("split No Vertex"); // Stop the timer
+    timer->stop("split No Vertex");
 
-    return SplitData(newLines, nextEndpoints); // Return the SplitData struct
+    return SplitData(newLines, nextEndpoints);
 }
 
 std::pair<SplitData, Vertex*> Line::fullSplit(double s) {
@@ -144,8 +136,6 @@ std::pair<SplitData, Vertex*> Line::fullSplit(double s) {
 		auto startPrev0 = prevEndpoint0->getIsAtStart();
 		prevEndpoint0->getFace()->insert(startPrev0 ? endpointT : endpointF, prevEndpoint0);
 		prevEndpoint1->getFace()->insert(startPrev0 ? endpointF : endpointT, prevEndpoint1);
-		// prevEndpoint0->maybeMergeNextFace();
-		// prevEndpoint1->maybeMergeNextFace();
 	} else {
 		split.lines[0]->addEndpoint(endpointF, 1);
 		split.lines[1]->addEndpoint(endpointT, 0);
@@ -154,12 +144,7 @@ std::pair<SplitData, Vertex*> Line::fullSplit(double s) {
 		auto startPrev0 = prevEndpoint0->getIsAtStart();
 		prevEndpoint0->getFace()->insert(startPrev0 ? endpointT : endpointF, prevEndpoint0);
 		prevEndpoint1->getFace()->insert(startPrev0 ? endpointF : endpointT, prevEndpoint1);
-		// prevEndpoint0->maybeMergeNextFace();
-		// prevEndpoint1->maybeMergeNextFace();
 	}
-
-	/* split.lines[0]->fillFromEndpoints(true);
-	split.lines[1]->fillFromEndpoints(true); */
 	
 	for (auto line : addedLines) {
 		line->destroy();
@@ -173,22 +158,19 @@ std::pair<SplitData, Vertex*> Line::fullSplit(double s) {
 
 VertexType* Line::getVertexType(EdgeType3D* edgeType) {
 	const int id = edgeType->getId();
-    // Check if the vertex type already exists or if it's an old version
+    // Check if the vertex type already exists or if it's an old version.
     if (splitVertexTypes.find(id) == splitVertexTypes.end() ||
         splitVertexTypes[id]->getConnections()[0].edge != edgeType) {
-        
-        VertexType* vertexType = new VertexType();
 
-        // Add edges to the vertex type
+        // Spliced vertices have two edges.
+		VertexType* vertexType = new VertexType();
         vertexType->addEdge(edgeType, true, edgeType->getAngle());
         vertexType->addEdge(edgeType, false, edgeType->getAngle());
         vertexType->setSpliced(true);
 
-        // Store the new vertex type
         splitVertexTypes[id] = vertexType;
     }
-
-    return splitVertexTypes[id]; // Return the vertex type
+    return splitVertexTypes[id];
 }
 
 bool Line::intersects(Line* lineB) {

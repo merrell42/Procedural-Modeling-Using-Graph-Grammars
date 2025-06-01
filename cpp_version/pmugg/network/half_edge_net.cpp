@@ -30,7 +30,7 @@ HalfEdgeNet* HalfEdgeNet::connectNet(Network* net) {
 
 void HalfEdgeNet::connectVertex(VertexNet* v, int index) {
     if (index == -1) {
-        // Set to next available spot in the vertex
+        // Set to next available spot in the vertex.
         index = (int)v->getHalfEdges().size();
     }
     vertex = v;
@@ -65,27 +65,6 @@ HalfEdgeNet* HalfEdgeNet::getTwin() const {
     }
     return halfEdges[1 - edgeIndex][0];
 }
-
-//HalfEdgeNet* HalfEdgeNet::boundaryToInterior() const {
-//    auto* edge = getEdge();
-//    if (!edge) return nullptr;
-//
-//    auto* startHalf = edge->getPrimal()->getInterior()->getOuterComponent();
-//    if (!startHalf) return nullptr;
-//
-//    if (forward) {
-//        // Follow the chain to the end
-//        auto* endHalf = startHalf;
-//        auto* next = endHalf->getNext();
-//        while (next) {
-//            endHalf = next;
-//            next = endHalf->getNext();
-//        }
-//        return endHalf;
-//    } else {
-//        return startHalf;
-//    }
-//}
 
 bool HalfEdgeNet::isSpliced() const {
     return edge && edge->getType()->getSpliced();
@@ -126,23 +105,5 @@ void HalfEdgeNet::import(const Json& json) {
     next = network->getHalfEdge(json["next"]);
     face = network->getFaces()[json["face"]];
 }
-
-//Json HalfEdgeNet::export() const {
-//    Json json;
-//    json["forward"] = forward;
-//    json["edgeIndex"] = edgeIndex;
-//    json["vertexIndex"] = vertexIndex;
-//    json["vertex"] = network->vertexIndex(vertex);
-//    json["edge"] = network->edgeIndex(edge);
-//    json["prev"] = network->halfEdgeIndex(prev);
-//    json["next"] = network->halfEdgeIndex(next);
-//    json["face"] = network->faceIndex(face);
-//    return json;
-//}
-//
-//void HalfEdgeNet::print() const {
-//    ms::highlight(getHalfEdgeSet());
-//    return id;
-//}
 
 } // namespace ms 

@@ -151,8 +151,4 @@ ChangeMB FacePlacement::getChangeMB() const {
     return {m, b};
 }
 
-//void FacePlacement::print() const {
-//    face->print();
-//}
-
 } // namespace ms 

@@ -24,7 +24,6 @@ Endpoint::Endpoint(Model* model, int id, bool isAtStart, EdgeType3D* edgeType, V
         std::vector<int> bspNodeIds;
         auto face = new Face(model, faceId, faceType, endpointIds, bspNodeIds);
         face->createGroup();
-        // face.getNode().connect(this);
     }
 }
 
@@ -86,7 +85,8 @@ Endpoint* Endpoint::prev() const {
 
     if (index == 0) {
         size_t N = endpoints.size();
-        index = N; // Wrap around to the last endpoint
+        // Wrap around to the last endpoint.
+        index = N;
     }
 
     return endpoints[index - 1];
@@ -99,7 +99,8 @@ Endpoint* Endpoint::twin() const {
         auto it = std::find(endpoints.begin(), endpoints.end(), this);
         if (it != endpoints.end()) {
             size_t index = std::distance(endpoints.begin(), it);
-            return endpoints[1 - index]; // Return the other endpoint
+            // Return the other endpoint.
+            return endpoints[1 - index];
         }
     }
     return nullptr;
@@ -123,19 +124,5 @@ void Endpoint::maybeMergeNextFace() {
         this->getFace()->append(n->getFace());
     }
 }
-
-//void Endpoint::maybeMergeNextFace() {
-//    Endpoint* nextEndpoint = next();
-//    if (nextEndpoint) {
-//        getFace()->append(nextEndpoint->getFace());
-//    }
-//}
-//
-//void Endpoint::maybeMergePrevFace() {
-//    Endpoint* prevEndpoint = prev();
-//    if (prevEndpoint) {
-//        prevEndpoint->getFace()->append(getFace());
-//    }
-//}
 
 }

@@ -80,39 +80,33 @@ Range Face::dirBounds(const Vec3& dir) const {
 }
 
 void Face::append(Face* faceB) {
-    // this->dirty = true;
-
-    // Check if the current object is the same as `faceB`
+    // Set looped if appending the same face.
     if (this == faceB) {
         this->setLooped(true);
         return;
     }
 
-    // Copy endpoints from `faceB`
-    auto endpointsB = faceB->getEndpoints(); // Assuming `getEndpoints` returns a `std::vector<Endpoint*>`
-
-    // Connect each endpoint to this face's node
+    // Attach all of faceB's endpoints to this face.
+    auto endpointsB = faceB->getEndpoints();
     for (auto* endpointB : endpointsB) {
         endpointIds.push_back(endpointB->getId());
         endpointB->setFace(this);
     }
-
-    // Destroy the node of `faceB`
+    // Destroy faceB.
     model->getCurrent()->removeFace(faceB);
     delete faceB;
 }
 
 std::vector<Vec3> Face::getPositions() const {
-    std::vector<Vec3> positions; // Assuming Vec3 is the type for positions
-    auto endpoints = getEndpoints(); // Get the endpoints
-
+    std::vector<Vec3> positions;
+    auto endpoints = getEndpoints();
     for (const auto& endpoint : endpoints) {
-        positions.push_back(endpoint->getPosition()); // Assuming getPosition returns a Vec3
+        positions.push_back(endpoint->getPosition());
     }
-
-    return positions; // Return the vector of positions
+    return positions;
 }
 
+// Remove one of the dimensions.
 std::vector<Vec2> Face::getPositions2D() const {
     auto positions = getPositions();
     auto maxDim = faceType->getMaxDim();
@@ -142,7 +136,7 @@ void Face::split(Endpoint* endpoint) {
         endpointIds = newOrder;
     } else {
         if (index == 0) {
-            // ms::alert("Should not be splitting off all of the endpoints.");
+            std::cout << "Should not be splitting off all of the endpoints." << std::endl;
             return;
         }
 
@@ -168,15 +162,11 @@ void Face::split(Endpoint* endpoint) {
 }
 
 void Face::insert(Endpoint* endpoint, Endpoint* prevEndpoint) {
-    // Get the current endpoints of the face
     std::vector<Endpoint*> endpoints = this->getEndpoints();
-    
-    // Find the index of the previous endpoint
-    auto it = std::find(endpoints.begin(), endpoints.end(), prevEndpoint);
-    int index = (it != endpoints.end()) ? std::distance(endpoints.begin(), it) : -1;
 
-    // Insert the new endpoint at the correct position
+    // Insert new endpoint before previous endpoint.
     int id = endpoint->getId();
+    int index = indexOf(endpoints, endpoint);
     if (index >= 0) {
         endpointIds.insert(endpointIds.begin() + index + 1, id);
         endpoint->setFace(this);
@@ -203,7 +193,6 @@ double Face::signedArea() {
         float yn = positions2D[(i + n - 1) % n].y;
         sum += xi * (yn - yp);
     }
-
     return -sum / 2.0f;
 }
 
@@ -261,12 +250,6 @@ std::vector<int> Face::getTriangleIndices() {
 
     auto indices = mapbox::earcut(polygons);
     return std::vector<int>(indices.begin(), indices.end());
-    /* auto endpoints = getEndpoints();
-    std::vector<int> final;
-    for (const auto& index : indices) {
-        final.push_back(model->getCurrent()->getVertexIndex(endpoints[index]->getVertex()->getId()));
-    }
-    return final; */
 }
 
 void Face::removeFromBsp() {

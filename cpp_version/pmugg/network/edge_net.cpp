@@ -18,10 +18,6 @@ const std::vector<std::vector<HalfEdgeNet*>>& EdgeNet::getHalfEdges() const {
     return halfEdges;
 }
 
-//PrimalEdge* EdgeNet::getPrimal() const {
-//    return primal;
-//}
-
 Network* EdgeNet::getNetwork() const {
     return network;
 }
@@ -29,10 +25,6 @@ Network* EdgeNet::getNetwork() const {
 int EdgeNet::getId() const {
     return id;
 }
-
-//void EdgeNet::setPrimal(PrimalEdge* p) {
-//    primal = p;
-//}
 
 EdgeNet* EdgeNet::connectNet(Network* net) {
     network = net;
@@ -72,26 +64,6 @@ bool EdgeNet::inNetwork() const {
     return std::find(vec.begin(), vec.end(), this) != vec.end();
 }
 
-//void EdgeNet::highlight(View* view) {
-//    std::vector<HalfEdgeNet*> allHalfEdges;
-//    for (const auto& halfArray : halfEdges) {
-//        allHalfEdges.insert(allHalfEdges.end(), halfArray.begin(), halfArray.end());
-//    }
-//    
-//    auto options = HalfEdgeSet::create(allHalfEdges);
-//    network->highlight(view, options);
-//}
-//
-//void EdgeNet::print() const {
-//    auto* interior = primal->getInterior();
-//    if (interior != this) {
-//        std::cout << "Boundary Edge" << std::endl;
-//        interior->print();
-//    } else {
-//        ms::highlight(this);
-//    }
-//}
-
 void EdgeNet::merge(EdgeNet* edgeB, bool mergeForward) {
     auto* interior = network;
 
@@ -122,21 +94,6 @@ void EdgeNet::merge(EdgeNet* edgeB, bool mergeForward) {
     }
     interior->removeEdge(edgeB);
 }
-
-//Json EdgeNet::export() const {
-//    Json json;
-//    json["halfEdges"] = Json::array();
-//    
-//    for (const auto& halfArray : halfEdges) {
-//        Json arrayJson = Json::array();
-//        for (auto* half : halfArray) {
-//            arrayJson.push_back(network->halfEdgeIndex(half));
-//        }
-//        json["halfEdges"].push_back(arrayJson);
-//    }
-//    
-//    return json;
-//}
 
 void EdgeNet::import(const Json& json) {
     halfEdges.clear();

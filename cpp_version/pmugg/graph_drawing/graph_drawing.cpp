@@ -18,7 +18,8 @@ GraphDrawing::GraphDrawing(
 	, bspNodeMap(bspNodeMap)
 	, bspRootId(bspRootId) {}
 
-// This will copy each item into the current model. This happen in the constructor.
+// This will copy each item into the current model.
+// This happens in the constructor of each item.
 void GraphDrawing::copy() {
 	for (const auto& [id, ptr] : endpointMap) {
 		ptr && ptr->copy();

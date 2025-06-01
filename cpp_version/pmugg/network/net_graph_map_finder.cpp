@@ -3,17 +3,10 @@
 #include "net_graph_map.h"
 #include "net_graph_map_info.h"
 #include "net_graph_map_state.h"
-//#include "face.h"
-//#include "vertex.h"
-//#include "half_edge.h"
-//#include "vertex_type.h"
 #include "../shapes3D/edge_type3d.h"
-//#include "face_group.h"
-//#include "line.h"
-//#include "edge.h"
 #include "../util/util.h"
 #include "../grid/settings.h"
-#include <algorithm> // For std::find
+#include <algorithm>
 #include "../intersector.h"
 #include <limits>
 
@@ -50,7 +43,6 @@ NetGraphMap* NetGraphMapFinder::findMap(Network* netB) {
     while (verticesB[index1]->getType()->getSpliced()) {
         index1++;
     }
-    //// auto* primalB = verticesB[index1]->getPrimal();
 
     bool isConnector = verticesB[index1]->connectorIndex() >= 0;
     auto* vertexType = verticesB[index1]->getType();
@@ -67,8 +59,7 @@ NetGraphMap* NetGraphMapFinder::findMap(Network* netB) {
 
     while (count < attempts) {
         auto vertexA = it->second;
-        if ((isConnector || vertexA->getType() == vertexType)
-            /* && !vertexA->getNode()->isDestroyed() */) {
+        if ((isConnector || vertexA->getType() == vertexType)) {
             nodesModified = false;
             auto* info = new NetGraphMapInfo(model, netB);
             auto* state = new NetGraphMapState(info);
@@ -87,10 +78,10 @@ NetGraphMap* NetGraphMapFinder::findMap(Network* netB) {
             delete info;
         }
 
-        ++count;
+        count++;
 
         // Move to the next element
-        ++it;
+        it++;
 
         // If we reach the end, roll over to the beginning
         if (it == vertexMap.end()) {
@@ -158,7 +149,6 @@ NetGraphMap* NetGraphMapFinder::findStarterMap(Network* netB) {
     auto info = std::make_unique<NetGraphMapInfo>(model, netB);
     auto state = std::make_unique<NetGraphMapState>(info.get());
 
-    // auto edges = netB->getBoundary()->getEdges();
     auto faces = netB->getFaces();
     if (faces.empty()) {
         return state->getMap();
@@ -178,84 +168,13 @@ NetGraphMap* NetGraphMapFinder::findStarterMap(Network* netB) {
     if (face) {
         state->getMap()->faceBtoA = {face};
 
-        // This is to support cases where we have disconnected boundaries and
-        // do a volume splice. This was always hacky and shouldn't be turned
-        // on without a lot of work.
-        /* if (!netB->boundary->faces[0]->innerComponents.empty()) {
-            Face* goalFace = netB->boundary->faces[1];
-            Face* intersectFace = nullptr;
-            int attempts = 0;
-
-            while (attempts < spliceRayAttempts && !intersectFace) {
-                intersectFace = castVolumeRaySeries(face,
-                    netB->boundary->faces[0]->innerComponents,
-                    goalFace);
-                attempts++;
-            }
-
-            if (!intersectFace) {
-                return nullptr;
-            }
-            else {
-                state->getMap()->outerFaces.push_back(intersectFace);
-            }
-        } */
+        // The web version supports cases where we have disconnected boundaries and
+        // do a volume splice through castVolumeRaySeries.
+        // This was always hacky and so I'm not using it here.
         return state->getMap();
     }
     return nullptr;
 }
-
-//Face* NetGraphMapFinder::castVolumeRaySeries(Face* face,
-//    const std::vector<HalfEdge*>& rayHalfs, Face* goalFace) {
-//
-//    if (rayHalfs.size() > 1) {
-//        // TODO: Implement multiple rays
-//        throw std::runtime_error("Multiple Rays not implemented yet.");
-//    }
-//
-//    Vector3 startPos = face->randomPoint();
-//    BspTree* tree = nodeStats->model->getBspTree();
-//    EdgeType* goalType = goalFace->outerComponent->edge->primal->type;
-//
-//    // Model ray as long polygon and intersect with BSP tree polygons
-//    FaceType* faceType = face->getFaceType();
-//    Vector3 dir = rayHalfs[0]->getDir();
-//    Vector3 u = faceType->u;
-//    Vector3 v = faceType->v;
-//
-//    Vector3 endPos = dir * Intersector::FAR_DISTANCE + startPos;
-//    Vector3 startPos2 = u * SMALL_DISTANCE + startPos;
-//    Vector3 endPos2 = u * SMALL_DISTANCE + endPos;
-//
-//    std::vector<Vector3> points = { startPos, endPos, endPos2, startPos2 };
-//    double d = v.dot(startPos);
-//
-//    BspPlane plane(v, d);
-//    auto fakePolygon = std::make_shared<Polygon>(points);
-//
-//    auto intersections = tree->add(plane, fakePolygon, true);
-//
-//    // Find closest intersection
-//    double closestDist = std::numeric_limits<double>::infinity();
-//    Intersection* closest = nullptr;
-//
-//    for (const auto& intersection : intersections) {
-//        double d = dir.dot(intersection->position);
-//        if (d < closestDist) {
-//            closest = intersection;
-//            closestDist = d;
-//        }
-//    }
-//
-//    if (closest) {
-//        Face* nextFace = closest->polygon->getFace();
-//        if (nextFace->getFaceType() == goalType && !nextFace->isHole()) {
-//            return nextFace;
-//        }
-//    }
-//
-//    return nullptr;
-//}
 
 NetGraphMap* NetGraphMapFinder::findContinue(NetGraphMapState* state) {
     if (!state->getQueue().empty()) {
@@ -303,7 +222,7 @@ NetGraphMap* NetGraphMapFinder::matchEndpoint(
 
     EdgeType3D* typeB = edgeB->getType();
 
-    // Find matching endpoint
+    // Find matching endpoint.
     Endpoint* endpointA = nullptr;
     for (auto* ep : endpointsA) {
         if (ep->getEdgeType() == typeB &&
@@ -325,7 +244,6 @@ NetGraphMap* NetGraphMapFinder::matchEndpoint(
     if (neighboringHoles(endpointA->getLine(), edgeB) && !isOuter) {
         return nullptr;
     }
-
     return assignEndpoint(endpointA, halfB, state);
 }
 
@@ -333,12 +251,11 @@ NetGraphMap* NetGraphMapFinder::spliceEndpoint(
     const EndpointData& endpointData,
     NetGraphMapState* state
 ) {
-
     HalfEdgeNet* halfB = endpointData.halfB;
     Vertex* vertexA = endpointData.vertexA;
     Network* netB = state->getInfo()->networkB;
 
-    // Find end of splice chain
+    // Find end of splice chain.
     HalfEdgeNet* endB = halfB;
     while (endB->isSpliced()) {
         endB = endB->getNext();
@@ -349,7 +266,7 @@ NetGraphMap* NetGraphMapFinder::spliceEndpoint(
         return findContinue(state);
     }
 
-    // Find matching endpoint
+    // Find matching endpoint.
     FaceType3D* faceTypeB = halfB->getEdge()->getType()->getFaceData()[0].type;
     Endpoint* endpointA = nullptr;
 
@@ -364,7 +281,7 @@ NetGraphMap* NetGraphMapFinder::spliceEndpoint(
         return nullptr;
     }
 
-    // Cast ray series
+    // Cast ray series.
     FaceGroup* groupA = endpointA->getFace()->getGroup();
     int maxDim = faceTypeB->getMaxDim();
     const Vec3 startPos = vertexA->getPosition();
@@ -381,7 +298,7 @@ NetGraphMap* NetGraphMapFinder::spliceEndpoint(
         return nullptr;
     }
 
-    // Handle intersection results
+    // Handle intersection results.
     Vertex* vertexA0 = intersectEndpoint->getVertex();
     Vertex* vertexA1 = intersectEndpoint->next()->getVertex();
 
@@ -390,12 +307,11 @@ NetGraphMap* NetGraphMapFinder::spliceEndpoint(
     int eIndex = indexOf(state->getMap()->getEdgeBtoA(), intersectEndpoint->getLine());
 
     if (vIndex0 < 0 && vIndex1 < 0 && eIndex < 0) {
-        // Split once for unmatched line and vertices
+        // Split once for unmatched line and vertices.
         auto result = intersectEndpoint->getLine()->fullSplit(Util::randomUniform(0, 1));
         nodesModified = true;
         return assignVertex(state, result.second, vIndexB);
-    }
-    else if (vIndex0 >= 0 && vIndex1 >= 0 && eIndex >= 0) {
+    } else if (vIndex0 >= 0 && vIndex1 >= 0 && eIndex >= 0) {
         // Split three times for matched line and vertices
         bool isAtStart0 = intersectEndpoint->getIsAtStart();
         VertexNet* vertexB0 = netB->getVertices()[vIndex0];
@@ -405,7 +321,7 @@ NetGraphMap* NetGraphMapFinder::spliceEndpoint(
         bool isConnector1 = (vertexB1->connectorIndex() >= 0);
 
         if (!(isConnector0 ^ isConnector1)) {
-            // throw std::runtime_error("Expected one of the vertices to be a connector.");
+            std::cout << "Expected one of the vertices to be a connector." << std::endl;
         }
 
         bool connectorAtStart = isConnector0 ? isAtStart0 : !isAtStart0;
@@ -432,8 +348,7 @@ NetGraphMap* NetGraphMapFinder::spliceEndpoint(
             state->getMap()->vertexBtoA[vIndexCon] = splitVertices[2];
             state->getMap()->edgeBtoA[eIndex] = splitLines[3];
             return assignVertex(state, splitVertices[0], vIndexB);
-        }
-        else {
+        } else {
             state->getMap()->vertexBtoA[vIndexCon] = splitVertices[0];
             state->getMap()->edgeBtoA[eIndex] = splitLines[0];
             return assignVertex(state, splitVertices[2], vIndexB);
@@ -450,33 +365,29 @@ NetGraphMap* NetGraphMapFinder::assignEndpoint(Endpoint* endpointA, HalfEdgeNet*
     auto map = state->getMap();
 
     VertexNet* vertexB = halfB->getNext()->getVertex();
-    int vIndexB = std::distance(info->verticesB.begin(),
-        std::find(info->verticesB.begin(), info->verticesB.end(), vertexB));
+    int vIndexB = indexOf(info->verticesB, vertexB);
 
     bool isConnector = vertexB->connectorIndex() >= 0;
     auto vertexType = vertexB->getType();
 
     if (!isConnector && vertexType->getSpliced() && map->vertexBtoA[vIndexB] == 0) {
-        endpointA->getLine()->fullSplit(random()); // Simulating ms.randomUniform(0, 1)
+        endpointA->getLine()->fullSplit(random());
         nodesModified = true;
     }
 
     Line* lineA = endpointA->getLine();
     EdgeNet* edgeB = halfB->getEdge();
-    int eIndexB = std::distance(info->edgesB.begin(),
-        std::find(info->edgesB.begin(), info->edgesB.end(), edgeB));
+    int eIndexB = indexOf(info->edgesB, edgeB);
     map->edgeBtoA[eIndexB] = lineA;
 
     Vertex* vertexA = endpointA->next()->getVertex();
-    int vIndexA = std::distance(map->vertexBtoA.begin(),
-        std::find(map->vertexBtoA.begin(), map->vertexBtoA.end(), vertexA));
+    int vIndexA = indexOf(map->vertexBtoA, vertexA);
 
     if (vIndexA < map->vertexBtoA.size()) {
         if (isConnector || vIndexA == vIndexB) {
             // We've already matched the vertex at the end of halfB.
             return findContinue(state);
-        }
-        else {
+        } else {
             // vertexA has been matched somewhere else.
             return nullptr;
         }
