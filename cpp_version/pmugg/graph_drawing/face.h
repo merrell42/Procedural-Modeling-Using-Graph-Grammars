@@ -30,7 +30,7 @@ class Face {
 		void setLooped(bool looped_) { looped = looped_; }
 		FaceGroup* getGroup() const;
 		void split(Endpoint* endpoint);
-		bool isHole() { return false; }
+		bool isHole() { return hole; }
 		void destroy();
 		void insert(Endpoint* endpoint, Endpoint* prevEndpoint);
 		void removeEndpoint(Endpoint* endpoint);

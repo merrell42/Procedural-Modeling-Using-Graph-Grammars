@@ -274,21 +274,20 @@ NetGraphMap* NetGraphMapFinder::findContinue(NetGraphMapState* state) {
     return state->getMap();
 }
 
-//bool neighboringHoles(const Line& line, const EdgeNet& edgeB) {
-//    const auto& endpoints = line.getEndpoints();
-//    const auto& halfEdges = edgeB.getHalfEdges();
-//
-//    return std::any_of(endpoints.begin(), endpoints.end(),
-//        [&](const Endpoint* endpoint) {
-//            Face* face = endpoint->getFace();
-//            if (!face) return false;
-//
-//            bool hasHoles = (face->getGroupFaces().size() > 1) && !face->isHole();
-//            size_t index = &endpoint - &endpoints[0]; // Get index of endpoint
-//            return hasHoles && halfEdges[index][0]->isLoopy();
-//        }
-//    );
-//}
+bool neighboringHoles(Line* line, EdgeNet* edgeB) {
+    const auto& endpoints = line->getEndpoints();
+    const auto& halfEdges = edgeB->getHalfEdges();
+
+    for (int i = 0; i < endpoints.size(); i++) {
+        auto endpoint = endpoints[i];
+        Face* face = endpoint->getFace();
+        bool hasHoles = (face->getGroup()->getFaces().size() > 1) && !face->isHole();
+        if (hasHoles && halfEdges[i][0]->isLoopy()) {
+            return true;
+        }
+    }
+    return false;
+}
 
 NetGraphMap* NetGraphMapFinder::matchEndpoint(
     const EndpointData& endpointData,
@@ -320,11 +319,14 @@ NetGraphMap* NetGraphMapFinder::matchEndpoint(
         return nullptr;
     }
 
-    // Check neighboring holes condition
-    /*if (neighboringHoles(endpointA->getLine(), edgeB) &&
-        halfB->getFace()->getPrimal()->getTurns() != 1) {
+    // Do not use this endpoint if it is attached to a face with interior vertex and
+    // it is not an outer face.
+    auto faceB = halfB->getFace();
+    auto bFaces = faceB->getNetwork()->getBFaces();
+    bool isOuter = !faceB->isLoopy() || std::find(bFaces.begin(), bFaces.end(), faceB) != bFaces.end();
+    if (neighboringHoles(endpointA->getLine(), edgeB) && !isOuter) {
         return nullptr;
-    }*/
+    }
 
     return assignEndpoint(endpointA, halfB, state);
 }

@@ -454,6 +454,7 @@ void NetTransistor::constrainVertexIds(std::vector<int>& vertexIds, NetTransisto
     }
 }
 
+// Connect a new face as an inner component or hole to this one.
 void NetTransistor::addFixedFace(Face* fixedFaceA, Face* fixedFaceB, double d) {
     auto* fPlace = settings->getFace(fixedFaceB->getId());
 

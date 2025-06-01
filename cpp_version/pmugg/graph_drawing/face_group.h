@@ -22,6 +22,7 @@ public:
     void removeFace(Face* face);
     std::vector<Face*> getFaces() const;
     void destroyIfEmpty();
+    void connectHole(FaceGroup* groupB);
 
 private:
     int id;

@@ -301,7 +301,7 @@ void Face::splitGroup() {
 
 std::vector<Vec3> Face::getIntersections(Plane* plane) {
     auto positions = getPositions();
-    int n = positions.size();
+    auto n = positions.size();
     std::vector<bool> isAbove(n);
     std::vector<bool> isBelow(n);
     for (int i = 0; i < n; i++) {
@@ -325,7 +325,7 @@ bool Face::containsPoint(Vec3 point) {
     int maxDim = faceType->getMaxDim();
     Vec2 point2D = point.dropDim(maxDim);
     auto positions = getPositions2D();
-    int n = positions.size();
+    auto n = positions.size();
 
     std::vector<bool> isAbove(n);
     std::vector<bool> isBelow(n);

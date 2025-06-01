@@ -44,4 +44,18 @@ void FaceGroup::destroyIfEmpty() {
     }
 }
 
+void FaceGroup::connectHole(FaceGroup* groupB) {
+    if (groupB == this) {
+        // This face has already been added.
+        return;
+    }
+    auto facesB = groupB->getFaces();
+	if (facesB.size() != 1) {
+        std::cout << "Hole group should have one face" << std::endl;
+	}
+	auto faceB = facesB[0];
+    groupB->removeFace(faceB);
+    addFace(faceB);
+}
+
 } // namespace ms 
