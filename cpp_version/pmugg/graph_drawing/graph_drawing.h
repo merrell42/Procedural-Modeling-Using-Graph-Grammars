@@ -4,6 +4,7 @@
 #include "face.h"
 #include "line.h"
 #include "vertex.h"
+#include "face_group.h"
 #include <iostream>
 #include "../shape/mesh.h"
 #include "../bsp/bsp_node.h"
@@ -33,6 +34,7 @@ class GraphDrawing {
 		Line* getLine(int id) {         return lineMap[id]; }
 		Vertex* getVertex(int id) {     return vertexMap[id];}
 		BspNode* getBspNode(int id) {   return bspNodeMap[id];}
+		FaceGroup* getFaceGroup(int id) {   return faceGroupMap[id];}
 
 		void addEndpoint(int id, Endpoint* endpoint) {
 			endpointMap[id] = endpoint;
@@ -41,18 +43,21 @@ class GraphDrawing {
 		void addLine    (int id, Line* line) {         lineMap[id] = line; }
 		void addVertex  (int id, Vertex* vertex) {     vertexMap[id] = vertex; }
 		void addBspNode (int id, BspNode* bspNode) { bspNodeMap[id] = bspNode; }
+		void addFaceGroup(int id, FaceGroup* faceGroup) { faceGroupMap[id] = faceGroup; }
 
 		void removeEndpoint(Endpoint* endpoint);
 		void removeFace(Face* face);
 		void removeLine(Line* line);
 		void removeVertex(Vertex* vertex);
 		void removeBspNode(BspNode* bspNode);
+		void removeFaceGroup(FaceGroup* faceGroup);
 
 		std::map<int, Endpoint*> getEndpointMap() { return endpointMap; }
 		std::map<int, Face*> getFaceMap() { return faceMap; }
 		std::map<int, Line*> getLineMap() { return lineMap; }
 		std::map<int, Vertex*> getVertexMap() { return vertexMap; }
 		std::map<int, BspNode*> getBspNodeMap() { return bspNodeMap; }
+		std::map<int, FaceGroup*> getFaceGroupMap() { return faceGroupMap; }
 
 		// TODO: Make this more efficient.
 		int getVertexIndex(int vertexId) const {
@@ -84,6 +89,7 @@ class GraphDrawing {
 		std::map<int, Line*>     lineMap;
 		std::map<int, Vertex*>   vertexMap;
 		std::map<int, BspNode*>  bspNodeMap;
+		std::map<int, FaceGroup*> faceGroupMap;
 		int bspRootId;
 };
 }

@@ -35,6 +35,9 @@ void GraphDrawing::copy() {
 	for (const auto& [id, ptr] : bspNodeMap) {
 		ptr && ptr->copy();
 	}
+	for (const auto& [id, ptr] : faceGroupMap) {
+		ptr && ptr->copy();
+	}
 }
 
 void GraphDrawing::removeEndpoint(Endpoint* endpoint) {
@@ -51,6 +54,9 @@ void GraphDrawing::removeVertex(Vertex* vertex) {
 }
 void GraphDrawing::removeBspNode(BspNode* bspNode) {
 	bspNodeMap.erase(bspNode->getId());
+}
+void GraphDrawing::removeFaceGroup(FaceGroup* faceGroup) {
+	faceGroupMap.erase(faceGroup->getId());
 }
 
 void GraphDrawing::save(std::string suffix) {

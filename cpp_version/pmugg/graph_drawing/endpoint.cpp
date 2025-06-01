@@ -23,7 +23,7 @@ Endpoint::Endpoint(Model* model, int id, bool isAtStart, EdgeType3D* edgeType, V
         faceId = model->newId();
         std::vector<int> bspNodeIds;
         auto face = new Face(model, faceId, faceType, endpointIds, bspNodeIds);
-        // face.createGroup();
+        face->createGroup();
         // face.getNode().connect(this);
     }
 }

@@ -510,6 +510,7 @@ void NetGraphMapFinder::findNearestIntersection(Face* faceA, const Vec3& p0, con
 }
 
 // Cast a ray and find the nearest intersection
+// TODO: Use BSP tree.
 IntersectResult NetGraphMapFinder::castRay(const Vec3& p0, const Vec3& dir, FaceGroup* groupA, const std::map<int, Face*>& faceMap, int maxDim) {
     Vec3 p1 = dir;
     p1.scale(Intersector::FAR_DISTANCE);

@@ -14,7 +14,7 @@ class Plane;
 
 class Face {
 	public:
-		Face(Model* model, int id, FaceType3D* faceType, std::vector<int> endpointIds, bool looped, std::vector<int> bspNodeIds);
+		Face(Model* model, int id, FaceType3D* faceType, std::vector<int> endpointIds, bool looped, std::vector<int> bspNodeIds, int groupId, bool hole);
 		Face(Model* model, int id, FaceType3D* faceType, std::vector<int> endpointIds, std::vector<int> bspNodeIds);
 		Face* copy();
 		~Face();
@@ -26,6 +26,7 @@ class Face {
 		FaceType3D* getFaceType() const { return faceType; }
 		Range dirBounds(const Vec3& dir) const;
 		void append(Face* faceB);
+		void setGroup(FaceGroup* group);
 		void setLooped(bool looped_) { looped = looped_; }
 		FaceGroup* getGroup() const;
 		void split(Endpoint* endpoint);
@@ -48,6 +49,11 @@ class Face {
 		Plane getPlane() const;
 		std::vector<Vec3> getIntersections(Plane* plane);
 		bool containsPoint(Vec3 point);
+		void createGroup();
+		void splitGroup();
+		void setHole(bool newHole) { hole = newHole; }
+		bool isHole() const { return hole; }
+
 
 	private:
 		int id;
@@ -55,6 +61,8 @@ class Face {
 		bool looped;
 		FaceType3D* faceType;
 		std::vector<int> bspNodeIds;
+		int groupId;
+		bool hole;
 
 		Model* model;
 

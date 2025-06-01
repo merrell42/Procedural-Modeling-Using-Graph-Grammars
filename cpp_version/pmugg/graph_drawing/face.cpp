@@ -10,13 +10,15 @@
 
 namespace ms {
 
-Face::Face(Model* model, int id, FaceType3D* faceType, std::vector<int> endpointIds, bool looped, std::vector<int> bspNodeIds)
+Face::Face(Model* model, int id, FaceType3D* faceType, std::vector<int> endpointIds, bool looped, std::vector<int> bspNodeIds, int groupId, bool hole)
 	: model(model)
 	, id(id)
     , faceType(faceType)
     , endpointIds(endpointIds)
     , looped(looped)
-    , bspNodeIds(bspNodeIds) {
+    , bspNodeIds(bspNodeIds)
+    , groupId(groupId)
+    , hole(hole) {
     model->getCurrent()->addFace(id, this);
 }
 
@@ -26,16 +28,23 @@ Face::Face(Model* model, int id, FaceType3D* faceType, std::vector<int> endpoint
     , faceType(faceType)
     , endpointIds(endpointIds)
     , bspNodeIds(bspNodeIds)
-    , looped(false) {
+    , looped(false)
+    , groupId(-1)
+    , hole(false) {
     model->getCurrent()->addFace(id, this);
 }
 
 Face::~Face() {
+    auto group = getGroup();
+    if (group) {
+        group->removeFace(this);
+        group->destroyIfEmpty();
+    }
     removeFromBsp();
 }
 
 Face* Face::copy() {
-	auto result = new Face(model, id, faceType, endpointIds, looped, bspNodeIds);
+	auto result = new Face(model, id, faceType, endpointIds, looped, bspNodeIds, groupId, hole);
 	return result;
 }
 
@@ -114,18 +123,20 @@ std::vector<Vec2> Face::getPositions2D() const {
     return positions2D;
 }
 
+void Face::setGroup(FaceGroup* group) {
+    groupId = group->getId();
+}
+
 FaceGroup* Face::getGroup() const {
-    FaceGroup* group = new FaceGroup();
-    group->addFace(const_cast<Face*>(this));
-    return group;
+    return model->getCurrent()->getFaceGroup(groupId);
 }
 
 void Face::split(Endpoint* endpoint) {
-    std::vector<Endpoint*> endpoints = this->getEndpoints();
+    std::vector<Endpoint*> endpoints = getEndpoints();
     auto index = std::find(endpoints.begin(), endpoints.end(), endpoint) - endpoints.begin();
 
     if (looped) {
-        this->setLooped(false);
+        setLooped(false);
         std::vector<int> newOrder(endpointIds.begin() + index, endpointIds.end());
         newOrder.insert(newOrder.end(), endpointIds.begin(), endpointIds.begin() + index);
         endpointIds = newOrder;
@@ -138,16 +149,16 @@ void Face::split(Endpoint* endpoint) {
         std::vector<Endpoint*> splitEndpoints(endpoints.begin() + index, endpoints.end());
         std::vector<int> splitEndpointIds(endpointIds.begin() + index, endpointIds.end());
         Face* newFace = new Face(model, model->newId(), faceType, splitEndpointIds, std::vector<int>());
-        /* if (isHole()) {
+        if (isHole()) {
             newFace->setHole(true);
         }
 
-        bool insertAtStart = !this->isHole();
+        bool insertAtStart = !isHole();
         if (insertAtStart) {
-            this->getGroup()->getNode()->splice(newFace, 0);
+            getGroup()->insertFace(newFace, 0);
         } else {
-            this->getGroup()->getNode()->connect(newFace);
-        } */
+            getGroup()->addFace(newFace);
+        }
 
         for (auto& splitEndpoint : splitEndpoints) {
             splitEndpoint->setFace(newFace);
@@ -274,6 +285,18 @@ Plane Face::getPlane() const {
     auto positions = getPositions();
     float d = normal.dot(positions[0]);
     return Plane(normal, d);
+}
+
+void Face::createGroup() {
+    groupId = model->newId();
+    auto group = new FaceGroup(model, groupId);
+    group->addFace(this);
+}
+
+void Face::splitGroup() {
+    auto group = getGroup();
+    group->removeFace(this);
+    createGroup();
 }
 
 std::vector<Vec3> Face::getIntersections(Plane* plane) {

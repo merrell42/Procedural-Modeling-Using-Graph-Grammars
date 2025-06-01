@@ -143,7 +143,6 @@ Graph* NetTransistor::createGraph() {
         }
     }*/
 
-
     // Maps from half edges to merge endpoints
     std::vector<Endpoint*> mergedEndpoints(endNetwork->getHalfEdges().size());
     std::fill(mergedEndpoints.begin(), mergedEndpoints.end(), nullptr);
@@ -368,20 +367,20 @@ Graph* NetTransistor::createGraph() {
         }
     }
 
-    // TODO: Handle holes.
     // Process outer faces
-    /*size_t faceIndex = 0;
-    for (Face* face : endNet->getOuterFaces()) {
-        merged->faces[faceIndex++]->setHole(true);
-    }*/
-
-    // TODO: Add Face groups back in.
-    //for (Face* face : merged->faces) {
-    //    if (!face->isHole() &&
-    //        face->getGroup()->getFaces().indexOf(face) > 0) {
-    //        face->splitGroup();
-    //    }
-    //}
+    size_t faceIndex = 0;
+    for (FaceNet* outerFace : endNet->getBFaces()) {
+        faceIndex = indexOf(endNet->getFaces(), outerFace);
+        merged->faces[faceIndex]->setHole(true);
+    }
+    for (Face* face : merged->faces) {
+		// Split the face off from a group if it is not a hole, but is not in
+		// outer position. It was split from another face, but is no longer coplanar.
+        if (!face->isHole() &&
+            indexOf(face->getGroup()->getFaces(), face) > 0) {
+            face->splitGroup();
+        }
+    }
 
     // Update outer faces map
     //map.outerFacesA.clear();
@@ -561,7 +560,7 @@ void NetTransistor::setupFaceCentric() {
     }
 
     // Process face placements
-    /*for (auto& [_, fPlace] : settings->facePlacements) {
+    for (auto& [_, fPlace] : settings->facePlacements) {
         auto face = fPlace->getFace();
         if (face) {
             auto* group = face->getGroup();
@@ -572,7 +571,7 @@ void NetTransistor::setupFaceCentric() {
                 addFixedFace(face, face, d);
             }
         }
-    }*/
+    }
 
     constrainVertexIds(fixedVertexIds, settings.get());
     constrainVertexIds(vertexIds, settings.get());
@@ -1006,6 +1005,7 @@ bool NetTransistor::placeVertexPositions(const std::vector<double>& positions) {
         }
     }
 
+    // TODO: Handle holes.
     //// Check face containment
     //bool success = std::all_of(facesToIntersect.begin(), facesToIntersect.end(),
     //    [this](Face* faceA) {

@@ -20,7 +20,8 @@ int main() {
 	// ifstream file("../../../grammar data/2D Basic Shapes/square filled.json");
 	// ifstream file("../../../grammar data/2D Branches/intersection.json");
 	// ifstream file("../../../grammar data/2D Basic Shapes/square hollow.json");
-	ifstream file("../../../grammar data/3D Shapes/L-floating.json");
+	ifstream file("../../../grammar data/3D Shapes/L-grounded.json");
+	// ifstream file("../../../grammar data/3D Shapes/box.json");
 	string content((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
 	file.close();
 	resetRandom(9);
