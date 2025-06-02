@@ -1,7 +1,6 @@
 #pragma once
 #include <vector>
 #include <memory>
-// #include "primal_vertex.h"
 #include "../guidelines/vertex_type.h"
 #include "../third_party/json.h"
 #include <iostream>
@@ -13,7 +12,6 @@ namespace ms {
 
 class Network;
 class HalfEdgeNet;
-class ConnectorGroup;
 class View;
 class VertexType;
 class EdgeNet;
@@ -34,7 +32,6 @@ public:
     }
     void setType(VertexType* type_) { type = type_; }
     Network* getNetwork() const { return network; }
-    ConnectorGroup* getGroup() const { return group; }
     int getId() const { return id; }
     int connectorIndex() const;
     EdgeNet* interiorEdge() const;
@@ -43,7 +40,6 @@ public:
     void setHalfEdge(HalfEdgeNet* halfEdge, int index);
     void copyConnection(const VertexNet* copy);
 
-    void setGroup(ConnectorGroup* newGroup) { group = newGroup; }
     bool inNetwork() const;
 
     // TODO: Replace with edgeType.
@@ -53,7 +49,6 @@ private:
     std::vector<HalfEdgeNet*> halfEdges;
     VertexType* type;
     Network* network;
-    ConnectorGroup* group;
     int id;
 
     static int nextId;

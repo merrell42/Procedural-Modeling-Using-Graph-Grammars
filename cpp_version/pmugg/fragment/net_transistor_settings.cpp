@@ -64,10 +64,10 @@ void NetTransistorSettings::mergeFace(int idA, int idB) {
 int NetTransistorSettings::findBasisOrder(const int basisId) {
     for (size_t index = 0; index < orderIds.size(); ++index) {
         if (orderIds[index] == basisId && orderInfo[index].type == "face") {
-            return static_cast<int>(index); // Return matching index
+            return static_cast<int>(index);
         }
     }
-    return -1; // Return -1 if not found
+    return -1;
 }
 
 }

@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "vertex_type.h"
 #include "../shapes3D/edge_type3d.h"
-// #include "vertex_decoration.h"
 #include "../shapes3d/shape3d.h"
 #include "../util/util.h"
 #include <algorithm>
@@ -13,8 +12,7 @@ namespace ms {
 
 int VertexType::nextId = 0;
 
-VertexType::VertexType(/* VertexDecoration* decoration */)
-    // : decoration(decoration)
+VertexType::VertexType()
     : spliced(false)
     , id(nextId++) {
 }
@@ -22,10 +20,6 @@ VertexType::VertexType(/* VertexDecoration* decoration */)
 const std::vector<Connection>& VertexType::getConnections() const {
     return connections;
 }
-
-/* VertexDecoration* VertexType::getDecoration() const {
-    return decoration;
-} */
 
 bool VertexType::getSpliced() const {
     return spliced;
@@ -36,7 +30,7 @@ int VertexType::getId() const {
 }
 
 void VertexType::addEdge(EdgeType3D* edge, bool isAtStart, float angle) {
-    // Angle becomes the angle going out from the vertex through the edge
+    // Angle becomes the angle going out from the vertex through the edge.
     auto dir = edge->getDir();
     if (!isAtStart) {
         angle += (float)M_PI;
@@ -47,9 +41,9 @@ void VertexType::addEdge(EdgeType3D* edge, bool isAtStart, float angle) {
     int directedId = 2 * edge->getId() + (isAtStart ? 0 : 1);
     float adjustedAngle = getAdjustedAngle(angle, edge, isAtStart);
 
-    // Find insertion point to maintain sorted order
+    // Find insertion point to maintain sorted order.
     auto it = std::lower_bound(connections.begin(), connections.end(),
-        Connection{},  // Dummy connection for comparison
+        Connection{},
         [adjustedAngle, directedId](const Connection& a, const Connection& b) {
             return (a.adjustedAngle < adjustedAngle) ||
                    (a.adjustedAngle == adjustedAngle && a.directedId < directedId);
@@ -70,11 +64,8 @@ void VertexType::setSpliced(bool spliced) {
     this->spliced = spliced;
 }
 
-VertexType* VertexType::import(const Json& json, Shape3D* shape) {
-    // auto decoration = json.contains("decoration") ? 
-    //     VertexDecoration::import(json["decoration"], [](){}) : nullptr;
-    
-    auto result = new VertexType(/*decoration*/);
+VertexType* VertexType::import(const Json& json, Shape3D* shape) {    
+    auto result = new VertexType();
     bool spliced = json["spliced"];
     result->spliced = spliced;
 
@@ -94,70 +85,6 @@ VertexType* VertexType::import(const Json& json, Shape3D* shape) {
 
     return result;
 }
-
-/* VertexType* VertexType::partialImport(const Json& json,
-                                    const std::vector<EdgeType*>& edgeTypes) {
-    auto result = new VertexType(
-        new VertexDecoration([](){})  // Empty callback
-    );
-
-    for (const auto& connJson : json["connections"]) {
-        auto edge = edgeTypes[connJson["edge"].get<int>()];
-        std::vector<int> faceIds;
-        
-        if (connJson.contains("faceIds") && !connJson["faceIds"].empty()) {
-            faceIds = connJson["faceIds"].get<std::vector<int>>();
-        } else {
-            for (const auto& datum : edge->getFaceData()) {
-                faceIds.push_back(datum.type->getId());
-            }
-        }
-
-        auto dir = edge->getDir();
-        bool isAtStart = connJson["isAtStart"].get<bool>();
-        if (!isAtStart) {
-            dir = dir * -1.0f;
-        }
-
-        Connection conn;
-        conn.dir = dir;
-        conn.edge = edge;
-        conn.isAtStart = isAtStart;
-        result->connections.push_back(conn);
-    }
-
-    result->id = json["id"];
-    return result;
-} */
-
-/* Json VertexType::export(const Types& types) const {
-    Json json;
-    
-    Json connsJson = Json::array();
-    for (const auto& conn : connections) {
-        Json connJson;
-        connJson["adjustedAngle"] = conn.adjustedAngle;
-        connJson["angle"] = conn.angle;
-        if (conn.dir != Vec2()) {
-            connJson["dir"] = conn.dir.export();
-        }
-        connJson["directedId"] = conn.directedId;
-        connJson["edge"] = std::find(types.edgeTypes.begin(), 
-                                   types.edgeTypes.end(), 
-                                   conn.edge) - types.edgeTypes.begin();
-        // connJson["faceIds"] = conn.faceIds;
-        connJson["isAtStart"] = conn.isAtStart;
-        connsJson.push_back(connJson);
-    }
-    json["connections"] = connsJson;
-    
-    if (decoration) {
-        json["decoration"] = decoration->export();
-    }
-    json["spliced"] = spliced;
-    
-    return json;
-} */
 
 float VertexType::getAdjustedAngle(float angle, EdgeType3D* edge, bool isAtStart) {
     int directedId = 2 * edge->getId() + (isAtStart ? 0 : 1);

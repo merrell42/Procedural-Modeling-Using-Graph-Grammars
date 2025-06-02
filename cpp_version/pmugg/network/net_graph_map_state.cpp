@@ -26,10 +26,11 @@ void NetGraphMapState::assignVertex(Vertex* vertexA, int indexB) {
     auto* vertexB = info->networkB->getVertices()[indexB];
     map->vertexBtoA[indexB] = vertexA;
 
-    // Add all non-spliced half edges to queue and spliced ones to spliceQueue
+    // Add all non-spliced half edges to queue and spliced ones to spliceQueue.
     for (auto* halfB : vertexB->getHalfEdges()) {
-        if (!halfB) continue;
-
+        if (!halfB) {
+            continue;
+        }
         if (halfB->isSpliced()) {
             spliceQueue.push_back(EndpointData(halfB, vertexA));
         } else {

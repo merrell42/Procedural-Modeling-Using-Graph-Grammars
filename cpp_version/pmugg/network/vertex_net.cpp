@@ -2,7 +2,6 @@
 #include "vertex_net.h"
 #include "network.h"
 #include "connector_group.h"
-// #include "view.h"
 #include "half_edge_net.h"
 #include "../util/util.h"
 
@@ -12,13 +11,8 @@ int VertexNet::nextId = 0;
 
 VertexNet::VertexNet()
     : network(nullptr)
-    // primal(nullptr)
-    , group(nullptr)
+    , type(nullptr)
     , id(nextId++) {}
-
-//void VertexNet::setPrimal(PrimalVertex* p) {
-//    primal = p;
-//}
 
 VertexNet* VertexNet::connectNet(Network* net) {
     network = net;
@@ -46,8 +40,7 @@ int VertexNet::connectorIndex() const {
 
 void VertexNet::copyConnection(const VertexNet* copy) {
     auto* copyNet = copy->getNetwork();
-    
-    // Copy half-edges
+
     halfEdges.clear();
     auto copyHalfEdges = copy->getHalfEdges();
     halfEdges.reserve(copyHalfEdges.size());
@@ -55,10 +48,6 @@ void VertexNet::copyConnection(const VertexNet* copy) {
     for (auto* halfEdge : copyHalfEdges) {
         halfEdges.push_back(halfEdge ? network->convertHalfEdge(copyNet, halfEdge) : nullptr);
     }
-    
-    // Copy group
-    //auto* copyGroup = copy->getGroup();
-    //group = copyGroup ? network->convertConnectorGroup(copyNet, copyGroup) : nullptr;
 }
 
 bool VertexNet::inNetwork() const {
@@ -79,43 +68,7 @@ EdgeNet* VertexNet::interiorEdge() const {
     return nullptr;
 }
 
-//void VertexNet::highlight(View* view, const DrawOptions& options) {
-//    auto highlightOptions = HalfEdgeSet::create(halfEdges);
-//    network->highlight(view, highlightOptions);
-//}
-//
-//void VertexNet::print() const {
-//    auto* interior = primal->getInterior();
-//    if (interior != this) {
-//        std::cout << "Boundary Vertex" << std::endl;
-//        auto* halfEdge = interior->getHalfEdges()[0];
-//        if (halfEdge->getEdge()) {
-//            halfEdge->getEdge()->print();
-//        } else {
-//            halfEdge->getPrev()->getEdge()->print();
-//        }
-//    } else {
-//        ms::highlight(this);
-//    }
-//}
-//
-//Json VertexNet::export() const {
-//    Json json;
-//    
-//    // Export half-edges
-//    json["halfEdges"] = Json::array();
-//    for (auto* halfEdge : halfEdges) {
-//        json["halfEdges"].push_back(halfEdge ? network->halfEdgeIndex(halfEdge) : -1);
-//    }
-//    
-//    // Export group
-//    json["group"] = group ? network->connectorGroupIndex(group) : -1;
-//    
-//    return json;
-//}
-
 void VertexNet::import(const Json& json) {
-    // Import half-edges
     halfEdges.clear();
     auto& networkHalfEdges = network->getHalfEdges();
     
@@ -125,10 +78,6 @@ void VertexNet::import(const Json& json) {
             halfEdges.push_back(idx >= 0 ? networkHalfEdges[idx] : nullptr);
         }
     }
-    
-    // Import group
-    //int groupIndex = json["group"].get<int>();
-    //group = groupIndex >= 0 ? network->getConnectorGroups()[groupIndex] : nullptr;
 }
 
 } // namespace ms 

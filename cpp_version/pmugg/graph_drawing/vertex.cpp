@@ -15,7 +15,6 @@ Vertex::Vertex(Model* model, int id, Vec3 position, VertexType* type, std::vecto
 Vertex::Vertex(Model* model, Vec3 position, VertexType* type)
 	: model(model)
 	, id(model->newId())
-	// , endpointIds(type->getConnections().size(), -1)
 	, position(position)
 	, type(type) {
 	model->getCurrent()->addVertex(id, this);
@@ -40,26 +39,15 @@ void Vertex::createEndpoints() {
 }
 
 Endpoint* Vertex::createEndpoint(const Connection& connection, int faceIndex) {
-	/*if (node.isDestroyed()) {
-		std::cerr << "Error in createEndpoint." << std::endl;
-		return nullptr;
-	}*/
-
 	Vec3 dir = connection.dir.copy();
-	/*if (angle != 0) {
-		dir.rotate(angle);
-	}*/
 
-	// double adjustedAngle = ms::util::fixAngle(angle + connection.angle);
-
-	// Create the endpoint
+	// Create the endpoint.
 	const int endpointId = model->newId();
 	const int vertexId = id;
 	const int lineId = model->newId();
-	// const int faceId = model->newId();
 	auto endpoint = new Endpoint(model, endpointId, connection.isAtStart, connection.edge, dir, vertexId, -1, lineId, true, faceIndex);
 
-	// Create the line and segment
+	// Create the line.
 	std::vector<int> lineEndpointIds(2, -1);
 	lineEndpointIds[faceIndex] = endpointId;
 	std::vector<int> bspNodeIds;
@@ -67,12 +55,6 @@ Endpoint* Vertex::createEndpoint(const Connection& connection, int faceIndex) {
 
 	// Add the endpoint to the vertex.
 	endpointIds.push_back(endpointId);
-
-	/*endpoint->maybeMergePrevFace();
-	auto twin = endpoint->twin();
-	if (twin) {
-		twin->maybeMergeNextFace();
-	}*/
 
 	return endpoint;
 }

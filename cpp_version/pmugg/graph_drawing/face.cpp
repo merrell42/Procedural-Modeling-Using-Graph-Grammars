@@ -166,12 +166,21 @@ void Face::insert(Endpoint* endpoint, Endpoint* prevEndpoint) {
 
     // Insert the new endpoint at the correct position
     int id = endpoint->getId();
-    int index = indexOf(endpoints, prevEndpoint);
+    int prevId = prevEndpoint->getId();
+    
+    // Find the index by comparing IDs instead of pointers
+    int index = -1;
+    for (size_t i = 0; i < endpoints.size(); i++) {
+        if (endpoints[i]->getId() == prevId) {
+            index = i;
+            break;
+        }
+    }
+    
     if (index >= 0) {
         endpointIds.insert(endpointIds.begin() + index + 1, id);
         endpoint->setFace(this);
-    }
-    else {
+    } else {
         endpointIds.insert(endpointIds.begin(), id);
         endpoint->setFace(this);
     }
@@ -224,8 +233,7 @@ void Face::exportMesh(
                 // Flip the order of the vertices to face outward.
                 triangles.push_back(indices[i + 1] + startIndex);
                 triangles.push_back(indices[i + 2] + startIndex);
-            }
-            else {
+            } else {
                 triangles.push_back(indices[i + 2] + startIndex);
                 triangles.push_back(indices[i + 1] + startIndex);
             }

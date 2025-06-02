@@ -10,8 +10,7 @@ namespace ms {
 const Vec2 Vec2::ORIGIN(0, 0);
 
 Vec2::Vec2(float x_, float y_)
-    : x(x_)
-    , y(y_) {}
+    : x(x_), y(y_) {}
 
 float Vec2::getValue(int dim) const {
     switch (dim) {

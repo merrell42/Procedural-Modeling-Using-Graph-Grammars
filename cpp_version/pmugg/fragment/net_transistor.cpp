@@ -1,8 +1,6 @@
 #include "pch.h"
 #include "net_transistor.h"
 #include "../network/network.h"
-// #include "transition.h"
-// #include "graph.h"
 #include "../graph_drawing/vertex.h"
 #include "../graph_drawing/line.h"
 #include "../graph_drawing/face.h"
@@ -11,7 +9,7 @@
 #include "../util/util.h"
 #include <iostream>
 #include <set>
-#include <utility> // For std::pair
+#include <utility>
 
 namespace ms {
 
@@ -33,12 +31,10 @@ void NetTransistor::create(const Transition& transition, Model* model_, int dims
     model = model_;
     endNet = transition.endNet;
  
-    // map = std::move(transition.map);
     map = transition.map;
     ground = transition.ground;
     dims = dims_;
-    
-    // isInitialBoundary = transition.initialBoundary;
+
     effort = 0;
 
     timer->start("Create Graph");
@@ -88,18 +84,12 @@ void NetTransistor::addLine(Line* line, bool includeLength, bool addToGraph) {
 static void destroyLines(const std::vector<std::vector<Line*>>& lineGroup) {
     std::set<Endpoint*> endpointSet;
     std::set<Vertex*> vertexSet;
-
-    // std::set<Connection*> connectionsToUpdate;
     for (const auto& lineGroup : lineGroup) {
         for (Line* line : lineGroup) {
             if (line) {
                 auto endpoints = line->getEndpoints();
                 endpointSet.insert(endpoints[0]);
                 endpointSet.insert(endpoints[1]);
-                // TODO: Add the faceConnections here and handle them.
-                // The faceConnections are only needed for shapes with holes.
-                // addConnectionsToSet(endpoints[0], connectionsToUpdate);
-                // addConnectionsToSet(endpoints[1], connectionsToUpdate);
                 line->destroy();
             }
         }
@@ -117,15 +107,6 @@ static void destroyLines(const std::vector<std::vector<Line*>>& lineGroup) {
         }
     }
 }
-
-// Helper function to add connections to the set
-//void addConnectionsToSet(Endpoint* endpoint, std::set<Connection*>& connectionsToUpdate) {
-//    if (endpoint) {
-//        for (auto* connection : endpoint->getConnections()) {
-//            connectionsToUpdate.insert(connection);
-//        }
-//    }
-//}
 
 Graph* NetTransistor::createGraph() {
     auto* endNetwork = endNet;
@@ -175,7 +156,8 @@ Graph* NetTransistor::createGraph() {
         if (v->connectorIndex() < 0) {
             auto* type = v->getType();
             
-            // Create random position based on dimensions
+            // Create a random position. This was for debugging in the web version.
+            // The position is later replaced.
             Vec3 randomPosition = Vec3(
                 5.0 * random(),
                 5.0 * random(),
@@ -206,7 +188,6 @@ Graph* NetTransistor::createGraph() {
 
     // Process edges
     std::vector<EdgeData> edgeData;
-    
     for (size_t i = 0; i < endEdges.size(); ++i) {
         auto* endEdge = endEdges[i];
         auto& edgeHalfs = endEdge->getHalfEdges();
@@ -231,7 +212,7 @@ Graph* NetTransistor::createGraph() {
                         if (splitLines[i][0] == splitLines[startIndex][0]) {
                             count++;
                             if (count >= 2) {
-                                // The same line is being split twice. This should not happen. Exiting early.
+                                // The same line is being split twice. This should not happen. Exit early.
                                 return nullptr;
                             }
                         }
@@ -259,7 +240,7 @@ Graph* NetTransistor::createGraph() {
         edgeData.push_back({coreEndpoints, halfEdges, modified});
     }
 
-    // Process end edges
+    // Process end edges.
     for (size_t i = 0; i < endEdges.size(); i++) {
         EdgeNet* endEdge = endEdges[i];
         auto edgeHalfs = endEdge->getHalfEdges();
@@ -278,7 +259,7 @@ Graph* NetTransistor::createGraph() {
 
     bool failed = false;
 
-    // Process faces in end network
+    // Process faces in end network.
     for (FaceNet* face : endNetwork->getFaces()) {
         auto halfs = face->getOuterHalfEdges();
         size_t N = halfs.size();
@@ -303,7 +284,7 @@ Graph* NetTransistor::createGraph() {
         return merged; // Return empty merged data
     }
 
-    // Process edge data
+    // Process edge data.
     merged->edges.resize(edgeData.size());
     for (size_t i = 0; i < edgeData.size(); i++) {
         EdgeData& datum = edgeData[i];
@@ -315,8 +296,6 @@ Graph* NetTransistor::createGraph() {
             line0->addEndpoint(endpointJ, datum.halfEdges[j]->getEdgeIndex());
             lineJ->destroy();
         }
-
-        // line0->fillFromEndpoints();
         merged->edges[i] = line0;
 
         if (datum.modified) {
@@ -325,8 +304,6 @@ Graph* NetTransistor::createGraph() {
                 datum.coreEndpoints[1]->getVertex()
             };
             Util::union_(merged->vertices, newVertices);
-            // merged->vertices.push_back(datum.coreEndpoints[0]->getVertex());
-            // merged->vertices.push_back(datum.coreEndpoints[1]->getVertex());
         }
     }
 
@@ -355,10 +332,9 @@ Graph* NetTransistor::createGraph() {
         }
     }
 
-    // Update connections
     destroyLines(splitLines);
 
-    // Process faces
+    // Process faces.
     merged->faces.clear();
     for (FaceNet* face : endNetwork->getFaces()) {
         HalfEdgeNet* half = face->getOuterComponent();
@@ -367,7 +343,7 @@ Graph* NetTransistor::createGraph() {
         }
     }
 
-    // Process outer faces
+    // Process outer faces.
     size_t faceIndex = 0;
     for (FaceNet* outerFace : endNet->getBFaces()) {
         faceIndex = indexOf(endNet->getFaces(), outerFace);
@@ -389,21 +365,7 @@ Graph* NetTransistor::createGraph() {
     //        halfToEndpoint(endFace->getOuterComponent())->getFace());
     //}
 
-    // Update face connections. This involves holes and check success.
-    bool success = true;
-    /* for (Connection* connection : connectionsToUpdate) {
-        if (connection->getNode()->isDestroyed()) {
-            continue;
-        }
-        auto endpoints = connection->getEndpoints();
-        Face* face = connection->getFace();
-
-        if (endpoints[1]) {
-            success = success && face->updateConnection();
-        }
-    }*/
-
-    return success ? merged : new Graph();
+    return merged;
 }
 
 bool NetTransistor::solve() {
@@ -412,20 +374,12 @@ bool NetTransistor::solve() {
 }
 
 void NetTransistor::setup() {
-    // Set math library based on settings
-    //if (GlobalSettings::get("Fast Matrix Math")) {
-    //    mathG = &FastMath::getInstance();
-    //}
-    //else {
-    //    mathG = &Math::getInstance();
-    //}
-
     timer->start("Setup");
     setupFaceCentric();
     timer->stop("Setup");
 }
 
-// Static helper function
+// Static helper function.
 void NetTransistor::constrainVertexIds(std::vector<int>& vertexIds, NetTransistorSettings* settings) {
     std::vector vIds(vertexIds);
     while (!vIds.empty()) {
@@ -597,6 +551,7 @@ Limits NetTransistor::findLimits() {
         double minLength = 0;
         double maxLength = std::numeric_limits<double>::infinity();
 
+        // TODO: Use brushes to set edge lengths.
         /*auto* edgeType = edge->getEdgeType();
         auto* brush = edgeType->getBrush();
         if (brush && brush->get("Strict Length")) {
@@ -631,18 +586,15 @@ Range NetTransistor::getRange(
     for (size_t i = 0; i < orderIds.size(); i++) {
         int id = orderIds[i];
         const auto& info = orderInfo[i];
-        Range rangeI;
 
+        Range rangeI;
         if (info.type == "vertex") {
             rangeI = settings->getVertex(id)->getRange();
-        }
-        else if (info.type == "edge") {
+        } else if (info.type == "edge") {
             rangeI = settings->getEdge(id)->getRange();
-        }
-        else if (info.type == "face") {
+        } else if (info.type == "face") {
             rangeI = settings->getFace(id)->getRange(info.vertexId);
         }
-
         range = range.intersect(rangeI);
     }
 
@@ -659,8 +611,7 @@ void NetTransistor::setPlacements(
 
         if (info.type == "vertex") {
             settings->getVertex(id)->setPosition();
-        }
-        else if (info.type == "face") {
+        } else if (info.type == "face") {
             settings->getFace(id)->setFromVertex(info.vertexId);
         }
     }
@@ -675,35 +626,16 @@ std::pair<std::vector<double>, bool> NetTransistor::sampleFaceCentric() {
             std::vector<double> lower = {0, 0, 0};
             auto upper = getExtents();
             for (auto* vertex : vertices) {
-                // if (dims == 3) {
-                    auto dir = vertex->getHalfEdges()[0]->getDir();
-                    if (dir.getX() > 0.9) {          // +X
-                        result.insert(result.end(), { lower[0], lower[1], lower[2] + 1 });
-                    } else if (dir.getX() < -0.9) {  // -X
-                        result.insert(result.end(), { upper[0], upper[1], lower[2] + 1 });
-                    } else if (dir.getY() > 0.9) {   // +Y
-                        result.insert(result.end(), { upper[0], lower[1], lower[2] + 1 });
-                    } else if (dir.getY() < -0.9) {  // -Y
-                        result.insert(result.end(), { lower[0], upper[1], lower[2] + 1 });
-                    }
-                /* } else {
-                    int signX = 0, signY = 0;
-                    for (int i = 0; i < 2; i++) {
-                        auto dir = vertex->getHalfEdges()[i]->getDir();
-                        if (dir.getX() > 0.9) signX = 1;
-                        if (dir.getX() < -0.9) signX = -1;
-                        if (dir.getY() > 0.9) signY = 1;
-                        if (dir.getY() < -0.9) signY = -1;
-                    }
-
-                    if (signX == 0 || signY == 0) {
-                        std::cout << "2D boundary corner is wrong." << std::endl;
-                    }
-
-                    double xPos = (signX == 1) ? lower[0] + 0.1 : upper[0] - 0.1;
-                    double yPos = (signY == 1) ? lower[1] + 0.1 : upper[1] - 0.1;
-                    result.insert(result.end(), { xPos, yPos });
-                } */
+                auto dir = vertex->getHalfEdges()[0]->getDir();
+                if (dir.getX() > 0.9) {          // +X
+                    result.insert(result.end(), { lower[0], lower[1], lower[2] + 1 });
+                } else if (dir.getX() < -0.9) {  // -X
+                    result.insert(result.end(), { upper[0], upper[1], lower[2] + 1 });
+                } else if (dir.getY() > 0.9) {   // +Y
+                    result.insert(result.end(), { upper[0], lower[1], lower[2] + 1 });
+                } else if (dir.getY() < -0.9) {  // -Y
+                    result.insert(result.end(), { lower[0], upper[1], lower[2] + 1 });
+                }
             }
             return std::make_pair(result, true);
         }
@@ -719,7 +651,9 @@ std::pair<std::vector<double>, bool> NetTransistor::sampleFaceCentric() {
         success = success && settings->getVertex(id)->fixPosition();
     }
 
-    if (!success) return {};
+    if (!success) {
+        return {};
+    }
 
     std::vector<int> basisOrders;
     for (const auto& basisId : settings->basisIds) {
@@ -744,11 +678,9 @@ std::pair<std::vector<double>, bool> NetTransistor::sampleFaceCentric() {
             effort = std::numeric_limits<double>::infinity();
             return std::make_pair(std::vector<double>(), false);
         }
-
         if (range.isEmpty()) {
             return std::make_pair(std::vector<double>(), false);
         }
-
         if (!fPlace->getFixed()) {
             double d = range.sample();
             fPlace->setD(d);
@@ -849,8 +781,6 @@ void NetTransistor::freeOneVertex(Vertex* vertex) {
         
         if (std::find_if(lineData.begin(), lineData.end(), hasLine) == lineData.end()) {
             addLine(line, true, true);
-            // auto* lineState = line->getSegment()->getStates()[0];
-            // lineState->removeCells();
         }
     }
 
@@ -901,7 +831,6 @@ bool NetTransistor::placeVertexPositions(const std::vector<double>& positions) {
             positions[3 * i + 1], 
             positions[3 * i + 2]
         );
-        
         freeVertices[i]->setPosition(position);
         /*if (!model->inBounds(position.x, position.y, position.z)) {
             return false;
@@ -919,85 +848,6 @@ bool NetTransistor::placeVertexPositions(const std::vector<double>& positions) {
         }
         return true;
     }
-
-    //// Faces to update the face connection
-    //std::set<Face*> facesToUpdate;
-
-    //// 2D Edge Intersections
-    //if (dims == 2) {
-    //    for (size_t i = 0; i < propagationOrder.size(); i++) {
-    //        auto* endpoint = propagationOrder[i];
-    //        auto* line = endpoint->getLine();
-    //        line->moveToEndpoints();
-    //        auto* lineState = line->getSegment()->getStates()[0];
-    //        
-    //        auto intersection = lineState->addToModelWithIntersections(-std::numeric_limits<double>::infinity());
-    //        if (intersection) {
-    //            if (!intersection->state) {
-    //                return false;
-    //            }
-    //            // Reset the line states, remove them from the model
-    //            for (size_t j = 0; j <= i; j++) {
-    //                auto* endpoint = propagationOrder[j];
-    //                auto* line = endpoint->getLine();
-    //                auto* lineState = line->getSegment()->getStates()[0];
-    //                lineState->removeCells();
-    //            }
-    //            return false;
-    //        }
-
-    //        auto intersections = lineState->findConnectionIntersections();
-    //        for (const auto& connection : intersections) {
-    //            facesToUpdate.insert(connection->getFace());
-    //        }
-    //    }
-    //}
-
-    //// Collect core vertices
-    //std::vector<Vertex*> coreVertices;
-    //for (auto* path : openPaths) {
-    //    coreVertices.push_back(path->endpoints[0]->getVertex());
-    //}
-    //coreVertices.insert(coreVertices.end(), freeVertices.begin(), freeVertices.end());
-
-    ////if (dims == 2) {
-    ////    // Find all faces that were involved
-    ////    auto addFaces = [&facesToUpdate](Endpoint* endpoint) {
-    ////        facesToUpdate.insert(endpoint->getFace());
-    ////        for (auto* connection : endpoint->getConnections()) {
-    ////            facesToUpdate.insert(connection->getFace());
-    ////        }
-    ////    };
-
-    ////    for (auto* edge : freeEdges) {
-    ////        auto& endpoints = edge->getEndpoints();
-    ////        addFaces(endpoints[0]);
-    ////        addFaces(endpoints[1]);
-    ////    }
-
-    ////    // Update face connections
-    ////    bool success = true;
-    ////    for (auto* face : facesToUpdate) {
-    ////        success = success && face->updateConnection();
-    ////    }
-    ////    if (!success) {
-    ////        return false;
-    ////    }
-
-    ////    // Handle tiled edges
-    ////    for (auto* edge : freeEdges) {
-    ////        auto* brush = edge->getBrush();
-    ////        bool tiled = brush ? brush->get("Tiled") : true;
-    ////        if (tiled && brush) {
-    ////            auto& endpoints = edge->getEndpoints();
-    ////            double length = endpoints[0]->getPosition().distance(endpoints[1]->getPosition());
-    ////            double lengthInTiles = length / brush->get("Tile Length");
-    ////            int numTiles = std::max(1, static_cast<int>(std::round(lengthInTiles)));
-    ////            edge->getState()->getCoordinates()->angledEdges[1].t = numTiles;
-    ////        }
-    ////    }
-    ////}
-    //// 3D case
 
     std::vector<Face*> facesToIntersect;
     for (const auto& [_, fPlace] : settings->facePlacements) {
@@ -1053,46 +903,20 @@ bool NetTransistor::placeVertexPositions(const std::vector<double>& positions) {
         }
     }
 
-    //// Handle BSP tree operations
-    //BspTree* tree = model->getBspTree();
-    //for (size_t i = 0; i < facesToIntersect.size(); i++) {
-    //    auto* face = facesToIntersect[i];
-    //    auto* plane = BspPlane::create(face);
-    //    auto* polygon = BspPolygon::create(face);
-
-    //    bool success = ground || !polygon->selfIntersects();
-    //    success = success && tree->add(plane, polygon);
-
-    //    if (!success) {
-    //        for (size_t j = 0; j <= i; j++) {
-    //            auto* face = facesToIntersect[j];
-    //            while (!face->getPolygons().empty()) {
-    //                face->getPolygons()[0]->getNode()->destroy();
-    //            }
-    //        }
-    //        return false;
-    //    }
-    //}
-
     return true;
 }
 
 void NetTransistor::reject() {
-    // Clean up resources
     delete graph;
     graph = nullptr;
     
-    // Clear vectors
     lineData.clear();
     lines.clear();
     freeVertices.clear();
     freeEdges.clear();
-    // edgeBlockers.clear();
     propagationOrder.clear();
     basisEdges.clear();
-    
-    // Reset pointers and values
-    // changeBasis = nullptr;
+
     initialPosition = nullptr;
     effort = std::numeric_limits<double>::infinity();
 }

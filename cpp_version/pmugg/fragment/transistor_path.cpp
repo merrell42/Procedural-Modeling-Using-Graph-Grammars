@@ -28,23 +28,6 @@ TransistorPath* TransistorPath::createNet(const std::vector<Endpoint*>& endpoint
     return new TransistorPath(indices, lines);
 }
 
-//TransistorPath* TransistorPath::create(const std::vector<Endpoint*>& endpoints,
-//                                     const std::vector<Line*>& edges,
-//                                     const std::vector<Line*>& lines) {
-//    std::vector<IndexInfo> indices;
-//    for (auto* endpoint : endpoints) {
-//        auto* edge = endpoint->getEdge();
-//        auto it = std::find(edges.begin(), edges.end(), edge);
-//        if (it == edges.end()) {
-//            Alert::show("endpoint is not found in edges.");
-//            return nullptr;
-//        }
-//        int index = std::distance(edges.begin(), it);
-//        indices.push_back({index, endpoint->getEdgeIndex() == 0});
-//    }
-//    return new TransistorPath(indices, lines);
-//}
-
 TransistorPath::TransistorPath(const std::vector<IndexInfo>& indices,
                              std::vector<Line*>* lines)
     : indices(indices)
@@ -80,7 +63,7 @@ Vertex* TransistorPath::rigidNextVertex() {
                 iIndices = {static_cast<int>(indices.size() - 2),
                            static_cast<int>(indices.size() - 1)};
             }
-            // Two consecutive indices must be rigid
+            // Two consecutive indices must be rigid.
             bool rigid = true;
             for (int j = 0; j < 2; j++) {
                 auto* line = lineFromIndex(iIndices[j]);
@@ -134,20 +117,5 @@ void TransistorPath::merge(TransistorPath* pathB) {
     extendable[1] = pathB->extendable[1];
     indices.insert(indices.end(), pathB->indices.begin(), pathB->indices.end());
 }
-
-//void TransistorPath::highlight(Context* context,
-//                             const std::function<Vec2(const Vec2&)>& convertToScreen) {
-//    for (auto* endpoint : endpoints) {
-//        endpoint->highlight(context, convertToScreen);
-//    }
-//    for (size_t i = 0; i < indices.size(); i++) {
-//        lineFromIndex(i)->highlight(context, convertToScreen);
-//    }
-//}
-//
-//void TransistorPath::print() {
-//    // Assuming there's a highlight function in the global scope
-//    highlight(this);
-//}
 
 } // namespace ms 

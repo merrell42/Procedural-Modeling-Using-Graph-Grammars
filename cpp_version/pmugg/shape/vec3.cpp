@@ -13,16 +13,13 @@ const Vec3 Vec3::Y_AXIS(0, 1, 0);
 const Vec3 Vec3::Z_AXIS(0, 0, 1);
 
 Vec3::Vec3(float x_, float y_, float z_)
-    : x(x_)
-    , y(y_)
-    , z(z_) {}
+    : x(x_), y(y_), z(z_) {}
 
 float Vec3::getValue(int dim) const {
     switch (dim) {
         case 0: return x;
         case 1: return y;
         case 2: return z;
-        default: throw std::runtime_error("Invalid dimension for Vec3");
     }
 }
 
@@ -31,7 +28,6 @@ void Vec3::setValue(float value, int dim) {
         case 0: x = value; break;
         case 1: y = value; break;
         case 2: z = value; break;
-        default: throw std::runtime_error("Invalid dimension for Vec3");
     }
 }
 

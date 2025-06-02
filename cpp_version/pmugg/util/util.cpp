@@ -14,7 +14,6 @@ int randomCount = 0;
 int randomSeed = 42;
 
 double random() {
-    // return static_cast<double>(rand()) / RAND_MAX;
     double x = (float)std::sin(randomSeed + randomCount) * (10000 + randomSeed);
     randomCount++;
     return x - std::floor(x);

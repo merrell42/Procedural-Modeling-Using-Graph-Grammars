@@ -37,7 +37,7 @@ void VertexPlacement::constrainFace(int id) {
     }
     unfreeFaceIds.push_back(id);
 
-    // Check if the face IDs are colinear
+    // Check if the face IDs are colinear.
     if (unfreeFaceIds.size() == 3) {
         auto* M = getM();
         if (!M) {
@@ -51,7 +51,7 @@ void VertexPlacement::propagate() {
     if (unfreeFaceIds.size() >= 3) {
         settings->addToOrder(this->id, "vertex", -1);
         
-        // Handle free faces and colinear faces
+        // Handle free faces and colinear faces.
         auto freeIds = freeFaceIds;
         freeIds.insert(freeIds.end(), colinearFaceIds.begin(), colinearFaceIds.end());
         
@@ -62,7 +62,7 @@ void VertexPlacement::propagate() {
             }
         }
 
-        // Handle connected edges
+        // Handle connected edges.
         for (Endpoint* endpoint : vertex->getEndpoints()) {
             int edgeId = endpoint->getLine()->getId();
             auto* ePlace = settings->getEdge(edgeId);
@@ -72,7 +72,7 @@ void VertexPlacement::propagate() {
 
             auto* prev = endpoint->prev();
             if (prev->getEdgeType()->faceData.size() == 1) {
-                // If prev edge only has one endpoint, propagate to previous vertex
+                // If prev edge only has one endpoint, propagate to previous vertex.
                 int prevEdgeId = prev->getLine()->getId();
                 auto* prevEPlace = settings->getEdge(prevEdgeId);
                 if (prevEPlace) {
@@ -84,13 +84,13 @@ void VertexPlacement::propagate() {
 }
 
 Matrix* VertexPlacement::getA(const std::vector<int>& faceIds) {
-    std::vector<std::vector<double>> A(3, std::vector<double>(3)); // Assuming A is a 3x3 matrix
+    std::vector<std::vector<double>> A(3, std::vector<double>(3));
 
     for (size_t i = 0; i < 3; i++) {
         int id = faceIds[i];
         FacePlacement* fPlace = settings->getFace(id);
         Vec3 n = fPlace->getNormal();
-        A[i] = { n.getX(), n.getY(), n.getZ()}; // Fill the matrix row with the normal components
+        A[i] = { n.getX(), n.getY(), n.getZ()};
     }
 
     return new Matrix(A);
@@ -100,33 +100,35 @@ Matrix* VertexPlacement::getM() {
     if (!M) {
         Matrix* A = getA(unfreeFaceIds);
         // The three faces are collinear.
+        // Return null if A is not invertible
         if (std::abs(Matrix::det(*A)) < 1e-8) {
-            delete A; // Clean up memory
-            return nullptr; // Return null if A is not invertible
+            delete A;
+            return nullptr;
         }
         M = Matrix::inverse(A);
-        delete A; // Clean up memory for A
+        delete A;
     }
     return M;
 }
 
 void VertexPlacement::setPosition() {
-    std::vector<std::vector<double>> D(3, std::vector<double>(1)); // 3x1 matrix
+    std::vector<std::vector<double>> D(3, std::vector<double>(1));
 
     for (size_t i = 0; i < 3; i++) {
         int id = unfreeFaceIds[i];
         FacePlacement* fPlace = settings->getFace(id);
-        D[i][0] = fPlace->getD(); // Fill D with D values
+        D[i][0] = fPlace->getD();
     }
 
-    Matrix* DMatrix = new Matrix(D); // Create a matrix from D
-    auto bMatrix = Matrix::multiply(getM(), DMatrix); // Multiply M and D
-    auto b = bMatrix->valueOf(); // Multiply M and D
-    delete DMatrix; // Clean up memory for DMatrix
+    // b = M * D.
+    Matrix* DMatrix = new Matrix(D);
+    auto bMatrix = Matrix::multiply(getM(), DMatrix);
+    auto b = bMatrix->valueOf();
+    delete DMatrix;
 
-    slope = Vec3(0, 0, 0); // Initialize slope
-    value = Vec3(b[0][0], b[1][0], b[2][0]); // Assuming b is a 3x1 matrix
-    delete bMatrix; // Clean up memory for bMatrix
+    slope = Vec3(0, 0, 0);
+    value = Vec3(b[0][0], b[1][0], b[2][0]);
+    delete bMatrix;
 }
 
 Range VertexPlacement::getRange() {
@@ -137,8 +139,8 @@ Range VertexPlacement::getRange() {
         int id = unfreeFaceIds[i];
         FacePlacement* fPlace = settings->getFace(id);
         auto mbi = fPlace->getChangeMB();
-        m3[i][0] = mbi.m; // Assuming mbi.m is a Vec3 or similar
-        b3[i][0] = mbi.b; // Assuming mbi.b is a double
+        m3[i][0] = mbi.m;
+        b3[i][0] = mbi.b;
     }
 
     Matrix* m3Matrix = new Matrix(m3);
@@ -148,8 +150,8 @@ Range VertexPlacement::getRange() {
     auto m = mMatrix->valueOf();
     auto b = bMatrix->valueOf();
 
-    delete m3Matrix; // Clean up memory for m3Matrix
-    delete b3Matrix; // Clean up memory for b3Matrix
+    delete m3Matrix;
+    delete b3Matrix;
 
     Range range(-std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity());
     for (size_t i = 0; i < 3; i++) {
@@ -160,8 +162,8 @@ Range VertexPlacement::getRange() {
     slope = Vec3(m[0][0], m[1][0], m[2][0]);
     value = Vec3(b[0][0], b[1][0], b[2][0]);
 
-    delete mMatrix; // Clean up memory for m
-    delete bMatrix; // Clean up memory for b
+    delete mMatrix;
+    delete bMatrix;
 
     return range;
 }
@@ -173,27 +175,28 @@ ChangeVecMB VertexPlacement::getChangeMB() const {
 }
 
 const Vec3& VertexPlacement::getPosition() const {
-    return value; // Return the position value
+    return value;
 }
 
 void VertexPlacement::addFixedNeighbor(const FixedFace& fixedFace) {
-    auto faceIds = getAllFaceIds(); // Get all face IDs
+    auto faceIds = getAllFaceIds();
     for (int id : faceIds) {
-        if (id != fixedFace.fPlace->id) { // Assuming Face has a method getId()
-            settings->getFace(id)->addFixedNeighbor(fixedFace.faceA); // Assuming faceA is accessible
+        if (id != fixedFace.fPlace->id) {
+            settings->getFace(id)->addFixedNeighbor(fixedFace.faceA);
         }
     }
 }
 
 void VertexPlacement::addFreeFace(int id) {
+    // Update id if a new ID is found.
     auto it = settings->uniqueFaceMap.find(id);
     if (it != settings->uniqueFaceMap.end()) {
-        id = it->second; // Update id if a new ID is found
+        id = it->second;
     }
 
-    // Check if the ID is already in freeFaceIds
+    // Check if the ID is already in freeFaceIds.
     if (std::find(freeFaceIds.begin(), freeFaceIds.end(), id) != freeFaceIds.end()) {
-        return; // ID already exists, exit the function
+        return;
     }
 
     FacePlacement* newFreeFace = settings->getFace(id);
@@ -210,34 +213,31 @@ void VertexPlacement::addFreeFace(int id) {
 
     if (isCoplanar) {
         settings->mergeFace(coplanarId, id);
-        id = coplanarId; // Update id to the merged face ID
+        id = coplanarId;
     } else {
-        freeFaceIds.push_back(id); // Add the new face ID
+        freeFaceIds.push_back(id);
     }
 
     settings->getFace(id)->addVertexId(this->id); // Add the vertex ID to the face
 
     // Check for colinearity
-    //if (freeFaceIds.size() == 3 && getA(freeFaceIds).empty()) { // Assuming getA returns a vector
+    //if (freeFaceIds.size() == 3 && getA(freeFaceIds).empty()) {
     //    freeFaceIds.pop_back(); // Remove the last face ID
     //}
 }
 
 std::vector<int> VertexPlacement::getAllFaceIds() const {
-    std::vector<int> allFaceIds; // Vector to hold all face IDs
-
-    // Reserve space to avoid multiple allocations
+    std::vector<int> allFaceIds;
     allFaceIds.reserve(unfreeFaceIds.size() + freeFaceIds.size() + colinearFaceIds.size());
 
-    // Concatenate the vectors
+    // Concatenate the vectors.
     allFaceIds.insert(allFaceIds.end(), unfreeFaceIds.begin(), unfreeFaceIds.end());
     allFaceIds.insert(allFaceIds.end(), freeFaceIds.begin(), freeFaceIds.end());
     allFaceIds.insert(allFaceIds.end(), colinearFaceIds.begin(), colinearFaceIds.end());
 
-    return allFaceIds; // Return the combined vector
+    return allFaceIds; // Return the combined vector.
 }
 
-// Method to get the number of constraints
 int VertexPlacement::getNumConstraints() const {
     return unfreeFaceIds.size();
 }
@@ -245,7 +245,7 @@ int VertexPlacement::getNumConstraints() const {
 
 void VertexPlacement::checkThreeFaces() {
     if (freeFaceIds.size() < 2) {
-        std::cerr << "Vertex should have at least two faces.\n";
+        std::cout << "Vertex should have at least two faces.\n";
     } else if (freeFaceIds.size() == 2) {
         Vec3 n0 = settings->getFace(freeFaceIds[0])->getNormal();
         Vec3 n1 = settings->getFace(freeFaceIds[1])->getNormal();

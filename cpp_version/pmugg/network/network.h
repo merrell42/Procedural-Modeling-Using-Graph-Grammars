@@ -14,8 +14,6 @@ class VertexNet;
 class EdgeNet;
 class HalfEdgeNet;
 class FaceNet;
-// class ConnectorGroup;
-// class BoundNet;
 class View;
 class Shape3D;
 struct DrawOptions;
@@ -64,7 +62,6 @@ private:
     std::vector<EdgeNet*> edges;
     std::vector<HalfEdgeNet*> halfEdges;
     std::vector<FaceNet*> faces;
-    std::vector<ConnectorGroup*> connectorGroups;
 
     // Boundary vertices, halfEdges, and faces.
     std::vector<VertexNet*> bVertices;
