@@ -164,13 +164,14 @@ void Face::split(Endpoint* endpoint) {
 void Face::insert(Endpoint* endpoint, Endpoint* prevEndpoint) {
     std::vector<Endpoint*> endpoints = this->getEndpoints();
 
-    // Insert new endpoint before previous endpoint.
+    // Insert the new endpoint at the correct position
     int id = endpoint->getId();
-    int index = indexOf(endpoints, endpoint);
+    int index = indexOf(endpoints, prevEndpoint);
     if (index >= 0) {
         endpointIds.insert(endpointIds.begin() + index + 1, id);
         endpoint->setFace(this);
-    } else {
+    }
+    else {
         endpointIds.insert(endpointIds.begin(), id);
         endpoint->setFace(this);
     }
