@@ -2,7 +2,6 @@
 #include <vector>
 #include <memory>
 #include "../third_party/json.h"
-#include "primal_edge.h"
 
 using Json = nlohmann::json;
 
@@ -11,7 +10,7 @@ namespace ms {
 class Network;
 class HalfEdgeNet;
 class View;
-class PrimalEdge;
+class EdgeType3D;
 
 class EdgeNet {
 public:

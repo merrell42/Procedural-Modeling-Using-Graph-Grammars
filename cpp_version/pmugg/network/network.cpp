@@ -1,11 +1,9 @@
 #include "pch.h"
 #include "network.h"
-#include "../shape/edge.h"
 #include "../network/half_edge_net.h"
 #include "../network/vertex_net.h"
 #include "../network/edge_net.h"
 #include "../network/face_net.h"
-#include "../network/bound_net.h"
 #include "../graph_drawing/face.h"
 #include "../util/util.h"
 #include <algorithm>

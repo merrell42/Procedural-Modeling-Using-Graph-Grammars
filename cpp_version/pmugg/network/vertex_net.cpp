@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "vertex_net.h"
 #include "network.h"
-#include "connector_group.h"
 #include "half_edge_net.h"
 #include "../util/util.h"
 

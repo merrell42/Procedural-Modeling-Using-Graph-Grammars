@@ -148,7 +148,7 @@ Graph* NetTransistor::createGraph() {
     }
 
     // Create vertices
-    const int numVertices = endVertices.size();
+    const auto numVertices = endVertices.size();
     merged->vertices.resize(numVertices, nullptr);
     for (size_t i = 0; i < numVertices; ++i) {
         auto* v = endVertices[i];

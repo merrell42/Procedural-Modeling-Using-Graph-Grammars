@@ -1,6 +1,5 @@
 #pragma once
 #include "../shape/vec2.h"
-#include "../node/node.h"
 #include "../shapes3D/edge_type3d.h"
 #include "../shapes3D/shape3d.h"
 #include <vector>

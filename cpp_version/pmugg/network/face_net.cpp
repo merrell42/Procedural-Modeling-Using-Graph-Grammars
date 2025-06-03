@@ -2,7 +2,6 @@
 #include "face_net.h"
 #include "half_edge_net.h"
 #include "network.h"
-#include "bound_net.h"
 #include "../shape/vec3.h"
 
 namespace ms {

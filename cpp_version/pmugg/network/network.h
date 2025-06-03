@@ -6,7 +6,6 @@
 #include "edge_net.h"
 #include "face_net.h"
 #include "half_edge_net.h"
-#include "bound_net.h"
 
 namespace ms {
 
