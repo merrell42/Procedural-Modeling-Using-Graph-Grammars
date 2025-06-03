@@ -14,7 +14,7 @@ int randomCount = 0;
 int randomSeed = 42;
 
 double random() {
-    double x = (float)std::sin(randomSeed + randomCount) * (10000 + randomSeed);
+    double x = (double)std::sin(randomSeed + randomCount) * (10000 + randomSeed);
     randomCount++;
     return x - std::floor(x);
 }
@@ -24,7 +24,7 @@ void resetRandom(int seed) {
     randomCount = 0;
 }
 
-float Util::fixAngle(float angle) {
+double Util::fixAngle(double angle) {
     while (angle > PI) {
         angle -= 2 * PI;
     }
@@ -34,11 +34,11 @@ float Util::fixAngle(float angle) {
     return angle;
 }
 
-float Util::angleDifference(float a, float b) {
+double Util::angleDifference(double a, double b) {
     return fixAngle(a - b);
 }
 
-int Util::angleTurn(float prev, float next) {
+int Util::angleTurn(double prev, double next) {
     if (prev > PI - EPS) { prev -= 2 * PI; }
     if (next > PI - EPS) { next -= 2 * PI; }
     
@@ -54,7 +54,7 @@ int Util::angleTurn(float prev, float next) {
     return 0;
 }
 
-int Util::angleWedges(float prev, float next) {
+int Util::angleWedges(double prev, double next) {
     if (prev >= PI) { prev -= 2 * PI; }
     if (next >= PI) { next -= 2 * PI; }
     
@@ -71,7 +71,7 @@ int Util::angleWedges(float prev, float next) {
     return 0;
 }
 
-int Util::wedgeTurns(const std::vector<float>& angles) {
+int Util::wedgeTurns(const std::vector<double>& angles) {
     int turns = 0;
     for (size_t i = 0; i < angles.size() - 1; i++) {
         turns += angleWedges(angles[i], angles[i + 1]);
@@ -79,7 +79,7 @@ int Util::wedgeTurns(const std::vector<float>& angles) {
     return turns;
 }
 
-float Util::fixAngleWedges(float angle) {
+double Util::fixAngleWedges(double angle) {
     if (angle >= PI) { angle -= 2 * PI; }
     if (angle < -PI) { angle += 2 * PI; }
     return angle;
@@ -155,7 +155,7 @@ const T& Util::last(const std::vector<T>& array) {
     return array.back();
 }
 
-float Util::clamp(float lower, float upper, float x) {
+double Util::clamp(double lower, double upper, double x) {
     return max(lower, min(upper, x));
 }
 
@@ -174,7 +174,7 @@ void Util::fastConcat(std::vector<T>& allData, const std::vector<T>& newData) {
 }
 
 int Util::maxDim(const Vec3& n) {
-    std::array<std::pair<float, int>, 3> coords = {
+    std::array<std::pair<double, int>, 3> coords = {
         std::make_pair(std::abs(n.getX()), 0),
         std::make_pair(std::abs(n.getY()), 1),
         std::make_pair(std::abs(n.getZ()), 2)

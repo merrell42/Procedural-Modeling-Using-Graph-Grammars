@@ -19,15 +19,15 @@ public:
     // The minimum angle in degrees between two line segments for them to intersect.
     // If they are within this angle they are close enough to being parallel that they
     // can be ignored.
-    static constexpr float MIN_ANGLE = 1e-6f;
-    static constexpr float MIN_CROSS_PRODUCT = 0.000001;
+    static constexpr double MIN_ANGLE = 1e-6f;
+    static constexpr double MIN_CROSS_PRODUCT = 0.000001;
     static constexpr double FAR_DISTANCE = 10000.0;
 
     // The thickness of the edges in pixels.
-    static constexpr float THICKNESS = 0.1f;
+    static constexpr double THICKNESS = 0.1f;
 
     struct IntersectOptions {
-        float thickness2;
+        double thickness2;
         IntersectOptions() : thickness2(THICKNESS) {}
     };
 
@@ -41,7 +41,7 @@ public:
                                        const Vec2& s2, const Vec2& e2);
 
     static std::optional<Vec2> intersect(const Vec2& s1, const Vec2& e1,
-                                       const Vec2& s2, const Vec2& e2, float thickness);
+                                       const Vec2& s2, const Vec2& e2, double thickness);
 
     static std::optional<FaceIntersection> intersectFaces(
         const std::vector<Vec2>& facePositionsA,

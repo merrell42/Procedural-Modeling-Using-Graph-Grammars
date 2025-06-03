@@ -24,13 +24,13 @@ public:
     void setColor(Vec3* newColor) { color = newColor; }
     void setMonotonic(bool isMonotonic) { monotonic = isMonotonic; }
 
-    float angle(const Vec3& q) const;
-    float getArea(const std::vector<Vec3>& vertices) const;
+    double angle(const Vec3& q) const;
+    double getArea(const std::vector<Vec3>& vertices) const;
     Vec3 normalColor() const;
 
     static FaceType3D* import(const Json& json);
 
-    static constexpr float EPS = 1e-5f;
+    static constexpr double EPS = 1e-5;
 
     Vec3 u;
     Vec3 v;
@@ -47,7 +47,7 @@ private:
 
     // Helper methods
     void computeOrthonormalBasis();
-    float polygonArea(const std::vector<Vec2>& points) const;
+    double polygonArea(const std::vector<Vec2>& points) const;
 };
 
 } // namespace ms 

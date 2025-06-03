@@ -21,7 +21,7 @@ struct ChangeVecMB {
 
 class VertexPlacement {
 public:
-    VertexPlacement(Vertex* vertex, int id, NetTransistorSettings* settings) : vertex(vertex), id(id), settings(settings) {}
+    VertexPlacement(Vertex* vertex, int id, NetTransistorSettings* settings) : vertex(vertex), id(id), settings(settings), M(nullptr) {}
     ~VertexPlacement() = default;
 
     Vertex* getVertex() const { return vertex; }

@@ -45,8 +45,8 @@ public:
     static constexpr int vertexAttempts = 100;
     static constexpr int faceAttempts = 30;
     static constexpr int spliceRayAttempts = 3;
-    static constexpr float maxRayDistance = 10.0f;
-    static constexpr float SMALL_DISTANCE = 1e-8f;
+    static constexpr double maxRayDistance = 10.0f;
+    static constexpr double SMALL_DISTANCE = 1e-8f;
 
 private:
     Model* model;

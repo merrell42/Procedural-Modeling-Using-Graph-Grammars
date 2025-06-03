@@ -76,7 +76,7 @@ Range Face::dirBounds(const Vec3& dir) const {
         high = max(d, high);
     }
 
-    return Range((float)low, (float)high);
+    return Range((double)low, (double)high);
 }
 
 void Face::append(Face* faceB) {
@@ -169,7 +169,7 @@ void Face::insert(Endpoint* endpoint, Endpoint* prevEndpoint) {
     int prevId = prevEndpoint->getId();
     
     // Find the index by comparing IDs instead of pointers
-    int index = -1;
+    size_t index = -1;
     for (size_t i = 0; i < endpoints.size(); i++) {
         if (endpoints[i]->getId() == prevId) {
             index = i;
@@ -195,12 +195,12 @@ void Face::removeEndpoint(Endpoint* endpoint) {
 
 double Face::signedArea() {
     auto positions2D = getPositions2D();
-    float sum = 0.0f;
-    int n = positions2D.size();
-    for (int i = 0; i < n; i++) {
-        float xi = positions2D[i].x;
-        float yp = positions2D[(i + 1) % n].y;
-        float yn = positions2D[(i + n - 1) % n].y;
+    double sum = 0.0f;
+    size_t n = positions2D.size();
+    for (size_t i = 0; i < n; i++) {
+        double xi = positions2D[i].x;
+        double yp = positions2D[(i + 1) % n].y;
+        double yn = positions2D[(i + n - 1) % n].y;
         sum += xi * (yn - yp);
     }
     return -sum / 2.0f;
@@ -212,7 +212,7 @@ void Face::exportMesh(
     std::vector<int>& triangles,
     std::vector<int>& faceIndices
 ) {
-    int startIndex = positions.size();
+    int startIndex = (int)positions.size();
     auto facePositions = getPositions();
     positions.insert(positions.end(), facePositions.begin(), facePositions.end());
 
@@ -240,7 +240,7 @@ void Face::exportMesh(
         }
     }
 
-    faceIndices.push_back(positions.size());
+    faceIndices.push_back((int)positions.size());
 }
 
 std::vector<int> Face::getTriangleIndices() {
@@ -275,7 +275,7 @@ bool Face::addToBsp() {
 Plane Face::getPlane() const {
     Vec3 normal = faceType->getNormal();
     auto positions = getPositions();
-    float d = normal.dot(positions[0]);
+    double d = normal.dot(positions[0]);
     return Plane(normal, d);
 }
 
@@ -321,7 +321,7 @@ bool Face::containsPoint(Vec3 point) {
 
     std::vector<bool> isAbove(n);
     std::vector<bool> isBelow(n);
-    float y = point2D.getY();
+    double y = point2D.getY();
     for (int i = 0; i < n; i++) {
         isAbove[i] = positions[i].getY() > y;
         isBelow[i] = positions[i].getY() < y;
@@ -330,12 +330,12 @@ bool Face::containsPoint(Vec3 point) {
     for (int i = 0; i < n; i++) {
         int i2 = (i + 1) % n;
         if ((isAbove[i] && isBelow[i2]) || (isBelow[i] && isAbove[i2])) {
-            float x1 = positions[i].getX();
-            float x2 = positions[i2].getX();
-            float y1 = positions[i].getY();
-            float y2 = positions[i2].getY();
-            float s = (y - y1) / (y2 - y1);
-            float x = x1 + (x2 - x1) * s;
+            double x1 = positions[i].getX();
+            double x2 = positions[i2].getX();
+            double y1 = positions[i].getY();
+            double y2 = positions[i2].getY();
+            double s = (y - y1) / (y2 - y1);
+            double x = x1 + (x2 - x1) * s;
             if (point2D.getX() < x) {
                 count++;
             }

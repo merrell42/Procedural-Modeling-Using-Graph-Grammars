@@ -58,7 +58,7 @@ void NetTransistor::create(const Transition& transition, Model* model_, int dims
 }
 
 void NetTransistor::addLine(Line* line, bool includeLength, bool addToGraph) {
-    float angle = line->getEdgeType()->getAngle();
+    double angle = line->getEdgeType()->getAngle();
     
     LineData datum;
     datum.v = Vec2::unitVec(angle);
@@ -659,7 +659,7 @@ std::pair<std::vector<double>, bool> NetTransistor::sampleFaceCentric() {
     for (const auto& basisId : settings->basisIds) {
         basisOrders.push_back(settings->findBasisOrder(basisId));
     }
-    basisOrders.push_back(settings->orderIds.size());
+    basisOrders.push_back((int)settings->orderIds.size());
 
     for (size_t i = 0; i < settings->basisIds.size(); i++) {
         int id = settings->basisIds[i];
@@ -837,7 +837,7 @@ bool NetTransistor::placeVertexPositions(const std::vector<double>& positions) {
         }*/
     }
     if (dims == 2) {
-        for (size_t i = 0; i < lines.size(); i++) {
+        for (int i = 0; i < (int)lines.size(); i++) {
             bool success = lines[i]->addToBsp();
             if (!success) {
                 for (int j = i - 1; j >= 0; j--) {
@@ -893,7 +893,7 @@ bool NetTransistor::placeVertexPositions(const std::vector<double>& positions) {
     for (size_t i = 0; i < facesToIntersect.size(); i++) {
         facesToIntersect[i]->removeFromBsp();
     }
-    for (size_t i = 0; i < facesToIntersect.size(); i++) {
+    for (int i = 0; i < (int)facesToIntersect.size(); i++) {
         bool success = facesToIntersect[i]->addToBsp();
         if (!success) {
             for (int j = i - 1; j >= 0; j--) {

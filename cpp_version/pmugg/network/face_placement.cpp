@@ -114,10 +114,10 @@ Range FacePlacement::getRange(int vertexId) {
 
     if (fixed) {
         if (m == 0) {
-            return Range(-std::numeric_limits<float>::infinity(),
-                        std::numeric_limits<float>::infinity());
+            return Range(-std::numeric_limits<double>::infinity(),
+                        std::numeric_limits<double>::infinity());
         }
-        return Range((float)value, (float)value);
+        return Range((double)value, (double)value);
     }
 
     slope = m;
@@ -136,13 +136,13 @@ Range FacePlacement::getRange(int vertexId) {
         }
     }
 
-    Range range((float)lowD, (float)highD);
+    Range range((double)lowD, (double)highD);
     for (auto* neighbor : fixedNeighbors) {
         Range rangeI = neighbor->dirBounds(normal);
         range = range.intersect(rangeI);
     }
 
-    return Range::transformCreate((float)m, (float)b, range);
+    return Range::transformCreate((double)m, (double)b, range);
 }
 
 ChangeMB FacePlacement::getChangeMB() const {

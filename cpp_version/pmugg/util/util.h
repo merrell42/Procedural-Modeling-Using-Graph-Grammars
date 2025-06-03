@@ -10,7 +10,7 @@ template <typename T> static
 int indexOf(const std::vector<T>& vec, const T& value) {
     auto it = std::find(vec.begin(), vec.end(), value);
     if (it != vec.end()) {
-        return std::distance(vec.begin(), it);
+        return (int)std::distance(vec.begin(), it);
     }
     // Return -1 if not found
     return -1; 
@@ -28,12 +28,12 @@ void resetRandom(int seed);
 class Util {
 public:
     // Angle operations
-    static float fixAngle(float angle);
-    static float angleDifference(float a, float b);
-    static int angleTurn(float prev, float next);
-    static int angleWedges(float prev, float next);
-    static int wedgeTurns(const std::vector<float>& angles);
-    static float fixAngleWedges(float angle);
+    static double fixAngle(double angle);
+    static double angleDifference(double a, double b);
+    static int angleTurn(double prev, double next);
+    static int angleWedges(double prev, double next);
+    static int wedgeTurns(const std::vector<double>& angles);
+    static double fixAngleWedges(double angle);
 
     // Array operations
     template<typename T>
@@ -66,7 +66,7 @@ public:
     static int findIndex(const std::vector<T>& vec, const T& item) {
         auto it = std::find(vec.begin(), vec.end(), item);
         if (it != vec.end()) {
-            return std::distance(vec.begin(), it);
+            return (int)std::distance(vec.begin(), it);
         }
         // Item not found.
         return -1;
@@ -89,7 +89,7 @@ public:
     template<typename T>
     static const T& last(const std::vector<T>& array);
     
-    static float clamp(float lower, float upper, float x);
+    static double clamp(double lower, double upper, double x);
     static std::vector<int> sequence(int a, int b);
     
     template<typename T>
@@ -102,17 +102,17 @@ public:
         if (vec.empty()) {
             throw std::invalid_argument("Cannot pick an item from an empty vector.");
         }
-        return vec[randomInt(vec.size())];
+        return vec[randomInt((int)vec.size())];
     }
 
     static double randomUniform(double lower, double upper);
 
-    static constexpr float EPS = 1e-5f;
-    static constexpr float PI = 3.14159265358979323846f;
-    static constexpr float INF = 1e10;
+    static constexpr double EPS = 1e-5f;
+    static constexpr double PI = 3.14159265358979323846f;
+    static constexpr double INF = 1e10;
 
 private:
-    static std::function<float()> originalRandom;
+    static std::function<double()> originalRandom;
     static int randomCount;
 };
 

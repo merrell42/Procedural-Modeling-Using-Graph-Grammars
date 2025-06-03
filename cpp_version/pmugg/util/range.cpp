@@ -12,7 +12,7 @@ Range::Range()
     : data({ 0, 0 })
     , tileLength(0) {}
 
-Range::Range(float low, float high, float tilelen)
+Range::Range(double low, double high, double tilelen)
     : data({low, high})
     , tileLength(tilelen) {}
 
@@ -28,22 +28,22 @@ bool Range::isEmpty() const {
     return data[1] < data[0];
 }
 
-float Range::sample() const {
+double Range::sample() const {
     if (tileLength == 0) {
         return Util::randomUniform(data[0], data[1]);
     } else {
-        float low = std::ceil(data[0] / tileLength);
-        float high = std::floor(data[1] / tileLength);
+        double low = std::ceil(data[0] / tileLength);
+        double high = std::floor(data[1] / tileLength);
         return low + Util::randomUniform(0, high - low + 1);
     }
 }
 
-bool Range::isInside(float x) const {
-    float m = ERROR_MARGIN;
+bool Range::isInside(double x) const {
+    double m = ERROR_MARGIN;
     return (data[0] - m <= x) && (x <= data[1] + m);
 }
 
-Range Range::transform(float a, float b) const {
+Range Range::transform(double a, double b) const {
     if (a > 0) {
         return Range(a * data[0] + b, a * data[1] + b, a * tileLength);
     } else {
@@ -51,7 +51,7 @@ Range Range::transform(float a, float b) const {
     }
 }
 
-Range Range::transformCreate(float a, float b, const Range& rangeB) {
+Range Range::transformCreate(double a, double b, const Range& rangeB) {
     if (std::abs(a) < ERROR_MARGIN) {
         if (rangeB.isInside(b)) {
             return Range(-INFINITY, INFINITY);
@@ -66,16 +66,16 @@ void Range::print() const {
     std::cout << data[0] << ", " << data[1] << std::endl;
 }
 
-float Range::gcd2(float x, float y) {
+double Range::gcd2(double x, double y) {
     return (y < ERROR_MARGIN) ? x : gcd2(y, std::fmod(x, y));
 }
 
-float Range::gcd(const std::vector<float>& arr) {
+double Range::gcd(const std::vector<double>& arr) {
     return std::accumulate(arr.begin(), arr.end(), arr[0],
-        [](float a, float b) { return gcd2(a, b); });
+        [](double a, double b) { return gcd2(a, b); });
 }
 
-float Range::lcm(float a, float b) {
+double Range::lcm(double a, double b) {
     if (std::abs(a) < ERROR_MARGIN) {
         return b;
     }

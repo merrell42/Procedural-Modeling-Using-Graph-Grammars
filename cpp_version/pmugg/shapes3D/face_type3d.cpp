@@ -25,7 +25,7 @@ FaceType3D::FaceType3D(const std::string& mat, const Vec3& n)
 void FaceType3D::computeOrthonormalBasis() {
     // Find the smallest component of the normal.
     int minDim = 0;
-    float minVal = std::abs(normal[0]);
+    double minVal = std::abs(normal[0]);
     for (int i = 1; i < 3; i++) {
         if (std::abs(normal[i]) < minVal) {
             minDim = i;
@@ -39,10 +39,10 @@ void FaceType3D::computeOrthonormalBasis() {
     v = normal.cross(u).normalize();
 }
 
-float FaceType3D::angle(const Vec3& q) const {
-    float dx = u.dot(q);
-    float dy = v.dot(q);
-    float angle = std::atan2(dy, dx);
+double FaceType3D::angle(const Vec3& q) const {
+    double dx = u.dot(q);
+    double dy = v.dot(q);
+    double angle = std::atan2(dy, dx);
     
     // Angles near pi wrap to -pi.
     if (angle > M_PI - EPS) {
@@ -51,7 +51,7 @@ float FaceType3D::angle(const Vec3& q) const {
     return angle;
 }
 
-float FaceType3D::getArea(const std::vector<Vec3>& vertices) const {
+double FaceType3D::getArea(const std::vector<Vec3>& vertices) const {
     std::vector<Vec2> projectedVertices;
     for (const auto& vertex : vertices) {
         projectedVertices.push_back({u.dot(vertex), v.dot(vertex)});
@@ -59,8 +59,8 @@ float FaceType3D::getArea(const std::vector<Vec3>& vertices) const {
     return -polygonArea(projectedVertices);
 }
 
-float FaceType3D::polygonArea(const std::vector<Vec2>& points) const {
-    float area = 0;
+double FaceType3D::polygonArea(const std::vector<Vec2>& points) const {
+    double area = 0;
     for (size_t i = 0; i < points.size(); i++) {
         const auto& p1 = points[i];
         const auto& p2 = points[(i + 1) % points.size()];

@@ -154,7 +154,7 @@ Range VertexPlacement::getRange() {
     delete b3Matrix;
 
     Range range(-std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity());
-    for (size_t i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
         Range rangeI = Range::transformCreate(m[i][0], b[i][0], Range(settings->lower[i], settings->upper[i]));
         range = range.intersect(rangeI);
     }
@@ -239,7 +239,7 @@ std::vector<int> VertexPlacement::getAllFaceIds() const {
 }
 
 int VertexPlacement::getNumConstraints() const {
-    return unfreeFaceIds.size();
+    return (int)unfreeFaceIds.size();
 }
 
 

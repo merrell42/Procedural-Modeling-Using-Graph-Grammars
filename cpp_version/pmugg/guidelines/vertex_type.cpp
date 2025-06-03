@@ -29,17 +29,17 @@ int VertexType::getId() const {
     return id;
 }
 
-void VertexType::addEdge(EdgeType3D* edge, bool isAtStart, float angle) {
+void VertexType::addEdge(EdgeType3D* edge, bool isAtStart, double angle) {
     // Angle becomes the angle going out from the vertex through the edge.
     auto dir = edge->getDir();
     if (!isAtStart) {
-        angle += (float)M_PI;
+        angle += (double)M_PI;
         dir = dir * -1.0f;
     }
     angle = ms::Util::fixAngle(angle);
     
     int directedId = 2 * edge->getId() + (isAtStart ? 0 : 1);
-    float adjustedAngle = getAdjustedAngle(angle, edge, isAtStart);
+    double adjustedAngle = getAdjustedAngle(angle, edge, isAtStart);
 
     // Find insertion point to maintain sorted order.
     auto it = std::lower_bound(connections.begin(), connections.end(),
@@ -86,7 +86,7 @@ VertexType* VertexType::import(const Json& json, Shape3D* shape) {
     return result;
 }
 
-float VertexType::getAdjustedAngle(float angle, EdgeType3D* edge, bool isAtStart) {
+double VertexType::getAdjustedAngle(double angle, EdgeType3D* edge, bool isAtStart) {
     int directedId = 2 * edge->getId() + (isAtStart ? 0 : 1);
     return angle + 1e-5f * directedId;
 }

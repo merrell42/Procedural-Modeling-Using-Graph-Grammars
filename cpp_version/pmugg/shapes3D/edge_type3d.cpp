@@ -55,8 +55,8 @@ bool EdgeType3D::extendable() const {
     return !isRigid || isRigidTiled;
 }
 
-float EdgeType3D::getThickness() const {
-    return brush ? brush->getFloat("Thickness") : 1.0f;
+double EdgeType3D::getThickness() const {
+    return brush ? brush->getDouble("Thickness") : 1.0f;
 }
 
 std::string EdgeType3D::boundaryString() const {
@@ -68,7 +68,7 @@ std::string EdgeType3D::boundaryString() const {
 
 int EdgeType3D::neighboringFace(int initialIndex, bool above) const {
     int maxDim = Util::maxDim(dir);
-    std::vector<std::pair<float, int>> angles;
+    std::vector<std::pair<double, int>> angles;
     
     for (size_t i = 0; i < faceData.size(); i++) {
         const auto& f = faceData[i];
@@ -77,8 +77,8 @@ int EdgeType3D::neighboringFace(int initialIndex, bool above) const {
             v.scale(-1);
         }
         
-        float x = 0;
-        float y = 0;
+        double x = 0;
+        double y = 0;
         switch(maxDim) {
             case 0: x = v.getX(); y = v.getY(); break;
             case 1: x = v.getZ(); y = v.getX(); break;
@@ -117,9 +117,9 @@ EdgeType3D* EdgeType3D::import(const Json& json, Shape3D* shape) {
         result->brush = Brush::import(json["brush"]);
     }
     // I think edge length is only needed for old grammars that have no brushes.
-    // result->edgeLength = json["edgeLength"].is_null() ? Util::INF : json["edgeLength"].get<float>();
+    // result->edgeLength = json["edgeLength"].is_null() ? Util::INF : json["edgeLength"].get<double>();
     /*result->angle = json.contains("angle") ?
-        json["angle"].get<float>() :
+        json["angle"].get<double>() :
         Vec2::angle(Vec2::ORIGIN, result->dir);*/
     if (json["offset"] != nullptr) {
         result->offset = new Vec3(Vec3::import(json["offset"]));

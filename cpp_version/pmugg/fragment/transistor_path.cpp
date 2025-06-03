@@ -22,7 +22,7 @@ TransistorPath* TransistorPath::createNet(const std::vector<Endpoint*>& endpoint
             std::cout << "endpoint is not found in edges." << std::endl;
             return nullptr;
         }
-        int index = std::distance(edges.begin(), it);
+        int index = (int)std::distance(edges.begin(), it);
         indices.push_back({index, !endpoint->getIsAtStart()});
     }
     return new TransistorPath(indices, lines);

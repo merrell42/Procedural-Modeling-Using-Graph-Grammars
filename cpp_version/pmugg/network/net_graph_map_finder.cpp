@@ -47,7 +47,7 @@ NetGraphMap* NetGraphMapFinder::findMap(Network* netB) {
     bool isConnector = verticesB[index1]->connectorIndex() >= 0;
     auto* vertexType = verticesB[index1]->getType();
     auto vertexMap = model->getCurrent()->getVertexMap();
-    int N = vertexMap.size();
+    int N = (int)vertexMap.size();
     if (N == 0) {
         return nullptr;
     }
@@ -125,7 +125,7 @@ Face* NetGraphMapFinder::findFace(FaceType3D* faceType) {
     for (const auto& [_, face] : facesA) {
         facesVec.push_back(face);
     }
-    int N = facesVec.size();
+    int N = (int)facesVec.size();
     int attempts = min(N, faceAttempts);
     int startIndex = Util::randomInt(N);
     std::vector<Face*> options;
@@ -442,7 +442,7 @@ IntersectResult NetGraphMapFinder::castRay(const Vec3& p0, const Vec3& dir, Face
     }
 
     // For 2D intersections, search random faces from the map
-    int N = faceMap.size();
+    int N = (int)faceMap.size();
     int attempts = min(N, faceAttempts);
     int startIndex = Util::randomInt(N);
     

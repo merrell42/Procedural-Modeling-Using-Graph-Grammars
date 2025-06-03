@@ -29,15 +29,15 @@ public:
     const std::vector<FaceData>& getFaceData() const { return faceData; }
     const Vec3& getDir() const { return dir; }
     Brush* getBrush() const { return brush; }
-    float getAngle() const { return angle; }
-    float getEdgeLength() const { return edgeLength; }
+    double getAngle() const { return angle; }
+    double getEdgeLength() const { return edgeLength; }
     bool getIsRigid() const { return isRigid; }
     bool getSpliced() const { return spliced; }
     bool isDestroyed() const { return destroyed; }
     int getId() const { return id; }
 
     // Modifiers
-    void setAngle(float newAngle) { angle = newAngle; }
+    void setAngle(double newAngle) { angle = newAngle; }
     void setSpliced(bool newSpliced);
     void setMonotonic(bool newMonotonic) { monotonic = newMonotonic; }
     void destroy() { destroyed = true; }
@@ -49,7 +49,7 @@ public:
     bool singleFragment() const;
     bool splittable() const;
     bool extendable() const;
-    float getThickness() const;
+    double getThickness() const;
     std::string boundaryString() const;
     int neighboringFace(int initialIndex, bool above) const;
 
@@ -60,8 +60,8 @@ public:
 private:
     Vec3 dir;
     Brush* brush;
-    float angle;
-    float edgeLength;
+    double angle;
+    double edgeLength;
     Vec3* offset;
     bool isRigid;
     bool isRigidTiled;

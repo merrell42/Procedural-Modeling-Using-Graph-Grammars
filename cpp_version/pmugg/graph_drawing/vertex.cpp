@@ -32,7 +32,7 @@ void Vertex::createEndpoints() {
 			bool position = faceDatum.onRight ^ connection.isAtStart;
 
 			if (position) {
-				createEndpoint(connection, faceIndex);
+				createEndpoint(connection, (int)faceIndex);
 			}
 		}
 	}

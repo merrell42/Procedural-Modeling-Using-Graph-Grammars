@@ -60,7 +60,7 @@ void iterate(int steps) {
 }
 
 int getNumFaces() {
-	return model->getCurrent()->getFaceMap().size();
+	return (int)model->getCurrent()->getFaceMap().size();
 }
 
 Mesh getMesh() {

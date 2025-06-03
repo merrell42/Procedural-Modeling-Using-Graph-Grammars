@@ -12,10 +12,10 @@ public:
     virtual ~Decoration() = default;
 
     // Property accessors
-    virtual void set(const std::string& name, float value);
+    virtual void set(const std::string& name, double value);
     virtual void set(const std::string& name, bool value);
     virtual void set(const std::string& name, const std::string& value);
-    virtual float getFloat(const std::string& name) const;
+    virtual double getDouble(const std::string& name) const;
     virtual bool getBool(const std::string& name) const;
     virtual std::string getString(const std::string& name) const;
 

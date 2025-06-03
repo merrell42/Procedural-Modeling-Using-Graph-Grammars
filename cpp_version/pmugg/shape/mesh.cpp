@@ -15,14 +15,14 @@ Mesh createMesh(
     mesh.triangles = (int*)malloc(triangles.size() * sizeof(int));
     mesh.faceIndices = (int*)malloc(faceIndices.size() * sizeof(int));
     for (int i = 0; i < positions.size(); i++) {
-        mesh.positions[3 * i + 0] = positions[i].getX();
-        mesh.positions[3 * i + 1] = positions[i].getY();
-        mesh.positions[3 * i + 2] = positions[i].getZ();
+        mesh.positions[3 * i + 0] = (float)positions[i].getX();
+        mesh.positions[3 * i + 1] = (float)positions[i].getY();
+        mesh.positions[3 * i + 2] = (float)positions[i].getZ();
     }
     for (int i = 0; i < normals.size(); i++) {
-        mesh.normals[3 * i + 0] = normals[i].getX();
-        mesh.normals[3 * i + 1] = normals[i].getY();
-        mesh.normals[3 * i + 2] = normals[i].getZ();
+        mesh.normals[3 * i + 0] = (float)normals[i].getX();
+        mesh.normals[3 * i + 1] = (float)normals[i].getY();
+        mesh.normals[3 * i + 2] = (float)normals[i].getZ();
     }
     for (int i = 0; i < triangles.size(); i++) {
         mesh.triangles[i] = triangles[i];

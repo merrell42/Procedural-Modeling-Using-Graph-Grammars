@@ -9,10 +9,10 @@ namespace ms {
 
 const Vec2 Vec2::ORIGIN(0, 0);
 
-Vec2::Vec2(float x_, float y_)
+Vec2::Vec2(double x_, double y_)
     : x(x_), y(y_) {}
 
-float Vec2::getValue(int dim) const {
+double Vec2::getValue(int dim) const {
     switch (dim) {
         case 0: return x;
         case 1: return y;
@@ -20,7 +20,7 @@ float Vec2::getValue(int dim) const {
     }
 }
 
-void Vec2::setValue(float value, int dim) {
+void Vec2::setValue(double value, int dim) {
     switch (dim) {
         case 0: x = value; break;
         case 1: y = value; break;
@@ -40,57 +40,57 @@ Vec2& Vec2::minus(const Vec2& v) {
     return *this;
 }
 
-Vec2& Vec2::scale(float s) {
+Vec2& Vec2::scale(double s) {
     x *= s;
     y *= s;
     return *this;
 }
 
 Vec2& Vec2::normalize() {
-    float len = length();
+    double len = length();
     if (len != 0) {
         scale(1.0f / len);
     }
     return *this;
 }
 
-float Vec2::dot(const Vec2& v) const {
+double Vec2::dot(const Vec2& v) const {
     return x * v.x + y * v.y;
 }
 
-float Vec2::crossZ(const Vec2& v) const {
+double Vec2::crossZ(const Vec2& v) const {
     return x * v.y - y * v.x;
 }
 
-float Vec2::length() const {
+double Vec2::length() const {
     return std::sqrt(length2());
 }
 
-float Vec2::length2() const {
+double Vec2::length2() const {
     return x * x + y * y;
 }
 
-float Vec2::distance(const Vec2& v) const {
+double Vec2::distance(const Vec2& v) const {
     return std::sqrt(distance2(v));
 }
 
-float Vec2::distance2(const Vec2& v) const {
-    float dx = x - v.x;
-    float dy = y - v.y;
+double Vec2::distance2(const Vec2& v) const {
+    double dx = x - v.x;
+    double dy = y - v.y;
     return dx * dx + dy * dy;
 }
 
-Vec2& Vec2::rotate(float theta) {
-    float cosTheta = std::cos(theta);
-    float sinTheta = std::sin(theta);
-    float newX = x * cosTheta - y * sinTheta;
-    float newY = x * sinTheta + y * cosTheta;
+Vec2& Vec2::rotate(double theta) {
+    double cosTheta = std::cos(theta);
+    double sinTheta = std::sin(theta);
+    double newX = x * cosTheta - y * sinTheta;
+    double newY = x * sinTheta + y * cosTheta;
     x = newX;
     y = newY;
     return *this;
 }
 
-float Vec2::isLeft(const Vec2& p0, const Vec2& p1) const {
+double Vec2::isLeft(const Vec2& p0, const Vec2& p1) const {
     return (p1.x - p0.x) * (y - p0.y) - (x - p0.x) * (p1.y - p0.y);
 }
 
@@ -102,7 +102,7 @@ int Vec2::compare(const Vec2& other) const {
     return 0;
 }
 
-Vec2& Vec2::move(float dx, float dy) {
+Vec2& Vec2::move(double dx, double dy) {
     x += dx;
     y += dy;
     return *this;
@@ -127,24 +127,24 @@ std::string Vec2::toString() const {
     return ss.str();
 }
 
-Vec2 Vec2::lerp(const Vec2& start, const Vec2& end, float s) {
+Vec2 Vec2::lerp(const Vec2& start, const Vec2& end, double s) {
     return Vec2(
         (1 - s) * start.x + s * end.x,
         (1 - s) * start.y + s * end.y
     );
 }
 
-Vec2 Vec2::unitVec(float angle) {
+Vec2 Vec2::unitVec(double angle) {
     return Vec2(std::cos(angle), std::sin(angle));
 }
 
-float Vec2::angle(const Vec2& start, const Vec2& end) {
-    float dx = end.x - start.x;
-    float dy = end.y - start.y;
+double Vec2::angle(const Vec2& start, const Vec2& end) {
+    double dx = end.x - start.x;
+    double dy = end.y - start.y;
     return std::atan2(dy, dx);
 }
 
-bool Vec2::coordinatesClose(const Vec2& a, const Vec2& b, float tolerance) {
+bool Vec2::coordinatesClose(const Vec2& a, const Vec2& b, double tolerance) {
     return (std::abs(a.x - b.x) <= tolerance && 
             std::abs(a.y - b.y) <= tolerance);
 }

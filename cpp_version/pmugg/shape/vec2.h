@@ -10,50 +10,50 @@ class Vec3;
 
 class Vec2 {
 public:
-    Vec2(float x = 0, float y = 0);
+    Vec2(double x = 0, double y = 0);
     ~Vec2() = default;
     static Vec2 import(const Json& json);
 
-    float getX() const { return x; }
-    float getY() const { return y; }
-    float getValue(int dim) const;
-    void setValue(float value, int dim);
+    double getX() const { return x; }
+    double getY() const { return y; }
+    double getValue(int dim) const;
+    void setValue(double value, int dim);
 
     Vec2& add(const Vec2& v);
     Vec2& minus(const Vec2& v);
-    Vec2& scale(float s);
+    Vec2& scale(double s);
     Vec2& normalize();
-    float dot(const Vec2& v) const;
-    float crossZ(const Vec2& v) const;
-    float length() const;
-    float length2() const;
-    float distance(const Vec2& v) const;
-    float distance2(const Vec2& v) const;
-    Vec2& rotate(float theta);
-    float isLeft(const Vec2& p0, const Vec2& p1) const;
+    double dot(const Vec2& v) const;
+    double crossZ(const Vec2& v) const;
+    double length() const;
+    double length2() const;
+    double distance(const Vec2& v) const;
+    double distance2(const Vec2& v) const;
+    Vec2& rotate(double theta);
+    double isLeft(const Vec2& p0, const Vec2& p1) const;
     int compare(const Vec2& other) const;
-    Vec2& move(float dx, float dy);
+    Vec2& move(double dx, double dy);
     Vec2 copy() const;
     Vec2 dropDim() const;
     Vec3 toVec3() const;
     std::string toString() const;
 
-    static Vec2 lerp(const Vec2& start, const Vec2& end, float s);
-    static Vec2 unitVec(float angle);
-    static float angle(const Vec2& start, const Vec2& end);
-    static bool coordinatesClose(const Vec2& a, const Vec2& b, float tolerance);
+    static Vec2 lerp(const Vec2& start, const Vec2& end, double s);
+    static Vec2 unitVec(double angle);
+    static double angle(const Vec2& start, const Vec2& end);
+    static bool coordinatesClose(const Vec2& a, const Vec2& b, double tolerance);
 
     Vec2 operator+(const Vec2& v) const { return Vec2(x + v.x, y + v.y); }
     Vec2 operator-(const Vec2& v) const { return Vec2(x - v.x, y - v.y); }
-    Vec2 operator*(float s) const { return Vec2(x * s, y * s); }
+    Vec2 operator*(double s) const { return Vec2(x * s, y * s); }
     Vec2& operator+=(const Vec2& v) { return add(v); }
     Vec2& operator-=(const Vec2& v) { return minus(v); }
-    Vec2& operator*=(float s) { return scale(s); }
+    Vec2& operator*=(double s) { return scale(s); }
 
     static const Vec2 ORIGIN;
 
-    float x;
-    float y;
+    double x;
+    double y;
 };
 
 } // namespace ms 

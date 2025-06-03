@@ -216,7 +216,6 @@
     <ClInclude Include="..\shape\mesh.h" />
     <ClInclude Include="..\shape\vec2.h" />
     <ClInclude Include="..\shape\vec3.h" />
-    <ClInclude Include="..\shared types\vec3Data.h" />
     <ClInclude Include="..\third_party\json.h" />
     <ClInclude Include="..\util\fast_math.h" />
     <ClInclude Include="..\util\range.h" />

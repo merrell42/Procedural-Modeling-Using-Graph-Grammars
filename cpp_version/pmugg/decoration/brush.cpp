@@ -8,16 +8,16 @@ Brush::Brush(const std::string& fillStyle, const std::string& strokeStyle)
     : Decoration(fillStyle, strokeStyle) {
 
     // Set default properties
-    floatProperties["Width"] = 1.0f;
-    floatProperties["Bend"] = 0.0f;
+    doubleProperties["Width"] = 1.0f;
+    doubleProperties["Bend"] = 0.0f;
     boolProperties["Boundary"] = false;
 }
 
 Brush::Brush(const std::string& fillStyle)
     : Brush(fillStyle, "") {}
 
-void Brush::set(const std::string& name, float value) {
-    floatProperties[name] = value;
+void Brush::set(const std::string& name, double value) {
+    doubleProperties[name] = value;
     notifyChange();
 }
 
@@ -31,9 +31,9 @@ void Brush::set(const std::string& name, const std::string& value) {
     notifyChange();
 }
 
-float Brush::getFloat(const std::string& name) const {
-    auto it = floatProperties.find(name);
-    return it != floatProperties.end() ? it->second : 0.0f;
+double Brush::getDouble(const std::string& name) const {
+    auto it = doubleProperties.find(name);
+    return it != doubleProperties.end() ? it->second : 0.0f;
 }
 
 bool Brush::getBool(const std::string& name) const {
@@ -54,11 +54,11 @@ Brush* Brush::import(Json json) {
             std::string converted_val = val.get<std::string>();
             brush->set(key, converted_val);
         } else if (val.is_number_float()) {
-            float converted_val = val.get<float>();
+            double converted_val = (double)val.get<float>();
             brush->set(key, converted_val);
         } else if (val.is_number_integer()) {
             int converted_val = val.get<int>();
-            brush->set(key, (float)converted_val);
+            brush->set(key, (double)converted_val);
         } else if (val.is_boolean()) {
             bool converted_val = val.get<bool>();
             brush->set(key, converted_val);

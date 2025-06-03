@@ -15,13 +15,13 @@ std::optional<Vec2> Intersector::intersect(
     const Vec2& s1, const Vec2& e1,
     const Vec2& s2, const Vec2& e2,
     // Thickness is currently not used.
-    float thickness1
+    double thickness1
 ) {
-    // float thickness2 = thickness1;
+    // double thickness2 = thickness1;
 
     Vec2 r = e1 - s1;
     Vec2 s = e2 - s2;
-    float rxs = r.crossZ(s);
+    double rxs = r.crossZ(s);
 
     // If the cross product is below the minimum the line segments are almost parallel
     if (std::abs(rxs / r.length() / s.length()) < MIN_CROSS_PRODUCT) {
@@ -29,11 +29,11 @@ std::optional<Vec2> Intersector::intersect(
     }
 
     Vec2 q = s2 - s1;
-    float qxr = q.crossZ(r);
-    float qxs = q.crossZ(s);
+    double qxr = q.crossZ(r);
+    double qxs = q.crossZ(s);
 
-    float t = qxs / rxs;
-    float u = qxr / rxs;
+    double t = qxs / rxs;
+    double u = qxr / rxs;
 
     // Check if the intersection is within the line segments
     if ((0 < t && t < 1) && (0 < u && u < 1)) {
@@ -47,8 +47,8 @@ std::optional<Vec2> Intersector::intersect(
         Vec2 normal2(-s.y, s.x);
         normal2 = normal2.normalize();
 
-        float d1 = std::abs(q.dot(normal1));
-        float d2 = std::abs(q.dot(normal2));
+        double d1 = std::abs(q.dot(normal1));
+        double d2 = std::abs(q.dot(normal2));
 
         // This is incorrect. Look at the web version.
         if (d1 <= thickness1 && d2 <= thickness2) {
@@ -68,8 +68,8 @@ std::optional<Intersector::FaceIntersection> Intersector::intersectFaces(
     std::vector<Vec2> fPositionsB = facePositionsB;
     
     // Ensure the faces are oriented correctly
-    float areaA = 0;
-    float areaB = 0;
+    double areaA = 0;
+    double areaB = 0;
     
     size_t Na = fPositionsA.size();
     size_t Nb = fPositionsB.size();

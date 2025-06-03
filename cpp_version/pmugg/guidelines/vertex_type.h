@@ -14,14 +14,14 @@ class EdgeType3D;
 class Shape3D;
 
 struct Connection {
-    float adjustedAngle;
-    float angle;
+    double adjustedAngle;
+    double angle;
     Vec3 dir;
     int directedId;
     EdgeType3D* edge;
     bool isAtStart;
 
-    Connection(EdgeType3D* edge = nullptr, bool isAtStart = false, float angle = 0.0f,
+    Connection(EdgeType3D* edge = nullptr, bool isAtStart = false, double angle = 0.0f,
               const std::vector<int>& faceIds = {})
         : adjustedAngle(0)
         , angle(angle)
@@ -52,7 +52,7 @@ public:
     bool getSpliced() const;
     int getId() const;
 
-    void addEdge(EdgeType3D* edge, bool isAtStart, float angle);
+    void addEdge(EdgeType3D* edge, bool isAtStart, double angle);
     void setSpliced(bool spliced);
 
 private:
@@ -61,9 +61,9 @@ private:
     int id;
 
     static int nextId;
-    static constexpr float ANGLE_EPSILON = 1e-5f;
+    static constexpr double ANGLE_EPSILON = 1e-5f;
 
-    static float getAdjustedAngle(float angle, EdgeType3D* edge, bool isAtStart);
+    static double getAdjustedAngle(double angle, EdgeType3D* edge, bool isAtStart);
 };
 
 } // namespace ms 

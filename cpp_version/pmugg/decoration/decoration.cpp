@@ -10,7 +10,7 @@ Decoration::Decoration(const std::string& fillStyle, const std::string& strokeSt
     , onChange(onChange) {
 }
 
-void Decoration::set(const std::string& name, float value) {
+void Decoration::set(const std::string& name, double value) {
     notifyChange();
 }
 
@@ -22,7 +22,7 @@ void Decoration::set(const std::string& name, const std::string& value) {
     notifyChange();
 }
 
-float Decoration::getFloat(const std::string& name) const {
+double Decoration::getDouble(const std::string& name) const {
     return 0.0f;
 }
 

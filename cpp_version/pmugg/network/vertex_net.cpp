@@ -31,7 +31,7 @@ int VertexNet::connectorIndex() const {
     auto it = std::find(bVertices.begin(), bVertices.end(), this);
     if (it != bVertices.end()) {
         // Compute the index
-        return std::distance(bVertices.begin(), it);
+        return (int)std::distance(bVertices.begin(), it);
     } else {
         return -1;
     }

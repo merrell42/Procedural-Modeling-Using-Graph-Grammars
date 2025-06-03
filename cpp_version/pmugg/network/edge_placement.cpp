@@ -88,12 +88,12 @@ Range EdgePlacement::getRange() const {
     auto bLength = dir.dot(mb1.b - mb0.b);
 
     auto* brush = edge ? edge->getEdgeType()->getBrush() : nullptr;
-    float lengthMin = brush ? brush->getFloat("Min Length") : NetTransistorSettings::defaultLengthMin;
-    float lengthMax = brush ? brush->getFloat("Max Length") : NetTransistorSettings::defaultLengthMax;
-    float tileLength = 0;
+    double lengthMin = brush ? brush->getDouble("Min Length") : NetTransistorSettings::defaultLengthMin;
+    double lengthMax = brush ? brush->getDouble("Max Length") : NetTransistorSettings::defaultLengthMax;
+    double tileLength = 0;
     
     if (brush && brush->getBool("Rigid Tiled")) {
-        tileLength = brush->getFloat("Tile Length");
+        tileLength = brush->getDouble("Tile Length");
     }
 
     return Range::transformCreate(mLength, bLength, Range(lengthMin, lengthMax, tileLength));
