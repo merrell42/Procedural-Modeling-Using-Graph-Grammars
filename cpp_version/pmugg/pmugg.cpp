@@ -17,26 +17,21 @@ using namespace ms;
 using Json = nlohmann::json;
 
 int main() {
-	// ifstream file("../../../grammar data/2D Basic Shapes/square filled.json");
-	// ifstream file("../../../grammar data/2D Branches/intersection.json");
-	// ifstream file("../../../grammar data/2D Basic Shapes/square hollow.json");
-	// ifstream file("../../../grammar data/3D Shapes/L-grounded.json");
-	ifstream file("../../../grammar data/3D Shapes/box-grounded.json");
+	// ifstream file("../../grammar data/2D Basic Shapes/square filled.json");
+	// ifstream file("../../grammar data/2D Branches/intersection.json");
+	ifstream file("../../grammar data/3D Shapes/box-grounded.json");
 	string content((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
 	file.close();
 	resetRandom(2);
 
-	// vector<GraphTemplate> graphTemplates;
-	// try {
+	try {
 		Json parsed = Json::parse(content);
 		cout << parsed["category"] << " " << parsed["name"] << endl;
-		// Shape3D::import(parsed["solution"]["types"]);
 		auto hierarchy = NetworkHierarchy::import(parsed["solution"]);
 		auto model = new ms::Model();
 		auto mutator = new GuideMutator(model, new NetworkMutator(hierarchy, model));
 		mutator->iterate(100);
-		// auto mesh = model->getCurrent()->exportMesh();
-	// } catch (const std::exception& e) {
-	// 	cout << "Error: " << e.what() << endl;
-	//}
+	} catch (const std::exception& e) {
+	 	cout << "Error: " << e.what() << endl;
+	}
 }

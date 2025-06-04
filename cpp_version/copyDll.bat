@@ -1,4 +1,4 @@
-set "TARGET_PATH=..\..\unity pmugg\Assets\Plugins\pmugg dll.dll"
+set "TARGET_PATH=..\unity pmugg\Assets\Plugins\pmugg dll.dll"
 set "TEMP_PATH=x64\Debug\pmugg dll.dll"
 
 copy "$(TargetPath)" "%TEMP_PATH%"

@@ -3,6 +3,7 @@
 
 namespace ms {
 
+// TODO: Rename as halfEdge.
 Endpoint::Endpoint(Model* model, int id, bool isAtStart, EdgeType3D* edgeType, Vec3 dir, int vertexId, int faceId_, int lineId, bool createFace, int faceIndex)
 	: model(model)
 	, id(id)
