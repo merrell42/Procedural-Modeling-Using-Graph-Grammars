@@ -1,8 +1,8 @@
 #pragma once
+#include "../geometry/vec3.h"
+#include "../geometry/plane.h"
+#include "../primitives/face_type.h"
 #include "../util/range.h"
-#include "../shape/vec3.h"
-#include "../shapes3D/face_type3d.h"
-#include "../bsp/plane.h"
 
 namespace ms {
 

@@ -24,13 +24,7 @@
     <ClInclude Include="generate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\shape\vec3.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\graph_drawing\model.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\graph_drawing\endpoint.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\graph_drawing\face.h">
@@ -42,64 +36,10 @@
     <ClInclude Include="..\graph_drawing\graph_drawing.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\graph_drawing\line.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\graph_drawing\vertex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\decoration\decoration.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\fragment\net_transistor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\fragment\net_transistor_settings.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\fragment\transistor_path.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\grid\settings.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\network\edge_net.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\network\edge_placement.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\network\face_net.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\network\face_placement.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\network\half_edge_net.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\network\net_graph_map.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\network\net_graph_map_finder.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\network\net_graph_map_info.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\network\net_graph_map_state.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\network\net_transition.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\network\network.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\network\vertex_net.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\network\vertex_placement.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\util\range.h">
@@ -111,43 +51,106 @@
     <ClInclude Include="..\decoration\brush.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\shape\vec2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\shapes3D\edge_type3d.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\shapes3D\face_type3d.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\intersector.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\guidelines\vertex_type.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\util\timer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\guidelines\network_mutator.h">
+    <ClInclude Include="..\geometry\intersector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\guidelines\guide_mutator.h">
+    <ClInclude Include="..\geometry\mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\hierarchy\network_hierarchy.h">
+    <ClInclude Include="..\geometry\plane.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\shapes3D\shape3d.h">
+    <ClInclude Include="..\geometry\vec2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\util\fast_math.h">
+    <ClInclude Include="..\geometry\vec3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\shape\mesh.h">
+    <ClInclude Include="..\grammar_rules\production_rule.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\bsp\bsp_node.h">
+    <ClInclude Include="..\grammar_rules\rule_applier.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\grammar_rules\rule_applier_settings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\graph\graph.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\graph\graph_edge.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\graph\graph_face.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\graph\graph_half_edge.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\graph\graph_vertex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\graph_drawing\bsp_node.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\graph_drawing\half_edge.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\graph_morphism\morphism.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\graph_morphism\morphism_finder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\graph_morphism\morphism_info.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\graph_morphism\morphism_path.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\graph_morphism\morphism_state.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\placements\edge_placement.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\placements\face_placement.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\placements\vertex_placement.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\primitives\edge_type.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\primitives\face_type.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\primitives\primitives.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\primitives\vertex_type.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\util\matrix.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\graph_grammar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\graph_mutator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mutator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\settings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\graph_drawing\edge.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -161,13 +164,7 @@
     <ClCompile Include="generate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\shape\vec3.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\graph_drawing\model.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\graph_drawing\endpoint.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\graph_drawing\face.cpp">
@@ -179,9 +176,6 @@
     <ClCompile Include="..\graph_drawing\graph_drawing.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\graph_drawing\line.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\graph_drawing\vertex.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -191,100 +185,109 @@
     <ClCompile Include="..\decoration\decoration.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\fragment\net_transistor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\fragment\net_transistor_settings.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\fragment\transistor_path.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\grid\settings.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\network\edge_net.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\network\edge_placement.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\network\face_net.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\network\face_placement.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\network\half_edge_net.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\network\net_graph_map.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\network\net_graph_map_finder.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\network\net_graph_map_info.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\network\net_graph_map_state.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\network\net_transition.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\network\network.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\network\vertex_net.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\network\vertex_placement.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\util\range.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\util\util.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\shape\vec2.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\shapes3D\edge_type3d.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\shapes3D\face_type3d.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\intersector.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\guidelines\vertex_type.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\util\timer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\guidelines\network_mutator.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\geometry\intersector.cpp">
+      <Filter>Header Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\guidelines\guide_mutator.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\geometry\mesh.cpp">
+      <Filter>Header Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\hierarchy\network_hierarchy.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\geometry\vec2.cpp">
+      <Filter>Header Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\shapes3D\shape3d.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\geometry\vec3.cpp">
+      <Filter>Header Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\util\fast_math.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\grammar_rules\production_rule.cpp">
+      <Filter>Header Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\shape\mesh.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\grammar_rules\rule_applier.cpp">
+      <Filter>Header Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\bsp\bsp_node.cpp">
+    <ClCompile Include="..\grammar_rules\rule_applier_settings.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\graph\graph.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\graph\graph_edge.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\graph\graph_face.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\graph\graph_half_edge.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\graph\graph_vertex.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\graph_drawing\bsp_node.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\graph_drawing\half_edge.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\graph_morphism\morphism.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\graph_morphism\morphism_finder.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\graph_morphism\morphism_info.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\graph_morphism\morphism_path.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\graph_morphism\morphism_state.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\placements\edge_placement.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\placements\face_placement.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\placements\vertex_placement.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\primitives\edge_type.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\primitives\face_type.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\primitives\primitives.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\primitives\vertex_type.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\matrix.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\graph_grammar.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\graph_mutator.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mutator.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\settings.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\graph_drawing\edge.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

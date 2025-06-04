@@ -1,13 +1,13 @@
 #pragma once
 #include <unordered_map>
-#include "endpoint.h"
+#include "half_edge.h"
 #include "face.h"
-#include "line.h"
+#include "edge.h"
 #include "vertex.h"
 #include "face_group.h"
 #include <iostream>
-#include "../shape/mesh.h"
-#include "../bsp/bsp_node.h"
+#include "bsp_node.h"
+#include "../geometry/mesh.h"
 
 namespace ms {
 

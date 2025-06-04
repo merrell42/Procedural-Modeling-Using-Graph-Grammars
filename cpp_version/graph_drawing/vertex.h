@@ -1,8 +1,8 @@
 #pragma once
 #include "model.h"
-#include "../shape/vec3.h"
-#include "../guidelines/vertex_type.h"
-#include "endpoint.h"
+#include "../geometry/vec3.h"
+#include "../primitives/vertex_type.h"
+#include "half_edge.h"
 #include <vector>
 
 namespace ms {

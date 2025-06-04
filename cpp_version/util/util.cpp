@@ -3,7 +3,6 @@
 #include <cmath>
 #include <algorithm>
 #include <stdexcept>
-// #include <random>
 #include <vector>
 #include <iostream>
 #include "minmax.h"

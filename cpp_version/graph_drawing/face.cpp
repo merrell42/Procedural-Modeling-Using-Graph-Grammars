@@ -1,12 +1,12 @@
 #include "pch.h"
 #include "face.h"
 #include "face_group.h"
-#include "endpoint.h"
-#include "../shapes3D/face_type3d.h"
-#include "../util/util.h"
+#include "half_edge.h"
 #include <vector>
 #include <algorithm>
+#include "../primitives/face_type.h"
 #include "../third_party/earcut/earcut.h"
+#include "../util/util.h"
 
 namespace ms {
 

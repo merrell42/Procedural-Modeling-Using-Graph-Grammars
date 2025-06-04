@@ -4,14 +4,14 @@
 #include <fstream>
 #include <vector>
 #include <sstream>
-#include "../hierarchy/network_hierarchy.h"
-#include "../guidelines/network_mutator.h"
-#include "../guidelines/guide_mutator.h"
-#include "../shapes3D/shape3d.h"
+#include "../graph_grammar.h"
+#include "../mutator.h"
+#include "../graph_mutator.h"
+#include "../primitives/primitives.h"
 #include "../third_party/json.h"
 #include "../graph_drawing/model.h"
 #include "../util/util.h"
-#include "../grid/settings.h"
+#include "../settings.h"
 
 using namespace std;
 using Json = nlohmann::json;

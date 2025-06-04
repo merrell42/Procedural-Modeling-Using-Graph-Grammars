@@ -6,7 +6,7 @@
 #define GENERATE_API __declspec(dllimport)
 #endif
 #include <string>
-#include "../shape/mesh.h"
+#include "../geometry/mesh.h"
 
 namespace ms {
 

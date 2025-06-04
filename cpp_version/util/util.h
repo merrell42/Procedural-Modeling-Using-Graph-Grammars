@@ -2,7 +2,7 @@
 #include <vector>
 #include <functional>
 #include <string>
-#include "../shape/vec3.h"
+#include "../geometry/vec3.h"
 
 namespace ms {
 

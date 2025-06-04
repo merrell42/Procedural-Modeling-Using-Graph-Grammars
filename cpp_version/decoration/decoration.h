@@ -1,5 +1,5 @@
 #pragma once
-#include "../shape/vec2.h"
+#include "../geometry/vec2.h"
 #include <functional>
 #include <string>
 

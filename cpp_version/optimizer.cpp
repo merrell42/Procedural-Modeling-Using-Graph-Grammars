@@ -1,5 +1,5 @@
 #include "optimizer.h"
-#include "global_settings.h"
+#include "settings.h"
 #include <stdexcept>
 
 namespace ms {
