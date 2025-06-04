@@ -4,14 +4,14 @@
 namespace ms {
 
 void VertexPlacement::initialize() {
-    std::vector<Endpoint*> endpoints = vertex->getEndpoints();
+    std::vector<HalfEdge*> halfedges = vertex->getHalfEdges();
 
-    for (auto* endpoint : endpoints) {
-        if (!endpoint) {
+    for (auto* halfedge : halfedges) {
+        if (!halfedge) {
             // Happens in the ground transition.
             continue;
         }
-        Face* face = endpoint->getFace();
+        Face* face = halfedge->getFace();
         int id = face->getId();
 
         if (!settings->getFace(id)) {
@@ -37,12 +37,12 @@ void VertexPlacement::constrainFace(int id) {
     }
     unfreeFaceIds.push_back(id);
 
-    // Check if the face IDs are colinear.
+    // Check if the face IDs are coedgear.
     if (unfreeFaceIds.size() == 3) {
         auto* M = getM();
         if (!M) {
             unfreeFaceIds.pop_back();
-            colinearFaceIds.push_back(id);
+            coedgearFaceIds.push_back(id);
         }
     }
 }
@@ -51,9 +51,9 @@ void VertexPlacement::propagate() {
     if (unfreeFaceIds.size() >= 3) {
         settings->addToOrder(this->id, "vertex", -1);
         
-        // Handle free faces and colinear faces.
+        // Handle free faces and coedgear faces.
         auto freeIds = freeFaceIds;
-        freeIds.insert(freeIds.end(), colinearFaceIds.begin(), colinearFaceIds.end());
+        freeIds.insert(freeIds.end(), coedgearFaceIds.begin(), coedgearFaceIds.end());
         
         for (int faceId : freeIds) {
             auto* fPlace = settings->getFace(faceId);
@@ -63,17 +63,17 @@ void VertexPlacement::propagate() {
         }
 
         // Handle connected edges.
-        for (Endpoint* endpoint : vertex->getEndpoints()) {
-            int edgeId = endpoint->getLine()->getId();
+        for (HalfEdge* halfedge : vertex->getHalfEdges()) {
+            int edgeId = halfedge->getEdge()->getId();
             auto* ePlace = settings->getEdge(edgeId);
             if (ePlace) {
                 ePlace->addConstraint(this->id);
             }
 
-            auto* prev = endpoint->prev();
+            auto* prev = halfedge->prev();
             if (prev->getEdgeType()->faceData.size() == 1) {
-                // If prev edge only has one endpoint, propagate to previous vertex.
-                int prevEdgeId = prev->getLine()->getId();
+                // If prev edge only has one halfedge, propagate to previous vertex.
+                int prevEdgeId = prev->getEdge()->getId();
                 auto* prevEPlace = settings->getEdge(prevEdgeId);
                 if (prevEPlace) {
                     prevEPlace->addConstraint(this->id);
@@ -99,7 +99,7 @@ Matrix* VertexPlacement::getA(const std::vector<int>& faceIds) {
 Matrix* VertexPlacement::getM() {
     if (!M) {
         Matrix* A = getA(unfreeFaceIds);
-        // The three faces are collinear.
+        // The three faces are coledgear.
         // Return null if A is not invertible
         if (std::abs(Matrix::det(*A)) < 1e-8) {
             delete A;
@@ -220,7 +220,7 @@ void VertexPlacement::addFreeFace(int id) {
 
     settings->getFace(id)->addVertexId(this->id); // Add the vertex ID to the face
 
-    // Check for colinearity
+    // Check for coedgearity
     //if (freeFaceIds.size() == 3 && getA(freeFaceIds).empty()) {
     //    freeFaceIds.pop_back(); // Remove the last face ID
     //}
@@ -228,12 +228,12 @@ void VertexPlacement::addFreeFace(int id) {
 
 std::vector<int> VertexPlacement::getAllFaceIds() const {
     std::vector<int> allFaceIds;
-    allFaceIds.reserve(unfreeFaceIds.size() + freeFaceIds.size() + colinearFaceIds.size());
+    allFaceIds.reserve(unfreeFaceIds.size() + freeFaceIds.size() + coedgearFaceIds.size());
 
     // Concatenate the vectors.
     allFaceIds.insert(allFaceIds.end(), unfreeFaceIds.begin(), unfreeFaceIds.end());
     allFaceIds.insert(allFaceIds.end(), freeFaceIds.begin(), freeFaceIds.end());
-    allFaceIds.insert(allFaceIds.end(), colinearFaceIds.begin(), colinearFaceIds.end());
+    allFaceIds.insert(allFaceIds.end(), coedgearFaceIds.begin(), coedgearFaceIds.end());
 
     return allFaceIds; // Return the combined vector.
 }

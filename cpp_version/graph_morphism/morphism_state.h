@@ -9,11 +9,11 @@ class NetGraphMap;
 class HalfEdgeNet;
 class Vertex;
 
-struct EndpointData {
+struct HalfEdgeData {
     HalfEdgeNet* halfB;
     Vertex* vertexA;
 
-    EndpointData(HalfEdgeNet* half = nullptr, Vertex* vertex = nullptr)
+    HalfEdgeData(HalfEdgeNet* half = nullptr, Vertex* vertex = nullptr)
         : halfB(half), vertexA(vertex) {}
 };
 
@@ -24,18 +24,18 @@ public:
 
     NetGraphMapInfo* getInfo() const { return info; }
     NetGraphMap* getMap() { return map; }
-    std::vector<EndpointData>& getQueue() { return queue; }
-    std::vector<EndpointData>& getSpliceQueue() { return spliceQueue; }
+    std::vector<HalfEdgeData>& getQueue() { return queue; }
+    std::vector<HalfEdgeData>& getSpliceQueue() { return spliceQueue; }
 
-    void setQueue(const std::vector<EndpointData>& newQueue);
+    void setQueue(const std::vector<HalfEdgeData>& newQueue);
     void assignVertex(Vertex* vertexA, int indexB);
     NetGraphMapState* copy() const;
 
 private:
     NetGraphMapInfo* info;
     NetGraphMap* map;
-    std::vector<EndpointData> queue;
-    std::vector<EndpointData> spliceQueue;
+    std::vector<HalfEdgeData> queue;
+    std::vector<HalfEdgeData> spliceQueue;
 };
 
 } // namespace ms 

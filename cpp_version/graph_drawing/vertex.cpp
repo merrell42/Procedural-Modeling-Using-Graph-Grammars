@@ -3,10 +3,10 @@
 
 namespace ms {
 
-Vertex::Vertex(Model* model, int id, Vec3 position, VertexType* type, std::vector<int> endpointIds)
+Vertex::Vertex(Model* model, int id, Vec3 position, VertexType* type, std::vector<int> halfedgeIds)
 	: model(model)
 	, id(id)
-	, endpointIds(endpointIds)
+	, halfedgeIds(halfedgeIds)
 	, position(position)
 	, type(type) {
 	model->getCurrent()->addVertex(id, this);
@@ -20,7 +20,7 @@ Vertex::Vertex(Model* model, Vec3 position, VertexType* type)
 	model->getCurrent()->addVertex(id, this);
 }
 
-void Vertex::createEndpoints() {
+void Vertex::createHalfEdges() {
 	std::vector<Connection> connections = type->getConnections();
 
 	for (const auto& connection : connections) {
@@ -32,35 +32,35 @@ void Vertex::createEndpoints() {
 			bool position = faceDatum.onRight ^ connection.isAtStart;
 
 			if (position) {
-				createEndpoint(connection, (int)faceIndex);
+				createHalfEdge(connection, (int)faceIndex);
 			}
 		}
 	}
 }
 
-Endpoint* Vertex::createEndpoint(const Connection& connection, int faceIndex) {
+HalfEdge* Vertex::createHalfEdge(const Connection& connection, int faceIndex) {
 	Vec3 dir = connection.dir.copy();
 
-	// Create the endpoint.
-	const int endpointId = model->newId();
+	// Create the halfedge.
+	const int halfedgeId = model->newId();
 	const int vertexId = id;
-	const int lineId = model->newId();
-	auto endpoint = new Endpoint(model, endpointId, connection.isAtStart, connection.edge, dir, vertexId, -1, lineId, true, faceIndex);
+	const int edgeId = model->newId();
+	auto halfedge = new HalfEdge(model, halfedgeId, connection.isAtStart, connection.edge, dir, vertexId, -1, edgeId, true, faceIndex);
 
-	// Create the line.
-	std::vector<int> lineEndpointIds(2, -1);
-	lineEndpointIds[faceIndex] = endpointId;
+	// Create the edge.
+	std::vector<int> edgeHalfEdgeIds(2, -1);
+	edgeHalfEdgeIds[faceIndex] = halfedgeId;
 	std::vector<int> bspNodeIds;
-	auto line = new Line(model, lineId, connection.edge, lineEndpointIds, bspNodeIds);
+	auto edge = new Edge(model, edgeId, connection.edge, edgeHalfEdgeIds, bspNodeIds);
 
-	// Add the endpoint to the vertex.
-	endpointIds.push_back(endpointId);
+	// Add the halfedge to the vertex.
+	halfedgeIds.push_back(halfedgeId);
 
-	return endpoint;
+	return halfedge;
 }
 
 Vertex* Vertex::copy() {
-	auto result = new Vertex(model, id, position, type, endpointIds);
+	auto result = new Vertex(model, id, position, type, halfedgeIds);
 	return result;
 }
 
@@ -69,14 +69,14 @@ void Vertex::destroy() {
 	delete this;
 };
 
-Endpoint* Vertex::getEndpoint(int index) const {
-	return model->getCurrent()->getEndpoint(endpointIds[index]);
+HalfEdge* Vertex::getHalfEdge(int index) const {
+	return model->getCurrent()->getHalfEdge(halfedgeIds[index]);
 }
 
-std::vector<Endpoint*> Vertex::getEndpoints() const {
-	std::vector<Endpoint*> result;
-	for (int i = 0; i < endpointIds.size(); i++) {
-		result.push_back(getEndpoint(i));
+std::vector<HalfEdge*> Vertex::getHalfEdges() const {
+	std::vector<HalfEdge*> result;
+	for (int i = 0; i < halfedgeIds.size(); i++) {
+		result.push_back(getHalfEdge(i));
 	}
 	return result;
 }

@@ -12,141 +12,141 @@
 
 namespace ms {
 
-Line::Line(Model* model, int id, EdgeType3D* type, std::vector<int> endpointIds, std::vector<int> bspNodeIds)
+Edge::Edge(Model* model, int id, EdgeType3D* type, std::vector<int> halfedgeIds, std::vector<int> bspNodeIds)
 	: model(model)
 	, type(type)
 	, id(id)
-	, endpointIds(endpointIds)
+	, halfedgeIds(halfedgeIds)
 	, bspNodeIds(bspNodeIds) {
-	model->getCurrent()->addLine(id, this);
+	model->getCurrent()->addEdge(id, this);
 }
 
-Line::~Line() {
+Edge::~Edge() {
 	removeFromBsp();
 }
 
 // Define and initialize the static member
-std::unordered_map<int, VertexType*> Line::splitVertexTypes;
+std::unordered_map<int, VertexType*> Edge::splitVertexTypes;
 
-Line* Line::copy() {
-	auto result = new Line(model, id, type, endpointIds, bspNodeIds);
+Edge* Edge::copy() {
+	auto result = new Edge(model, id, type, halfedgeIds, bspNodeIds);
 	return result;
 }
 
-Endpoint* Line::getEndpoint(int index) const {
-	return model->getCurrent()->getEndpoint(endpointIds[index]);
+HalfEdge* Edge::getHalfEdge(int index) const {
+	return model->getCurrent()->getHalfEdge(halfedgeIds[index]);
 }
 
-std::vector<Endpoint*> Line::getEndpoints() const {
-	std::vector<Endpoint*> result;
-	for (int i = 0; i < endpointIds.size(); i++) {
-		result.push_back(getEndpoint(i));
+std::vector<HalfEdge*> Edge::getHalfEdges() const {
+	std::vector<HalfEdge*> result;
+	for (int i = 0; i < halfedgeIds.size(); i++) {
+		result.push_back(getHalfEdge(i));
 	}
 	return result;
 }
 
-void Line::addEndpoint(Endpoint* endpoint, int index) {
-	setEndpoint(index, endpoint);
-	endpoint->setLine(this);
+void Edge::addHalfEdge(HalfEdge* halfedge, int index) {
+	setHalfEdge(index, halfedge);
+	halfedge->setEdge(this);
 }
-void Line::setEndpoint(int index, Endpoint* endpoint) {
-	endpointIds[index] = endpoint->getId();
-}
-
-// New function to set endpoint IDs directly.
-void Line::setEndpointIds(const std::vector<int>& ids) {
-	endpointIds.resize(ids.size());
-	std::copy(ids.begin(), ids.end(), endpointIds.begin());
+void Edge::setHalfEdge(int index, HalfEdge* halfedge) {
+	halfedgeIds[index] = halfedge->getId();
 }
 
-void Line::destroy() {
-	model->getCurrent()->removeLine(this);
+// New function to set halfedge IDs directly.
+void Edge::setHalfEdgeIds(const std::vector<int>& ids) {
+	halfedgeIds.resize(ids.size());
+	std::copy(ids.begin(), ids.end(), halfedgeIds.begin());
+}
+
+void Edge::destroy() {
+	model->getCurrent()->removeEdge(this);
 	delete this;
 };
 
-SplitData Line::split(bool splitFaces) {
+SplitData Edge::split(bool splitFaces) {
     timer->start("split No Vertex");
 
-    // Create two new lines as copies of the current line.
-	Line* line0 = this->copy();
-	Line* line1 = this->copy();
-    std::vector<Line*> newLines = { line0, line1 };
-	line0->setId(model->newId());
-	line1->setId(model->newId());
-	model->getCurrent()->addLine(line0->getId(), line0);
-	model->getCurrent()->addLine(line1->getId(), line1);
-	line0->setEndpointIds({ -1, -1 });
-	line1->setEndpointIds({ -1, -1 });
+    // Create two new edges as copies of the current edge.
+	Edge* edge0 = this->copy();
+	Edge* edge1 = this->copy();
+    std::vector<Edge*> newEdges = { edge0, edge1 };
+	edge0->setId(model->newId());
+	edge1->setId(model->newId());
+	model->getCurrent()->addEdge(edge0->getId(), edge0);
+	model->getCurrent()->addEdge(edge1->getId(), edge1);
+	edge0->setHalfEdgeIds({ -1, -1 });
+	edge1->setHalfEdgeIds({ -1, -1 });
 
-    // Get old endpoints and set new ones.
-    std::vector<Endpoint*> endpoints = this->getEndpoints();
-    std::vector<Endpoint*> nextEndpoints;
-    for (auto& endpoint : endpoints) {
-        nextEndpoints.push_back(endpoint->next());
+    // Get old halfedges and set new ones.
+    std::vector<HalfEdge*> halfedges = this->getHalfEdges();
+    std::vector<HalfEdge*> nextHalfEdges;
+    for (auto& halfedge : halfedges) {
+        nextHalfEdges.push_back(halfedge->next());
     }
 	if (splitFaces) {
-		for (auto& endpoint : endpoints) {
-			endpoint->getFace()->split(endpoint->next());
+		for (auto& halfedge : halfedges) {
+			halfedge->getFace()->split(halfedge->next());
 		}
 	}
-    for (auto& endpoint : endpoints) {
-        endpoint->transfer(newLines[endpoint->getIsAtStart() ? 0 : 1]);
+    for (auto& halfedge : halfedges) {
+        halfedge->transfer(newEdges[halfedge->getIsAtStart() ? 0 : 1]);
     }
 
     destroy();
     timer->stop("split No Vertex");
 
-    return SplitData(newLines, nextEndpoints);
+    return SplitData(newEdges, nextHalfEdges);
 }
 
-std::pair<SplitData, Vertex*> Line::fullSplit(double s) {
+std::pair<SplitData, Vertex*> Edge::fullSplit(double s) {
 	Vec3 middlePos = Vec3::lerp(
-		this->getEndpoints()[0]->getPosition(),
-		this->getEndpoints()[1]->getPosition(), s);
+		this->getHalfEdges()[0]->getPosition(),
+		this->getHalfEdges()[1]->getPosition(), s);
 
 	auto edgeType = this->getEdgeType();
 	auto modelCopy = model;
 	SplitData split = this->split(false);
-	VertexType* vertexType = Line::getVertexType(edgeType);
+	VertexType* vertexType = Edge::getVertexType(edgeType);
 	Vertex* newVertex = new Vertex(modelCopy, middlePos, vertexType);
-	newVertex->createEndpoints();
+	newVertex->createHalfEdges();
 	
-	std::vector<Line*> addedLines;
-	for (auto endpoint : newVertex->getEndpoints()) {
-		addedLines.push_back(endpoint->getLine());
+	std::vector<Edge*> addedEdges;
+	for (auto halfedge : newVertex->getHalfEdges()) {
+		addedEdges.push_back(halfedge->getEdge());
 	}
 	
 	std::vector<Face*> addedFaces;
-	for (auto endpoint : newVertex->getEndpoints()) {
-		addedFaces.push_back(endpoint->getFace());
+	for (auto halfedge : newVertex->getHalfEdges()) {
+		addedFaces.push_back(halfedge->getFace());
 	}
 
-	int p = !split.lines[0]->getEndpoints()[0] ? 0 : 1;
+	int p = !split.edges[0]->getHalfEdges()[0] ? 0 : 1;
 
-	auto start0 = newVertex->getEndpoints()[0]->getIsAtStart();
-	auto endpointT = newVertex->getEndpoints()[start0 ? 0 : 1];
-	auto endpointF = newVertex->getEndpoints()[start0 ? 1 : 0];
+	auto start0 = newVertex->getHalfEdges()[0]->getIsAtStart();
+	auto halfedgeT = newVertex->getHalfEdges()[start0 ? 0 : 1];
+	auto halfedgeF = newVertex->getHalfEdges()[start0 ? 1 : 0];
 
 	if (p == 0) {
-		split.lines[0]->addEndpoint(endpointF, 0);
-		split.lines[1]->addEndpoint(endpointT, 1);
-		auto prevEndpoint0 = split.lines[0]->getEndpoints()[1];
-		auto prevEndpoint1 = split.lines[1]->getEndpoints()[0];
-		auto startPrev0 = prevEndpoint0->getIsAtStart();
-		prevEndpoint0->getFace()->insert(startPrev0 ? endpointT : endpointF, prevEndpoint0);
-		prevEndpoint1->getFace()->insert(startPrev0 ? endpointF : endpointT, prevEndpoint1);
+		split.edges[0]->addHalfEdge(halfedgeF, 0);
+		split.edges[1]->addHalfEdge(halfedgeT, 1);
+		auto prevHalfEdge0 = split.edges[0]->getHalfEdges()[1];
+		auto prevHalfEdge1 = split.edges[1]->getHalfEdges()[0];
+		auto startPrev0 = prevHalfEdge0->getIsAtStart();
+		prevHalfEdge0->getFace()->insert(startPrev0 ? halfedgeT : halfedgeF, prevHalfEdge0);
+		prevHalfEdge1->getFace()->insert(startPrev0 ? halfedgeF : halfedgeT, prevHalfEdge1);
 	} else {
-		split.lines[0]->addEndpoint(endpointF, 1);
-		split.lines[1]->addEndpoint(endpointT, 0);
-		auto prevEndpoint0 = split.lines[0]->getEndpoints()[0];
-		auto prevEndpoint1 = split.lines[1]->getEndpoints()[1];
-		auto startPrev0 = prevEndpoint0->getIsAtStart();
-		prevEndpoint0->getFace()->insert(startPrev0 ? endpointT : endpointF, prevEndpoint0);
-		prevEndpoint1->getFace()->insert(startPrev0 ? endpointF : endpointT, prevEndpoint1);
+		split.edges[0]->addHalfEdge(halfedgeF, 1);
+		split.edges[1]->addHalfEdge(halfedgeT, 0);
+		auto prevHalfEdge0 = split.edges[0]->getHalfEdges()[0];
+		auto prevHalfEdge1 = split.edges[1]->getHalfEdges()[1];
+		auto startPrev0 = prevHalfEdge0->getIsAtStart();
+		prevHalfEdge0->getFace()->insert(startPrev0 ? halfedgeT : halfedgeF, prevHalfEdge0);
+		prevHalfEdge1->getFace()->insert(startPrev0 ? halfedgeF : halfedgeT, prevHalfEdge1);
 	}
 	
-	for (auto line : addedLines) {
-		line->destroy();
+	for (auto edge : addedEdges) {
+		edge->destroy();
 	}
 	for (auto face : addedFaces) {
 		face->destroy();
@@ -155,7 +155,7 @@ std::pair<SplitData, Vertex*> Line::fullSplit(double s) {
 	return { split, newVertex };
 }
 
-VertexType* Line::getVertexType(EdgeType3D* edgeType) {
+VertexType* Edge::getVertexType(EdgeType3D* edgeType) {
 	const int id = edgeType->getId();
     // Check if the vertex type already exists or if it's an old version.
     if (splitVertexTypes.find(id) == splitVertexTypes.end() ||
@@ -172,32 +172,32 @@ VertexType* Line::getVertexType(EdgeType3D* edgeType) {
     return splitVertexTypes[id];
 }
 
-bool Line::intersects(Line* lineB) {
+bool Edge::intersects(Edge* edgeB) {
     auto result = Intersector::intersect(
-        this->getEndpoints()[0]->getPosition().dropDim(2),
-        this->getEndpoints()[1]->getPosition().dropDim(2),
-        lineB->getEndpoints()[0]->getPosition().dropDim(2),
-        lineB->getEndpoints()[1]->getPosition().dropDim(2)
+        this->getHalfEdges()[0]->getPosition().dropDim(2),
+        this->getHalfEdges()[1]->getPosition().dropDim(2),
+        edgeB->getHalfEdges()[0]->getPosition().dropDim(2),
+        edgeB->getHalfEdges()[1]->getPosition().dropDim(2)
     );
     return result.has_value();
 }
 
-Vec3* Line::getDirection() const {
-	Vec3 v1(getEndpoint(1)->getPosition());
-	auto normal = new Vec3(v1.minus(getEndpoint(0)->getPosition()));
+Vec3* Edge::getDirection() const {
+	Vec3 v1(getHalfEdge(1)->getPosition());
+	auto normal = new Vec3(v1.minus(getHalfEdge(0)->getPosition()));
 	normal->normalize();
 	return normal;
 }
 
-bool Line::addToBsp() {
-	return model->getCurrent()->bspAddLine(this);
+bool Edge::addToBsp() {
+	return model->getCurrent()->bspAddEdge(this);
 }
 
-void Line::removeFromBsp() {
+void Edge::removeFromBsp() {
 	for (int nodeId : bspNodeIds) {
 		auto bspNode = model->getCurrent()->getBspNode(nodeId);
 		if (bspNode) {
-			bspNode->removeLine(this);
+			bspNode->removeEdge(this);
 		}
 	}
 	bspNodeIds.clear();

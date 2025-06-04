@@ -17,9 +17,9 @@ class Face;
 class Vertex;
 class HalfEdgeNet;
 class VertexType;
-class Endpoint;
+class HalfEdge;
 class FaceGroup;
-struct EndpointData;
+struct HalfEdgeData;
 struct IntersectionData;
 
 // Structure to hold intersection results
@@ -58,14 +58,14 @@ private:
     Face* findFace(FaceType3D* faceType);
     NetGraphMap* findContinue(NetGraphMapState* state);
     NetGraphMap* assignVertex(NetGraphMapState* state, Vertex* vertexA, int indexB);
-    NetGraphMap* matchEndpoint(const EndpointData& endpointData, NetGraphMapState* state);
-    NetGraphMap* assignEndpoint(Endpoint* endpointA, HalfEdgeNet* halfB, NetGraphMapState* state);
-    NetGraphMap* spliceEndpoint(const EndpointData& endpointData, NetGraphMapState* state);
+    NetGraphMap* matchHalfEdge(const HalfEdgeData& halfedgeData, NetGraphMapState* state);
+    NetGraphMap* assignHalfEdge(HalfEdge* halfedgeA, HalfEdgeNet* halfB, NetGraphMapState* state);
+    NetGraphMap* spliceHalfEdge(const HalfEdgeData& halfedgeData, NetGraphMapState* state);
 
     // Ray casting methods
     /*Face* castVolumeRaySeries(Face* face, const std::vector<HalfEdgeNet*>& rayHalfs, Face* goalFace);*/
     static IntersectResult castRay(const Vec3& p0, const Vec3& dir, FaceGroup* groupA, const std::map<int, Face*>& faceMap, int maxDim);
-    static Endpoint* castRaySeries(HalfEdgeNet* halfB, const Vec3& startPos, FaceGroup* groupA, const std::map<int, Face*>& faceMap, int maxDim);
+    static HalfEdge* castRaySeries(HalfEdgeNet* halfB, const Vec3& startPos, FaceGroup* groupA, const std::map<int, Face*>& faceMap, int maxDim);
     static void findNearestIntersection(Face* faceA, const Vec3& p0, const Vec3& p1, const Vec2& dir2, IntersectResult& nearestIntersect, int maxDim);
 
     // Static helper methods

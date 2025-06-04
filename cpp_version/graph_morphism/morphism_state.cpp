@@ -18,7 +18,7 @@ NetGraphMapState::NetGraphMapState(NetGraphMapInfo* info, NetGraphMap* existingM
     }
 }
 
-void NetGraphMapState::setQueue(const std::vector<EndpointData>& newQueue) {
+void NetGraphMapState::setQueue(const std::vector<HalfEdgeData>& newQueue) {
     queue = newQueue;
 }
 
@@ -32,9 +32,9 @@ void NetGraphMapState::assignVertex(Vertex* vertexA, int indexB) {
             continue;
         }
         if (halfB->isSpliced()) {
-            spliceQueue.push_back(EndpointData(halfB, vertexA));
+            spliceQueue.push_back(HalfEdgeData(halfB, vertexA));
         } else {
-            queue.push_back(EndpointData(halfB, vertexA));
+            queue.push_back(HalfEdgeData(halfB, vertexA));
         }
     }
 }

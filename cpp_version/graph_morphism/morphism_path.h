@@ -17,26 +17,26 @@ public:
     };
 
     static int count;
-    static TransistorPath* createNet(const std::vector<Endpoint*>& endpoints,
-                                   const std::vector<Line*>& edges,
-                                   std::vector<Line*>* lines);
+    static TransistorPath* createPath(const std::vector<HalfEdge*>& halfedges,
+                                   const std::vector<Edge*>& edges,
+                                   std::vector<Edge*>* lines);
 
-    TransistorPath(const std::vector<IndexInfo>& indices, std::vector<Line*>* lines);
+    TransistorPath(const std::vector<IndexInfo>& indices, std::vector<Edge*>* edges);
 
-    void setEndpoints(const std::vector<Endpoint*>& endpoints);
+    void setHalfEdges(const std::vector<HalfEdge*>& halfedges);
     int extendableness() const;
     Vertex* randomNextVertex();
     Vertex* rigidNextVertex();
-    Line* lineFromIndex(int index);
-    IndexInfo indexForEndpoint(Endpoint* endpoint);
+    Edge* edgeFromIndex(int index);
+    IndexInfo indexForHalfEdge(HalfEdge* halfedge);
     void expandBackward();
     void expandForward();
     void merge(TransistorPath* pathB);
 
     // Member variables
     std::vector<IndexInfo> indices;
-    std::vector<Line*>* lines;
-    std::vector<Endpoint*> endpoints;
+    std::vector<Edge*>* edges;
+    std::vector<HalfEdge*> halfedges;
     std::vector<bool> extendable;
     int id;
 };

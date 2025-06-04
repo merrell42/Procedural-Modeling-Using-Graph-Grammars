@@ -10,28 +10,28 @@
 
 namespace ms {
 
-EdgePlacement::EdgePlacement(Line* edge, int id, NetTransistorSettings* settings)
+EdgePlacement::EdgePlacement(Edge* edge, int id, NetTransistorSettings* settings)
     : edge(edge)
     , id(id)
     , settings(settings) {
     
-    // Get vertex IDs from endpoints
-    auto endpoints = edge->getEndpoints();
-    for (auto* endpoint : endpoints) {
-        if (endpoint) {
+    // Get vertex IDs from halfedges
+    auto halfedges = edge->getHalfEdges();
+    for (auto* halfedge : halfedges) {
+        if (halfedge) {
             // Can be null in the ground transition.
-            vertexIds.push_back(endpoint->getVertex()->getId());
+            vertexIds.push_back(halfedge->getVertex()->getId());
         }
     }
 
     // Handle self-loops
     if (vertexIds.size() == 1) {
-        auto* endpoint = edge->getEndpoints()[0]->next();
-        vertexIds.push_back(endpoint->getVertex()->getId());
+        auto* halfedge = edge->getHalfEdges()[0]->next();
+        vertexIds.push_back(halfedge->getVertex()->getId());
     }
 
-    // Set direction from first endpoint
-    dir = edge->getEndpoints()[0]->getDir();
+    // Set direction from first halfedge
+    dir = edge->getHalfEdges()[0]->getDir();
 }
 
 void EdgePlacement::initialize() {

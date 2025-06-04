@@ -5,15 +5,15 @@
 namespace ms {
 
 GraphDrawing::GraphDrawing(
-	std::map<int, Endpoint*> endpointMap,
+	std::map<int, HalfEdge*> halfedgeMap,
 	std::map<int, Face*>     faceMap,
-	std::map<int, Line*>     lineMap,
+	std::map<int, Edge*>     edgeMap,
 	std::map<int, Vertex*>   vertexMap,
 	std::map<int, BspNode*> bspNodeMap,
 	int bspRootId
-) : endpointMap(endpointMap)
+) : halfedgeMap(halfedgeMap)
 	, faceMap(faceMap)
-	, lineMap(lineMap)
+	, edgeMap(edgeMap)
 	, vertexMap(vertexMap)
 	, bspNodeMap(bspNodeMap)
 	, bspRootId(bspRootId) {}
@@ -21,13 +21,13 @@ GraphDrawing::GraphDrawing(
 // This will copy each item into the current model.
 // This happens in the constructor of each item.
 void GraphDrawing::copy() {
-	for (const auto& [id, ptr] : endpointMap) {
+	for (const auto& [id, ptr] : halfedgeMap) {
 		ptr && ptr->copy();
 	}
 	for (const auto& [id, ptr] : faceMap) {
 		ptr && ptr->copy();
 	}
-	for (const auto& [id, ptr] : lineMap) {
+	for (const auto& [id, ptr] : edgeMap) {
 		ptr && ptr->copy();
 	}
 	for (const auto& [id, ptr] : vertexMap) {
@@ -41,14 +41,14 @@ void GraphDrawing::copy() {
 	}
 }
 
-void GraphDrawing::removeEndpoint(Endpoint* endpoint) {
-	endpointMap.erase(endpoint->getId());
+void GraphDrawing::removeHalfEdge(HalfEdge* halfedge) {
+	halfedgeMap.erase(halfedge->getId());
 }
 void GraphDrawing::removeFace(Face* face) {
 	faceMap.erase(face->getId());
 }
-void GraphDrawing::removeLine(Line* line) {
-	lineMap.erase(line->getId());
+void GraphDrawing::removeEdge(Edge* edge) {
+	edgeMap.erase(edge->getId());
 }
 void GraphDrawing::removeVertex(Vertex* vertex) {
 	vertexMap.erase(vertex->getId());
@@ -91,8 +91,8 @@ void GraphDrawing::save(std::string suffix) {
 		}
 
 		outFile << "f";
-		for (Endpoint* endpoint : face->getEndpoints()) {
-			const int id = endpoint->getVertex()->getId();
+		for (HalfEdge* halfedge : face->getHalfEdges()) {
+			const int id = halfedge->getVertex()->getId();
 			auto it = std::find(vertexIds.begin(), vertexIds.end(), id);
 
 			if (it != vertexIds.end()) {
@@ -119,16 +119,16 @@ Mesh GraphDrawing::exportMesh() {
 	return createMesh(positions, normals, triangles, faceIndices);
 }
 
-bool GraphDrawing::bspAddLine(Line* line) {
+bool GraphDrawing::bspAddEdge(Edge* edge) {
 	if (bspRootId == -1) {
 		bspRootId = 0;
-		bspNodeMap[bspRootId] = new BspNode(line->getModel(), bspRootId);
+		bspNodeMap[bspRootId] = new BspNode(edge->getModel(), bspRootId);
 	}
-	return bspNodeMap[bspRootId]->addLine(line);
+	return bspNodeMap[bspRootId]->addEdge(edge);
 }
 
-void GraphDrawing::bspRemoveLine(Line* line) {
-	bspNodeMap[bspRootId]->removeLine(line);
+void GraphDrawing::bspRemoveEdge(Edge* edge) {
+	bspNodeMap[bspRootId]->removeEdge(edge);
 }
 
 bool GraphDrawing::bspAddFace(Face* face) {

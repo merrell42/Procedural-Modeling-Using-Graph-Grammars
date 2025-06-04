@@ -9,23 +9,23 @@
 
 namespace ms {
 	class Model;
-	class Line;
-	class Endpoint;
+	class Edge;
+	class HalfEdge;
 	class Vertex;
 
 	struct SplitData {
-		std::vector<Line*> lines;
-		std::vector<Endpoint*> nextEndpoints;
+		std::vector<Edge*> edges;
+		std::vector<HalfEdge*> nextHalfEdges;
 
-		SplitData(const std::vector<Line*>& newLines, const std::vector<Endpoint*>& newEndpoints)
-			: lines(newLines), nextEndpoints(newEndpoints) {}
+		SplitData(const std::vector<Edge*>& newEdges, const std::vector<HalfEdge*>& newHalfEdges)
+			: edges(newEdges), nextHalfEdges(newHalfEdges) {}
 	};
 
-	class Line {
+	class Edge {
 	public:
-		Line(Model* model, int id, EdgeType3D* type, std::vector<int> endpointIds, std::vector<int> bspNodeIds);
-		Line* copy();
-		~Line();
+		Edge(Model* model, int id, EdgeType3D* type, std::vector<int> halfedgeIds, std::vector<int> bspNodeIds);
+		Edge* copy();
+		~Edge();
 		int getId() const { return id; };
 		Model* getModel() const { return model; };
 		void setId(int newId) { id = newId; };
@@ -34,23 +34,23 @@ namespace ms {
 		const std::vector<int>& getBspNodeIds() const { return bspNodeIds; }
 		bool addToBsp();
 		void removeFromBsp();
-		Endpoint* getEndpoint(int index) const;
-		std::vector<Endpoint*> getEndpoints() const;
-		void addEndpoint(Endpoint* endpoint, int index);
-		void setEndpoint(int index, Endpoint* endpoint);
-        void setEndpointIds(const std::vector<int>& ids);
+		HalfEdge* getHalfEdge(int index) const;
+		std::vector<HalfEdge*> getHalfEdges() const;
+		void addHalfEdge(HalfEdge* halfedge, int index);
+		void setHalfEdge(int index, HalfEdge* halfedge);
+        void setHalfEdgeIds(const std::vector<int>& ids);
 		EdgeType3D* getEdgeType() const { return type; };
 		SplitData split(bool splitFaces);
 		std::pair<SplitData, Vertex*> fullSplit(double s);
 		void destroy();
 		static VertexType* getVertexType(EdgeType3D* edgeType);
-		bool intersects(Line* lineB);
+		bool intersects(Edge* edgeB);
 		Vec3* getDirection() const;
 
 	private:
 		int id;
 		EdgeType3D* type;	
-		std::vector<int> endpointIds;
+		std::vector<int> halfedgeIds;
 		std::vector<int> bspNodeIds;
 		static std::unordered_map<int, VertexType*> splitVertexTypes;
 

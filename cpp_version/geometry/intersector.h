@@ -16,7 +16,7 @@ struct IntersectionData {
 
 class Intersector {
 public:
-    // The minimum angle in degrees between two line segments for them to intersect.
+    // The minimum angle in degrees between two edge segments for them to intersect.
     // If they are within this angle they are close enough to being parallel that they
     // can be ignored.
     static constexpr double MIN_ANGLE = 1e-6f;
@@ -47,8 +47,8 @@ public:
         const std::vector<Vec2>& facePositionsA,
         const std::vector<Vec2>& facePositionsB);
 
-    static std::vector<IntersectionData> lineFaceIntersect(
-        const Vec3& line0Start, const Vec3& line0End, const std::vector<Vec3>& fPositions, int maxDim);
+    static std::vector<IntersectionData> edgeFaceIntersect(
+        const Vec3& edge0Start, const Vec3& edge0End, const std::vector<Vec3>& fPositions, int maxDim);
 
 private:
     Intersector() = delete; // Static class

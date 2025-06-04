@@ -6,7 +6,7 @@
 namespace ms {
 
 class Network;
-class Line;
+class Edge;
 
 class NetGraphMap {
 public:
@@ -16,10 +16,10 @@ public:
     static NetGraphMap* create(const NetGraphMapInfo& info);
 
     const std::vector<Vertex*>& getVertexBtoA() const { return vertexBtoA; }
-    const std::vector<Line*>& getEdgeBtoA() const { return edgeBtoA; }
+    const std::vector<Edge*>& getEdgeBtoA() const { return edgeBtoA; }
 
     std::vector<Vertex*> vertexBtoA;
-    std::vector<Line*> edgeBtoA;
+    std::vector<Edge*> edgeBtoA;
     std::vector<Face*> faceBtoA;
 };
 

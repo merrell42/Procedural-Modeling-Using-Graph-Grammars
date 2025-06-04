@@ -8,16 +8,16 @@
 namespace ms {
 
 class Model;
-class Endpoint;
+class HalfEdge;
 
 class Vertex {
 	public:
-		Vertex(Model* model, int id, Vec3 position, VertexType* type, std::vector<int> endpointIds);
+		Vertex(Model* model, int id, Vec3 position, VertexType* type, std::vector<int> halfedgeIds);
 		Vertex(Model* model, Vec3 position, VertexType* type);
-		void createEndpoints();
-		std::vector<Endpoint*> getEndpoints() const;
+		void createHalfEdges();
+		std::vector<HalfEdge*> getHalfEdges() const;
 		int getId() const { return id; }
-		Endpoint* getEndpoint(int index) const;
+		HalfEdge* getHalfEdge(int index) const;
 		Vec3 getPosition() const { return position; }
 		void setPosition(Vec3 newPosition) { position = newPosition; }
 		Vertex* copy();
@@ -30,9 +30,9 @@ class Vertex {
 		int id;
 		Vec3 position;
 		VertexType* type;
-		std::vector<int> endpointIds;
+		std::vector<int> halfedgeIds;
 
 		Model* model;
-		Endpoint* createEndpoint(const Connection& connection, int faceIndex);
+		HalfEdge* createHalfEdge(const Connection& connection, int faceIndex);
 };
 }

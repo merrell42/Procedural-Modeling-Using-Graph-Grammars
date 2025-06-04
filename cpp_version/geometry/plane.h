@@ -17,7 +17,7 @@ namespace ms {
             bool isBelow(Vec3 point) {
                 return normal.dot(point) < d - PLANE_EPSILON;
             }
-            Vec3 intersectLine(Vec3 p1, Vec3 p2) {
+            Vec3 intersectEdge(Vec3 p1, Vec3 p2) {
                 double d1 = normal.dot(p1);
                 double d2 = normal.dot(p2);
                 double s = (d - d1) / (d2 - d1);

@@ -8,7 +8,7 @@
 
 namespace ms {
 
-class Endpoint;
+class HalfEdge;
 class Vertex;
 class NetTransistorSettings;
 class Range;
@@ -29,7 +29,7 @@ public:
     NetTransistorSettings* getSettings() const { return settings; }
     const std::vector<int>& getFreeFaceIds() const { return freeFaceIds; }
     const std::vector<int>& getUnfreeFaceIds() const { return unfreeFaceIds; }
-    const std::vector<int>& getColinearFaceIds() const { return colinearFaceIds; }
+    const std::vector<int>& getCoedgearFaceIds() const { return coedgearFaceIds; }
     const Vec3& getSlope() const { return slope; }
     const Vec3& getValue() const { return value; }
 
@@ -57,7 +57,7 @@ private:
     Vertex* vertex;
     int id;
     NetTransistorSettings* settings;
-    std::vector<int> colinearFaceIds;
+    std::vector<int> coedgearFaceIds;
     Matrix* M;
 
     Matrix* getA(const std::vector<int>& faceIds);

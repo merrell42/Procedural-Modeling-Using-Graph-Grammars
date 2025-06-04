@@ -6,16 +6,16 @@
 
 namespace ms {
 
-class Line;
+class Edge;
 class NetTransistorSettings;
 class Range;
 
 class EdgePlacement {
 public:
-    EdgePlacement(Line* edge, int id, NetTransistorSettings* settings);
+    EdgePlacement(Edge* edge, int id, NetTransistorSettings* settings);
     ~EdgePlacement() = default;
 
-    Line* getEdge() const { return edge; }
+    Edge* getEdge() const { return edge; }
     int getId() const { return id; }
     const std::vector<int>& getVertexIds() const { return vertexIds; }
     const Vec3& getDir() const { return dir; }
@@ -27,7 +27,7 @@ public:
     Range getRange() const;
 
 private:
-    Line* edge;
+    Edge* edge;
     int id;
     std::vector<int> vertexIds;
     Vec3 dir;

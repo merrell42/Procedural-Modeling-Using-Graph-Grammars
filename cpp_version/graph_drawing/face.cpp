@@ -10,11 +10,11 @@
 
 namespace ms {
 
-Face::Face(Model* model, int id, FaceType3D* faceType, std::vector<int> endpointIds, bool looped, std::vector<int> bspNodeIds, int groupId, bool hole)
+Face::Face(Model* model, int id, FaceType3D* faceType, std::vector<int> halfedgeIds, bool looped, std::vector<int> bspNodeIds, int groupId, bool hole)
 	: model(model)
 	, id(id)
     , faceType(faceType)
-    , endpointIds(endpointIds)
+    , halfedgeIds(halfedgeIds)
     , looped(looped)
     , bspNodeIds(bspNodeIds)
     , groupId(groupId)
@@ -22,11 +22,11 @@ Face::Face(Model* model, int id, FaceType3D* faceType, std::vector<int> endpoint
     model->getCurrent()->addFace(id, this);
 }
 
-Face::Face(Model* model, int id, FaceType3D* faceType, std::vector<int> endpointIds, std::vector<int> bspNodeIds)
+Face::Face(Model* model, int id, FaceType3D* faceType, std::vector<int> halfedgeIds, std::vector<int> bspNodeIds)
     : model(model)
     , id(id)
     , faceType(faceType)
-    , endpointIds(endpointIds)
+    , halfedgeIds(halfedgeIds)
     , bspNodeIds(bspNodeIds)
     , looped(false)
     , groupId(-1)
@@ -44,7 +44,7 @@ Face::~Face() {
 }
 
 Face* Face::copy() {
-	auto result = new Face(model, id, faceType, endpointIds, looped, bspNodeIds, groupId, hole);
+	auto result = new Face(model, id, faceType, halfedgeIds, looped, bspNodeIds, groupId, hole);
 	return result;
 }
 
@@ -53,14 +53,14 @@ void Face::destroy() {
 	delete this;
 };
 
-Endpoint* Face::getEndpoint(int index) const {
-	return model->getCurrent()->getEndpoint(endpointIds[index]);
+HalfEdge* Face::getHalfEdge(int index) const {
+	return model->getCurrent()->getHalfEdge(halfedgeIds[index]);
 }
 
-std::vector<Endpoint*> Face::getEndpoints() const {
-	std::vector<Endpoint*> result;
-	for (int i = 0; i < endpointIds.size(); i++) {
-		result.push_back(getEndpoint(i));
+std::vector<HalfEdge*> Face::getHalfEdges() const {
+	std::vector<HalfEdge*> result;
+	for (int i = 0; i < halfedgeIds.size(); i++) {
+		result.push_back(getHalfEdge(i));
 	}
 	return result;
 }
@@ -69,9 +69,9 @@ Range Face::dirBounds(const Vec3& dir) const {
     double low = std::numeric_limits<double>::infinity();
     double high = -std::numeric_limits<double>::infinity();
 
-    std::vector<Endpoint*> endpoints = getEndpoints();
-    for (const Endpoint* endpoint : endpoints) {
-        double d = dir.dot(endpoint->getPosition());
+    std::vector<HalfEdge*> halfedges = getHalfEdges();
+    for (const HalfEdge* halfedge : halfedges) {
+        double d = dir.dot(halfedge->getPosition());
         low = min(d, low);
         high = max(d, high);
     }
@@ -86,11 +86,11 @@ void Face::append(Face* faceB) {
         return;
     }
 
-    // Attach all of faceB's endpoints to this face.
-    auto endpointsB = faceB->getEndpoints();
-    for (auto* endpointB : endpointsB) {
-        endpointIds.push_back(endpointB->getId());
-        endpointB->setFace(this);
+    // Attach all of faceB's halfedges to this face.
+    auto halfedgesB = faceB->getHalfEdges();
+    for (auto* halfedgeB : halfedgesB) {
+        halfedgeIds.push_back(halfedgeB->getId());
+        halfedgeB->setFace(this);
     }
     // Destroy faceB.
     model->getCurrent()->removeFace(faceB);
@@ -99,9 +99,9 @@ void Face::append(Face* faceB) {
 
 std::vector<Vec3> Face::getPositions() const {
     std::vector<Vec3> positions;
-    auto endpoints = getEndpoints();
-    for (const auto& endpoint : endpoints) {
-        positions.push_back(endpoint->getPosition());
+    auto halfedges = getHalfEdges();
+    for (const auto& halfedge : halfedges) {
+        positions.push_back(halfedge->getPosition());
     }
     return positions;
 }
@@ -125,24 +125,24 @@ FaceGroup* Face::getGroup() const {
     return model->getCurrent()->getFaceGroup(groupId);
 }
 
-void Face::split(Endpoint* endpoint) {
-    std::vector<Endpoint*> endpoints = getEndpoints();
-    auto index = std::find(endpoints.begin(), endpoints.end(), endpoint) - endpoints.begin();
+void Face::split(HalfEdge* halfedge) {
+    std::vector<HalfEdge*> halfedges = getHalfEdges();
+    auto index = std::find(halfedges.begin(), halfedges.end(), halfedge) - halfedges.begin();
 
     if (looped) {
         setLooped(false);
-        std::vector<int> newOrder(endpointIds.begin() + index, endpointIds.end());
-        newOrder.insert(newOrder.end(), endpointIds.begin(), endpointIds.begin() + index);
-        endpointIds = newOrder;
+        std::vector<int> newOrder(halfedgeIds.begin() + index, halfedgeIds.end());
+        newOrder.insert(newOrder.end(), halfedgeIds.begin(), halfedgeIds.begin() + index);
+        halfedgeIds = newOrder;
     } else {
         if (index == 0) {
-            std::cout << "Should not be splitting off all of the endpoints." << std::endl;
+            std::cout << "Should not be splitting off all of the halfedges." << std::endl;
             return;
         }
 
-        std::vector<Endpoint*> splitEndpoints(endpoints.begin() + index, endpoints.end());
-        std::vector<int> splitEndpointIds(endpointIds.begin() + index, endpointIds.end());
-        Face* newFace = new Face(model, model->newId(), faceType, splitEndpointIds, std::vector<int>());
+        std::vector<HalfEdge*> splitHalfEdges(halfedges.begin() + index, halfedges.end());
+        std::vector<int> splitHalfEdgeIds(halfedgeIds.begin() + index, halfedgeIds.end());
+        Face* newFace = new Face(model, model->newId(), faceType, splitHalfEdgeIds, std::vector<int>());
         if (isHole()) {
             newFace->setHole(true);
         }
@@ -154,41 +154,41 @@ void Face::split(Endpoint* endpoint) {
             getGroup()->addFace(newFace);
         }
 
-        for (auto& splitEndpoint : splitEndpoints) {
-            splitEndpoint->setFace(newFace);
+        for (auto& splitHalfEdge : splitHalfEdges) {
+            splitHalfEdge->setFace(newFace);
         }
-        endpointIds.erase(endpointIds.begin() + index, endpointIds.end());
+        halfedgeIds.erase(halfedgeIds.begin() + index, halfedgeIds.end());
     }
 }
 
-void Face::insert(Endpoint* endpoint, Endpoint* prevEndpoint) {
-    std::vector<Endpoint*> endpoints = this->getEndpoints();
+void Face::insert(HalfEdge* halfedge, HalfEdge* prevHalfEdge) {
+    std::vector<HalfEdge*> halfedges = this->getHalfEdges();
 
-    // Insert the new endpoint at the correct position
-    int id = endpoint->getId();
-    int prevId = prevEndpoint->getId();
+    // Insert the new halfedge at the correct position
+    int id = halfedge->getId();
+    int prevId = prevHalfEdge->getId();
     
     // Find the index by comparing IDs instead of pointers
     size_t index = -1;
-    for (size_t i = 0; i < endpoints.size(); i++) {
-        if (endpoints[i]->getId() == prevId) {
+    for (size_t i = 0; i < halfedges.size(); i++) {
+        if (halfedges[i]->getId() == prevId) {
             index = i;
             break;
         }
     }
     
     if (index >= 0) {
-        endpointIds.insert(endpointIds.begin() + index + 1, id);
-        endpoint->setFace(this);
+        halfedgeIds.insert(halfedgeIds.begin() + index + 1, id);
+        halfedge->setFace(this);
     } else {
-        endpointIds.insert(endpointIds.begin(), id);
-        endpoint->setFace(this);
+        halfedgeIds.insert(halfedgeIds.begin(), id);
+        halfedge->setFace(this);
     }
 }
 
-void Face::removeEndpoint(Endpoint* endpoint) {
-    Util::remove(endpointIds, endpoint->getId());
-    if (endpointIds.size() == 0) {
+void Face::removeHalfEdge(HalfEdge* halfedge) {
+    Util::remove(halfedgeIds, halfedge->getId());
+    if (halfedgeIds.size() == 0) {
         destroy();
     }
 }
@@ -306,7 +306,7 @@ std::vector<Vec3> Face::getIntersections(Plane* plane) {
         if ((isAbove[i] && isBelow[i2]) || (isBelow[i] && isAbove[i2])) {
             auto p1 = positions[i];
             auto p2 = positions[i2];
-            auto intersection = plane->intersectLine(p1, p2);
+            auto intersection = plane->intersectEdge(p1, p2);
             intersections.push_back(intersection);
         }
     }

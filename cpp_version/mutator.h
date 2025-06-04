@@ -29,7 +29,7 @@ public:
     // Static members
     static int taskCount;
     static constexpr int findMutableVertexAttempts = 20;
-    static constexpr int findMutableLineAttempts = 20;
+    static constexpr int findMutableEdgeAttempts = 20;
 
 private:
     Model* model;

@@ -9,35 +9,35 @@ namespace ms {
 // Initialize static counter
 int TransistorPath::count = 0;
 
-TransistorPath* TransistorPath::createNet(const std::vector<Endpoint*>& endpoints,
-                                        const std::vector<Line*>& edges,
-                                        std::vector<Line*>* lines) {
+TransistorPath* TransistorPath::createPath(const std::vector<HalfEdge*>& halfedges,
+                                        const std::vector<Edge*>& edges,
+                                        std::vector<Edge*>* lines) {
     std::vector<IndexInfo> indices;
-    for (auto* endpoint : endpoints) {
+    for (auto* halfedge : halfedges) {
         auto it = std::find_if(edges.begin(), edges.end(),
-            [endpoint](Line* edge) {
-                return edge == endpoint->getLine();
+            [halfedge](Edge* edge) {
+                return edge == halfedge->getEdge();
             });
         if (it == edges.end()) {
-            std::cout << "endpoint is not found in edges." << std::endl;
+            std::cout << "halfedge is not found in edges." << std::endl;
             return nullptr;
         }
         int index = (int)std::distance(edges.begin(), it);
-        indices.push_back({index, !endpoint->getIsAtStart()});
+        indices.push_back({index, !halfedge->getIsAtStart()});
     }
     return new TransistorPath(indices, lines);
 }
 
 TransistorPath::TransistorPath(const std::vector<IndexInfo>& indices,
-                             std::vector<Line*>* lines)
+                             std::vector<Edge*>* edges)
     : indices(indices)
-    , lines(lines)
+    , edges(edges)
     , extendable{true, true}
     , id(count++) {
 }
 
-void TransistorPath::setEndpoints(const std::vector<Endpoint*>& endpoints) {
-    this->endpoints = endpoints;
+void TransistorPath::setHalfEdges(const std::vector<HalfEdge*>& halfedges) {
+    this->halfedges = halfedges;
 }
 
 int TransistorPath::extendableness() const {
@@ -50,7 +50,7 @@ Vertex* TransistorPath::randomNextVertex() {
         probabilities.push_back(e ? 1.0 : 0.0);
     }
     int index = Util::randomDistribution(probabilities);
-    return endpoints[index]->getVertex();
+    return halfedges[index]->getVertex();
 }
 
 Vertex* TransistorPath::rigidNextVertex() {
@@ -66,54 +66,54 @@ Vertex* TransistorPath::rigidNextVertex() {
             // Two consecutive indices must be rigid.
             bool rigid = true;
             for (int j = 0; j < 2; j++) {
-                auto* line = lineFromIndex(iIndices[j]);
-                rigid = rigid && !line->getEdgeType()->extendable();
+                auto* edge = edgeFromIndex(iIndices[j]);
+                rigid = rigid && !edge->getEdgeType()->extendable();
             }
             if (rigid) {
-                return endpoints[i]->getVertex();
+                return halfedges[i]->getVertex();
             }
         }
     }
     return nullptr;
 }
 
-Line* TransistorPath::lineFromIndex(int index) {
-    return (*lines)[indices[index].index];
+Edge* TransistorPath::edgeFromIndex(int index) {
+    return (*edges)[indices[index].index];
 }
 
-TransistorPath::IndexInfo TransistorPath::indexForEndpoint(Endpoint* endpoint) {
-    auto it = std::find_if(lines->begin(), lines->end(), 
-        [endpoint](Line* line) {
-            return line == endpoint->getLine();
+TransistorPath::IndexInfo TransistorPath::indexForHalfEdge(HalfEdge* halfedge) {
+    auto it = std::find_if(edges->begin(), edges->end(), 
+        [halfedge](Edge* edge) {
+            return edge == halfedge->getEdge();
         });
     return {
-        static_cast<int>(std::distance(lines->begin(), it)),
-        endpoint->getIsAtStart()
+        static_cast<int>(std::distance(edges->begin(), it)),
+        halfedge->getIsAtStart()
     };
 }
 
 void TransistorPath::expandBackward() {
-    auto* prevEndpoint = endpoints[0]->prev();
-    if (prevEndpoint) {
-        endpoints[0] = prevEndpoint;
-        indices.insert(indices.begin(), indexForEndpoint(prevEndpoint));
+    auto* prevHalfEdge = halfedges[0]->prev();
+    if (prevHalfEdge) {
+        halfedges[0] = prevHalfEdge;
+        indices.insert(indices.begin(), indexForHalfEdge(prevHalfEdge));
     } else {
         extendable[0] = false;
     }
 }
 
 void TransistorPath::expandForward() {
-    indices.push_back(indexForEndpoint(endpoints[1]));
-    auto* nextEndpoint = endpoints[1]->next();
-    if (nextEndpoint) {
-        endpoints[1] = nextEndpoint;
+    indices.push_back(indexForHalfEdge(halfedges[1]));
+    auto* nextHalfEdge = halfedges[1]->next();
+    if (nextHalfEdge) {
+        halfedges[1] = nextHalfEdge;
     } else {
         extendable[1] = false;
     }
 }
 
 void TransistorPath::merge(TransistorPath* pathB) {
-    endpoints[1] = pathB->endpoints[1];
+    halfedges[1] = pathB->halfedges[1];
     extendable[1] = pathB->extendable[1];
     indices.insert(indices.end(), pathB->indices.begin(), pathB->indices.end());
 }

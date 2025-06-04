@@ -19,21 +19,21 @@ namespace ms {
 struct Transition;
 class TransistorPath;
 class Network;
-class Line;
+class Edge;
 class Edge;
 class Vertex;
 struct FixedFace;
 
 struct Graph {
     std::vector<Vertex*> vertices;
-    std::vector<Line*> edges;
+    std::vector<Edge*> edges;
     std::vector<Face*> faces;
 };
 
-// Helper struct for line data
-struct LineData {
+// Helper struct for edge data
+struct EdgeData {
     Vec2 v;
-    Line* line = nullptr;
+    Edge* edge = nullptr;
     double length = 0;
 };
 
@@ -60,7 +60,7 @@ public:
     bool solve();
     void setup();
     void create(const Transition& transition, Model* model, int dims);
-    void addLine(Line* line, bool includeLength, bool addToGraph);
+    void addEdge(Edge* edge, bool includeLength, bool addToGraph);
     Graph* createGraph();
     void reject();
     void freeVertex();
@@ -74,8 +74,8 @@ private:
     int dims = 2;
     
     std::vector<TransistorPath*> openPaths;
-    std::vector<LineData> lineData;
-    std::vector<Line*> lines;
+    std::vector<EdgeData> edgeData;
+    std::vector<Edge*> edges;
     Model* model = nullptr;
 
     std::vector<Vertex*> freeVertices;
@@ -92,7 +92,7 @@ private:
 
     // Helper functions
     void addFixedFace(Face* faceA, Face* faceB, double d);
-    // bool mergeDuplicateLines();
+    // bool mergeDuplicateEdges();
     void setupFaceCentric();
     bool sampleSolutionSpace();
     void constrainVertexIds(std::vector<int>& vIds, NetTransistorSettings* settings);

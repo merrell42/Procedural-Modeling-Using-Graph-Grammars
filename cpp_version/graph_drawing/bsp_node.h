@@ -16,13 +16,13 @@ namespace ms {
 	class BspNode {
 		public:
 			BspNode(Model* model, int id);
-			BspNode(Model* model, int id, int parentId, int aboveId, int belowId, Plane* plane, std::vector<int> faceIds, std::vector<int> lineIds);
+			BspNode(Model* model, int id, int parentId, int aboveId, int belowId, Plane* plane, std::vector<int> faceIds, std::vector<int> edgeIds);
 			~BspNode() { delete plane; }
 			BspNode* copy();
 			void setParentId(int newParentId) { parentId = newParentId; }
-			bool addLine(Line* line);
+			bool addEdge(Edge* edge);
 			bool addFace(Face* face);
-			void removeLine(Line* line);
+			void removeEdge(Edge* edge);
 			void removeFace(Face* face);
 			int getId() { return id; }
 
@@ -33,19 +33,19 @@ namespace ms {
 			int aboveId;
 			int belowId;
 			std::vector<int> faceIds;
-			std::vector<int> lineIds;
+			std::vector<int> edgeIds;
 			Plane* plane;
 
 			void connectAbove(BspNode* above);
 			void connectBelow(BspNode* below);
-			void connectLine(Line* line);
+			void connectEdge(Edge* edge);
 			void connectFace(Face* face);
 			BspNode* getAboveNode();
 			BspNode* getBelowNode();
-			bool hasLineIntersection(Line* line);
+			bool hasEdgeIntersection(Edge* edge);
 			bool hasFaceIntersection(Face* face);
 
-			PlaneClassification classifyLine(Line* line);
+			PlaneClassification classifyEdge(Edge* edge);
 			PlaneClassification classifyFace(Face* face);
 			Plane* getPlane();
 			bool isPointAbovePlane(Vec3 point);

@@ -117,7 +117,7 @@ std::optional<Intersector::FaceIntersection> Intersector::intersectFaces(
     return std::nullopt;
 }
 
-std::vector<IntersectionData> Intersector::lineFaceIntersect(const Vec3& line0Start, const Vec3& line0End, const std::vector<Vec3>& fPositions, int maxDim) {
+std::vector<IntersectionData> Intersector::edgeFaceIntersect(const Vec3& edge0Start, const Vec3& edge0End, const std::vector<Vec3>& fPositions, int maxDim) {
     size_t N = fPositions.size();
     std::vector<Vec2> fPositions2(N);
 
@@ -125,8 +125,8 @@ std::vector<IntersectionData> Intersector::lineFaceIntersect(const Vec3& line0St
     for (size_t i = 0; i < N; ++i) {
         fPositions2[i] = fPositions[i].dropDim(maxDim);
     }
-    Vec2 query0 = line0Start.dropDim(maxDim);
-    Vec2 query1 = line0End.dropDim(maxDim);
+    Vec2 query0 = edge0Start.dropDim(maxDim);
+    Vec2 query1 = edge0End.dropDim(maxDim);
 
     std::vector<IntersectionData> intersections;
     for (size_t i = 0; i < N; ++i) {

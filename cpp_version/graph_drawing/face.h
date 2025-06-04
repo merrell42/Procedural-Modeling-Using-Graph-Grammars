@@ -7,20 +7,20 @@
 namespace ms {
 
 class Model;
-class Endpoint;
+class HalfEdge;
 class FaceType3D;
 class FaceGroup;
 class Plane;
 
 class Face {
 	public:
-		Face(Model* model, int id, FaceType3D* faceType, std::vector<int> endpointIds, bool looped, std::vector<int> bspNodeIds, int groupId, bool hole);
-		Face(Model* model, int id, FaceType3D* faceType, std::vector<int> endpointIds, std::vector<int> bspNodeIds);
+		Face(Model* model, int id, FaceType3D* faceType, std::vector<int> halfedgeIds, bool looped, std::vector<int> bspNodeIds, int groupId, bool hole);
+		Face(Model* model, int id, FaceType3D* faceType, std::vector<int> halfedgeIds, std::vector<int> bspNodeIds);
 		Face* copy();
 		~Face();
 		int getId() const { return id; };
-		std::vector<Endpoint*> getEndpoints() const;
-		Endpoint* getEndpoint(int index) const;
+		std::vector<HalfEdge*> getHalfEdges() const;
+		HalfEdge* getHalfEdge(int index) const;
 		std::vector<Vec3> getPositions() const;
 		std::vector<Vec2> getPositions2D() const;
 		FaceType3D* getFaceType() const { return faceType; }
@@ -29,11 +29,11 @@ class Face {
 		void setGroup(FaceGroup* group);
 		void setLooped(bool looped_) { looped = looped_; }
 		FaceGroup* getGroup() const;
-		void split(Endpoint* endpoint);
+		void split(HalfEdge* halfedge);
 		bool isHole() { return hole; }
 		void destroy();
-		void insert(Endpoint* endpoint, Endpoint* prevEndpoint);
-		void removeEndpoint(Endpoint* endpoint);
+		void insert(HalfEdge* halfedge, HalfEdge* prevHalfEdge);
+		void removeHalfEdge(HalfEdge* halfedge);
 		double signedArea();
 		void exportMesh(
 			std::vector<Vec3>& positions,
@@ -56,7 +56,7 @@ class Face {
 
 	private:
 		int id;
-		std::vector<int> endpointIds;
+		std::vector<int> halfedgeIds;
 		bool looped;
 		FaceType3D* faceType;
 		std::vector<int> bspNodeIds;

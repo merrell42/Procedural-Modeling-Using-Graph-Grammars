@@ -4,7 +4,7 @@
 namespace ms {
 
 // TODO: Rename as halfEdge.
-Endpoint::Endpoint(Model* model, int id, bool isAtStart, EdgeType3D* edgeType, Vec3 dir, int vertexId, int faceId_, int lineId, bool createFace, int faceIndex)
+HalfEdge::HalfEdge(Model* model, int id, bool isAtStart, EdgeType3D* edgeType, Vec3 dir, int vertexId, int faceId_, int edgeId, bool createFace, int faceIndex)
 	: model(model)
 	, id(id)
     , isAtStart(isAtStart)
@@ -13,22 +13,22 @@ Endpoint::Endpoint(Model* model, int id, bool isAtStart, EdgeType3D* edgeType, V
 	, vertexId(vertexId)
     , faceIndex(faceIndex)
 	, faceId(faceId_)
-	, lineId(lineId) {
-    model->getCurrent()->addEndpoint(id, this);
+	, edgeId(edgeId) {
+    model->getCurrent()->addHalfEdge(id, this);
 
     faceTypeCached = nullptr;
     if (createFace) {
         auto faceType = getFaceType();
-        std::vector<int> endpointIds;
-        endpointIds.push_back(id);
+        std::vector<int> halfedgeIds;
+        halfedgeIds.push_back(id);
         faceId = model->newId();
         std::vector<int> bspNodeIds;
-        auto face = new Face(model, faceId, faceType, endpointIds, bspNodeIds);
+        auto face = new Face(model, faceId, faceType, halfedgeIds, bspNodeIds);
         face->createGroup();
     }
 }
 
-FaceType3D* Endpoint::getFaceType() {
+FaceType3D* HalfEdge::getFaceType() {
     if (!faceTypeCached) {
         const auto& faceData = edgeType->faceData;
         faceTypeCached = faceData[faceIndex].type;
@@ -36,91 +36,91 @@ FaceType3D* Endpoint::getFaceType() {
     return faceTypeCached;
 }
 
-Endpoint* Endpoint::copy() {
-	auto result = new Endpoint(model, id, isAtStart, edgeType, dir, vertexId, faceId, lineId, false, -1);
+HalfEdge* HalfEdge::copy() {
+	auto result = new HalfEdge(model, id, isAtStart, edgeType, dir, vertexId, faceId, edgeId, false, -1);
 	return result;
 }
 
-void Endpoint::destroy() {
-    model->getCurrent()->removeEndpoint(this);
+void HalfEdge::destroy() {
+    model->getCurrent()->removeHalfEdge(this);
     delete this;
 };
 
-EdgeType3D* Endpoint::getEdgeType() const {
+EdgeType3D* HalfEdge::getEdgeType() const {
     return edgeType;
 }
 
-Vertex* Endpoint::getVertex() const {
+Vertex* HalfEdge::getVertex() const {
 	return model->getCurrent()->getVertex(vertexId);
 }
 
-Face* Endpoint::getFace() const {
+Face* HalfEdge::getFace() const {
 	return model->getCurrent()->getFace(faceId);
 }
 
 
-Line* Endpoint::getLine() const {
-	return model->getCurrent()->getLine(lineId);
+Edge* HalfEdge::getEdge() const {
+	return model->getCurrent()->getEdge(edgeId);
 }
 
-Vec3 Endpoint::getPosition() const {
+Vec3 HalfEdge::getPosition() const {
 	return getVertex()->getPosition();
 }
 
-void Endpoint::transfer(Line* replacement) {
+void HalfEdge::transfer(Edge* replacement) {
 	int index = isAtStart ? 1 : 0;
-    replacement->addEndpoint(this, index);
+    replacement->addHalfEdge(this, index);
 }
 
-Endpoint* Endpoint::next() const {
-    std::vector<Endpoint*> endpoints = getFace()->getEndpoints();
-    size_t N = endpoints.size();
-    auto it = std::find(endpoints.begin(), endpoints.end(), this);
-    size_t index = std::distance(endpoints.begin(), it);
-    return endpoints[(index + 1) % N];
+HalfEdge* HalfEdge::next() const {
+    std::vector<HalfEdge*> halfedges = getFace()->getHalfEdges();
+    size_t N = halfedges.size();
+    auto it = std::find(halfedges.begin(), halfedges.end(), this);
+    size_t index = std::distance(halfedges.begin(), it);
+    return halfedges[(index + 1) % N];
 }
 
-Endpoint* Endpoint::prev() const {
-    std::vector<Endpoint*> endpoints = getFace()->getEndpoints();
-    size_t index = std::find(endpoints.begin(), endpoints.end(), this) - endpoints.begin();
+HalfEdge* HalfEdge::prev() const {
+    std::vector<HalfEdge*> halfedges = getFace()->getHalfEdges();
+    size_t index = std::find(halfedges.begin(), halfedges.end(), this) - halfedges.begin();
 
     if (index == 0) {
-        size_t N = endpoints.size();
-        // Wrap around to the last endpoint.
+        size_t N = halfedges.size();
+        // Wrap around to the last halfedge.
         index = N;
     }
 
-    return endpoints[index - 1];
+    return halfedges[index - 1];
 }
 
-Endpoint* Endpoint::twin() const {
-    Line* line = getLine();
-    if (line) {
-        std::vector<Endpoint*> endpoints = line->getEndpoints();
-        auto it = std::find(endpoints.begin(), endpoints.end(), this);
-        if (it != endpoints.end()) {
-            size_t index = std::distance(endpoints.begin(), it);
-            // Return the other endpoint.
-            return endpoints[1 - index];
+HalfEdge* HalfEdge::twin() const {
+    Edge* edge = getEdge();
+    if (edge) {
+        std::vector<HalfEdge*> halfedges = edge->getHalfEdges();
+        auto it = std::find(halfedges.begin(), halfedges.end(), this);
+        if (it != halfedges.end()) {
+            size_t index = std::distance(halfedges.begin(), it);
+            // Return the other halfedge.
+            return halfedges[1 - index];
         }
     }
     return nullptr;
 }
 
-void Endpoint::setLine(Line* line) {
-    lineId = line->getId();
+void HalfEdge::setEdge(Edge* edge) {
+    edgeId = edge->getId();
 }
 
-void Endpoint::setFace(Face* face) {
+void HalfEdge::setFace(Face* face) {
     faceId = face->getId();
 }
 
-void Endpoint::mergeFaces(Endpoint* next) {
+void HalfEdge::mergeFaces(HalfEdge* next) {
     getFace()->append(next->getFace());
 }
 
-void Endpoint::maybeMergeNextFace() {
-    Endpoint* n = next();
+void HalfEdge::maybeMergeNextFace() {
+    HalfEdge* n = next();
     if (n) {
         this->getFace()->append(n->getFace());
     }

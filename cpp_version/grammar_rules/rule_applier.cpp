@@ -38,8 +38,8 @@ void NetTransistor::create(const Transition& transition, Model* model_, int dims
     effort = 0;
 
     timer->start("Create Graph");
-    // TODO: Merge duplicate lines
-    /*if (!mergeDuplicateLines()) {
+    // TODO: Merge duplicate edges
+    /*if (!mergeDuplicateEdges()) {
         effort = std::numeric_limits<double>::infinity();
         return;
     }*/
@@ -53,52 +53,52 @@ void NetTransistor::create(const Transition& transition, Model* model_, int dims
     }
 
     for (auto* edge : graph->edges) {
-        addLine(edge, false, false);
+        addEdge(edge, false, false);
     }
 }
 
-void NetTransistor::addLine(Line* line, bool includeLength, bool addToGraph) {
-    double angle = line->getEdgeType()->getAngle();
+void NetTransistor::addEdge(Edge* edge, bool includeLength, bool addToGraph) {
+    double angle = edge->getEdgeType()->getAngle();
     
-    LineData datum;
+    EdgeData datum;
     datum.v = Vec2::unitVec(angle);
-    datum.line = line;
+    datum.edge = edge;
     
-    auto lineEndpoints = line->getEndpoints();
+    auto edgeHalfEdges = edge->getHalfEdges();
     if (includeLength) {
-        Vec3 v = lineEndpoints[1]->getPosition() - lineEndpoints[0]->getPosition();
+        Vec3 v = edgeHalfEdges[1]->getPosition() - edgeHalfEdges[0]->getPosition();
         datum.length = v.length();
     }
     
-    lineData.push_back(datum);
-    lines.push_back(line);
+    edgeData.push_back(datum);
+    edges.push_back(edge);
 
     if (addToGraph) {
-        for (auto* endpoint : lineEndpoints) {
-            Util::union_(graph->vertices, {endpoint->getVertex()});
+        for (auto* halfedge : edgeHalfEdges) {
+            Util::union_(graph->vertices, {halfedge->getVertex()});
         }
-        graph->edges.push_back(line);
+        graph->edges.push_back(edge);
     }
 }
 
-static void destroyLines(const std::vector<std::vector<Line*>>& lineGroup) {
-    std::set<Endpoint*> endpointSet;
+static void destroyEdges(const std::vector<std::vector<Edge*>>& edgeGroup) {
+    std::set<HalfEdge*> halfedgeSet;
     std::set<Vertex*> vertexSet;
-    for (const auto& lineGroup : lineGroup) {
-        for (Line* line : lineGroup) {
-            if (line) {
-                auto endpoints = line->getEndpoints();
-                endpointSet.insert(endpoints[0]);
-                endpointSet.insert(endpoints[1]);
-                line->destroy();
+    for (const auto& edgeGroup : edgeGroup) {
+        for (Edge* edge : edgeGroup) {
+            if (edge) {
+                auto halfedges = edge->getHalfEdges();
+                halfedgeSet.insert(halfedges[0]);
+                halfedgeSet.insert(halfedges[1]);
+                edge->destroy();
             }
         }
     }
-    for (const auto& endpoint : endpointSet) {
-        if (endpoint) {
-            endpoint->getFace()->removeEndpoint(endpoint);
-            vertexSet.insert(endpoint->getVertex());
-            endpoint->destroy();
+    for (const auto& halfedge : halfedgeSet) {
+        if (halfedge) {
+            halfedge->getFace()->removeHalfEdge(halfedge);
+            vertexSet.insert(halfedge->getVertex());
+            halfedge->destroy();
         }
     }
     for (const auto& vertex : vertexSet) {
@@ -120,30 +120,30 @@ Graph* NetTransistor::createGraph() {
         for (auto* outerFace : map->outerFaces) {
             map->outerFacesD.push_back(
                 outerFace->getFaceType()->getNormal().dot(
-                    outerFace->getEndpoints()[0]->getPosition()));
+                    outerFace->getHalfEdges()[0]->getPosition()));
         }
     }*/
 
-    // Maps from half edges to merge endpoints
-    std::vector<Endpoint*> mergedEndpoints(endNetwork->getHalfEdges().size());
-    std::fill(mergedEndpoints.begin(), mergedEndpoints.end(), nullptr);
-    auto halfToEndpoint = [&](HalfEdgeNet* half) -> Endpoint* {
+    // Maps from half edges to merge halfedges
+    std::vector<HalfEdge*> mergedHalfEdges(endNetwork->getHalfEdges().size());
+    std::fill(mergedHalfEdges.begin(), mergedHalfEdges.end(), nullptr);
+    auto halfToHalfEdge = [&](HalfEdgeNet* half) -> HalfEdge* {
         int index = Util::findIndex<HalfEdgeNet*>(endNetwork->getHalfEdges(), half);
-        return mergedEndpoints[index];
+        return mergedHalfEdges[index];
     };
     
-    auto setHalfToEndpoint = [&](HalfEdgeNet* half, Endpoint* endpoint) {
+    auto setHalfToHalfEdge = [&](HalfEdgeNet* half, HalfEdge* halfedge) {
         int index = Util::findIndex<HalfEdgeNet*>(endNetwork->getHalfEdges(), half);
-        mergedEndpoints[index] = endpoint;
+        mergedHalfEdges[index] = halfedge;
     };
 
-    std::vector<std::vector<Line*>> splitLines;
-    std::vector<std::vector<Endpoint*>> splitEndpoints;
+    std::vector<std::vector<Edge*>> splitEdges;
+    std::vector<std::vector<HalfEdge*>> splitHalfEdges;
     if (map) {
-        splitLines.resize(map->edgeBtoA.size());
-        splitEndpoints.resize(map->edgeBtoA.size());
+        splitEdges.resize(map->edgeBtoA.size());
+        splitHalfEdges.resize(map->edgeBtoA.size());
         for (size_t i = 0; i < map->edgeBtoA.size(); ++i) {
-            splitLines[i] = {map->edgeBtoA[i]};
+            splitEdges[i] = {map->edgeBtoA[i]};
         }
     }
 
@@ -165,14 +165,14 @@ Graph* NetTransistor::createGraph() {
             );
 
             auto* newVertex = new Vertex(model, randomPosition, type);
-            newVertex->createEndpoints();
+            newVertex->createHalfEdges();
             merged->vertices[i] = newVertex;
             
-            auto vEndpoints = newVertex->getEndpoints();
+            auto vHalfEdges = newVertex->getHalfEdges();
             auto& halfs = v->getHalfEdges();
             
             for (size_t j = 0; j < halfs.size(); ++j) {
-                setHalfToEndpoint(halfs[j], vEndpoints[j]);
+                setHalfToHalfEdge(halfs[j], vHalfEdges[j]);
             }
         }
     }
@@ -181,7 +181,7 @@ Graph* NetTransistor::createGraph() {
     }
 
     struct EdgeData {
-        std::vector<Endpoint*> coreEndpoints;
+        std::vector<HalfEdge*> coreHalfEdges;
         std::vector<HalfEdgeNet*> halfEdges;
         bool modified;
     };
@@ -191,7 +191,7 @@ Graph* NetTransistor::createGraph() {
     for (size_t i = 0; i < endEdges.size(); ++i) {
         auto* endEdge = endEdges[i];
         auto& edgeHalfs = endEdge->getHalfEdges();
-        std::vector<Endpoint*> coreEndpoints;
+        std::vector<HalfEdge*> coreHalfEdges;
         std::vector<HalfEdgeNet*> halfEdges;
         bool modified = false;
 
@@ -206,38 +206,38 @@ Graph* NetTransistor::createGraph() {
                 int startIndex = Util::findIndex(startNet->getEdges(),
                     startNet->getBVertices()[connectorIndex]->interiorEdge());
                 
-                if (splitLines[startIndex].size() == 1) {
+                if (splitEdges[startIndex].size() == 1) {
                     int count = 0;
-                    for (int i = 0; i < splitLines.size(); i++) {
-                        if (splitLines[i][0] == splitLines[startIndex][0]) {
+                    for (int i = 0; i < splitEdges.size(); i++) {
+                        if (splitEdges[i][0] == splitEdges[startIndex][0]) {
                             count++;
                             if (count >= 2) {
-                                // The same line is being split twice. This should not happen. Exit early.
+                                // The same edge is being split twice. This should not happen. Exit early.
                                 return nullptr;
                             }
                         }
                     }
-                    auto split = splitLines[startIndex][0]->split(true);
-                    splitLines[startIndex] = split.lines;
-                    splitEndpoints[startIndex] = split.nextEndpoints;
+                    auto split = splitEdges[startIndex][0]->split(true);
+                    splitEdges[startIndex] = split.edges;
+                    splitHalfEdges[startIndex] = split.nextHalfEdges;
                 }
 
-                int lineIndex = half->getForward() ? 0 : 1;
-                auto* coreEndpoint = splitLines[startIndex][lineIndex]->getEndpoints()[e];
-                splitLines[startIndex][lineIndex] = nullptr;
-                coreEndpoints.push_back(coreEndpoint);
+                int edgeIndex = half->getForward() ? 0 : 1;
+                auto* coreHalfEdge = splitEdges[startIndex][edgeIndex]->getHalfEdges()[e];
+                splitEdges[startIndex][edgeIndex] = nullptr;
+                coreHalfEdges.push_back(coreHalfEdge);
 
                 halfEdges.push_back(half);
                 modified = true;
-                setHalfToEndpoint(half, coreEndpoint);
+                setHalfToHalfEdge(half, coreHalfEdge);
             } else {
-                auto* coreEndpoint = core->getEndpoints()[half->getVertexIndex()];
-                coreEndpoints.push_back(coreEndpoint);
+                auto* coreHalfEdge = core->getHalfEdges()[half->getVertexIndex()];
+                coreHalfEdges.push_back(coreHalfEdge);
                 halfEdges.push_back(half);
             }
         }
         
-        edgeData.push_back({coreEndpoints, halfEdges, modified});
+        edgeData.push_back({coreHalfEdges, halfEdges, modified});
     }
 
     // Process end edges.
@@ -252,7 +252,7 @@ Graph* NetTransistor::createGraph() {
                 auto startHalf = startNet->getBHalfEdges()[boundaryIndex];
                 int edgeIndex = indexOf(startNet->getEdges(), startHalf->getPrev()->getEdge());
                 int startIndex = indexOf(startNet->getHalfEdges(), startHalf);
-                setHalfToEndpoint(halfNext, splitEndpoints[edgeIndex][e]);                
+                setHalfToHalfEdge(halfNext, splitHalfEdges[edgeIndex][e]);                
             }
         }
     }
@@ -267,20 +267,20 @@ Graph* NetTransistor::createGraph() {
         for (size_t i = 0; i < N; i++) {
             HalfEdgeNet* halfA = const_cast<HalfEdgeNet*>(halfs[i]);
             HalfEdgeNet* halfB = const_cast<HalfEdgeNet*>(halfs[(i + 1) % N]);
-            Endpoint* endpointA = halfToEndpoint(halfA);
-            Endpoint* endpointB = halfToEndpoint(halfB);
+            HalfEdge* halfedgeA = halfToHalfEdge(halfA);
+            HalfEdge* halfedgeB = halfToHalfEdge(halfB);
 
-            if (!endpointA || !endpointB) {
+            if (!halfedgeA || !halfedgeB) {
                 failed = true;
                 continue;
             }
-            endpointA->mergeFaces(endpointB);
+            halfedgeA->mergeFaces(halfedgeB);
         }
     }
 
     if (failed) {
         // Handle error case
-        std::cerr << "Do not know how this can happen, but halfToEndpoint is missing an endpoint." << std::endl;
+        std::cerr << "Do not know how this can happen, but halfToHalfEdge is missing an halfedge." << std::endl;
         return merged; // Return empty merged data
     }
 
@@ -288,20 +288,20 @@ Graph* NetTransistor::createGraph() {
     merged->edges.resize(edgeData.size());
     for (size_t i = 0; i < edgeData.size(); i++) {
         EdgeData& datum = edgeData[i];
-        Line* line0 = datum.coreEndpoints[0]->getLine();
+        Edge* edge0 = datum.coreHalfEdges[0]->getEdge();
 
-        for (size_t j = 1; j < datum.coreEndpoints.size(); j++) {
-            Endpoint* endpointJ = datum.coreEndpoints[j];
-            Line* lineJ = endpointJ->getLine();
-            line0->addEndpoint(endpointJ, datum.halfEdges[j]->getEdgeIndex());
-            lineJ->destroy();
+        for (size_t j = 1; j < datum.coreHalfEdges.size(); j++) {
+            HalfEdge* halfedgeJ = datum.coreHalfEdges[j];
+            Edge* edgeJ = halfedgeJ->getEdge();
+            edge0->addHalfEdge(halfedgeJ, datum.halfEdges[j]->getEdgeIndex());
+            edgeJ->destroy();
         }
-        merged->edges[i] = line0;
+        merged->edges[i] = edge0;
 
         if (datum.modified) {
             std::vector<Vertex*> newVertices = {
-                datum.coreEndpoints[0]->getVertex(),
-                datum.coreEndpoints[1]->getVertex()
+                datum.coreHalfEdges[0]->getVertex(),
+                datum.coreHalfEdges[1]->getVertex()
             };
             Util::union_(merged->vertices, newVertices);
         }
@@ -319,27 +319,27 @@ Graph* NetTransistor::createGraph() {
             HalfEdgeNet* endHalf = const_cast<HalfEdgeNet*>(faceHalfs.back());
             faceHalfs.pop_back();
 
-            std::vector<Endpoint*> faceEndpointsI;
+            std::vector<HalfEdge*> faceHalfEdgesI;
             for (HalfEdgeNet* half : faceHalfs) {
-                faceEndpointsI.push_back(halfToEndpoint(half));
+                faceHalfEdgesI.push_back(halfToHalfEdge(half));
             }
 
-            TransistorPath* path = TransistorPath::createNet(faceEndpointsI, merged->edges, &lines);
-            Endpoint* pathEnd = halfToEndpoint(endHalf);
-            std::vector<Endpoint*> pathEndpoints = { faceEndpointsI[0], pathEnd };
-            path->setEndpoints(pathEndpoints);
+            TransistorPath* path = TransistorPath::createPath(faceHalfEdgesI, merged->edges, &edges);
+            HalfEdge* pathEnd = halfToHalfEdge(endHalf);
+            std::vector<HalfEdge*> pathHalfEdges = { faceHalfEdgesI[0], pathEnd };
+            path->setHalfEdges(pathHalfEdges);
             openPaths.push_back(path);
         }
     }
 
-    destroyLines(splitLines);
+    destroyEdges(splitEdges);
 
     // Process faces.
     merged->faces.clear();
     for (FaceNet* face : endNetwork->getFaces()) {
         HalfEdgeNet* half = face->getOuterComponent();
         if (half) {
-            merged->faces.push_back(halfToEndpoint(half)->getFace());
+            merged->faces.push_back(halfToHalfEdge(half)->getFace());
         }
     }
 
@@ -362,7 +362,7 @@ Graph* NetTransistor::createGraph() {
     //map.outerFacesA.clear();
     //for (Face* endFace : endNet->getOuterFaces()) {
     //    map.outerFacesA.push_back(
-    //        halfToEndpoint(endFace->getOuterComponent())->getFace());
+    //        halfToHalfEdge(endFace->getOuterComponent())->getFace());
     //}
 
     return merged;
@@ -479,7 +479,7 @@ void NetTransistor::setupFaceCentric() {
     fixedVertexIds.clear();
     for (auto* path : openPaths) {
         for (int j = 0; j < 2; ++j) {
-            auto* pathVertex = path->endpoints[j]->getVertex();
+            auto* pathVertex = path->halfedges[j]->getVertex();
             int id = pathVertex->getId();
             if (!contains(fixedVertexIds, id)) {
                 fixedVertexIds.push_back(id);
@@ -506,7 +506,7 @@ void NetTransistor::setupFaceCentric() {
                  d = map->outerFacesD[i];
              } else {*/
                  auto normal = fixedFaceB->getFaceType()->getNormal();
-                 auto vPosition = fixedFaceA->getEndpoints()[0]->getVertex()->getPosition();
+                 auto vPosition = fixedFaceA->getHalfEdges()[0]->getVertex()->getPosition();
                  d = normal.dot(vPosition);
              // }
 
@@ -521,7 +521,7 @@ void NetTransistor::setupFaceCentric() {
             auto* group = face->getGroup();
             if (group->getFaces().size() > 1) {
                 auto normal = face->getFaceType()->getNormal();
-                auto vPosition = face->getEndpoints()[0]->getVertex()->getPosition();
+                auto vPosition = face->getHalfEdges()[0]->getVertex()->getPosition();
                 double d = normal.dot(vPosition);
                 addFixedFace(face, face, d);
             }
@@ -738,7 +738,7 @@ std::vector<TransistorPath*> NetTransistor::getFreeablePaths() const {
     std::vector<TransistorPath*> result;
     std::copy_if(openPaths.begin(), openPaths.end(), std::back_inserter(result),
         [](TransistorPath* path) {
-            return path->endpoints[0] != path->endpoints[1] &&
+            return path->halfedges[0] != path->halfedges[1] &&
                 path->extendableness() > 0;
         });
     return result;
@@ -772,27 +772,27 @@ void NetTransistor::freeVertex() {
 }
 
 void NetTransistor::freeOneVertex(Vertex* vertex) {
-    auto vertexEndpoints = vertex->getEndpoints();
+    auto vertexHalfEdges = vertex->getHalfEdges();
 
-    // Process all vertex endpoints
-    for (auto* vEndpoint : vertexEndpoints) {
-        auto* line = vEndpoint->getLine();
-        auto hasLine = [line](const LineData& data) { return data.line == line; };
+    // Process all vertex halfedges
+    for (auto* vHalfEdge : vertexHalfEdges) {
+        auto* edge = vHalfEdge->getEdge();
+        auto hasEdge = [edge](const EdgeData& data) { return data.edge == edge; };
         
-        if (std::find_if(lineData.begin(), lineData.end(), hasLine) == lineData.end()) {
-            addLine(line, true, true);
+        if (std::find_if(edgeData.begin(), edgeData.end(), hasEdge) == edgeData.end()) {
+            addEdge(edge, true, true);
         }
     }
 
-    // Process paths for each endpoint
-    for (auto* vEndpoint : vertexEndpoints) {
-        auto* line = vEndpoint->getLine();
+    // Process paths for each halfedge
+    for (auto* vHalfEdge : vertexHalfEdges) {
+        auto* edge = vHalfEdge->getEdge();
         
-        auto findPath0 = [vEndpoint](TransistorPath* path) { 
-            return path->endpoints[0] == vEndpoint; 
+        auto findPath0 = [vHalfEdge](TransistorPath* path) { 
+            return path->halfedges[0] == vHalfEdge; 
         };
-        auto findPath1 = [vEndpoint](TransistorPath* path) { 
-            return path->endpoints[1] == vEndpoint; 
+        auto findPath1 = [vHalfEdge](TransistorPath* path) { 
+            return path->halfedges[1] == vHalfEdge; 
         };
 
         auto path0 = std::find_if(openPaths.begin(), openPaths.end(), findPath0);
@@ -801,7 +801,7 @@ void NetTransistor::freeOneVertex(Vertex* vertex) {
         if (path0 != openPaths.end() && path1 != openPaths.end()) {
             if (*path0 == *path1) {
                 // Same path
-                (*path0)->endpoints.clear();
+                (*path0)->halfedges.clear();
                 Util::remove(openPaths, *path0);
             } else {
                 // Different paths
@@ -814,8 +814,8 @@ void NetTransistor::freeOneVertex(Vertex* vertex) {
             (*path1)->expandForward();
         } else {
             // Create new path
-            auto* path = new TransistorPath({}, &lines);
-            path->setEndpoints({vEndpoint, vEndpoint});
+            auto* path = new TransistorPath({}, &edges);
+            path->setHalfEdges({vHalfEdge, vHalfEdge});
             path->expandBackward();
             path->expandForward();
             openPaths.push_back(path);
@@ -837,11 +837,11 @@ bool NetTransistor::placeVertexPositions(const std::vector<double>& positions) {
         }*/
     }
     if (dims == 2) {
-        for (int i = 0; i < (int)lines.size(); i++) {
-            bool success = lines[i]->addToBsp();
+        for (int i = 0; i < (int)edges.size(); i++) {
+            bool success = edges[i]->addToBsp();
             if (!success) {
                 for (int j = i - 1; j >= 0; j--) {
-                    lines[j]->removeFromBsp();
+                    edges[j]->removeFromBsp();
                 }
                 return false;
             }
@@ -910,8 +910,8 @@ void NetTransistor::reject() {
     delete graph;
     graph = nullptr;
     
-    lineData.clear();
-    lines.clear();
+    edgeData.clear();
+    edges.clear();
     freeVertices.clear();
     freeEdges.clear();
     propagationOrder.clear();

@@ -9,57 +9,57 @@ namespace ms {
         aboveId(-1),
         belowId(-1),
         faceIds(),
-        lineIds(),
+        edgeIds(),
         plane(nullptr) {
         model->getCurrent()->addBspNode(id, this);
 	}
 
-    BspNode::BspNode(Model* model, int id, int parentId, int aboveId, int belowId, Plane* plane, std::vector<int> faceIds, std::vector<int> lineIds) :
+    BspNode::BspNode(Model* model, int id, int parentId, int aboveId, int belowId, Plane* plane, std::vector<int> faceIds, std::vector<int> edgeIds) :
         model(model),
         id(id),
         parentId(parentId),
         aboveId(aboveId),
         belowId(belowId),
         faceIds(faceIds),
-        lineIds(lineIds),
+        edgeIds(edgeIds),
         plane(plane) {
         model->getCurrent()->addBspNode(id, this);
 	}
 
 	BspNode* BspNode::copy() {
         auto newPlane = plane ? new Plane(*plane) : nullptr;
-		return new BspNode(model, id, parentId, aboveId, belowId, newPlane, faceIds, lineIds);
+		return new BspNode(model, id, parentId, aboveId, belowId, newPlane, faceIds, edgeIds);
 	}
 
-    bool BspNode::addLine(Line* line) {
-        if (lineIds.size() > 0) {
-            auto thisLine = model->getCurrent()->getLine(lineIds[0]);
-            auto endpoints = thisLine->getEndpoints();
-            auto p0 = endpoints[0]->getPosition();
-            auto p1 = endpoints[1]->getPosition();
+    bool BspNode::addEdge(Edge* edge) {
+        if (edgeIds.size() > 0) {
+            auto thisEdge = model->getCurrent()->getEdge(edgeIds[0]);
+            auto halfedges = thisEdge->getHalfEdges();
+            auto p0 = halfedges[0]->getPosition();
+            auto p1 = halfedges[1]->getPosition();
         }
 
-        PlaneClassification classification = classifyLine(line);
+        PlaneClassification classification = classifyEdge(edge);
         switch (classification) {
             case PlaneClassification::ON_PLANE:
-                connectLine(line);
+                connectEdge(edge);
                 return true;
             case PlaneClassification::ABOVE: {
                 BspNode* above = getAboveNode();
-                return above->addLine(line);
+                return above->addEdge(edge);
             }
             case PlaneClassification::BELOW: {
                 BspNode* below = getBelowNode();
-                return below->addLine(line);
+                return below->addEdge(edge);
             }
             case PlaneClassification::BOTH: {
-                // This could be made slightly more efficient as we already know the line is on both sides.
-                if (hasLineIntersection(line)) {
+                // This could be made slightly more efficient as we already know the edge is on both sides.
+                if (hasEdgeIntersection(edge)) {
                     return false;
                 }
                 BspNode* above = getAboveNode();
                 BspNode* below = getBelowNode();
-                return above->addLine(line) && below->addLine(line);
+                return above->addEdge(edge) && below->addEdge(edge);
             }
             default:
                 return false;
@@ -93,8 +93,8 @@ namespace ms {
         }
     }
 
-    void BspNode::removeLine(Line* line) {
-        lineIds.erase(std::remove(lineIds.begin(), lineIds.end(), line->getId()), lineIds.end());
+    void BspNode::removeEdge(Edge* edge) {
+        edgeIds.erase(std::remove(edgeIds.begin(), edgeIds.end(), edge->getId()), edgeIds.end());
         deleteIfEmpty();
     }
 
@@ -104,7 +104,7 @@ namespace ms {
     }
 
     void BspNode::deleteIfEmpty() {
-        if (lineIds.size() > 0 || faceIds.size() > 0) {
+        if (edgeIds.size() > 0 || faceIds.size() > 0) {
             return;
         }
         if (aboveId == -1 && belowId == -1) {
@@ -155,13 +155,13 @@ namespace ms {
         below->setParentId(id);
     }
 
-    void BspNode::connectLine(Line* line) {
-        lineIds.push_back(line->getId());
-        line->addBspNodeId(id);
+    void BspNode::connectEdge(Edge* edge) {
+        edgeIds.push_back(edge->getId());
+        edge->addBspNodeId(id);
         if (!plane) {
-            auto line = model->getCurrent()->getLine(lineIds[0]);
-            auto normal = line->getDirection()->cross(Vec3(0, 0, 1));
-            auto d = line->getEndpoint(0)->getPosition().dot(normal);
+            auto edge = model->getCurrent()->getEdge(edgeIds[0]);
+            auto normal = edge->getDirection()->cross(Vec3(0, 0, 1));
+            auto d = edge->getHalfEdge(0)->getPosition().dot(normal);
             plane = new Plane(normal, d);
         }
     }
@@ -174,13 +174,13 @@ namespace ms {
         }
     }
 
-    PlaneClassification BspNode::classifyLine(Line* line) {
+    PlaneClassification BspNode::classifyEdge(Edge* edge) {
         if (!plane) {
             return PlaneClassification::ON_PLANE;
         }
-        auto endpoints = line->getEndpoints();
-        auto p0 = endpoints[0]->getPosition();
-        auto p1 = endpoints[1]->getPosition();
+        auto halfedges = edge->getHalfEdges();
+        auto p0 = halfedges[0]->getPosition();
+        auto p1 = halfedges[1]->getPosition();
         bool isAbove = (isPointAbovePlane(p0) || isPointAbovePlane(p1));
         bool isBelow = (isPointBelowPlane(p0) || isPointBelowPlane(p1));
         if (isAbove && isBelow) {
@@ -257,11 +257,11 @@ namespace ms {
         return current->getBspNode(belowId);
     }
 
-    bool BspNode::hasLineIntersection(Line* lineA) {
+    bool BspNode::hasEdgeIntersection(Edge* edgeA) {
         auto current = model->getCurrent();
-        for (int lineId : lineIds) {
-            Line* lineB = current->getLine(lineId);
-            if (lineA->intersects(lineB)) {
+        for (int edgeId : edgeIds) {
+            Edge* edgeB = current->getEdge(edgeId);
+            if (edgeA->intersects(edgeB)) {
                 return true;
             }
         }
