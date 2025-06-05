@@ -7,7 +7,7 @@
 
 namespace ms {
 
-NetworkMutator::NetworkMutator(NetworkHierarchy* hierarchy, Model* model/*, NodeStats* nodeStats*/)
+GraphMutator::GraphMutator(GraphGrammar* hierarchy, Model* model/*, NodeStats* nodeStats*/)
     : hierarchy(hierarchy)
     , model(model)
     , edgeTypeStarted() {
@@ -16,23 +16,23 @@ NetworkMutator::NetworkMutator(NetworkHierarchy* hierarchy, Model* model/*, Node
     mapFinder = std::make_unique<NetGraphMapFinder>(model, groundEnabled);
 }
 
-void NetworkMutator::reset() {
+void GraphMutator::reset() {
     mapFinder->reset();
 }
 
-bool NetworkMutator::addStartInstance(bool useGround) {
+bool GraphMutator::addStartInstance(bool useGround) {
     auto transition = hierarchy->getStarterTransition(useGround);
     return applyTransition(transition);
 }
 
-bool NetworkMutator::changeRandomInstance(bool justDestructible) {
+bool GraphMutator::changeRandomInstance(bool justDestructible) {
     auto transition = justDestructible ?
         hierarchy->getRemoveTransition() :
         hierarchy->getTransition();
     return applyTransition(transition);
 }
 
-bool NetworkMutator::applyTransition(Transition transition) {
+bool GraphMutator::applyTransition(Transition transition) {
     if (!transition.startNet && !transition.endNet) {
         return false;
     }

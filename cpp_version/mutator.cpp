@@ -8,12 +8,12 @@
 
 namespace ms {
 
-GuideMutator::GuideMutator(Model* model, NetworkMutator* networkMutator)
+GuideMutator::GuideMutator(Model* model, GraphMutator* graphMutator)
     : model(model)
-    , networkMutator(networkMutator) {}
+    , graphMutator(graphMutator) {}
 
 void GuideMutator::reset() {
-    networkMutator->reset();
+    graphMutator->reset();
 }
 
 void GuideMutator::iterate(int steps) {
@@ -52,7 +52,7 @@ void GuideMutator::iterate(int steps) {
 
 // Add the ground plane.
 void GuideMutator::mutateGround() {
-    bool success = networkMutator->addStartInstance(true);
+    bool success = graphMutator->addStartInstance(true);
 };
 
 void GuideMutator::mutate() {
@@ -63,7 +63,7 @@ void GuideMutator::mutate() {
         switch(Util::randomDistribution(probabilities)) {
             case 0: {
                 timer->start("Add Fragment");
-                bool success = networkMutator->addStartInstance(false);
+                bool success = graphMutator->addStartInstance(false);
                 timer->stop("Add Fragment");
                 if (success) {
                     return;
@@ -75,7 +75,7 @@ void GuideMutator::mutate() {
             }
             case 1: {
                 timer->start("Remove Fragment");
-                bool success = networkMutator->changeRandomInstance(true);
+                bool success = graphMutator->changeRandomInstance(true);
                 timer->stop("Remove Fragment");
                 if (success) {
                     return;
@@ -87,7 +87,7 @@ void GuideMutator::mutate() {
             }
             case 2: {
                 timer->start("Modify Fragment");
-                bool success = networkMutator->changeRandomInstance(false);
+                bool success = graphMutator->changeRandomInstance(false);
                 timer->stop("Modify Fragment");
                 if (success) {
                     return;

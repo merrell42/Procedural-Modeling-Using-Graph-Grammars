@@ -11,28 +11,27 @@ using Json = nlohmann::json;
 
 namespace ms {
 
-class Network;  
+class Graph;  
 class NetTransition;
 class Shape3D;
-// class Matcher;
 class EdgeType;
 class VertexType;
 
 struct Transition {
-    Network* startNet;
-    Network* endNet;
+    Graph* startNet;
+    Graph* endNet;
     NetGraphMap* map;
     bool ground;
 };
 
-class NetworkHierarchy {
+class GraphGrammar {
 public:
-    NetworkHierarchy();
-    ~NetworkHierarchy() = default;
-    static NetworkHierarchy* import(const Json& json);
+    GraphGrammar();
+    ~GraphGrammar() = default;
+    static GraphGrammar* import(const Json& json);
 
     void reset();
-    const std::vector<std::vector<Network*>>& getGenerations() const;
+    const std::vector<std::vector<Graph*>>& getGenerations() const;
     const std::vector<NetTransition*>& getTransitions() const;
     const std::vector<NetTransition*>& getStarterTransitions() const;
     const std::vector<NetTransition*>& getGroundTransitions() const;
@@ -44,9 +43,9 @@ public:
     Transition getStarterTransition(bool useGround);
 
 private:
-    std::vector<std::vector<Network*>> generations;
-    std::vector<Network*> nodeQueue;
-    Network* emptyNet;
+    std::vector<std::vector<Graph*>> generations;
+    std::vector<Graph*> nodeQueue;
+    Graph* emptyNet;
 
     Shape3D* shape;
     std::vector<NetTransition*> transitions;
@@ -54,10 +53,10 @@ private:
     std::vector<NetTransition*> groundTransitions;
     bool grounded;
 
-    struct NetworkSet {
-        std::vector<Network*> face;
-        std::vector<Network*> edge;
-        std::vector<Network*> vertex;
+    struct GraphSet {
+        std::vector<Graph*> face;
+        std::vector<Graph*> edge;
+        std::vector<Graph*> vertex;
         std::vector<EdgeType*> edgeTypes;
         std::unordered_map<std::string, EdgeType*> splicedEdgeTypes;
     };

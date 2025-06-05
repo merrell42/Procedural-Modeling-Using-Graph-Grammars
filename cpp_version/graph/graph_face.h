@@ -7,39 +7,39 @@ using Json = nlohmann::json;
 
 namespace ms {
 
-class HalfEdgeNet;
-class Network;
-class FaceType3D;
+class GraphHalfEdge;
+class Graph;
+class FaceType;
 
-class FaceNet {
+class GraphFace {
 public:
-    FaceNet();
+    GraphFace();
     void import(const Json& json);
 
-    HalfEdgeNet* getOuterComponent() const;
-    const std::vector<HalfEdgeNet*>& getInnerComponents() const;
-    Network* getNetwork() const;
-    FaceType3D* getType() const { return type; }
+    GraphHalfEdge* getOuterComponent() const;
+    const std::vector<GraphHalfEdge*>& getInnerComponents() const;
+    Graph* getGraph() const;
+    FaceType* getType() const { return type; }
     
-    FaceNet* connectNet(Network* network);
-    void connectOuter(const std::vector<HalfEdgeNet*>& halfEdges);
-    void makeInner(HalfEdgeNet* halfEdge);
-    void copyConnection(const FaceNet* copy);
-    void setType(FaceType3D* type_) { type = type_;}
+    GraphFace* connectNet(Graph* graph);
+    void connectOuter(const std::vector<GraphHalfEdge*>& halfEdges);
+    void makeInner(GraphHalfEdge* halfEdge);
+    void copyConnection(const GraphFace* copy);
+    void setType(FaceType* type_) { type = type_;}
     
-    static std::vector<HalfEdgeNet*> getConnectedHalfEdges(HalfEdgeNet* start);
-    std::vector<HalfEdgeNet*> getOuterHalfEdges() const;
-    std::vector<HalfEdgeNet*> getInnerHalfEdges() const;
-    std::vector<HalfEdgeNet*> getHalfEdges() const;
-    void replaceHalfEdge(HalfEdgeNet* a, HalfEdgeNet* b, bool force);
+    static std::vector<GraphHalfEdge*> getConnectedHalfEdges(GraphHalfEdge* start);
+    std::vector<GraphHalfEdge*> getOuterHalfEdges() const;
+    std::vector<GraphHalfEdge*> getInnerHalfEdges() const;
+    std::vector<GraphHalfEdge*> getHalfEdges() const;
+    void replaceHalfEdge(GraphHalfEdge* a, GraphHalfEdge* b, bool force);
     bool isLoopy() const;
-    bool inNetwork() const;
+    bool inGraph() const;
 
 private:
-    HalfEdgeNet* outerComponent;
-    std::vector<HalfEdgeNet*> innerComponents;
-    FaceType3D* type;
-    Network* network;
+    GraphHalfEdge* outerComponent;
+    std::vector<GraphHalfEdge*> innerComponents;
+    FaceType* type;
+    Graph* graph;
     int id;
 };
 

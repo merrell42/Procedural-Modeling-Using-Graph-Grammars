@@ -6,9 +6,9 @@
 
 namespace ms {
 
-int EdgeType3D::nextId = 0;
+int EdgeType::nextId = 0;
 
-EdgeType3D::EdgeType3D(const std::vector<FaceData>& fData, const Vec3& direction,
+EdgeType::EdgeType(const std::vector<FaceData>& fData, const Vec3& direction,
                        const std::map<std::string, bool>& options)
     : faceData(fData)
     , dir(direction)
@@ -23,50 +23,50 @@ EdgeType3D::EdgeType3D(const std::vector<FaceData>& fData, const Vec3& direction
     , destroyed(false)
     , id(nextId++) {}
 
-void EdgeType3D::setSpliced(bool newSpliced) {
+void EdgeType::setSpliced(bool newSpliced) {
     spliced = newSpliced;
     if (spliced) {
         brush = new Brush("#aaa");
     }
 }
 
-bool EdgeType3D::isLoopy() const {
+bool EdgeType::isLoopy() const {
     return brush ? brush->getBool("Loopy") : true;
 }
 
-bool EdgeType3D::isBoundary() const {
+bool EdgeType::isBoundary() const {
     return brush ? brush->getBool("Boundary") : false;
 }
 
-bool EdgeType3D::isConnected() const {
+bool EdgeType::isConnected() const {
     if (spliced) return false;
     return brush ? brush->getBool("Fully Connected") : false;
 }
 
-bool EdgeType3D::singleFragment() const {
+bool EdgeType::singleFragment() const {
     return isBoundary();
 }
 
-bool EdgeType3D::splittable() const {
+bool EdgeType::splittable() const {
     return !(!isLoopy() || isBoundary() || isConnected());
 }
 
-bool EdgeType3D::extendable() const {
+bool EdgeType::extendable() const {
     return !isRigid || isRigidTiled;
 }
 
-double EdgeType3D::getThickness() const {
+double EdgeType::getThickness() const {
     return brush ? brush->getDouble("Thickness") : 1.0f;
 }
 
-std::string EdgeType3D::boundaryString() const {
+std::string EdgeType::boundaryString() const {
     if (dir.dot(Vec3::X_AXIS) > 0.99f) return "x";
     if (dir.dot(Vec3::Y_AXIS) > 0.99f) return "y";
     if (dir.dot(Vec3::Z_AXIS) > 0.99f) return "z";
     return std::string(1, static_cast<char>(id + 'a'));
 }
 
-int EdgeType3D::neighboringFace(int initialIndex, bool above) const {
+int EdgeType::neighboringFace(int initialIndex, bool above) const {
     int maxDim = Util::maxDim(dir);
     std::vector<std::pair<double, int>> angles;
     
@@ -95,7 +95,7 @@ int EdgeType3D::neighboringFace(int initialIndex, bool above) const {
     return angles[neighborOrder].second;
 }
 
-EdgeType3D* EdgeType3D::import(const Json& json, Shape3D* shape) {
+EdgeType* EdgeType::import(const Json& json, Shape3D* shape) {
     std::vector<FaceData> fData;
     for (const auto& f : json["faceData"]) {
         fData.push_back({
@@ -111,7 +111,7 @@ EdgeType3D* EdgeType3D::import(const Json& json, Shape3D* shape) {
         {"isRigidTiled", json["isRigidTiled"]}
     };
     
-    auto* result = new EdgeType3D(fData, direction, options);
+    auto* result = new EdgeType(fData, direction, options);
     
     if (json.contains("brush") && !json["brush"].is_null()) {
         result->brush = Brush::import(json["brush"]);

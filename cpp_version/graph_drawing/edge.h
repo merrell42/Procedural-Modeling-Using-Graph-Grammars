@@ -23,7 +23,7 @@ namespace ms {
 
 	class Edge {
 	public:
-		Edge(Model* model, int id, EdgeType3D* type, std::vector<int> halfedgeIds, std::vector<int> bspNodeIds);
+		Edge(Model* model, int id, EdgeType* type, std::vector<int> halfedgeIds, std::vector<int> bspNodeIds);
 		Edge* copy();
 		~Edge();
 		int getId() const { return id; };
@@ -39,17 +39,17 @@ namespace ms {
 		void addHalfEdge(HalfEdge* halfedge, int index);
 		void setHalfEdge(int index, HalfEdge* halfedge);
         void setHalfEdgeIds(const std::vector<int>& ids);
-		EdgeType3D* getEdgeType() const { return type; };
+		EdgeType* getEdgeType() const { return type; };
 		SplitData split(bool splitFaces);
 		std::pair<SplitData, Vertex*> fullSplit(double s);
 		void destroy();
-		static VertexType* getVertexType(EdgeType3D* edgeType);
+		static VertexType* getVertexType(EdgeType* edgeType);
 		bool intersects(Edge* edgeB);
 		Vec3* getDirection() const;
 
 	private:
 		int id;
-		EdgeType3D* type;	
+		EdgeType* type;	
 		std::vector<int> halfedgeIds;
 		std::vector<int> bspNodeIds;
 		static std::unordered_map<int, VertexType*> splitVertexTypes;

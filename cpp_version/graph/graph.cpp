@@ -10,90 +10,90 @@
 
 namespace ms {
 
-int Network::nextId = 0;
+int Graph::nextId = 0;
 
-Network::Network() : id(nextId++) {}
+Graph::Graph() : id(nextId++) {}
 
-void Network::addVertex(VertexNet* vertex) {
+void Graph::addVertex(VertexNet* vertex) {
     vertices.push_back(vertex);
 }
 
-void Network::addEdge(EdgeNet* edge) {
+void Graph::addEdge(GraphEdge* edge) {
     edges.push_back(edge);
 }
 
-void Network::addHalfEdge(HalfEdgeNet* halfEdge) {
+void Graph::addHalfEdge(GraphHalfEdge* halfEdge) {
     halfEdges.push_back(halfEdge);
 }
 
-void Network::addFace(FaceNet* face) {
+void Graph::addFace(GraphFace* face) {
     faces.push_back(face);
 }
 
-void Network::removeVertex(VertexNet* vertex) {
+void Graph::removeVertex(VertexNet* vertex) {
     vertices.erase(std::remove(vertices.begin(), vertices.end(), vertex), vertices.end());
 }
 
-void Network::removeEdge(EdgeNet* edge) {
+void Graph::removeEdge(GraphEdge* edge) {
     edges.erase(std::remove(edges.begin(), edges.end(), edge), edges.end());
 }
 
-void Network::removeHalfEdge(HalfEdgeNet* halfEdge) {
+void Graph::removeHalfEdge(GraphHalfEdge* halfEdge) {
     halfEdges.erase(std::remove(halfEdges.begin(), halfEdges.end(), halfEdge), halfEdges.end());
 }
 
-void Network::removeFace(FaceNet* face) {
+void Graph::removeFace(GraphFace* face) {
     faces.erase(std::remove(faces.begin(), faces.end(), face), faces.end());
 }
 
-VertexNet* Network::convertVertex(Network* networkB, VertexNet* vertexB) {
-    return vertexB ? vertices[networkB->vertexIndex(vertexB)] : nullptr;
+VertexNet* Graph::convertVertex(Graph* graphB, VertexNet* vertexB) {
+    return vertexB ? vertices[graphB->vertexIndex(vertexB)] : nullptr;
 }
 
-EdgeNet* Network::convertEdge(Network* networkB, EdgeNet* edgeB) {
-    return edgeB ? edges[networkB->edgeIndex(edgeB)] : nullptr;
+GraphEdge* Graph::convertEdge(Graph* graphB, GraphEdge* edgeB) {
+    return edgeB ? edges[graphB->edgeIndex(edgeB)] : nullptr;
 }
 
-HalfEdgeNet* Network::convertHalfEdge(Network* networkB, HalfEdgeNet* halfEdgeB) {
-    return halfEdgeB ? halfEdges[networkB->halfEdgeIndex(halfEdgeB)] : nullptr;
+GraphHalfEdge* Graph::convertHalfEdge(Graph* graphB, GraphHalfEdge* halfEdgeB) {
+    return halfEdgeB ? halfEdges[graphB->halfEdgeIndex(halfEdgeB)] : nullptr;
 }
 
-FaceNet* Network::convertFace(Network* networkB, FaceNet* faceB) {
-    return faceB ? faces[networkB->faceIndex(faceB)] : nullptr;
+GraphFace* Graph::convertFace(Graph* graphB, GraphFace* faceB) {
+    return faceB ? faces[graphB->faceIndex(faceB)] : nullptr;
 }
 
-int Network::vertexIndex(VertexNet* vertex) const {
+int Graph::vertexIndex(VertexNet* vertex) const {
     return vertex ? (int)(std::find(vertices.begin(), vertices.end(), vertex) - vertices.begin()) : -1;
 }
 
-int Network::edgeIndex(EdgeNet* edge) const {
+int Graph::edgeIndex(GraphEdge* edge) const {
     return edge ? (int)(std::find(edges.begin(), edges.end(), edge) - edges.begin()) : -1;
 }
 
-int Network::halfEdgeIndex(HalfEdgeNet* halfEdge) const {
+int Graph::halfEdgeIndex(GraphHalfEdge* halfEdge) const {
     return halfEdge ? (int)(std::find(halfEdges.begin(), halfEdges.end(), halfEdge) - halfEdges.begin()) : -1;
 }
 
-int Network::faceIndex(FaceNet* face) const {
+int Graph::faceIndex(GraphFace* face) const {
     return face ? (int)(std::find(faces.begin(), faces.end(), face) - faces.begin()) : -1;
 }
 
-Network* Network::import(const Json & json, Shape3D* shape) {
+Graph* Graph::import(const Json & json, Shape3D* shape) {
     auto interior = json["interior"];
 
-    auto result = new Network();
+    auto result = new Graph();
 
     for (const auto& vertex : interior["vertices"]) {
         (new VertexNet())->connectNet(result);
     }
     for (const auto& edge : interior["edges"]) {
-        (new EdgeNet())->connectNet(result);
+        (new GraphEdge())->connectNet(result);
     }
     for (const auto& halfEdge : interior["halfEdges"]) {
-        (new HalfEdgeNet(true))->connectNet(result);
+        (new GraphHalfEdge(true))->connectNet(result);
     }
     for (const auto& face : interior["faces"]) {
-        (new FaceNet())->connectNet(result);
+        (new GraphFace())->connectNet(result);
     }
 
     for (size_t index = 0; index < interior["vertices"].size(); ++index) {
@@ -152,12 +152,12 @@ Network* Network::import(const Json & json, Shape3D* shape) {
 }
 
 // Remove any spliced edges.
-void Network::removeSplices() {
+void Graph::removeSplices() {
     // Check if any half edges are spliced
     bool hasSplices = std::any_of(
         getHalfEdges().begin(),
         getHalfEdges().end(),
-        [](HalfEdgeNet* half) { return half->isSpliced(); }
+        [](GraphHalfEdge* half) { return half->isSpliced(); }
     );
 
     if (!hasSplices) {
@@ -185,12 +185,12 @@ void Network::removeSplices() {
             removeHalfEdge(half);
             auto* vertex = half->getVertex();
             // TODO: I'm not sure if this check is necessary.
-            if (vertex->inNetwork()) {
+            if (vertex->inGraph()) {
                 removeVertex(vertex);
             }
             auto* edge = half->getEdge();
             // TODO: I'm not sure if this check is necessary.
-            if (edge->inNetwork()) {
+            if (edge->inGraph()) {
                 removeEdge(edge);
             }
         }

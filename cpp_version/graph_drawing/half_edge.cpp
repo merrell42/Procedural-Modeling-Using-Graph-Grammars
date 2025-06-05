@@ -4,7 +4,7 @@
 namespace ms {
 
 // TODO: Rename as halfEdge.
-HalfEdge::HalfEdge(Model* model, int id, bool isAtStart, EdgeType3D* edgeType, Vec3 dir, int vertexId, int faceId_, int edgeId, bool createFace, int faceIndex)
+HalfEdge::HalfEdge(Model* model, int id, bool isAtStart, EdgeType* edgeType, Vec3 dir, int vertexId, int faceId_, int edgeId, bool createFace, int faceIndex)
 	: model(model)
 	, id(id)
     , isAtStart(isAtStart)
@@ -28,7 +28,7 @@ HalfEdge::HalfEdge(Model* model, int id, bool isAtStart, EdgeType3D* edgeType, V
     }
 }
 
-FaceType3D* HalfEdge::getFaceType() {
+FaceType* HalfEdge::getFaceType() {
     if (!faceTypeCached) {
         const auto& faceData = edgeType->faceData;
         faceTypeCached = faceData[faceIndex].type;
@@ -46,7 +46,7 @@ void HalfEdge::destroy() {
     delete this;
 };
 
-EdgeType3D* HalfEdge::getEdgeType() const {
+EdgeType* HalfEdge::getEdgeType() const {
     return edgeType;
 }
 

@@ -87,7 +87,7 @@ Json globalSettings = {
     {"Cut Holes", true},
     {"Fewer Start Transitions", false},
     {"Example View", true},
-    {"Use Network", true},
+    {"Use Graph", true},
     {"Pause when finished", false}
 };
 

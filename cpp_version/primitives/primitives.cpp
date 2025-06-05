@@ -4,8 +4,8 @@
 namespace ms {
 
 Shape3D::Shape3D(const std::vector<VertexType*>& vTypes,
-                 const std::vector<EdgeType3D*>& eTypes,
-                 const std::vector<FaceType3D*>& fTypes,
+                 const std::vector<EdgeType*>& eTypes,
+                 const std::vector<FaceType*>& fTypes,
                  const std::string& xmlData,
                  int dims)
     : vertexTypes(vTypes)
@@ -23,15 +23,15 @@ Shape3D* Shape3D::import(const Json& json) {
     }
     auto shape = new Shape3D(dims);
 
-    std::vector<FaceType3D*> faceTypes;
+    std::vector<FaceType*> faceTypes;
     for (const auto& type : json.at("faceTypes")) {
-        faceTypes.push_back(FaceType3D::import(type));
+        faceTypes.push_back(FaceType::import(type));
     }
     shape->faceTypes = faceTypes;
 
-    std::vector<EdgeType3D*> edgeTypes;
+    std::vector<EdgeType*> edgeTypes;
     for (const auto& type : json.at("edgeTypes")) {
-        edgeTypes.push_back(EdgeType3D::import(type, shape));
+        edgeTypes.push_back(EdgeType::import(type, shape));
     }
     shape->edgeTypes = edgeTypes;
     

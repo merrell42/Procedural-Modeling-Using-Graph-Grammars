@@ -3,15 +3,15 @@
 
 namespace ms {
 
-NetGraphMapInfo::NetGraphMapInfo(Model* model, Network* networkB)
-    : model(model) , networkB(networkB) {
-    verticesB = networkB->getVertices();
-    edgesB = networkB->getEdges();
+NetGraphMapInfo::NetGraphMapInfo(Model* model, Graph* graphB)
+    : model(model) , graphB(graphB) {
+    verticesB = graphB->getVertices();
+    edgesB = graphB->getEdges();
 }
 
 NetGraphMapInfo::NetGraphMapInfo(const NetGraphMapInfo& other)
     : model(other.model)
-    , networkB(other.networkB)
+    , graphB(other.graphB)
     , verticesB(other.verticesB)
     , edgesB(other.edgesB) {}
 

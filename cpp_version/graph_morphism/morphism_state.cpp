@@ -23,7 +23,7 @@ void NetGraphMapState::setQueue(const std::vector<HalfEdgeData>& newQueue) {
 }
 
 void NetGraphMapState::assignVertex(Vertex* vertexA, int indexB) {
-    auto* vertexB = info->networkB->getVertices()[indexB];
+    auto* vertexB = info->graphB->getVertices()[indexB];
     map->vertexBtoA[indexB] = vertexA;
 
     // Add all non-spliced half edges to queue and spliced ones to spliceQueue.

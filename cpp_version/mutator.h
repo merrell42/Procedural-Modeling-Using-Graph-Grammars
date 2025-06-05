@@ -12,11 +12,11 @@ class Classifier;
 class Timer;
 class Model;
 class MutationArea;
-class NetworkMutator;
+class GraphMutator;
 
 class GuideMutator {
 public:
-    GuideMutator(Model* model, NetworkMutator* networkMutator);
+    GuideMutator(Model* model, GraphMutator* graphMutator);
     ~GuideMutator() = default;
 
     void iterate(int step);
@@ -33,7 +33,7 @@ public:
 
 private:
     Model* model;
-    std::unique_ptr<NetworkMutator> networkMutator;
+    std::unique_ptr<GraphMutator> graphMutator;
 };
 
 } // namespace ms 

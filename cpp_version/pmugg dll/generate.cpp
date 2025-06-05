@@ -34,9 +34,9 @@ void initialize(const char* filePath, char* result, int len, int seed) {
 	file.close();
 	try {
 		Json parsed= Json::parse(content);
-		auto hierarchy = NetworkHierarchy::import(parsed["solution"]);
+		auto hierarchy = GraphGrammar::import(parsed["solution"]);
 		model = new ms::Model();
-		mutator = new GuideMutator(model, new NetworkMutator(hierarchy, model));
+		mutator = new GuideMutator(model, new GraphMutator(hierarchy, model));
 		strcpy_s(result, len, "Success");
 	} catch (const Json::exception& e) {
 		string errorMsg = "Error: JSON parsing failed - ";

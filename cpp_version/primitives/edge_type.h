@@ -11,19 +11,19 @@ using Json = nlohmann::json;
 
 namespace ms {
 
-class FaceType3D;
+class FaceType;
 class Shape3D;
 
 struct FaceData {
-    FaceType3D* type;
+    FaceType* type;
     bool onRight;
 };
 
-class EdgeType3D {
+class EdgeType {
 public:
-    EdgeType3D(const std::vector<FaceData>& faceData, const Vec3& dir, 
+    EdgeType(const std::vector<FaceData>& faceData, const Vec3& dir, 
                const std::map<std::string, bool>& options = {});
-    ~EdgeType3D() = default;
+    ~EdgeType() = default;
 
     // Core accessors
     const std::vector<FaceData>& getFaceData() const { return faceData; }
@@ -53,7 +53,7 @@ public:
     std::string boundaryString() const;
     int neighboringFace(int initialIndex, bool above) const;
 
-    static EdgeType3D* import(const Json& json, Shape3D* shape);
+    static EdgeType* import(const Json& json, Shape3D* shape);
 
     std::vector<FaceData> faceData;
 

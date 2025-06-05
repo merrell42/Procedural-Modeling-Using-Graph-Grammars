@@ -6,46 +6,46 @@
 
 namespace ms {
 
-int EdgeNet::nextId = 0;
+int GraphEdge::nextId = 0;
 
-EdgeNet::EdgeNet()
+GraphEdge::GraphEdge()
     : type(nullptr)
-    , network(nullptr)
+    , graph(nullptr)
     , id(nextId++) {}
 
-const std::vector<std::vector<HalfEdgeNet*>>& EdgeNet::getHalfEdges() const {
+const std::vector<std::vector<GraphHalfEdge*>>& GraphEdge::getHalfEdges() const {
     return halfEdges;
 }
 
-Network* EdgeNet::getNetwork() const {
-    return network;
+Graph* GraphEdge::getGraph() const {
+    return graph;
 }
 
-int EdgeNet::getId() const {
+int GraphEdge::getId() const {
     return id;
 }
 
-EdgeNet* EdgeNet::connectNet(Network* net) {
-    network = net;
-    network->addEdge(this);
+GraphEdge* GraphEdge::connectNet(Graph* net) {
+    graph = net;
+    graph->addEdge(this);
     return this;
 }
 
-void EdgeNet::addHalfEdge(HalfEdgeNet* halfEdge, int index) {
+void GraphEdge::addHalfEdge(GraphHalfEdge* halfEdge, int index) {
     if (index >= halfEdges.size()) {
         halfEdges.resize(index + 1);
     }
     halfEdges[index].push_back(halfEdge);
 }
 
-void EdgeNet::removeHalfEdge(HalfEdgeNet* halfEdge, int index) {
+void GraphEdge::removeHalfEdge(GraphHalfEdge* halfEdge, int index) {
     if (index < halfEdges.size()) {
         halfEdges.erase(halfEdges.begin() + index);
     }
 }
 
-void EdgeNet::copyConnection(const EdgeNet* copy) {
-    auto* copyNet = copy->getNetwork();
+void GraphEdge::copyConnection(const GraphEdge* copy) {
+    auto* copyNet = copy->getGraph();
     auto copyHalfEdges = copy->getHalfEdges();
     
     halfEdges.clear();
@@ -53,18 +53,18 @@ void EdgeNet::copyConnection(const EdgeNet* copy) {
     
     for (size_t i = 0; i < copyHalfEdges.size(); i++) {
         for (auto* half : copyHalfEdges[i]) {
-            halfEdges[i].push_back(network->convertHalfEdge(copyNet, half));
+            halfEdges[i].push_back(graph->convertHalfEdge(copyNet, half));
         }
     }
 }
 
-bool EdgeNet::inNetwork() const {
-    auto vec = network->getEdges();
+bool GraphEdge::inGraph() const {
+    auto vec = graph->getEdges();
     return std::find(vec.begin(), vec.end(), this) != vec.end();
 }
 
-void EdgeNet::merge(EdgeNet* edgeB, bool mergeForward) {
-    auto* interior = network;
+void GraphEdge::merge(GraphEdge* edgeB, bool mergeForward) {
+    auto* interior = graph;
 
     auto halfsB = edgeB->getHalfEdges();
     for (size_t edgeIndex = 0; edgeIndex < halfEdges.size(); edgeIndex++) {
@@ -94,15 +94,15 @@ void EdgeNet::merge(EdgeNet* edgeB, bool mergeForward) {
     interior->removeEdge(edgeB);
 }
 
-void EdgeNet::import(const Json& json) {
+void GraphEdge::import(const Json& json) {
     halfEdges.clear();
-    auto& networkHalfEdges = network->getHalfEdges();
+    auto& graphHalfEdges = graph->getHalfEdges();
     
     if (json.contains("halfEdges")) {
         for (const auto& arrayJson : json["halfEdges"]) {
-            std::vector<HalfEdgeNet*> halfArray;
+            std::vector<GraphHalfEdge*> halfArray;
             for (const auto& index : arrayJson) {
-                halfArray.push_back(networkHalfEdges[index.get<int>()]);
+                halfArray.push_back(graphHalfEdges[index.get<int>()]);
             }
             halfEdges.push_back(halfArray);
         }

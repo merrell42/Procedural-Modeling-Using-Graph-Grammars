@@ -10,7 +10,7 @@ using Json = nlohmann::json;
 
 namespace ms {
 
-class EdgeType3D;
+class EdgeType;
 class Shape3D;
 
 struct Connection {
@@ -18,10 +18,10 @@ struct Connection {
     double angle;
     Vec3 dir;
     int directedId;
-    EdgeType3D* edge;
+    EdgeType* edge;
     bool isAtStart;
 
-    Connection(EdgeType3D* edge = nullptr, bool isAtStart = false, double angle = 0.0f,
+    Connection(EdgeType* edge = nullptr, bool isAtStart = false, double angle = 0.0f,
               const std::vector<int>& faceIds = {})
         : adjustedAngle(0)
         , angle(angle)
@@ -52,7 +52,7 @@ public:
     bool getSpliced() const;
     int getId() const;
 
-    void addEdge(EdgeType3D* edge, bool isAtStart, double angle);
+    void addEdge(EdgeType* edge, bool isAtStart, double angle);
     void setSpliced(bool spliced);
 
 private:
@@ -63,7 +63,7 @@ private:
     static int nextId;
     static constexpr double ANGLE_EPSILON = 1e-5f;
 
-    static double getAdjustedAngle(double angle, EdgeType3D* edge, bool isAtStart);
+    static double getAdjustedAngle(double angle, EdgeType* edge, bool isAtStart);
 };
 
 } // namespace ms 

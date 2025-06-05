@@ -29,7 +29,7 @@ int VertexType::getId() const {
     return id;
 }
 
-void VertexType::addEdge(EdgeType3D* edge, bool isAtStart, double angle) {
+void VertexType::addEdge(EdgeType* edge, bool isAtStart, double angle) {
     // Angle becomes the angle going out from the vertex through the edge.
     auto dir = edge->getDir();
     if (!isAtStart) {
@@ -86,7 +86,7 @@ VertexType* VertexType::import(const Json& json, Shape3D* shape) {
     return result;
 }
 
-double VertexType::getAdjustedAngle(double angle, EdgeType3D* edge, bool isAtStart) {
+double VertexType::getAdjustedAngle(double angle, EdgeType* edge, bool isAtStart) {
     int directedId = 2 * edge->getId() + (isAtStart ? 0 : 1);
     return angle + 1e-5f * directedId;
 }

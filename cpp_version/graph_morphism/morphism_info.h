@@ -8,20 +8,20 @@
 
 namespace ms {
 
-class Network;
+class Graph;
 class NodeStats;
 class Vertex;
 class Edge;
 
 class NetGraphMapInfo {
 public:
-    NetGraphMapInfo(Model* model, Network* networkB);
+    NetGraphMapInfo(Model* model, Graph* graphB);
     NetGraphMapInfo(const NetGraphMapInfo& other);
 
     Model* model;
-    Network* networkB;  
+    Graph* graphB;  
     std::vector<VertexNet*> verticesB;
-    std::vector<EdgeNet*> edgesB;
+    std::vector<GraphEdge*> edgesB;
 };
 
 } // namespace ms 

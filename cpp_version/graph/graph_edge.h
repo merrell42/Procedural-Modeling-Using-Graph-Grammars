@@ -7,37 +7,37 @@ using Json = nlohmann::json;
 
 namespace ms {
 
-class Network;
-class HalfEdgeNet;
+class Graph;
+class GraphHalfEdge;
 class View;
-class EdgeType3D;
+class EdgeType;
 
-class EdgeNet {
+class GraphEdge {
 public:
-    EdgeNet();
-    ~EdgeNet() = default;
+    GraphEdge();
+    ~GraphEdge() = default;
 
     // Core functionality
-    const std::vector<std::vector<HalfEdgeNet*>>& getHalfEdges() const;
-    EdgeType3D* getType() { return type; }
-    void setType(EdgeType3D* type_) { type = type_; }
-    Network* getNetwork() const;
+    const std::vector<std::vector<GraphHalfEdge*>>& getHalfEdges() const;
+    EdgeType* getType() { return type; }
+    void setType(EdgeType* type_) { type = type_; }
+    Graph* getGraph() const;
     int getId() const;
 
-    EdgeNet* connectNet(Network* network);
-    void addHalfEdge(HalfEdgeNet* halfEdge, int index);
-    void removeHalfEdge(HalfEdgeNet* halfEdge, int index);
-    void copyConnection(const EdgeNet* copy);
+    GraphEdge* connectNet(Graph* graph);
+    void addHalfEdge(GraphHalfEdge* halfEdge, int index);
+    void removeHalfEdge(GraphHalfEdge* halfEdge, int index);
+    void copyConnection(const GraphEdge* copy);
 
     // Validation
-    bool inNetwork() const;
-    void merge(EdgeNet* edgeB, bool mergeForward);
+    bool inGraph() const;
+    void merge(GraphEdge* edgeB, bool mergeForward);
     void import(const Json& json);
 
 private:
-    std::vector<std::vector<HalfEdgeNet*>> halfEdges;
-    EdgeType3D* type;
-    Network* network;
+    std::vector<std::vector<GraphHalfEdge*>> halfEdges;
+    EdgeType* type;
+    Graph* graph;
     int id;
 
     static int nextId;

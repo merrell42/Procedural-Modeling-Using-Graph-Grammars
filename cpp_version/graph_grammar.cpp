@@ -11,11 +11,11 @@
 
 namespace ms {
 
-NetworkHierarchy::NetworkHierarchy() {
+GraphGrammar::GraphGrammar() {
     reset();
 }
 
-void NetworkHierarchy::reset() {
+void GraphGrammar::reset() {
     generations.clear();
     nodeQueue.clear();
     emptyNet = nullptr;
@@ -26,77 +26,77 @@ void NetworkHierarchy::reset() {
     groundTransitions.clear();
 }
 
-const std::vector<std::vector<Network*>>& NetworkHierarchy::getGenerations() const {
+const std::vector<std::vector<Graph*>>& GraphGrammar::getGenerations() const {
     return generations;
 }
 
-const std::vector<NetTransition*>& NetworkHierarchy::getTransitions() const {
+const std::vector<NetTransition*>& GraphGrammar::getTransitions() const {
     return transitions;
 }
 
-const std::vector<NetTransition*>& NetworkHierarchy::getStarterTransitions() const {
+const std::vector<NetTransition*>& GraphGrammar::getStarterTransitions() const {
     return starterTransitions;
 }
 
-const std::vector<NetTransition*>& NetworkHierarchy::getGroundTransitions() const {
+const std::vector<NetTransition*>& GraphGrammar::getGroundTransitions() const {
     return groundTransitions;
 }
 
-bool NetworkHierarchy::isGrounded() const {
+bool GraphGrammar::isGrounded() const {
     return grounded;
 }
 
-Transition NetworkHierarchy::getTransition() {
+Transition GraphGrammar::getTransition() {
     NetTransition* transition = transitions.empty() ? nullptr : Util::pick<NetTransition*>(transitions);
     if (transition) {
-        auto startNetworks = transition->getStartNetworks();
-        auto endNetworks = transition->getEndNetworks();
-        int n = (int)startNetworks.size();
+        auto startGraphs = transition->getStartGraphs();
+        auto endGraphs = transition->getEndGraphs();
+        int n = (int)startGraphs.size();
         // Pick two unique indices
         int start = Util::randomInt(n);
         int end = Util::randomInt(n - 1);
         if (end >= start) {
             end++;
         }
-        return { startNetworks[start], endNetworks[end], nullptr, false};
+        return { startGraphs[start], endGraphs[end], nullptr, false};
     }
     return {nullptr, nullptr, nullptr, false};
 }
 
-Transition NetworkHierarchy::getRemoveTransition() {
+Transition GraphGrammar::getRemoveTransition() {
     bool grounded = starterTransitions.empty();
     if (grounded) {
         return {nullptr, nullptr, nullptr, false};
     }
     auto* transition = Util::pick(starterTransitions);
     if (transition) {
-        auto startNetworks = transition->getStartNetworks();
-        int n = (int)startNetworks.size();
+        auto startGraphs = transition->getStartGraphs();
+        int n = (int)startGraphs.size();
         auto* endNet = emptyNet;
-        auto* startNet = startNetworks[Util::randomInt(n - 1) + 1];
+        auto* startNet = startGraphs[Util::randomInt(n - 1) + 1];
         return {startNet, endNet, nullptr, false};
     }
     return {nullptr, nullptr, nullptr, false};
 }
 
-Transition NetworkHierarchy::getStarterTransition(bool useGround) {
+Transition GraphGrammar::getStarterTransition(bool useGround) {
     bool grounded = (this->grounded && useGround) || starterTransitions.empty();
     auto& transitions = grounded ? groundTransitions : starterTransitions;
     
     auto* transition = Util::pick(transitions);
     if (transition) {
-        auto startNetworks = transition->getStartNetworks();
-        auto endNetworks = transition->getEndNetworks();
-        int n = (int)endNetworks.size();
-        auto* startNet = startNetworks[0];
-        auto* endNet = endNetworks[Util::randomInt(n - 1) + 1];
+        auto startGraphs = transition->getStartGraphs();
+        auto endGraphs = transition->getEndGraphs();
+        int n = (int)endGraphs.size();
+        auto* startNet = startGraphs[0];
+        auto* endNet = endGraphs[Util::randomInt(n - 1) + 1];
         return {startNet, endNet, nullptr, transition->isGround()};
     }
     return {nullptr, nullptr, nullptr, false};
 }
 
-NetworkHierarchy* NetworkHierarchy::import(const Json& json) {
-    auto* hierarchy = new NetworkHierarchy();
+GraphGrammar* GraphGrammar::import(const Json& json) {
+    auto* hierarchy = new GraphGrammar();
     hierarchy->shape = Shape3D::import(json["types"]);
     
     auto importTransition = [&](const Json& transJson) {
@@ -114,7 +114,7 @@ NetworkHierarchy* NetworkHierarchy::import(const Json& json) {
     }
     
     hierarchy->grounded = json["grounded"];
-    hierarchy->emptyNet = Network::import(json["emptyNet"], hierarchy->shape);
+    hierarchy->emptyNet = Graph::import(json["emptyNet"], hierarchy->shape);
     
     return hierarchy;
 }

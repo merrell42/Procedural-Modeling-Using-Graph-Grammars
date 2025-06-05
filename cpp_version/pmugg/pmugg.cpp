@@ -27,9 +27,9 @@ int main() {
 	try {
 		Json parsed = Json::parse(content);
 		cout << parsed["category"] << " " << parsed["name"] << endl;
-		auto hierarchy = NetworkHierarchy::import(parsed["solution"]);
+		auto hierarchy = GraphGrammar::import(parsed["solution"]);
 		auto model = new ms::Model();
-		auto mutator = new GuideMutator(model, new NetworkMutator(hierarchy, model));
+		auto mutator = new GuideMutator(model, new GraphMutator(hierarchy, model));
 		mutator->iterate(100);
 	} catch (const std::exception& e) {
 	 	cout << "Error: " << e.what() << endl;

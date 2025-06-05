@@ -8,9 +8,9 @@
 
 namespace ms {
 
-int HalfEdgeNet::nextId = 0;
+int GraphHalfEdge::nextId = 0;
 
-HalfEdgeNet::HalfEdgeNet(bool forward)
+GraphHalfEdge::GraphHalfEdge(bool forward)
     : forward(forward)
     , vertex(nullptr)
     , edge(nullptr)
@@ -19,16 +19,16 @@ HalfEdgeNet::HalfEdgeNet(bool forward)
     , prev(nullptr)
     , next(nullptr)
     , face(nullptr)
-    , network(nullptr)
+    , graph(nullptr)
     , id(nextId++) {}
 
-HalfEdgeNet* HalfEdgeNet::connectNet(Network* net) {
-    network = net;
-    network->addHalfEdge(this);
+GraphHalfEdge* GraphHalfEdge::connectNet(Graph* net) {
+    graph = net;
+    graph->addHalfEdge(this);
     return this;
 }
 
-void HalfEdgeNet::connectVertex(VertexNet* v, int index) {
+void GraphHalfEdge::connectVertex(VertexNet* v, int index) {
     if (index == -1) {
         // Set to next available spot in the vertex.
         index = (int)v->getHalfEdges().size();
@@ -38,27 +38,27 @@ void HalfEdgeNet::connectVertex(VertexNet* v, int index) {
     vertex->setHalfEdge(this, index);
 }
 
-void HalfEdgeNet::disconnectHalfEdge() {
+void GraphHalfEdge::disconnectHalfEdge() {
     if (next) {
         next->setPrev(nullptr);
     }
     next = nullptr;
 }
 
-void HalfEdgeNet::connectHalfEdge(HalfEdgeNet* n) {
+void GraphHalfEdge::connectHalfEdge(GraphHalfEdge* n) {
     next = n;
     n->setPrev(this);
 }
 
-void HalfEdgeNet::setPrev(HalfEdgeNet* p) {
+void GraphHalfEdge::setPrev(GraphHalfEdge* p) {
     prev = p;
 }
 
-void HalfEdgeNet::setFace(FaceNet* f) {
+void GraphHalfEdge::setFace(GraphFace* f) {
     face = f;
 }
 
-HalfEdgeNet* HalfEdgeNet::getTwin() const {
+GraphHalfEdge* GraphHalfEdge::getTwin() const {
     auto halfEdges = edge->getHalfEdges();
     if (halfEdges.size() != 2) {
         throw std::runtime_error("Expected two halfEdges to get a twin.");
@@ -66,24 +66,24 @@ HalfEdgeNet* HalfEdgeNet::getTwin() const {
     return halfEdges[1 - edgeIndex][0];
 }
 
-bool HalfEdgeNet::isSpliced() const {
+bool GraphHalfEdge::isSpliced() const {
     return edge && edge->getType()->getSpliced();
 }
 
-bool HalfEdgeNet::isLoopy() {
-    auto connected = FaceNet::getConnectedHalfEdges(this);
+bool GraphHalfEdge::isLoopy() {
+    auto connected = GraphFace::getConnectedHalfEdges(this);
     auto* last = connected.back();
     return last->getNext() != nullptr;
 }
 
-const FaceData* HalfEdgeNet::getFaceDatum() const {
+const FaceData* GraphHalfEdge::getFaceDatum() const {
     if (!edge) {
         return nullptr;
     }
     return &edge->getType()->getFaceData()[edgeIndex];
 }
 
-Vec3 HalfEdgeNet::getDir() const {
+Vec3 GraphHalfEdge::getDir() const {
     if (!edge) {
         // This maybe should be null.
         return Vec3();
@@ -95,15 +95,15 @@ Vec3 HalfEdgeNet::getDir() const {
     return dir;
 }
 
-void HalfEdgeNet::import(const Json& json) {
+void GraphHalfEdge::import(const Json& json) {
     forward = json["forward"];
     edgeIndex = json["edgeIndex"];
     vertexIndex = json["vertexIndex"];
-    vertex = network->getVertices()[json["vertex"]];
-    edge = network->getEdge(json["edge"]);
-    prev = network->getHalfEdge(json["prev"]);
-    next = network->getHalfEdge(json["next"]);
-    face = network->getFaces()[json["face"]];
+    vertex = graph->getVertices()[json["vertex"]];
+    edge = graph->getEdge(json["edge"]);
+    prev = graph->getHalfEdge(json["prev"]);
+    next = graph->getHalfEdge(json["next"]);
+    face = graph->getFaces()[json["face"]];
 }
 
 } // namespace ms 

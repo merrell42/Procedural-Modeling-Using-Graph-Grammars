@@ -24,7 +24,7 @@ void Vertex::createHalfEdges() {
 	std::vector<Connection> connections = type->getConnections();
 
 	for (const auto& connection : connections) {
-		EdgeType3D* edgeType = connection.edge;
+		EdgeType* edgeType = connection.edge;
 		const std::vector<FaceData> faceData = edgeType->faceData;
 
 		for (size_t faceIndex = 0; faceIndex < faceData.size(); ++faceIndex) {

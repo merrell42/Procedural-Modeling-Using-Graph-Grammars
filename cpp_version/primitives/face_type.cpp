@@ -8,9 +8,9 @@
 
 namespace ms {
 
-int FaceType3D::nextId = 0;
+int FaceType::nextId = 0;
 
-FaceType3D::FaceType3D(const std::string& mat, const Vec3& n)
+FaceType::FaceType(const std::string& mat, const Vec3& n)
     : material(mat)
     , normal(n)
     , monotonic(false)
@@ -20,7 +20,7 @@ FaceType3D::FaceType3D(const std::string& mat, const Vec3& n)
     maxDim = Util::maxDim(normal);
 }
 
-void FaceType3D::computeOrthonormalBasis() {
+void FaceType::computeOrthonormalBasis() {
     // Find the smallest component of the normal.
     int minDim = 0;
     double minVal = std::abs(normal[0]);
@@ -37,7 +37,7 @@ void FaceType3D::computeOrthonormalBasis() {
     v = normal.cross(u).normalize();
 }
 
-double FaceType3D::angle(const Vec3& q) const {
+double FaceType::angle(const Vec3& q) const {
     double dx = u.dot(q);
     double dy = v.dot(q);
     double angle = std::atan2(dy, dx);
@@ -49,7 +49,7 @@ double FaceType3D::angle(const Vec3& q) const {
     return angle;
 }
 
-double FaceType3D::getArea(const std::vector<Vec3>& vertices) const {
+double FaceType::getArea(const std::vector<Vec3>& vertices) const {
     std::vector<Vec2> projectedVertices;
     for (const auto& vertex : vertices) {
         projectedVertices.push_back({u.dot(vertex), v.dot(vertex)});
@@ -57,7 +57,7 @@ double FaceType3D::getArea(const std::vector<Vec3>& vertices) const {
     return -polygonArea(projectedVertices);
 }
 
-double FaceType3D::polygonArea(const std::vector<Vec2>& points) const {
+double FaceType::polygonArea(const std::vector<Vec2>& points) const {
     double area = 0;
     for (size_t i = 0; i < points.size(); i++) {
         const auto& p1 = points[i];
@@ -67,7 +67,7 @@ double FaceType3D::polygonArea(const std::vector<Vec2>& points) const {
     return area / 2;
 }
 
-Vec3 FaceType3D::normalColor() const {
+Vec3 FaceType::normalColor() const {
     if (color) {
         return *color;
     }
@@ -78,14 +78,14 @@ Vec3 FaceType3D::normalColor() const {
     );
 }
 
-FaceType3D* FaceType3D::import(const Json& json) {
+FaceType* FaceType::import(const Json& json) {
     std::string material = "";
     if (json.contains("material") && json["material"].is_string()) {
         material = json["material"].get<std::string>();
     }
     auto normal = json.contains("normal") ?
         Vec3::import(json["normal"]) : Vec3(0, 0, 1);
-    auto* result = new FaceType3D(material, normal);
+    auto* result = new FaceType(material, normal);
     
     if (json["color"] != nullptr) {
         result->color = new Vec3(Vec3::import(json["color"]));

@@ -18,13 +18,13 @@ namespace ms {
 
 struct Transition;
 class TransistorPath;
-class Network;
+class Graph;
 class Edge;
 class Edge;
 class Vertex;
 struct FixedFace;
 
-struct Graph {
+struct EditGraph {
     std::vector<Vertex*> vertices;
     std::vector<Edge*> edges;
     std::vector<Face*> faces;
@@ -61,14 +61,14 @@ public:
     void setup();
     void create(const Transition& transition, Model* model, int dims);
     void addEdge(Edge* edge, bool includeLength, bool addToGraph);
-    Graph* createGraph();
+    EditGraph* createGraph();
     void reject();
     void freeVertex();
     std::vector<double> getExtents();
 
 private:
-    Network* startNet = nullptr;
-    Network* endNet = nullptr;
+    Graph* startNet = nullptr;
+    Graph* endNet = nullptr;
     NetGraphMap* map = nullptr;
     bool ground = false;
     int dims = 2;
@@ -86,7 +86,7 @@ private:
     std::vector<Edge*> basisEdges;
     std::vector<int> fixedVertexIds;
     double effort = 0;
-    Graph* graph = nullptr;
+    EditGraph* graph = nullptr;
     double angle = 0;
     std::unique_ptr<NetTransistorSettings> settings;
 

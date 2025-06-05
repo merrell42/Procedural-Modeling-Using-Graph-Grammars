@@ -15,7 +15,7 @@ class NetGraphMapInfo;
 class NetGraphMapState;
 class Face;
 class Vertex;
-class HalfEdgeNet;
+class GraphHalfEdge;
 class VertexType;
 class HalfEdge;
 class FaceGroup;
@@ -37,8 +37,8 @@ public:
     ~NetGraphMapFinder() = default;
 
     // Core functionality
-    NetGraphMap* findMap(Network* netB);
-    NetGraphMap* findStarterMap(Network* netB);
+    NetGraphMap* findMap(Graph* netB);
+    NetGraphMap* findStarterMap(Graph* netB);
     void reset();
 
     // Static configuration
@@ -55,21 +55,21 @@ private:
     bool groundEnabled;
 
     // Helper methods
-    Face* findFace(FaceType3D* faceType);
+    Face* findFace(FaceType* faceType);
     NetGraphMap* findContinue(NetGraphMapState* state);
     NetGraphMap* assignVertex(NetGraphMapState* state, Vertex* vertexA, int indexB);
     NetGraphMap* matchHalfEdge(const HalfEdgeData& halfedgeData, NetGraphMapState* state);
-    NetGraphMap* assignHalfEdge(HalfEdge* halfedgeA, HalfEdgeNet* halfB, NetGraphMapState* state);
+    NetGraphMap* assignHalfEdge(HalfEdge* halfedgeA, GraphHalfEdge* halfB, NetGraphMapState* state);
     NetGraphMap* spliceHalfEdge(const HalfEdgeData& halfedgeData, NetGraphMapState* state);
 
     // Ray casting methods
-    /*Face* castVolumeRaySeries(Face* face, const std::vector<HalfEdgeNet*>& rayHalfs, Face* goalFace);*/
+    /*Face* castVolumeRaySeries(Face* face, const std::vector<GraphHalfEdge*>& rayHalfs, Face* goalFace);*/
     static IntersectResult castRay(const Vec3& p0, const Vec3& dir, FaceGroup* groupA, const std::map<int, Face*>& faceMap, int maxDim);
-    static HalfEdge* castRaySeries(HalfEdgeNet* halfB, const Vec3& startPos, FaceGroup* groupA, const std::map<int, Face*>& faceMap, int maxDim);
+    static HalfEdge* castRaySeries(GraphHalfEdge* halfB, const Vec3& startPos, FaceGroup* groupA, const std::map<int, Face*>& faceMap, int maxDim);
     static void findNearestIntersection(Face* faceA, const Vec3& p0, const Vec3& p1, const Vec2& dir2, IntersectResult& nearestIntersect, int maxDim);
 
     // Static helper methods
-    static void addOuterFaces(NetGraphMap* map, Network* netB);
+    static void addOuterFaces(NetGraphMap* map, Graph* netB);
 
     // Cache for spliced vertex types
     static std::unordered_map<int, VertexType*> splicedVertexTypes;

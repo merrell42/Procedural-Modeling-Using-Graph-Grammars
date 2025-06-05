@@ -6,31 +6,31 @@
 
 namespace ms {
 
-FaceNet::FaceNet() 
+GraphFace::GraphFace() 
     : outerComponent(nullptr)
     , type(nullptr)
-    , network(nullptr) {
+    , graph(nullptr) {
 }
 
-HalfEdgeNet* FaceNet::getOuterComponent() const {
+GraphHalfEdge* GraphFace::getOuterComponent() const {
     return outerComponent;
 }
 
-const std::vector<HalfEdgeNet*>& FaceNet::getInnerComponents() const {
+const std::vector<GraphHalfEdge*>& GraphFace::getInnerComponents() const {
     return innerComponents;
 }
 
-Network* FaceNet::getNetwork() const {
-    return network;
+Graph* GraphFace::getGraph() const {
+    return graph;
 }
 
-FaceNet* FaceNet::connectNet(Network* network) {
-    this->network = network;
-    network->addFace(this);
+GraphFace* GraphFace::connectNet(Graph* graph) {
+    this->graph = graph;
+    graph->addFace(this);
     return this;
 }
 
-void FaceNet::connectOuter(const std::vector<HalfEdgeNet*>& halfEdges) {
+void GraphFace::connectOuter(const std::vector<GraphHalfEdge*>& halfEdges) {
     if (!halfEdges.empty()) {
         outerComponent = halfEdges[0];
         for (auto halfEdge : halfEdges) {
@@ -39,39 +39,39 @@ void FaceNet::connectOuter(const std::vector<HalfEdgeNet*>& halfEdges) {
     }
 }
 
-void FaceNet::makeInner(HalfEdgeNet* halfEdge) {
+void GraphFace::makeInner(GraphHalfEdge* halfEdge) {
     innerComponents.push_back(halfEdge);
     outerComponent = nullptr;
 }
 
-void FaceNet::copyConnection(const FaceNet* copy) {
-    Network* copyNet = copy->getNetwork();
-    outerComponent = network->convertHalfEdge(copyNet, copy->getOuterComponent());
+void GraphFace::copyConnection(const GraphFace* copy) {
+    Graph* copyNet = copy->getGraph();
+    outerComponent = graph->convertHalfEdge(copyNet, copy->getOuterComponent());
     
     innerComponents.clear();
     for (auto halfEdge : copy->getInnerComponents()) {
-        innerComponents.push_back(network->convertHalfEdge(copyNet, halfEdge));
+        innerComponents.push_back(graph->convertHalfEdge(copyNet, halfEdge));
     }
 }
 
-void FaceNet::import(const Json & json) {
-    auto halfEdges = network->getHalfEdges();
+void GraphFace::import(const Json & json) {
+    auto halfEdges = graph->getHalfEdges();
     if (halfEdges.size() == 0) {
         return;
     }
-    outerComponent = network->getHalfEdges()[json["outerComponent"]];
+    outerComponent = graph->getHalfEdges()[json["outerComponent"]];
 
     // innerComponents.clear();
     // for (const auto& halfEdge : json["innerComponents"]) {
     //    Vec3 dir = Vec3::import(halfEdge);
     //    // Create a lambda to mimic the getDir behavior
-    //    innerComponents.push_back(new HalfEdgeNet(dir));
+    //    innerComponents.push_back(new GraphHalfEdge(dir));
     // }
 }
 
-std::vector<HalfEdgeNet*> FaceNet::getConnectedHalfEdges(HalfEdgeNet* start) {
-    std::vector<HalfEdgeNet*> result;
-    HalfEdgeNet* current = start;
+std::vector<GraphHalfEdge*> GraphFace::getConnectedHalfEdges(GraphHalfEdge* start) {
+    std::vector<GraphHalfEdge*> result;
+    GraphHalfEdge* current = start;
     do {
         result.push_back(current);
         current = current->getNext();
@@ -79,15 +79,15 @@ std::vector<HalfEdgeNet*> FaceNet::getConnectedHalfEdges(HalfEdgeNet* start) {
     return result;
 }
 
-std::vector<HalfEdgeNet*> FaceNet::getOuterHalfEdges() const {
+std::vector<GraphHalfEdge*> GraphFace::getOuterHalfEdges() const {
     if (outerComponent) {
         return getConnectedHalfEdges(outerComponent);
     }
-    return std::vector<HalfEdgeNet*>();
+    return std::vector<GraphHalfEdge*>();
 }
 
-std::vector<HalfEdgeNet*> FaceNet::getInnerHalfEdges() const {
-    std::vector<HalfEdgeNet*> result;
+std::vector<GraphHalfEdge*> GraphFace::getInnerHalfEdges() const {
+    std::vector<GraphHalfEdge*> result;
     for (auto component : innerComponents) {
         auto connected = getConnectedHalfEdges(component);
         result.insert(result.end(), connected.begin(), connected.end());
@@ -95,14 +95,14 @@ std::vector<HalfEdgeNet*> FaceNet::getInnerHalfEdges() const {
     return result;
 }
 
-std::vector<HalfEdgeNet*> FaceNet::getHalfEdges() const {
+std::vector<GraphHalfEdge*> GraphFace::getHalfEdges() const {
     auto result = getOuterHalfEdges();
     auto inner = getInnerHalfEdges();
     result.insert(result.end(), inner.begin(), inner.end());
     return result;
 }
 
-void FaceNet::replaceHalfEdge(HalfEdgeNet* a, HalfEdgeNet* b, bool force) {
+void GraphFace::replaceHalfEdge(GraphHalfEdge* a, GraphHalfEdge* b, bool force) {
     if ((outerComponent == a) || (force && outerComponent)) {
         outerComponent = b;
     }
@@ -115,12 +115,12 @@ void FaceNet::replaceHalfEdge(HalfEdgeNet* a, HalfEdgeNet* b, bool force) {
     b->setFace(this);
 }
 
-bool FaceNet::isLoopy() const {
+bool GraphFace::isLoopy() const {
     return outerComponent->isLoopy();
 }
 
-bool FaceNet::inNetwork() const {
-    auto faces = network->getFaces();
+bool GraphFace::inGraph() const {
+    auto faces = graph->getFaces();
     return std::find(faces.begin(), faces.end(), this) != faces.end();
 }
 

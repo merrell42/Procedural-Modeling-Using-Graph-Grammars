@@ -7,10 +7,10 @@ namespace ms {
 
 class View;
 
-class FaceType3D {
+class FaceType {
 public:
-    FaceType3D(const std::string& material, const Vec3& normal);
-    ~FaceType3D() = default;
+    FaceType(const std::string& material, const Vec3& normal);
+    ~FaceType() = default;
 
     const std::string& getMaterial() const { return material; }
     const Vec3& getNormal() const { return normal; }
@@ -28,7 +28,7 @@ public:
     double getArea(const std::vector<Vec3>& vertices) const;
     Vec3 normalColor() const;
 
-    static FaceType3D* import(const Json& json);
+    static FaceType* import(const Json& json);
 
     static constexpr double EPS = 1e-5;
 

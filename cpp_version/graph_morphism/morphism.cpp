@@ -17,7 +17,7 @@ NetGraphMap* NetGraphMap::copy() const {
 
 NetGraphMap* NetGraphMap::create(const NetGraphMapInfo& info) {
     auto map = new NetGraphMap();
-    auto netB = info.networkB;
+    auto netB = info.graphB;
     map->vertexBtoA.resize(netB->getVertices().size(), nullptr);
     map->edgeBtoA.resize(netB->getEdges().size(), nullptr);
     return map;

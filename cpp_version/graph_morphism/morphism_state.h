@@ -6,14 +6,14 @@ namespace ms {
 
 class NetGraphMapInfo;
 class NetGraphMap;
-class HalfEdgeNet;
+class GraphHalfEdge;
 class Vertex;
 
 struct HalfEdgeData {
-    HalfEdgeNet* halfB;
+    GraphHalfEdge* halfB;
     Vertex* vertexA;
 
-    HalfEdgeData(HalfEdgeNet* half = nullptr, Vertex* vertex = nullptr)
+    HalfEdgeData(GraphHalfEdge* half = nullptr, Vertex* vertex = nullptr)
         : halfB(half), vertexA(vertex) {}
 };
 

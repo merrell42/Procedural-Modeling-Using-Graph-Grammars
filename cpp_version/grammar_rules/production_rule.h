@@ -7,7 +7,7 @@ using Json = nlohmann::json;
 
 namespace ms {
 
-class Network;
+class Graph;
 class View;
 class Shape3D;
 struct DrawOptions;
@@ -16,20 +16,20 @@ struct OrderInfo;
 class NetTransition {
 public:
     explicit NetTransition(
-        const std::vector<Network*>& startNetworks,
-        const std::vector<Network*>& endNetworks
+        const std::vector<Graph*>& startGraphs,
+        const std::vector<Graph*>& endGraphs
     );
     static NetTransition* import(const Json& json, Shape3D* shape);
     ~NetTransition() = default;
 
-    const std::vector<Network*>& getStartNetworks() const { return startNetworks; }
-    const std::vector<Network*>& getEndNetworks() const { return endNetworks; }
+    const std::vector<Graph*>& getStartGraphs() const { return startGraphs; }
+    const std::vector<Graph*>& getEndGraphs() const { return endGraphs; }
     bool isGround() const { return ground; }
     int getId() const { return id; }
 
 private:
-    std::vector<Network*> startNetworks;
-    std::vector<Network*> endNetworks;
+    std::vector<Graph*> startGraphs;
+    std::vector<Graph*> endGraphs;
     bool ground;
     int id;
 

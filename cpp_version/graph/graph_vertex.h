@@ -10,11 +10,11 @@ using Json = nlohmann::json;
 
 namespace ms {
 
-class Network;
-class HalfEdgeNet;
+class Graph;
+class GraphHalfEdge;
 class View;
 class VertexType;
-class EdgeNet;
+class GraphEdge;
 struct DrawOptions;
 
 class VertexNet {
@@ -23,7 +23,7 @@ public:
     ~VertexNet() = default;
     void import(const Json& json);
 
-    const std::vector<HalfEdgeNet*>& getHalfEdges() const { return halfEdges; }
+    const std::vector<GraphHalfEdge*>& getHalfEdges() const { return halfEdges; }
     VertexType* getType() {
         if (kind == "e") {
             // The edge case may not be handled correctly.
@@ -31,24 +31,24 @@ public:
         return type;
     }
     void setType(VertexType* type_) { type = type_; }
-    Network* getNetwork() const { return network; }
+    Graph* getGraph() const { return graph; }
     int getId() const { return id; }
     int connectorIndex() const;
-    EdgeNet* interiorEdge() const;
+    GraphEdge* interiorEdge() const;
 
-    VertexNet* connectNet(Network* network);
-    void setHalfEdge(HalfEdgeNet* halfEdge, int index);
+    VertexNet* connectNet(Graph* graph);
+    void setHalfEdge(GraphHalfEdge* halfEdge, int index);
     void copyConnection(const VertexNet* copy);
 
-    bool inNetwork() const;
+    bool inGraph() const;
 
     // TODO: Replace with edgeType.
     std::string kind;
 
 private:
-    std::vector<HalfEdgeNet*> halfEdges;
+    std::vector<GraphHalfEdge*> halfEdges;
     VertexType* type;
-    Network* network;
+    Graph* graph;
     int id;
 
     static int nextId;

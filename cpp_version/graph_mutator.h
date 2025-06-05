@@ -9,12 +9,12 @@ namespace ms {
 
 class NetGraphMap;
 struct Transition;
-class NetworkHierarchy;
+class GraphGrammar;
 
-class NetworkMutator {
+class GraphMutator {
 public:
-    NetworkMutator(NetworkHierarchy* hierarchy, Model* model);
-    ~NetworkMutator() = default;
+    GraphMutator(GraphGrammar* hierarchy, Model* model);
+    ~GraphMutator() = default;
 
     bool addStartInstance(bool useGround);
     bool changeRandomInstance(bool justDestructible = false);
@@ -22,7 +22,7 @@ public:
 
 private:
     std::vector<bool> edgeTypeStarted;
-    NetworkHierarchy* hierarchy;
+    GraphGrammar* hierarchy;
     Model* model;
     std::unique_ptr<NetGraphMapFinder> mapFinder;
 

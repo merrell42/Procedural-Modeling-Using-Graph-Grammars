@@ -8,14 +8,14 @@ namespace ms {
 
 class Model;
 class HalfEdge;
-class FaceType3D;
+class FaceType;
 class FaceGroup;
 class Plane;
 
 class Face {
 	public:
-		Face(Model* model, int id, FaceType3D* faceType, std::vector<int> halfedgeIds, bool looped, std::vector<int> bspNodeIds, int groupId, bool hole);
-		Face(Model* model, int id, FaceType3D* faceType, std::vector<int> halfedgeIds, std::vector<int> bspNodeIds);
+		Face(Model* model, int id, FaceType* faceType, std::vector<int> halfedgeIds, bool looped, std::vector<int> bspNodeIds, int groupId, bool hole);
+		Face(Model* model, int id, FaceType* faceType, std::vector<int> halfedgeIds, std::vector<int> bspNodeIds);
 		Face* copy();
 		~Face();
 		int getId() const { return id; };
@@ -23,7 +23,7 @@ class Face {
 		HalfEdge* getHalfEdge(int index) const;
 		std::vector<Vec3> getPositions() const;
 		std::vector<Vec2> getPositions2D() const;
-		FaceType3D* getFaceType() const { return faceType; }
+		FaceType* getFaceType() const { return faceType; }
 		Range dirBounds(const Vec3& dir) const;
 		void append(Face* faceB);
 		void setGroup(FaceGroup* group);
@@ -58,7 +58,7 @@ class Face {
 		int id;
 		std::vector<int> halfedgeIds;
 		bool looped;
-		FaceType3D* faceType;
+		FaceType* faceType;
 		std::vector<int> bspNodeIds;
 		int groupId;
 		bool hole;

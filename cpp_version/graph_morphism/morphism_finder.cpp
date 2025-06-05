@@ -25,7 +25,7 @@ void NetGraphMapFinder::reset() {
     groundFace = nullptr;
 }
 
-NetGraphMap* NetGraphMapFinder::findMap(Network* netB) {
+NetGraphMap* NetGraphMapFinder::findMap(Graph* netB) {
     if (!groundFace && groundEnabled) {
         auto faces = model->getCurrent()->getFaceMap();
         if (!faces.empty()) {
@@ -97,7 +97,7 @@ NetGraphMap* NetGraphMapFinder::assignVertex(NetGraphMapState* state, Vertex* ve
     return findContinue(state);
 }
 
-void NetGraphMapFinder::addOuterFaces(NetGraphMap* map, Network* netB) {
+void NetGraphMapFinder::addOuterFaces(NetGraphMap* map, Graph* netB) {
     // TODO: Implement this. For a closed building popping out of the ground. The ground face is the outer face.
     /*map->outerFaces.clear();
     auto outerFaces = netB->getOuterFaces();
@@ -110,7 +110,7 @@ void NetGraphMapFinder::addOuterFaces(NetGraphMap* map, Network* netB) {
 }
 
 
-Face* NetGraphMapFinder::findFace(FaceType3D* faceType) {
+Face* NetGraphMapFinder::findFace(FaceType* faceType) {
     if (groundEnabled && faceType == groundFace->getFaceType()) {
         auto preference = globalSettings["Prefer Ground"].get<double>();
         if (Util::randomUniform(0, 1) < preference) {
@@ -145,7 +145,7 @@ Face* NetGraphMapFinder::findFace(FaceType3D* faceType) {
     return nullptr;
 }
 
-NetGraphMap* NetGraphMapFinder::findStarterMap(Network* netB) {
+NetGraphMap* NetGraphMapFinder::findStarterMap(Graph* netB) {
     auto info = std::make_unique<NetGraphMapInfo>(model, netB);
     auto state = std::make_unique<NetGraphMapState>(info.get());
 
@@ -191,7 +191,7 @@ NetGraphMap* NetGraphMapFinder::findContinue(NetGraphMapState* state) {
     return state->getMap();
 }
 
-bool neighboringHoles(Edge* edge, EdgeNet* edgeB) {
+bool neighboringHoles(Edge* edge, GraphEdge* edgeB) {
     const auto& halfedges = edge->getHalfEdges();
     const auto& halfEdges = edgeB->getHalfEdges();
 
@@ -210,17 +210,17 @@ NetGraphMap* NetGraphMapFinder::matchHalfEdge(
     const HalfEdgeData& halfedgeData,
     NetGraphMapState* state
 ) {
-    HalfEdgeNet* halfB = halfedgeData.halfB;
+    GraphHalfEdge* halfB = halfedgeData.halfB;
     Vertex* vertexA = halfedgeData.vertexA;
 
     auto halfedgesA = vertexA->getHalfEdges();
-    EdgeNet* edgeB = halfB->getEdge();
+    GraphEdge* edgeB = halfB->getEdge();
 
     if (!edgeB) {
         return findContinue(state);
     }
 
-    EdgeType3D* typeB = edgeB->getType();
+    EdgeType* typeB = edgeB->getType();
 
     // Find matching halfedge.
     HalfEdge* halfedgeA = nullptr;
@@ -239,7 +239,7 @@ NetGraphMap* NetGraphMapFinder::matchHalfEdge(
     // Do not use this halfedge if it is attached to a face with interior vertex and
     // it is not an outer face.
     auto faceB = halfB->getFace();
-    auto bFaces = faceB->getNetwork()->getBFaces();
+    auto bFaces = faceB->getGraph()->getBFaces();
     bool isOuter = !faceB->isLoopy() || std::find(bFaces.begin(), bFaces.end(), faceB) != bFaces.end();
     if (neighboringHoles(halfedgeA->getEdge(), edgeB) && !isOuter) {
         return nullptr;
@@ -251,12 +251,12 @@ NetGraphMap* NetGraphMapFinder::spliceHalfEdge(
     const HalfEdgeData& halfedgeData,
     NetGraphMapState* state
 ) {
-    HalfEdgeNet* halfB = halfedgeData.halfB;
+    GraphHalfEdge* halfB = halfedgeData.halfB;
     Vertex* vertexA = halfedgeData.vertexA;
-    Network* netB = state->getInfo()->networkB;
+    Graph* netB = state->getInfo()->graphB;
 
     // Find end of splice chain.
-    HalfEdgeNet* endB = halfB;
+    GraphHalfEdge* endB = halfB;
     while (endB->isSpliced()) {
         endB = endB->getNext();
     }
@@ -267,7 +267,7 @@ NetGraphMap* NetGraphMapFinder::spliceHalfEdge(
     }
 
     // Find matching halfedge.
-    FaceType3D* faceTypeB = halfB->getEdge()->getType()->getFaceData()[0].type;
+    FaceType* faceTypeB = halfB->getEdge()->getType()->getFaceData()[0].type;
     HalfEdge* halfedgeA = nullptr;
 
     for (auto* ep : vertexA->getHalfEdges()) {
@@ -360,7 +360,7 @@ NetGraphMap* NetGraphMapFinder::spliceHalfEdge(
     return nullptr;
 }
 
-NetGraphMap* NetGraphMapFinder::assignHalfEdge(HalfEdge* halfedgeA, HalfEdgeNet* halfB, NetGraphMapState* state) {
+NetGraphMap* NetGraphMapFinder::assignHalfEdge(HalfEdge* halfedgeA, GraphHalfEdge* halfB, NetGraphMapState* state) {
     auto info = state->getInfo();
     auto map = state->getMap();
 
@@ -376,7 +376,7 @@ NetGraphMap* NetGraphMapFinder::assignHalfEdge(HalfEdge* halfedgeA, HalfEdgeNet*
     }
 
     Edge* edgeA = halfedgeA->getEdge();
-    EdgeNet* edgeB = halfB->getEdge();
+    GraphEdge* edgeB = halfB->getEdge();
     int eIndexB = indexOf(info->edgesB, edgeB);
     map->edgeBtoA[eIndexB] = edgeA;
 
@@ -460,9 +460,9 @@ IntersectResult NetGraphMapFinder::castRay(const Vec3& p0, const Vec3& dir, Face
 }
 
 // Cast a series of rays
-HalfEdge* NetGraphMapFinder::castRaySeries(HalfEdgeNet* halfB, const Vec3& startPos, FaceGroup* groupA, const std::map<int, Face*>& faceMap, int maxDim) {
+HalfEdge* NetGraphMapFinder::castRaySeries(GraphHalfEdge* halfB, const Vec3& startPos, FaceGroup* groupA, const std::map<int, Face*>& faceMap, int maxDim) {
     Vec3 p0 = startPos;
-    HalfEdgeNet* nextB = halfB->getNext();
+    GraphHalfEdge* nextB = halfB->getNext();
     
     while (true) {
         const Vec3 dir = halfB->getDir();
@@ -484,8 +484,8 @@ HalfEdge* NetGraphMapFinder::castRaySeries(HalfEdgeNet* halfB, const Vec3& start
             p0.add(startPos);
         } else {
             HalfEdge* nextA = nearestIntersect.face->getHalfEdges()[nearestIntersect.data->index];
-            EdgeType3D* edgeTypeA = nextA->getEdgeType();
-            EdgeType3D* edgeTypeB = nextB->getEdge()->getType();
+            EdgeType* edgeTypeA = nextA->getEdgeType();
+            EdgeType* edgeTypeB = nextB->getEdge()->getType();
 
             delete nearestIntersect.data;
             if (edgeTypeA != edgeTypeB) {

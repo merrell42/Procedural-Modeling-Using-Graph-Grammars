@@ -10,62 +10,62 @@
 namespace ms {
 
 class VertexNet;
-class EdgeNet;
-class HalfEdgeNet;
-class FaceNet;
+class GraphEdge;
+class GraphHalfEdge;
+class GraphFace;
 class View;
 class Shape3D;
 struct DrawOptions;
 
-class Network {
+class Graph {
 public:
-    Network();
-    ~Network() = default;
-    static Network* import(const Json& json, Shape3D* shape = nullptr);
+    Graph();
+    ~Graph() = default;
+    static Graph* import(const Json& json, Shape3D* shape = nullptr);
 
     const std::vector<VertexNet*>& getVertices() const { return vertices; }
-    const std::vector<EdgeNet*>& getEdges() const { return edges; }
-    const std::vector<HalfEdgeNet*>& getHalfEdges() const { return halfEdges; }
-    const std::vector<FaceNet*>& getFaces() const { return faces; }
+    const std::vector<GraphEdge*>& getEdges() const { return edges; }
+    const std::vector<GraphHalfEdge*>& getHalfEdges() const { return halfEdges; }
+    const std::vector<GraphFace*>& getFaces() const { return faces; }
     const std::vector<VertexNet*>& getBVertices() const { return bVertices; }
-    const std::vector<HalfEdgeNet*>& getBHalfEdges() const { return bHalfEdges; }
-    const std::vector<FaceNet*>& getBFaces() const { return bFaces; }
-    EdgeNet* getEdge(int index) const { return index >= 0 ? edges[index] : nullptr; }
-    HalfEdgeNet* getHalfEdge(int index) const { return index >= 0 ? halfEdges[index] : nullptr; }
+    const std::vector<GraphHalfEdge*>& getBHalfEdges() const { return bHalfEdges; }
+    const std::vector<GraphFace*>& getBFaces() const { return bFaces; }
+    GraphEdge* getEdge(int index) const { return index >= 0 ? edges[index] : nullptr; }
+    GraphHalfEdge* getHalfEdge(int index) const { return index >= 0 ? halfEdges[index] : nullptr; }
     int getId() const { return id; }
 
-    // Network operations
+    // Graph operations
     void addVertex(VertexNet* vertex);
-    void addEdge(EdgeNet* edge);
-    void addHalfEdge(HalfEdgeNet* halfEdge);
-    void addFace(FaceNet* face);
+    void addEdge(GraphEdge* edge);
+    void addHalfEdge(GraphHalfEdge* halfEdge);
+    void addFace(GraphFace* face);
 
     void removeVertex(VertexNet* vertex);
-    void removeEdge(EdgeNet* edge);
-    void removeHalfEdge(HalfEdgeNet* halfEdge);
-    void removeFace(FaceNet* face);
+    void removeEdge(GraphEdge* edge);
+    void removeHalfEdge(GraphHalfEdge* halfEdge);
+    void removeFace(GraphFace* face);
     void removeSplices();
 
-    VertexNet* convertVertex(Network* networkB, VertexNet* vertexB);
-    EdgeNet* convertEdge(Network* networkB, EdgeNet* edgeB);
-    HalfEdgeNet* convertHalfEdge(Network* networkB, HalfEdgeNet* halfEdgeB);
-    FaceNet* convertFace(Network* networkB, FaceNet* faceB);
+    VertexNet* convertVertex(Graph* graphB, VertexNet* vertexB);
+    GraphEdge* convertEdge(Graph* graphB, GraphEdge* edgeB);
+    GraphHalfEdge* convertHalfEdge(Graph* graphB, GraphHalfEdge* halfEdgeB);
+    GraphFace* convertFace(Graph* graphB, GraphFace* faceB);
 
     int vertexIndex(VertexNet* vertex) const;
-    int edgeIndex(EdgeNet* edge) const;
-    int halfEdgeIndex(HalfEdgeNet* halfEdge) const;
-    int faceIndex(FaceNet* face) const;
+    int edgeIndex(GraphEdge* edge) const;
+    int halfEdgeIndex(GraphHalfEdge* halfEdge) const;
+    int faceIndex(GraphFace* face) const;
 
 private:
     std::vector<VertexNet*> vertices;
-    std::vector<EdgeNet*> edges;
-    std::vector<HalfEdgeNet*> halfEdges;
-    std::vector<FaceNet*> faces;
+    std::vector<GraphEdge*> edges;
+    std::vector<GraphHalfEdge*> halfEdges;
+    std::vector<GraphFace*> faces;
 
     // Boundary vertices, halfEdges, and faces.
     std::vector<VertexNet*> bVertices;
-    std::vector<HalfEdgeNet*> bHalfEdges;
-    std::vector<FaceNet*> bFaces;
+    std::vector<GraphHalfEdge*> bHalfEdges;
+    std::vector<GraphFace*> bFaces;
     int id;
 
     static int nextId;

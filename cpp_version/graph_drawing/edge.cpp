@@ -12,7 +12,7 @@
 
 namespace ms {
 
-Edge::Edge(Model* model, int id, EdgeType3D* type, std::vector<int> halfedgeIds, std::vector<int> bspNodeIds)
+Edge::Edge(Model* model, int id, EdgeType* type, std::vector<int> halfedgeIds, std::vector<int> bspNodeIds)
 	: model(model)
 	, type(type)
 	, id(id)
@@ -155,7 +155,7 @@ std::pair<SplitData, Vertex*> Edge::fullSplit(double s) {
 	return { split, newVertex };
 }
 
-VertexType* Edge::getVertexType(EdgeType3D* edgeType) {
+VertexType* Edge::getVertexType(EdgeType* edgeType) {
 	const int id = edgeType->getId();
     // Check if the vertex type already exists or if it's an old version.
     if (splitVertexTypes.find(id) == splitVertexTypes.end() ||

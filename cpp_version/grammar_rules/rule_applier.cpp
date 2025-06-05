@@ -108,11 +108,11 @@ static void destroyEdges(const std::vector<std::vector<Edge*>>& edgeGroup) {
     }
 }
 
-Graph* NetTransistor::createGraph() {
-    auto* endNetwork = endNet;
-    auto& endVertices = endNetwork->getVertices();
-    auto& endEdges = endNetwork->getEdges();
-    Graph* merged = new Graph();
+EditGraph* NetTransistor::createGraph() {
+    auto* endGraph = endNet;
+    auto& endVertices = endGraph->getVertices();
+    auto& endEdges = endGraph->getEdges();
+    EditGraph* merged = new EditGraph();
     
     // Save face locations
     /*if (map->outerFaces) {
@@ -125,15 +125,15 @@ Graph* NetTransistor::createGraph() {
     }*/
 
     // Maps from half edges to merge halfedges
-    std::vector<HalfEdge*> mergedHalfEdges(endNetwork->getHalfEdges().size());
+    std::vector<HalfEdge*> mergedHalfEdges(endGraph->getHalfEdges().size());
     std::fill(mergedHalfEdges.begin(), mergedHalfEdges.end(), nullptr);
-    auto halfToHalfEdge = [&](HalfEdgeNet* half) -> HalfEdge* {
-        int index = Util::findIndex<HalfEdgeNet*>(endNetwork->getHalfEdges(), half);
+    auto halfToHalfEdge = [&](GraphHalfEdge* half) -> HalfEdge* {
+        int index = Util::findIndex<GraphHalfEdge*>(endGraph->getHalfEdges(), half);
         return mergedHalfEdges[index];
     };
     
-    auto setHalfToHalfEdge = [&](HalfEdgeNet* half, HalfEdge* halfedge) {
-        int index = Util::findIndex<HalfEdgeNet*>(endNetwork->getHalfEdges(), half);
+    auto setHalfToHalfEdge = [&](GraphHalfEdge* half, HalfEdge* halfedge) {
+        int index = Util::findIndex<GraphHalfEdge*>(endGraph->getHalfEdges(), half);
         mergedHalfEdges[index] = halfedge;
     };
 
@@ -182,7 +182,7 @@ Graph* NetTransistor::createGraph() {
 
     struct EdgeData {
         std::vector<HalfEdge*> coreHalfEdges;
-        std::vector<HalfEdgeNet*> halfEdges;
+        std::vector<GraphHalfEdge*> halfEdges;
         bool modified;
     };
 
@@ -192,7 +192,7 @@ Graph* NetTransistor::createGraph() {
         auto* endEdge = endEdges[i];
         auto& edgeHalfs = endEdge->getHalfEdges();
         std::vector<HalfEdge*> coreHalfEdges;
-        std::vector<HalfEdgeNet*> halfEdges;
+        std::vector<GraphHalfEdge*> halfEdges;
         bool modified = false;
 
         for (size_t e = 0; e < edgeHalfs.size(); ++e) {
@@ -242,11 +242,11 @@ Graph* NetTransistor::createGraph() {
 
     // Process end edges.
     for (size_t i = 0; i < endEdges.size(); i++) {
-        EdgeNet* endEdge = endEdges[i];
+        GraphEdge* endEdge = endEdges[i];
         auto edgeHalfs = endEdge->getHalfEdges();
 
         for (size_t e = 0; e < edgeHalfs.size(); e++) {
-            HalfEdgeNet* halfNext = edgeHalfs[e][0]->getNext();
+            GraphHalfEdge* halfNext = edgeHalfs[e][0]->getNext();
             if (!halfNext->getEdge()) {
                 int boundaryIndex = indexOf(endNet->getBHalfEdges(), halfNext);
                 auto startHalf = startNet->getBHalfEdges()[boundaryIndex];
@@ -259,14 +259,14 @@ Graph* NetTransistor::createGraph() {
 
     bool failed = false;
 
-    // Process faces in end network.
-    for (FaceNet* face : endNetwork->getFaces()) {
+    // Process faces in end graph.
+    for (GraphFace* face : endGraph->getFaces()) {
         auto halfs = face->getOuterHalfEdges();
         size_t N = halfs.size();
 
         for (size_t i = 0; i < N; i++) {
-            HalfEdgeNet* halfA = const_cast<HalfEdgeNet*>(halfs[i]);
-            HalfEdgeNet* halfB = const_cast<HalfEdgeNet*>(halfs[(i + 1) % N]);
+            GraphHalfEdge* halfA = const_cast<GraphHalfEdge*>(halfs[i]);
+            GraphHalfEdge* halfB = const_cast<GraphHalfEdge*>(halfs[(i + 1) % N]);
             HalfEdge* halfedgeA = halfToHalfEdge(halfA);
             HalfEdge* halfedgeB = halfToHalfEdge(halfB);
 
@@ -312,15 +312,15 @@ Graph* NetTransistor::createGraph() {
     for (size_t i = 0; i < bVertices.size(); i++) {
         auto halfs = bVertices[i]->getHalfEdges();
         auto it = std::find_if(halfs.begin(), halfs.end(),
-            [](HalfEdgeNet* half) { return half->getEdge() != nullptr; });
+            [](GraphHalfEdge* half) { return half->getEdge() != nullptr; });
 
         if (it != halfs.end()) {
-            auto faceHalfs = FaceNet::getConnectedHalfEdges(*it);
-            HalfEdgeNet* endHalf = const_cast<HalfEdgeNet*>(faceHalfs.back());
+            auto faceHalfs = GraphFace::getConnectedHalfEdges(*it);
+            GraphHalfEdge* endHalf = const_cast<GraphHalfEdge*>(faceHalfs.back());
             faceHalfs.pop_back();
 
             std::vector<HalfEdge*> faceHalfEdgesI;
-            for (HalfEdgeNet* half : faceHalfs) {
+            for (GraphHalfEdge* half : faceHalfs) {
                 faceHalfEdgesI.push_back(halfToHalfEdge(half));
             }
 
@@ -336,8 +336,8 @@ Graph* NetTransistor::createGraph() {
 
     // Process faces.
     merged->faces.clear();
-    for (FaceNet* face : endNetwork->getFaces()) {
-        HalfEdgeNet* half = face->getOuterComponent();
+    for (GraphFace* face : endGraph->getFaces()) {
+        GraphHalfEdge* half = face->getOuterComponent();
         if (half) {
             merged->faces.push_back(halfToHalfEdge(half)->getFace());
         }
@@ -345,7 +345,7 @@ Graph* NetTransistor::createGraph() {
 
     // Process outer faces.
     size_t faceIndex = 0;
-    for (FaceNet* outerFace : endNet->getBFaces()) {
+    for (GraphFace* outerFace : endNet->getBFaces()) {
         faceIndex = indexOf(endNet->getFaces(), outerFace);
         merged->faces[faceIndex]->setHole(true);
     }

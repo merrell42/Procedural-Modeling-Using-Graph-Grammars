@@ -5,7 +5,7 @@
 
 namespace ms {
 
-class Network;
+class Graph;
 class Edge;
 
 class NetGraphMap {

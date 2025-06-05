@@ -10,7 +10,7 @@
 
 namespace ms {
 
-Face::Face(Model* model, int id, FaceType3D* faceType, std::vector<int> halfedgeIds, bool looped, std::vector<int> bspNodeIds, int groupId, bool hole)
+Face::Face(Model* model, int id, FaceType* faceType, std::vector<int> halfedgeIds, bool looped, std::vector<int> bspNodeIds, int groupId, bool hole)
 	: model(model)
 	, id(id)
     , faceType(faceType)
@@ -22,7 +22,7 @@ Face::Face(Model* model, int id, FaceType3D* faceType, std::vector<int> halfedge
     model->getCurrent()->addFace(id, this);
 }
 
-Face::Face(Model* model, int id, FaceType3D* faceType, std::vector<int> halfedgeIds, std::vector<int> bspNodeIds)
+Face::Face(Model* model, int id, FaceType* faceType, std::vector<int> halfedgeIds, std::vector<int> bspNodeIds)
     : model(model)
     , id(id)
     , faceType(faceType)

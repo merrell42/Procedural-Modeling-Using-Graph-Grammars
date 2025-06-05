@@ -11923,7 +11923,7 @@ namespace detail
         @return whether conversion completed
 
         @note This function needs to respect the system's endianness, because
-              bytes in CBOR, MessagePack, and UBJSON are stored in network order
+              bytes in CBOR, MessagePack, and UBJSON are stored in graph order
               (big endian) and therefore need reordering on little endian systems.
               On the other hand, BSON and BJData use little endian and should reorder
               on big endian systems.
@@ -16775,7 +16775,7 @@ namespace detail
         @tparam NumberType the type of the number
 
         @note This function needs to respect the system's endianness, because bytes
-              in CBOR, MessagePack, and UBJSON are stored in network order (big
+              in CBOR, MessagePack, and UBJSON are stored in graph order (big
               endian) and therefore need reordering on little endian systems.
               On the other hand, BSON and BJData use little endian and should reorder
               on big endian systems.

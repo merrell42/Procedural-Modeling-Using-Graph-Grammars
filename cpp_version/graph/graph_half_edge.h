@@ -6,39 +6,39 @@ using Json = nlohmann::json;
 
 namespace ms {
 
-class Network;
+class Graph;
 class VertexNet;
-class EdgeNet;
-class FaceNet;
+class GraphEdge;
+class GraphFace;
 class Vec3;
 struct FaceData;
 
-class HalfEdgeNet {
+class GraphHalfEdge {
 public:
-    explicit HalfEdgeNet(bool forward);
-    ~HalfEdgeNet() = default;
+    explicit GraphHalfEdge(bool forward);
+    ~GraphHalfEdge() = default;
     void import(const Json& json);
 
     // Core accessors
     bool getForward() const { return forward; }
     VertexNet* getVertex() const { return vertex; }
-    EdgeNet* getEdge() const { return edge; }
-    HalfEdgeNet* getPrev() const { return prev; }
-    HalfEdgeNet* getNext() const { return next; }
-    HalfEdgeNet* getTwin() const;
-    FaceNet* getFace() const { return face; }
-    Network* getNetwork() const { return network; }
+    GraphEdge* getEdge() const { return edge; }
+    GraphHalfEdge* getPrev() const { return prev; }
+    GraphHalfEdge* getNext() const { return next; }
+    GraphHalfEdge* getTwin() const;
+    GraphFace* getFace() const { return face; }
+    Graph* getGraph() const { return graph; }
     int getVertexIndex() const { return vertexIndex; }
     int getEdgeIndex() const { return edgeIndex; }
     int getId() const { return id; }
 
-    // Network operations
-    HalfEdgeNet* connectNet(Network* net);
+    // Graph operations
+    GraphHalfEdge* connectNet(Graph* net);
     void connectVertex(VertexNet* v, int index);
     void disconnectHalfEdge();
-    void connectHalfEdge(HalfEdgeNet* next);
-    void setPrev(HalfEdgeNet* p);
-    void setFace(FaceNet* f);
+    void connectHalfEdge(GraphHalfEdge* next);
+    void setPrev(GraphHalfEdge* p);
+    void setFace(GraphFace* f);
 
     bool isSpliced() const;
     bool isLoopy();
@@ -48,13 +48,13 @@ public:
 private:
     bool forward;
     VertexNet* vertex;
-    EdgeNet* edge;
+    GraphEdge* edge;
     int vertexIndex;
     int edgeIndex;
-    HalfEdgeNet* prev;
-    HalfEdgeNet* next;
-    FaceNet* face;
-    Network* network;
+    GraphHalfEdge* prev;
+    GraphHalfEdge* next;
+    GraphFace* face;
+    Graph* graph;
     int id;
 
     static int nextId;
