@@ -17,10 +17,10 @@ class VertexType;
 class GraphEdge;
 struct DrawOptions;
 
-class VertexNet {
+class GraphVertex {
 public:
-    VertexNet();
-    ~VertexNet() = default;
+    GraphVertex();
+    ~GraphVertex() = default;
     void import(const Json& json);
 
     const std::vector<GraphHalfEdge*>& getHalfEdges() const { return halfEdges; }
@@ -36,9 +36,9 @@ public:
     int connectorIndex() const;
     GraphEdge* interiorEdge() const;
 
-    VertexNet* connectNet(Graph* graph);
+    GraphVertex* connectNet(Graph* graph);
     void setHalfEdge(GraphHalfEdge* halfEdge, int index);
-    void copyConnection(const VertexNet* copy);
+    void copyConnection(const GraphVertex* copy);
 
     bool inGraph() const;
 

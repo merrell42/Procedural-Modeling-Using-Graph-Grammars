@@ -3,7 +3,7 @@
 
 namespace ms {
 
-Shape3D::Shape3D(const std::vector<VertexType*>& vTypes,
+Primitives::Primitives(const std::vector<VertexType*>& vTypes,
                  const std::vector<EdgeType*>& eTypes,
                  const std::vector<FaceType*>& fTypes,
                  const std::string& xmlData,
@@ -14,14 +14,14 @@ Shape3D::Shape3D(const std::vector<VertexType*>& vTypes,
     , xml(xmlData)
     , dims(dims) {}
 
-Shape3D::Shape3D(int dims) : Shape3D({}, {}, {}, "", dims) {}
+Primitives::Primitives(int dims) : Primitives({}, {}, {}, "", dims) {}
 
-Shape3D* Shape3D::import(const Json& json) {
+Primitives* Primitives::import(const Json& json) {
     int dims = 3;
     if (json.contains("dims")) {
         dims = json.at("dims");
     }
-    auto shape = new Shape3D(dims);
+    auto shape = new Primitives(dims);
 
     std::vector<FaceType*> faceTypes;
     for (const auto& type : json.at("faceTypes")) {
@@ -44,11 +44,11 @@ Shape3D* Shape3D::import(const Json& json) {
     return shape;
 }
 
-Shape3D* Shape3D::getShape() {
+Primitives* Primitives::getShape() {
     return this;
 }
 
-std::vector<int> Shape3D::getVertices() const {
+std::vector<int> Primitives::getVertices() const {
     return {0};
 }
 

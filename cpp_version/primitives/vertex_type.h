@@ -11,7 +11,7 @@ using Json = nlohmann::json;
 namespace ms {
 
 class EdgeType;
-class Shape3D;
+class Primitives;
 
 struct Connection {
     double adjustedAngle;
@@ -46,7 +46,7 @@ class VertexType {
 public:
     VertexType();
     ~VertexType() = default;
-    static VertexType* import(const Json& json, Shape3D* shape);
+    static VertexType* import(const Json& json, Primitives* shape);
 
     const std::vector<Connection>& getConnections() const;
     bool getSpliced() const;

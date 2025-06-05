@@ -8,12 +8,12 @@ namespace ms {
 class Graph;
 class Edge;
 
-class NetGraphMap {
+class Morphism {
 public:
-    NetGraphMap();
-    ~NetGraphMap() = default;
-    NetGraphMap* copy() const;
-    static NetGraphMap* create(const NetGraphMapInfo& info);
+    Morphism();
+    ~Morphism() = default;
+    Morphism* copy() const;
+    static Morphism* create(const MorphismInfo& info);
 
     const std::vector<Vertex*>& getVertexBtoA() const { return vertexBtoA; }
     const std::vector<Edge*>& getEdgeBtoA() const { return edgeBtoA; }

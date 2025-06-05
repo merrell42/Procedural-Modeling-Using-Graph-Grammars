@@ -10,7 +10,7 @@ namespace ms {
 
 class HalfEdge;
 class Vertex;
-class NetTransistorSettings;
+class RuleApplierSettings;
 class Range;
 class Matrix;
 
@@ -21,12 +21,12 @@ struct ChangeVecMB {
 
 class VertexPlacement {
 public:
-    VertexPlacement(Vertex* vertex, int id, NetTransistorSettings* settings) : vertex(vertex), id(id), settings(settings), M(nullptr) {}
+    VertexPlacement(Vertex* vertex, int id, RuleApplierSettings* settings) : vertex(vertex), id(id), settings(settings), M(nullptr) {}
     ~VertexPlacement() = default;
 
     Vertex* getVertex() const { return vertex; }
     int getId() const { return id; }
-    NetTransistorSettings* getSettings() const { return settings; }
+    RuleApplierSettings* getSettings() const { return settings; }
     const std::vector<int>& getFreeFaceIds() const { return freeFaceIds; }
     const std::vector<int>& getUnfreeFaceIds() const { return unfreeFaceIds; }
     const std::vector<int>& getCoedgearFaceIds() const { return coedgearFaceIds; }
@@ -56,7 +56,7 @@ public:
 private:
     Vertex* vertex;
     int id;
-    NetTransistorSettings* settings;
+    RuleApplierSettings* settings;
     std::vector<int> coedgearFaceIds;
     Matrix* M;
 

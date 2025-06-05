@@ -12,15 +12,15 @@ using Json = nlohmann::json;
 namespace ms {
 
 class Graph;  
-class NetTransition;
-class Shape3D;
+class ProductionRule;
+class Primitives;
 class EdgeType;
 class VertexType;
 
 struct Transition {
     Graph* startNet;
     Graph* endNet;
-    NetGraphMap* map;
+    Morphism* map;
     bool ground;
 };
 
@@ -32,9 +32,9 @@ public:
 
     void reset();
     const std::vector<std::vector<Graph*>>& getGenerations() const;
-    const std::vector<NetTransition*>& getTransitions() const;
-    const std::vector<NetTransition*>& getStarterTransitions() const;
-    const std::vector<NetTransition*>& getGroundTransitions() const;
+    const std::vector<ProductionRule*>& getTransitions() const;
+    const std::vector<ProductionRule*>& getStarterTransitions() const;
+    const std::vector<ProductionRule*>& getGroundTransitions() const;
     bool isGrounded() const;
     int getDims() const { return shape->dims; }
 
@@ -47,10 +47,10 @@ private:
     std::vector<Graph*> nodeQueue;
     Graph* emptyNet;
 
-    Shape3D* shape;
-    std::vector<NetTransition*> transitions;
-    std::vector<NetTransition*> starterTransitions;
-    std::vector<NetTransition*> groundTransitions;
+    Primitives* shape;
+    std::vector<ProductionRule*> transitions;
+    std::vector<ProductionRule*> starterTransitions;
+    std::vector<ProductionRule*> groundTransitions;
     bool grounded;
 
     struct GraphSet {

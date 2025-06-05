@@ -3,13 +3,13 @@
 
 namespace ms {
 
-NetGraphMapInfo::NetGraphMapInfo(Model* model, Graph* graphB)
+MorphismInfo::MorphismInfo(Model* model, Graph* graphB)
     : model(model) , graphB(graphB) {
     verticesB = graphB->getVertices();
     edgesB = graphB->getEdges();
 }
 
-NetGraphMapInfo::NetGraphMapInfo(const NetGraphMapInfo& other)
+MorphismInfo::MorphismInfo(const MorphismInfo& other)
     : model(other.model)
     , graphB(other.graphB)
     , verticesB(other.verticesB)

@@ -28,7 +28,7 @@ GraphHalfEdge* GraphHalfEdge::connectNet(Graph* net) {
     return this;
 }
 
-void GraphHalfEdge::connectVertex(VertexNet* v, int index) {
+void GraphHalfEdge::connectVertex(GraphVertex* v, int index) {
     if (index == -1) {
         // Set to next available spot in the vertex.
         index = (int)v->getHalfEdges().size();

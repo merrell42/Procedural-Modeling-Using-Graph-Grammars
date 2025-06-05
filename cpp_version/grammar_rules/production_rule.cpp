@@ -4,9 +4,9 @@
 
 namespace ms {
 
-int NetTransition::nextId = 0;
+int ProductionRule::nextId = 0;
 
-NetTransition::NetTransition(
+ProductionRule::ProductionRule(
     const std::vector<Graph*>& startGraphs,
     const std::vector<Graph*>& endGraphs
 ) : startGraphs(startGraphs),
@@ -14,7 +14,7 @@ NetTransition::NetTransition(
     ground(false),
     id(nextId++) {}
 
-NetTransition* NetTransition::import(const Json& json, Shape3D* shape) {
+ProductionRule* ProductionRule::import(const Json& json, Primitives* shape) {
     std::vector<Graph*> startGraphs;
     std::vector<Graph*> endGraphs;
     for (size_t index = 0; index < json["n"].size(); ++index) {
@@ -37,7 +37,7 @@ NetTransition* NetTransition::import(const Json& json, Shape3D* shape) {
         }
     }
 
-    auto* result = new NetTransition(startGraphs, endGraphs);
+    auto* result = new ProductionRule(startGraphs, endGraphs);
     result->ground = json["ground"];
     return result;
 }

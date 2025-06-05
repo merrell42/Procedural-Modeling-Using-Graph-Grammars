@@ -14,10 +14,10 @@ class Model;
 class MutationArea;
 class GraphMutator;
 
-class GuideMutator {
+class Mutator {
 public:
-    GuideMutator(Model* model, GraphMutator* graphMutator);
-    ~GuideMutator() = default;
+    Mutator(Model* model, GraphMutator* graphMutator);
+    ~Mutator() = default;
 
     void iterate(int step);
     void mutate();

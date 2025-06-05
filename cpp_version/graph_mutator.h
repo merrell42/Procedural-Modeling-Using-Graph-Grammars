@@ -7,7 +7,7 @@
 
 namespace ms {
 
-class NetGraphMap;
+class Morphism;
 struct Transition;
 class GraphGrammar;
 
@@ -24,7 +24,7 @@ private:
     std::vector<bool> edgeTypeStarted;
     GraphGrammar* hierarchy;
     Model* model;
-    std::unique_ptr<NetGraphMapFinder> mapFinder;
+    std::unique_ptr<MorphismFinder> mapFinder;
 
     bool applyTransition(Transition transition);
 };

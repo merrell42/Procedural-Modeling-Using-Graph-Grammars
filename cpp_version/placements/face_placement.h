@@ -7,7 +7,7 @@ namespace ms {
 
 class Face;
 class FacePlacement;
-class NetTransistorSettings;
+class RuleApplierSettings;
 
 struct ChangeMB {
     double m;
@@ -22,7 +22,7 @@ struct FixedFace {
 
 class FacePlacement {
 public:
-    FacePlacement(const Vec3& normal, int id, NetTransistorSettings* settings, Face* face);
+    FacePlacement(const Vec3& normal, int id, RuleApplierSettings* settings, Face* face);
 
     Face* getFace() const;
     double getD() const;
@@ -46,7 +46,7 @@ public:
 private:
     Vec3 normal;
     Face* face;
-    NetTransistorSettings* settings;
+    RuleApplierSettings* settings;
     bool free{true};
     std::vector<Face*> fixedNeighbors;
     double d{0.0};

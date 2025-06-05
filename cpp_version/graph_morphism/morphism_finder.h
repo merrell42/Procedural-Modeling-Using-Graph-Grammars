@@ -10,9 +10,9 @@ namespace ms {
 
 class Model;
 class NodeStats;
-class NetGraphMap;
-class NetGraphMapInfo;
-class NetGraphMapState;
+class Morphism;
+class MorphismInfo;
+class MorphismState;
 class Face;
 class Vertex;
 class GraphHalfEdge;
@@ -31,14 +31,14 @@ struct IntersectResult {
     IntersectResult() : distance(std::numeric_limits<double>::infinity()), face(nullptr), data(nullptr) {}
 };
 
-class NetGraphMapFinder {
+class MorphismFinder {
 public:
-    NetGraphMapFinder(Model* model, bool groundEnabled);
-    ~NetGraphMapFinder() = default;
+    MorphismFinder(Model* model, bool groundEnabled);
+    ~MorphismFinder() = default;
 
     // Core functionality
-    NetGraphMap* findMap(Graph* netB);
-    NetGraphMap* findStarterMap(Graph* netB);
+    Morphism* findMap(Graph* netB);
+    Morphism* findStarterMap(Graph* netB);
     void reset();
 
     // Static configuration
@@ -56,11 +56,11 @@ private:
 
     // Helper methods
     Face* findFace(FaceType* faceType);
-    NetGraphMap* findContinue(NetGraphMapState* state);
-    NetGraphMap* assignVertex(NetGraphMapState* state, Vertex* vertexA, int indexB);
-    NetGraphMap* matchHalfEdge(const HalfEdgeData& halfedgeData, NetGraphMapState* state);
-    NetGraphMap* assignHalfEdge(HalfEdge* halfedgeA, GraphHalfEdge* halfB, NetGraphMapState* state);
-    NetGraphMap* spliceHalfEdge(const HalfEdgeData& halfedgeData, NetGraphMapState* state);
+    Morphism* findContinue(MorphismState* state);
+    Morphism* assignVertex(MorphismState* state, Vertex* vertexA, int indexB);
+    Morphism* matchHalfEdge(const HalfEdgeData& halfedgeData, MorphismState* state);
+    Morphism* assignHalfEdge(HalfEdge* halfedgeA, GraphHalfEdge* halfB, MorphismState* state);
+    Morphism* spliceHalfEdge(const HalfEdgeData& halfedgeData, MorphismState* state);
 
     // Ray casting methods
     /*Face* castVolumeRaySeries(Face* face, const std::vector<GraphHalfEdge*>& rayHalfs, Face* goalFace);*/
@@ -69,7 +69,7 @@ private:
     static void findNearestIntersection(Face* faceA, const Vec3& p0, const Vec3& p1, const Vec2& dir2, IntersectResult& nearestIntersect, int maxDim);
 
     // Static helper methods
-    static void addOuterFaces(NetGraphMap* map, Graph* netB);
+    static void addOuterFaces(Morphism* map, Graph* netB);
 
     // Cache for spliced vertex types
     static std::unordered_map<int, VertexType*> splicedVertexTypes;

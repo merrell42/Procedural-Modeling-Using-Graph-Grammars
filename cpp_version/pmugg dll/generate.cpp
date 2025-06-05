@@ -19,7 +19,7 @@ using Json = nlohmann::json;
 namespace ms {
 
 Model* model;
-GuideMutator* mutator;
+Mutator* mutator;
 
 void initialize(const char* filePath, char* result, int len, int seed) {
 	resetRandom(seed);
@@ -36,7 +36,7 @@ void initialize(const char* filePath, char* result, int len, int seed) {
 		Json parsed= Json::parse(content);
 		auto hierarchy = GraphGrammar::import(parsed["solution"]);
 		model = new ms::Model();
-		mutator = new GuideMutator(model, new GraphMutator(hierarchy, model));
+		mutator = new Mutator(model, new GraphMutator(hierarchy, model));
 		strcpy_s(result, len, "Success");
 	} catch (const Json::exception& e) {
 		string errorMsg = "Error: JSON parsing failed - ";

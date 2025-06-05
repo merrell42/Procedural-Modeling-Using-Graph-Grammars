@@ -4,8 +4,8 @@
 
 namespace ms {
 
-class NetGraphMapInfo;
-class NetGraphMap;
+class MorphismInfo;
+class Morphism;
 class GraphHalfEdge;
 class Vertex;
 
@@ -17,23 +17,23 @@ struct HalfEdgeData {
         : halfB(half), vertexA(vertex) {}
 };
 
-class NetGraphMapState {
+class MorphismState {
 public:
-    explicit NetGraphMapState(NetGraphMapInfo* info, NetGraphMap* map = nullptr);
-    ~NetGraphMapState() = default;
+    explicit MorphismState(MorphismInfo* info, Morphism* map = nullptr);
+    ~MorphismState() = default;
 
-    NetGraphMapInfo* getInfo() const { return info; }
-    NetGraphMap* getMap() { return map; }
+    MorphismInfo* getInfo() const { return info; }
+    Morphism* getMap() { return map; }
     std::vector<HalfEdgeData>& getQueue() { return queue; }
     std::vector<HalfEdgeData>& getSpliceQueue() { return spliceQueue; }
 
     void setQueue(const std::vector<HalfEdgeData>& newQueue);
     void assignVertex(Vertex* vertexA, int indexB);
-    NetGraphMapState* copy() const;
+    MorphismState* copy() const;
 
 private:
-    NetGraphMapInfo* info;
-    NetGraphMap* map;
+    MorphismInfo* info;
+    Morphism* map;
     std::vector<HalfEdgeData> queue;
     std::vector<HalfEdgeData> spliceQueue;
 };

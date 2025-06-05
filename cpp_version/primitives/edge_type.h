@@ -12,7 +12,7 @@ using Json = nlohmann::json;
 namespace ms {
 
 class FaceType;
-class Shape3D;
+class Primitives;
 
 struct FaceData {
     FaceType* type;
@@ -53,7 +53,7 @@ public:
     std::string boundaryString() const;
     int neighboringFace(int initialIndex, bool above) const;
 
-    static EdgeType* import(const Json& json, Shape3D* shape);
+    static EdgeType* import(const Json& json, Primitives* shape);
 
     std::vector<FaceData> faceData;
 

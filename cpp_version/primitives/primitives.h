@@ -11,17 +11,17 @@ namespace ms {
 class VertexType;
 class EdgeType;
 
-class Shape3D {
+class Primitives {
 public:
-    Shape3D(int dims);
-    Shape3D(const std::vector<VertexType*>& vertexTypes,
+    Primitives(int dims);
+    Primitives(const std::vector<VertexType*>& vertexTypes,
             const std::vector<EdgeType*>& edgeTypes,
             const std::vector<FaceType*>& faceTypes,
             const std::string& xml,
             int dims);
-    static Shape3D* import(const Json& json);
+    static Primitives* import(const Json& json);
 
-    Shape3D* getShape();
+    Primitives* getShape();
     std::vector<int> getVertices() const;
 
     std::vector<VertexType*> vertexTypes;

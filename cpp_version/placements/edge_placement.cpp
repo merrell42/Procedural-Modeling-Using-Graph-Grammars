@@ -10,7 +10,7 @@
 
 namespace ms {
 
-EdgePlacement::EdgePlacement(Edge* edge, int id, NetTransistorSettings* settings)
+EdgePlacement::EdgePlacement(Edge* edge, int id, RuleApplierSettings* settings)
     : edge(edge)
     , id(id)
     , settings(settings) {
@@ -88,8 +88,8 @@ Range EdgePlacement::getRange() const {
     auto bLength = dir.dot(mb1.b - mb0.b);
 
     auto* brush = edge ? edge->getEdgeType()->getBrush() : nullptr;
-    double lengthMin = brush ? brush->getDouble("Min Length") : NetTransistorSettings::defaultLengthMin;
-    double lengthMax = brush ? brush->getDouble("Max Length") : NetTransistorSettings::defaultLengthMax;
+    double lengthMin = brush ? brush->getDouble("Min Length") : RuleApplierSettings::defaultLengthMin;
+    double lengthMax = brush ? brush->getDouble("Max Length") : RuleApplierSettings::defaultLengthMax;
     double tileLength = 0;
     
     if (brush && brush->getBool("Rigid Tiled")) {

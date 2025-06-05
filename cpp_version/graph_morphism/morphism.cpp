@@ -6,17 +6,17 @@
 
 namespace ms {
 
-NetGraphMap::NetGraphMap() {}
+Morphism::Morphism() {}
 
-NetGraphMap* NetGraphMap::copy() const {
-    auto* result = new NetGraphMap();
+Morphism* Morphism::copy() const {
+    auto* result = new Morphism();
     result->vertexBtoA = vertexBtoA;
     result->edgeBtoA = edgeBtoA;
     return result;
 }
 
-NetGraphMap* NetGraphMap::create(const NetGraphMapInfo& info) {
-    auto map = new NetGraphMap();
+Morphism* Morphism::create(const MorphismInfo& info) {
+    auto map = new Morphism();
     auto netB = info.graphB;
     map->vertexBtoA.resize(netB->getVertices().size(), nullptr);
     map->edgeBtoA.resize(netB->getEdges().size(), nullptr);

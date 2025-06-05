@@ -13,7 +13,7 @@ GraphMutator::GraphMutator(GraphGrammar* hierarchy, Model* model/*, NodeStats* n
     , edgeTypeStarted() {
     
     bool groundEnabled = hierarchy->getGroundTransitions().size() > 0;
-    mapFinder = std::make_unique<NetGraphMapFinder>(model, groundEnabled);
+    mapFinder = std::make_unique<MorphismFinder>(model, groundEnabled);
 }
 
 void GraphMutator::reset() {
@@ -37,19 +37,19 @@ bool GraphMutator::applyTransition(Transition transition) {
         return false;
     }
     timer->start("Find Transition Map");
-    auto netGraphMap = mapFinder->findMap(transition.startNet);
+    auto morphism = mapFinder->findMap(transition.startNet);
     timer->stop("Find Transition Map");
 
-    if (!netGraphMap) {
+    if (!morphism) {
         return false;
     }
 
-    transition.map = netGraphMap;
+    transition.map = morphism;
 
     timer->start("Build Normally");
 
     int dims = hierarchy->getDims();
-    auto transistor = NetTransistor::buildNormally(transition, model, dims);
+    auto transistor = RuleApplier::buildNormally(transition, model, dims);
     timer->stop("Build Normally");
 
     if (!transistor) {

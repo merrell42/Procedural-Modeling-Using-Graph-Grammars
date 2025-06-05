@@ -7,7 +7,7 @@ using Json = nlohmann::json;
 namespace ms {
 
 class Graph;
-class VertexNet;
+class GraphVertex;
 class GraphEdge;
 class GraphFace;
 class Vec3;
@@ -21,7 +21,7 @@ public:
 
     // Core accessors
     bool getForward() const { return forward; }
-    VertexNet* getVertex() const { return vertex; }
+    GraphVertex* getVertex() const { return vertex; }
     GraphEdge* getEdge() const { return edge; }
     GraphHalfEdge* getPrev() const { return prev; }
     GraphHalfEdge* getNext() const { return next; }
@@ -34,7 +34,7 @@ public:
 
     // Graph operations
     GraphHalfEdge* connectNet(Graph* net);
-    void connectVertex(VertexNet* v, int index);
+    void connectVertex(GraphVertex* v, int index);
     void disconnectHalfEdge();
     void connectHalfEdge(GraphHalfEdge* next);
     void setPrev(GraphHalfEdge* p);
@@ -47,7 +47,7 @@ public:
 
 private:
     bool forward;
-    VertexNet* vertex;
+    GraphVertex* vertex;
     GraphEdge* edge;
     int vertexIndex;
     int edgeIndex;

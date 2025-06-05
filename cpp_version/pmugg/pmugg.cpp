@@ -29,7 +29,7 @@ int main() {
 		cout << parsed["category"] << " " << parsed["name"] << endl;
 		auto hierarchy = GraphGrammar::import(parsed["solution"]);
 		auto model = new ms::Model();
-		auto mutator = new GuideMutator(model, new GraphMutator(hierarchy, model));
+		auto mutator = new Mutator(model, new GraphMutator(hierarchy, model));
 		mutator->iterate(100);
 	} catch (const std::exception& e) {
 	 	cout << "Error: " << e.what() << endl;

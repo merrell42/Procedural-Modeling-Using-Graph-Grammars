@@ -30,15 +30,15 @@ const std::vector<std::vector<Graph*>>& GraphGrammar::getGenerations() const {
     return generations;
 }
 
-const std::vector<NetTransition*>& GraphGrammar::getTransitions() const {
+const std::vector<ProductionRule*>& GraphGrammar::getTransitions() const {
     return transitions;
 }
 
-const std::vector<NetTransition*>& GraphGrammar::getStarterTransitions() const {
+const std::vector<ProductionRule*>& GraphGrammar::getStarterTransitions() const {
     return starterTransitions;
 }
 
-const std::vector<NetTransition*>& GraphGrammar::getGroundTransitions() const {
+const std::vector<ProductionRule*>& GraphGrammar::getGroundTransitions() const {
     return groundTransitions;
 }
 
@@ -47,7 +47,7 @@ bool GraphGrammar::isGrounded() const {
 }
 
 Transition GraphGrammar::getTransition() {
-    NetTransition* transition = transitions.empty() ? nullptr : Util::pick<NetTransition*>(transitions);
+    ProductionRule* transition = transitions.empty() ? nullptr : Util::pick<ProductionRule*>(transitions);
     if (transition) {
         auto startGraphs = transition->getStartGraphs();
         auto endGraphs = transition->getEndGraphs();
@@ -97,10 +97,10 @@ Transition GraphGrammar::getStarterTransition(bool useGround) {
 
 GraphGrammar* GraphGrammar::import(const Json& json) {
     auto* hierarchy = new GraphGrammar();
-    hierarchy->shape = Shape3D::import(json["types"]);
+    hierarchy->shape = Primitives::import(json["types"]);
     
     auto importTransition = [&](const Json& transJson) {
-        return NetTransition::import(transJson, hierarchy->shape);
+        return ProductionRule::import(transJson, hierarchy->shape);
     };
     
     for (const auto& transJson : json["transitions"]) {

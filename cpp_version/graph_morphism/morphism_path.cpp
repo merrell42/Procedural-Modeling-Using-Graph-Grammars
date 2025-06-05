@@ -7,9 +7,9 @@
 namespace ms {
 
 // Initialize static counter
-int TransistorPath::count = 0;
+int MorphismPath::count = 0;
 
-TransistorPath* TransistorPath::createPath(const std::vector<HalfEdge*>& halfedges,
+MorphismPath* MorphismPath::createPath(const std::vector<HalfEdge*>& halfedges,
                                         const std::vector<Edge*>& edges,
                                         std::vector<Edge*>* lines) {
     std::vector<IndexInfo> indices;
@@ -25,10 +25,10 @@ TransistorPath* TransistorPath::createPath(const std::vector<HalfEdge*>& halfedg
         int index = (int)std::distance(edges.begin(), it);
         indices.push_back({index, !halfedge->getIsAtStart()});
     }
-    return new TransistorPath(indices, lines);
+    return new MorphismPath(indices, lines);
 }
 
-TransistorPath::TransistorPath(const std::vector<IndexInfo>& indices,
+MorphismPath::MorphismPath(const std::vector<IndexInfo>& indices,
                              std::vector<Edge*>* edges)
     : indices(indices)
     , edges(edges)
@@ -36,15 +36,15 @@ TransistorPath::TransistorPath(const std::vector<IndexInfo>& indices,
     , id(count++) {
 }
 
-void TransistorPath::setHalfEdges(const std::vector<HalfEdge*>& halfedges) {
+void MorphismPath::setHalfEdges(const std::vector<HalfEdge*>& halfedges) {
     this->halfedges = halfedges;
 }
 
-int TransistorPath::extendableness() const {
+int MorphismPath::extendableness() const {
     return extendable[0] + extendable[1];
 }
 
-Vertex* TransistorPath::randomNextVertex() {
+Vertex* MorphismPath::randomNextVertex() {
     std::vector<double> probabilities;
     for (bool e : extendable) {
         probabilities.push_back(e ? 1.0 : 0.0);
@@ -53,7 +53,7 @@ Vertex* TransistorPath::randomNextVertex() {
     return halfedges[index]->getVertex();
 }
 
-Vertex* TransistorPath::rigidNextVertex() {
+Vertex* MorphismPath::rigidNextVertex() {
     for (int i = 0; i < 2; i++) {
         if (extendable[i] && indices.size() >= 2) {
             std::vector<int> iIndices;
@@ -77,11 +77,11 @@ Vertex* TransistorPath::rigidNextVertex() {
     return nullptr;
 }
 
-Edge* TransistorPath::edgeFromIndex(int index) {
+Edge* MorphismPath::edgeFromIndex(int index) {
     return (*edges)[indices[index].index];
 }
 
-TransistorPath::IndexInfo TransistorPath::indexForHalfEdge(HalfEdge* halfedge) {
+MorphismPath::IndexInfo MorphismPath::indexForHalfEdge(HalfEdge* halfedge) {
     auto it = std::find_if(edges->begin(), edges->end(), 
         [halfedge](Edge* edge) {
             return edge == halfedge->getEdge();
@@ -92,7 +92,7 @@ TransistorPath::IndexInfo TransistorPath::indexForHalfEdge(HalfEdge* halfedge) {
     };
 }
 
-void TransistorPath::expandBackward() {
+void MorphismPath::expandBackward() {
     auto* prevHalfEdge = halfedges[0]->prev();
     if (prevHalfEdge) {
         halfedges[0] = prevHalfEdge;
@@ -102,7 +102,7 @@ void TransistorPath::expandBackward() {
     }
 }
 
-void TransistorPath::expandForward() {
+void MorphismPath::expandForward() {
     indices.push_back(indexForHalfEdge(halfedges[1]));
     auto* nextHalfEdge = halfedges[1]->next();
     if (nextHalfEdge) {
@@ -112,7 +112,7 @@ void TransistorPath::expandForward() {
     }
 }
 
-void TransistorPath::merge(TransistorPath* pathB) {
+void MorphismPath::merge(MorphismPath* pathB) {
     halfedges[1] = pathB->halfedges[1];
     extendable[1] = pathB->extendable[1];
     indices.insert(indices.end(), pathB->indices.begin(), pathB->indices.end());

@@ -7,19 +7,19 @@
 namespace ms {
 
 class Edge;
-class NetTransistorSettings;
+class RuleApplierSettings;
 class Range;
 
 class EdgePlacement {
 public:
-    EdgePlacement(Edge* edge, int id, NetTransistorSettings* settings);
+    EdgePlacement(Edge* edge, int id, RuleApplierSettings* settings);
     ~EdgePlacement() = default;
 
     Edge* getEdge() const { return edge; }
     int getId() const { return id; }
     const std::vector<int>& getVertexIds() const { return vertexIds; }
     const Vec3& getDir() const { return dir; }
-    NetTransistorSettings* getSettings() const { return settings; }
+    RuleApplierSettings* getSettings() const { return settings; }
     const std::vector<int>& getConstraints() const { return constraints; }
 
     void initialize();
@@ -31,7 +31,7 @@ private:
     int id;
     std::vector<int> vertexIds;
     Vec3 dir;
-    NetTransistorSettings* settings;
+    RuleApplierSettings* settings;
     std::vector<int> constraints;
 };
 

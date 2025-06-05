@@ -9,7 +9,7 @@
 
 namespace ms {
 
-FacePlacement::FacePlacement(const Vec3& normal, int id, NetTransistorSettings* settings, Face* face)
+FacePlacement::FacePlacement(const Vec3& normal, int id, RuleApplierSettings* settings, Face* face)
     : normal(normal)
     , face(face)
     , id(id)

@@ -8,15 +8,15 @@
 
 namespace ms {
 
-GuideMutator::GuideMutator(Model* model, GraphMutator* graphMutator)
+Mutator::Mutator(Model* model, GraphMutator* graphMutator)
     : model(model)
     , graphMutator(graphMutator) {}
 
-void GuideMutator::reset() {
+void Mutator::reset() {
     graphMutator->reset();
 }
 
-void GuideMutator::iterate(int steps) {
+void Mutator::iterate(int steps) {
     timer->start("Guide Mutator");
 
     int finishStep = model->numSteps + steps;
@@ -51,11 +51,11 @@ void GuideMutator::iterate(int steps) {
 }
 
 // Add the ground plane.
-void GuideMutator::mutateGround() {
+void Mutator::mutateGround() {
     bool success = graphMutator->addStartInstance(true);
 };
 
-void GuideMutator::mutate() {
+void Mutator::mutate() {
     std::vector<double> probabilities = {1, 1, 10};
     bool done = false;
 
@@ -113,11 +113,11 @@ void GuideMutator::mutate() {
     }
 }
 
-void GuideMutator::accept() {
+void Mutator::accept() {
     model->accept();
 }
 
-void GuideMutator::reject() {
+void Mutator::reject() {
     model->reject();
 }
 

@@ -13,14 +13,14 @@ class NodeStats;
 class Vertex;
 class Edge;
 
-class NetGraphMapInfo {
+class MorphismInfo {
 public:
-    NetGraphMapInfo(Model* model, Graph* graphB);
-    NetGraphMapInfo(const NetGraphMapInfo& other);
+    MorphismInfo(Model* model, Graph* graphB);
+    MorphismInfo(const MorphismInfo& other);
 
     Model* model;
     Graph* graphB;  
-    std::vector<VertexNet*> verticesB;
+    std::vector<GraphVertex*> verticesB;
     std::vector<GraphEdge*> edgesB;
 };
 

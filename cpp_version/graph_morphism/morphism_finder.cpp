@@ -12,20 +12,20 @@
 
 namespace ms {
 
-std::unordered_map<int, VertexType*> NetGraphMapFinder::splicedVertexTypes;
+std::unordered_map<int, VertexType*> MorphismFinder::splicedVertexTypes;
 
-NetGraphMapFinder::NetGraphMapFinder(Model* model, bool groundEnabled)
+MorphismFinder::MorphismFinder(Model* model, bool groundEnabled)
     : model(model)
     , nodesModified(false)
     , groundFace(nullptr)
     , groundEnabled(groundEnabled) {}
 
-void NetGraphMapFinder::reset() {
+void MorphismFinder::reset() {
     nodesModified = false;
     groundFace = nullptr;
 }
 
-NetGraphMap* NetGraphMapFinder::findMap(Graph* netB) {
+Morphism* MorphismFinder::findMap(Graph* netB) {
     if (!groundFace && groundEnabled) {
         auto faces = model->getCurrent()->getFaceMap();
         if (!faces.empty()) {
@@ -61,8 +61,8 @@ NetGraphMap* NetGraphMapFinder::findMap(Graph* netB) {
         auto vertexA = it->second;
         if ((isConnector || vertexA->getType() == vertexType)) {
             nodesModified = false;
-            auto* info = new NetGraphMapInfo(model, netB);
-            auto* state = new NetGraphMapState(info);
+            auto* info = new MorphismInfo(model, netB);
+            auto* state = new MorphismState(info);
             auto* map = assignVertex(state, vertexA, index1);
                 
             if (map) {
@@ -92,12 +92,12 @@ NetGraphMap* NetGraphMapFinder::findMap(Graph* netB) {
 }
 
 
-NetGraphMap* NetGraphMapFinder::assignVertex(NetGraphMapState* state, Vertex* vertexA, int indexB) {
+Morphism* MorphismFinder::assignVertex(MorphismState* state, Vertex* vertexA, int indexB) {
     state->assignVertex(vertexA, indexB);
     return findContinue(state);
 }
 
-void NetGraphMapFinder::addOuterFaces(NetGraphMap* map, Graph* netB) {
+void MorphismFinder::addOuterFaces(Morphism* map, Graph* netB) {
     // TODO: Implement this. For a closed building popping out of the ground. The ground face is the outer face.
     /*map->outerFaces.clear();
     auto outerFaces = netB->getOuterFaces();
@@ -110,7 +110,7 @@ void NetGraphMapFinder::addOuterFaces(NetGraphMap* map, Graph* netB) {
 }
 
 
-Face* NetGraphMapFinder::findFace(FaceType* faceType) {
+Face* MorphismFinder::findFace(FaceType* faceType) {
     if (groundEnabled && faceType == groundFace->getFaceType()) {
         auto preference = globalSettings["Prefer Ground"].get<double>();
         if (Util::randomUniform(0, 1) < preference) {
@@ -145,9 +145,9 @@ Face* NetGraphMapFinder::findFace(FaceType* faceType) {
     return nullptr;
 }
 
-NetGraphMap* NetGraphMapFinder::findStarterMap(Graph* netB) {
-    auto info = std::make_unique<NetGraphMapInfo>(model, netB);
-    auto state = std::make_unique<NetGraphMapState>(info.get());
+Morphism* MorphismFinder::findStarterMap(Graph* netB) {
+    auto info = std::make_unique<MorphismInfo>(model, netB);
+    auto state = std::make_unique<MorphismState>(info.get());
 
     auto faces = netB->getFaces();
     if (faces.empty()) {
@@ -176,7 +176,7 @@ NetGraphMap* NetGraphMapFinder::findStarterMap(Graph* netB) {
     return nullptr;
 }
 
-NetGraphMap* NetGraphMapFinder::findContinue(NetGraphMapState* state) {
+Morphism* MorphismFinder::findContinue(MorphismState* state) {
     if (!state->getQueue().empty()) {
         std::vector<HalfEdgeData>& queue = state->getQueue();
         HalfEdgeData halfedgeData = queue.front();
@@ -206,9 +206,9 @@ bool neighboringHoles(Edge* edge, GraphEdge* edgeB) {
     return false;
 }
 
-NetGraphMap* NetGraphMapFinder::matchHalfEdge(
+Morphism* MorphismFinder::matchHalfEdge(
     const HalfEdgeData& halfedgeData,
-    NetGraphMapState* state
+    MorphismState* state
 ) {
     GraphHalfEdge* halfB = halfedgeData.halfB;
     Vertex* vertexA = halfedgeData.vertexA;
@@ -247,9 +247,9 @@ NetGraphMap* NetGraphMapFinder::matchHalfEdge(
     return assignHalfEdge(halfedgeA, halfB, state);
 }
 
-NetGraphMap* NetGraphMapFinder::spliceHalfEdge(
+Morphism* MorphismFinder::spliceHalfEdge(
     const HalfEdgeData& halfedgeData,
-    NetGraphMapState* state
+    MorphismState* state
 ) {
     GraphHalfEdge* halfB = halfedgeData.halfB;
     Vertex* vertexA = halfedgeData.vertexA;
@@ -314,8 +314,8 @@ NetGraphMap* NetGraphMapFinder::spliceHalfEdge(
     } else if (vIndex0 >= 0 && vIndex1 >= 0 && eIndex >= 0) {
         // Split three times for matched edge and vertices
         bool isAtStart0 = intersectHalfEdge->getIsAtStart();
-        VertexNet* vertexB0 = netB->getVertices()[vIndex0];
-        VertexNet* vertexB1 = netB->getVertices()[vIndex1];
+        GraphVertex* vertexB0 = netB->getVertices()[vIndex0];
+        GraphVertex* vertexB1 = netB->getVertices()[vIndex1];
 
         bool isConnector0 = (vertexB0->connectorIndex() >= 0);
         bool isConnector1 = (vertexB1->connectorIndex() >= 0);
@@ -360,11 +360,11 @@ NetGraphMap* NetGraphMapFinder::spliceHalfEdge(
     return nullptr;
 }
 
-NetGraphMap* NetGraphMapFinder::assignHalfEdge(HalfEdge* halfedgeA, GraphHalfEdge* halfB, NetGraphMapState* state) {
+Morphism* MorphismFinder::assignHalfEdge(HalfEdge* halfedgeA, GraphHalfEdge* halfB, MorphismState* state) {
     auto info = state->getInfo();
     auto map = state->getMap();
 
-    VertexNet* vertexB = halfB->getNext()->getVertex();
+    GraphVertex* vertexB = halfB->getNext()->getVertex();
     int vIndexB = indexOf(info->verticesB, vertexB);
 
     bool isConnector = vertexB->connectorIndex() >= 0;
@@ -402,7 +402,7 @@ NetGraphMap* NetGraphMapFinder::assignHalfEdge(HalfEdge* halfedgeA, GraphHalfEdg
 }
 
 // Helper function to find the nearest intersection between a edge and a face
-void NetGraphMapFinder::findNearestIntersection(Face* faceA, const Vec3& p0, const Vec3& p1, const Vec2& dir2, IntersectResult& nearestIntersect, int maxDim) {
+void MorphismFinder::findNearestIntersection(Face* faceA, const Vec3& p0, const Vec3& p1, const Vec2& dir2, IntersectResult& nearestIntersect, int maxDim) {
     std::vector<Vec3> fPositions = faceA->getPositions();
     std::vector<IntersectionData> intersections = Intersector::edgeFaceIntersect(p0, p1, fPositions, maxDim);
     
@@ -422,7 +422,7 @@ void NetGraphMapFinder::findNearestIntersection(Face* faceA, const Vec3& p0, con
 
 // Cast a ray and find the nearest intersection
 // TODO: Use BSP tree.
-IntersectResult NetGraphMapFinder::castRay(const Vec3& p0, const Vec3& dir, FaceGroup* groupA, const std::map<int, Face*>& faceMap, int maxDim) {
+IntersectResult MorphismFinder::castRay(const Vec3& p0, const Vec3& dir, FaceGroup* groupA, const std::map<int, Face*>& faceMap, int maxDim) {
     Vec3 p1 = dir;
     p1.scale(Intersector::FAR_DISTANCE);
     p1.add(p0);
@@ -460,7 +460,7 @@ IntersectResult NetGraphMapFinder::castRay(const Vec3& p0, const Vec3& dir, Face
 }
 
 // Cast a series of rays
-HalfEdge* NetGraphMapFinder::castRaySeries(GraphHalfEdge* halfB, const Vec3& startPos, FaceGroup* groupA, const std::map<int, Face*>& faceMap, int maxDim) {
+HalfEdge* MorphismFinder::castRaySeries(GraphHalfEdge* halfB, const Vec3& startPos, FaceGroup* groupA, const std::map<int, Face*>& faceMap, int maxDim) {
     Vec3 p0 = startPos;
     GraphHalfEdge* nextB = halfB->getNext();
     

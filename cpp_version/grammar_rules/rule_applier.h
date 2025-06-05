@@ -17,7 +17,7 @@
 namespace ms {
 
 struct Transition;
-class TransistorPath;
+class MorphismPath;
 class Graph;
 class Edge;
 class Edge;
@@ -42,9 +42,9 @@ struct Limits {
     std::vector<double> max;
 };
 
-class NetTransistor {
+class RuleApplier {
 public:
-    NetTransistor() = default;
+    RuleApplier() = default;
 
     // Constants
     static constexpr double MAX_ANGLE_DIFFERENCE = (double)(45.0f / 180.0f * M_PI);
@@ -54,7 +54,7 @@ public:
     static constexpr double minLength = 0;
 
     // Static factory method
-    static std::unique_ptr<NetTransistor> buildNormally(const Transition& transition, 
+    static std::unique_ptr<RuleApplier> buildNormally(const Transition& transition, 
                                                        Model* model, int dims);
 
     bool solve();
@@ -69,11 +69,11 @@ public:
 private:
     Graph* startNet = nullptr;
     Graph* endNet = nullptr;
-    NetGraphMap* map = nullptr;
+    Morphism* map = nullptr;
     bool ground = false;
     int dims = 2;
     
-    std::vector<TransistorPath*> openPaths;
+    std::vector<MorphismPath*> openPaths;
     std::vector<EdgeData> edgeData;
     std::vector<Edge*> edges;
     Model* model = nullptr;
@@ -88,16 +88,16 @@ private:
     double effort = 0;
     EditGraph* graph = nullptr;
     double angle = 0;
-    std::unique_ptr<NetTransistorSettings> settings;
+    std::unique_ptr<RuleApplierSettings> settings;
 
     // Helper functions
     void addFixedFace(Face* faceA, Face* faceB, double d);
     // bool mergeDuplicateEdges();
     void setupFaceCentric();
     bool sampleSolutionSpace();
-    void constrainVertexIds(std::vector<int>& vIds, NetTransistorSettings* settings);
+    void constrainVertexIds(std::vector<int>& vIds, RuleApplierSettings* settings);
     std::pair<std::vector<double>, bool> sampleFaceCentric();
-    std::vector<TransistorPath*> getFreeablePaths() const;
+    std::vector<MorphismPath*> getFreeablePaths() const;
     void freeOneVertex(Vertex* vertex);
     bool placeVertexPositions(const std::vector<double>& positions);
     Limits findLimits();

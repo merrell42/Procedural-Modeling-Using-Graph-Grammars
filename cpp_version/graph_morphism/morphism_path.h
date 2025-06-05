@@ -9,7 +9,7 @@ namespace ms {
 
 // class Edge
 
-class TransistorPath {
+class MorphismPath {
 public:
     struct IndexInfo {
         int index;
@@ -17,11 +17,11 @@ public:
     };
 
     static int count;
-    static TransistorPath* createPath(const std::vector<HalfEdge*>& halfedges,
+    static MorphismPath* createPath(const std::vector<HalfEdge*>& halfedges,
                                    const std::vector<Edge*>& edges,
                                    std::vector<Edge*>* lines);
 
-    TransistorPath(const std::vector<IndexInfo>& indices, std::vector<Edge*>* edges);
+    MorphismPath(const std::vector<IndexInfo>& indices, std::vector<Edge*>* edges);
 
     void setHalfEdges(const std::vector<HalfEdge*>& halfedges);
     int extendableness() const;
@@ -31,7 +31,7 @@ public:
     IndexInfo indexForHalfEdge(HalfEdge* halfedge);
     void expandBackward();
     void expandForward();
-    void merge(TransistorPath* pathB);
+    void merge(MorphismPath* pathB);
 
     // Member variables
     std::vector<IndexInfo> indices;

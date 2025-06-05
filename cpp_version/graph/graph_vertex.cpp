@@ -6,27 +6,27 @@
 
 namespace ms {
 
-int VertexNet::nextId = 0;
+int GraphVertex::nextId = 0;
 
-VertexNet::VertexNet()
+GraphVertex::GraphVertex()
     : graph(nullptr)
     , type(nullptr)
     , id(nextId++) {}
 
-VertexNet* VertexNet::connectNet(Graph* net) {
+GraphVertex* GraphVertex::connectNet(Graph* net) {
     graph = net;
     graph->addVertex(this);
     return this;
 }
 
-void VertexNet::setHalfEdge(GraphHalfEdge* halfEdge, int index) {
+void GraphVertex::setHalfEdge(GraphHalfEdge* halfEdge, int index) {
     if (index >= halfEdges.size()) {
         halfEdges.resize(index + 1, nullptr);
     }
     halfEdges[index] = halfEdge;
 }
 
-int VertexNet::connectorIndex() const {
+int GraphVertex::connectorIndex() const {
     auto bVertices = graph->getBVertices();
     auto it = std::find(bVertices.begin(), bVertices.end(), this);
     if (it != bVertices.end()) {
@@ -37,7 +37,7 @@ int VertexNet::connectorIndex() const {
     }
 }
 
-void VertexNet::copyConnection(const VertexNet* copy) {
+void GraphVertex::copyConnection(const GraphVertex* copy) {
     auto* copyNet = copy->getGraph();
 
     halfEdges.clear();
@@ -49,13 +49,13 @@ void VertexNet::copyConnection(const VertexNet* copy) {
     }
 }
 
-bool VertexNet::inGraph() const {
+bool GraphVertex::inGraph() const {
     return graph && std::find(graph->getVertices().begin(),
                               graph->getVertices().end(),
                               this) != graph->getVertices().end();
 }
 
-GraphEdge* VertexNet::interiorEdge() const {
+GraphEdge* GraphVertex::interiorEdge() const {
     for (auto* halfEdge : halfEdges) {
         if (halfEdge) {
             auto edge = halfEdge->getEdge();
@@ -67,7 +67,7 @@ GraphEdge* VertexNet::interiorEdge() const {
     return nullptr;
 }
 
-void VertexNet::import(const Json& json) {
+void GraphVertex::import(const Json& json) {
     halfEdges.clear();
     auto& graphHalfEdges = graph->getHalfEdges();
     

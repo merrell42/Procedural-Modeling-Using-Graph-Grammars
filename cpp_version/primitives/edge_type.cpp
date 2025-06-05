@@ -95,7 +95,7 @@ int EdgeType::neighboringFace(int initialIndex, bool above) const {
     return angles[neighborOrder].second;
 }
 
-EdgeType* EdgeType::import(const Json& json, Shape3D* shape) {
+EdgeType* EdgeType::import(const Json& json, Primitives* shape) {
     std::vector<FaceData> fData;
     for (const auto& f : json["faceData"]) {
         fData.push_back({

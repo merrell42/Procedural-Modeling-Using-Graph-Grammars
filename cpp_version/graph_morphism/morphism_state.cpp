@@ -9,20 +9,20 @@
 
 namespace ms {
 
-NetGraphMapState::NetGraphMapState(NetGraphMapInfo* info, NetGraphMap* existingMap)
+MorphismState::MorphismState(MorphismInfo* info, Morphism* existingMap)
     : info(info) {
     if (existingMap) {
         map = existingMap->copy();
     } else {
-        map = NetGraphMap::create(*info);
+        map = Morphism::create(*info);
     }
 }
 
-void NetGraphMapState::setQueue(const std::vector<HalfEdgeData>& newQueue) {
+void MorphismState::setQueue(const std::vector<HalfEdgeData>& newQueue) {
     queue = newQueue;
 }
 
-void NetGraphMapState::assignVertex(Vertex* vertexA, int indexB) {
+void MorphismState::assignVertex(Vertex* vertexA, int indexB) {
     auto* vertexB = info->graphB->getVertices()[indexB];
     map->vertexBtoA[indexB] = vertexA;
 
@@ -39,8 +39,8 @@ void NetGraphMapState::assignVertex(Vertex* vertexA, int indexB) {
     }
 }
 
-NetGraphMapState* NetGraphMapState::copy() const {
-    auto* result = new NetGraphMapState(info, map);
+MorphismState* MorphismState::copy() const {
+    auto* result = new MorphismState(info, map);
     result->queue = queue;
     result->spliceQueue = spliceQueue;
     return result;

@@ -14,7 +14,7 @@ int Graph::nextId = 0;
 
 Graph::Graph() : id(nextId++) {}
 
-void Graph::addVertex(VertexNet* vertex) {
+void Graph::addVertex(GraphVertex* vertex) {
     vertices.push_back(vertex);
 }
 
@@ -30,7 +30,7 @@ void Graph::addFace(GraphFace* face) {
     faces.push_back(face);
 }
 
-void Graph::removeVertex(VertexNet* vertex) {
+void Graph::removeVertex(GraphVertex* vertex) {
     vertices.erase(std::remove(vertices.begin(), vertices.end(), vertex), vertices.end());
 }
 
@@ -46,7 +46,7 @@ void Graph::removeFace(GraphFace* face) {
     faces.erase(std::remove(faces.begin(), faces.end(), face), faces.end());
 }
 
-VertexNet* Graph::convertVertex(Graph* graphB, VertexNet* vertexB) {
+GraphVertex* Graph::convertVertex(Graph* graphB, GraphVertex* vertexB) {
     return vertexB ? vertices[graphB->vertexIndex(vertexB)] : nullptr;
 }
 
@@ -62,7 +62,7 @@ GraphFace* Graph::convertFace(Graph* graphB, GraphFace* faceB) {
     return faceB ? faces[graphB->faceIndex(faceB)] : nullptr;
 }
 
-int Graph::vertexIndex(VertexNet* vertex) const {
+int Graph::vertexIndex(GraphVertex* vertex) const {
     return vertex ? (int)(std::find(vertices.begin(), vertices.end(), vertex) - vertices.begin()) : -1;
 }
 
@@ -78,13 +78,13 @@ int Graph::faceIndex(GraphFace* face) const {
     return face ? (int)(std::find(faces.begin(), faces.end(), face) - faces.begin()) : -1;
 }
 
-Graph* Graph::import(const Json & json, Shape3D* shape) {
+Graph* Graph::import(const Json & json, Primitives* shape) {
     auto interior = json["interior"];
 
     auto result = new Graph();
 
     for (const auto& vertex : interior["vertices"]) {
-        (new VertexNet())->connectNet(result);
+        (new GraphVertex())->connectNet(result);
     }
     for (const auto& edge : interior["edges"]) {
         (new GraphEdge())->connectNet(result);

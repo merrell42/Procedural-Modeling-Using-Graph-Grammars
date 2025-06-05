@@ -13,10 +13,10 @@
 
 namespace ms {
 
-std::unique_ptr<NetTransistor> NetTransistor::buildNormally(
+std::unique_ptr<RuleApplier> RuleApplier::buildNormally(
     const Transition& transition, Model* model, int dims) {
     
-    auto result = std::make_unique<NetTransistor>();
+    auto result = std::make_unique<RuleApplier>();
     result->create(transition, model, dims);
     
     if (result->effort > 0) {
@@ -26,7 +26,7 @@ std::unique_ptr<NetTransistor> NetTransistor::buildNormally(
     return result;
 }
 
-void NetTransistor::create(const Transition& transition, Model* model_, int dims_) {
+void RuleApplier::create(const Transition& transition, Model* model_, int dims_) {
     startNet = transition.startNet;
     model = model_;
     endNet = transition.endNet;
@@ -57,7 +57,7 @@ void NetTransistor::create(const Transition& transition, Model* model_, int dims
     }
 }
 
-void NetTransistor::addEdge(Edge* edge, bool includeLength, bool addToGraph) {
+void RuleApplier::addEdge(Edge* edge, bool includeLength, bool addToGraph) {
     double angle = edge->getEdgeType()->getAngle();
     
     EdgeData datum;
@@ -108,7 +108,7 @@ static void destroyEdges(const std::vector<std::vector<Edge*>>& edgeGroup) {
     }
 }
 
-EditGraph* NetTransistor::createGraph() {
+EditGraph* RuleApplier::createGraph() {
     auto* endGraph = endNet;
     auto& endVertices = endGraph->getVertices();
     auto& endEdges = endGraph->getEdges();
@@ -324,7 +324,7 @@ EditGraph* NetTransistor::createGraph() {
                 faceHalfEdgesI.push_back(halfToHalfEdge(half));
             }
 
-            TransistorPath* path = TransistorPath::createPath(faceHalfEdgesI, merged->edges, &edges);
+            MorphismPath* path = MorphismPath::createPath(faceHalfEdgesI, merged->edges, &edges);
             HalfEdge* pathEnd = halfToHalfEdge(endHalf);
             std::vector<HalfEdge*> pathHalfEdges = { faceHalfEdgesI[0], pathEnd };
             path->setHalfEdges(pathHalfEdges);
@@ -368,19 +368,19 @@ EditGraph* NetTransistor::createGraph() {
     return merged;
 }
 
-bool NetTransistor::solve() {
+bool RuleApplier::solve() {
     setup();
     return sampleSolutionSpace();
 }
 
-void NetTransistor::setup() {
+void RuleApplier::setup() {
     timer->start("Setup");
     setupFaceCentric();
     timer->stop("Setup");
 }
 
 // Static helper function.
-void NetTransistor::constrainVertexIds(std::vector<int>& vertexIds, NetTransistorSettings* settings) {
+void RuleApplier::constrainVertexIds(std::vector<int>& vertexIds, RuleApplierSettings* settings) {
     std::vector vIds(vertexIds);
     while (!vIds.empty()) {
         std::vector<int> newVIdsToConstrain;
@@ -409,7 +409,7 @@ void NetTransistor::constrainVertexIds(std::vector<int>& vertexIds, NetTransisto
 }
 
 // Connect a new face as an inner component or hole to this one.
-void NetTransistor::addFixedFace(Face* fixedFaceA, Face* fixedFaceB, double d) {
+void RuleApplier::addFixedFace(Face* fixedFaceA, Face* fixedFaceB, double d) {
     auto* fPlace = settings->getFace(fixedFaceB->getId());
 
     // Check if face is already fixed
@@ -427,7 +427,7 @@ void NetTransistor::addFixedFace(Face* fixedFaceA, Face* fixedFaceB, double d) {
     fPlace->makeFixed(fixedFace);
 }
 
-std::vector<double> NetTransistor::getExtents() {
+std::vector<double> RuleApplier::getExtents() {
     auto extents = globalSettings["Extents"].get<std::vector<double>>();
     if (dims == 2) {
         extents[2] = 0;
@@ -435,11 +435,11 @@ std::vector<double> NetTransistor::getExtents() {
     return extents;
 }
 
-void NetTransistor::setupFaceCentric() {
+void RuleApplier::setupFaceCentric() {
     auto extents = getExtents();
     const Vec3 lower(1, 1, 0);
     const Vec3 upper(extents[0] - 1, extents[1] - 1, extents[2]);
-    auto settingsNew = std::make_unique<NetTransistorSettings>(lower, upper);
+    auto settingsNew = std::make_unique<RuleApplierSettings>(lower, upper);
     this->settings = std::move(settingsNew);
     freeVertices.clear();
 
@@ -532,7 +532,7 @@ void NetTransistor::setupFaceCentric() {
     constrainVertexIds(vertexIds, settings.get());
 }
 
-Limits NetTransistor::findLimits() {
+Limits RuleApplier::findLimits() {
     std::vector<double> minLimit;
     std::vector<double> maxLimit;
     auto extents = getExtents();
@@ -566,7 +566,7 @@ Limits NetTransistor::findLimits() {
     return { minLimit, maxLimit };
 }
 
-bool NetTransistor::hasViolations(const std::vector<double>& positions, const Limits& limits) {
+bool RuleApplier::hasViolations(const std::vector<double>& positions, const Limits& limits) {
     for (size_t i = 0; i < positions.size(); i++) {
         double value = positions[i];
         if (value < limits.min[i] || value > limits.max[i]) {
@@ -576,7 +576,7 @@ bool NetTransistor::hasViolations(const std::vector<double>& positions, const Li
     return false;
 }
 
-Range NetTransistor::getRange(
+Range RuleApplier::getRange(
     const std::vector<int>& orderIds,
     const std::vector<OrderInfo>& orderInfo
 ) {
@@ -601,7 +601,7 @@ Range NetTransistor::getRange(
     return range;
 }
 
-void NetTransistor::setPlacements(
+void RuleApplier::setPlacements(
     const std::vector<int>& orderIds,
     const std::vector<OrderInfo>& orderInfo
 ) {
@@ -617,7 +617,7 @@ void NetTransistor::setPlacements(
     }
 }
 
-std::pair<std::vector<double>, bool> NetTransistor::sampleFaceCentric() {
+std::pair<std::vector<double>, bool> RuleApplier::sampleFaceCentric() {
     if (ground) {
         std::vector<double> result;
         auto& vertices = endNet->getVertices();
@@ -703,7 +703,7 @@ std::pair<std::vector<double>, bool> NetTransistor::sampleFaceCentric() {
     return std::make_pair(positions, true);
 }
 
-bool NetTransistor::sampleSolutionSpace() {
+bool RuleApplier::sampleSolutionSpace() {
     timer->start("Sample Solutions");
 
     effort = 0;
@@ -734,17 +734,17 @@ bool NetTransistor::sampleSolutionSpace() {
     }
 }
 
-std::vector<TransistorPath*> NetTransistor::getFreeablePaths() const {
-    std::vector<TransistorPath*> result;
+std::vector<MorphismPath*> RuleApplier::getFreeablePaths() const {
+    std::vector<MorphismPath*> result;
     std::copy_if(openPaths.begin(), openPaths.end(), std::back_inserter(result),
-        [](TransistorPath* path) {
+        [](MorphismPath* path) {
             return path->halfedges[0] != path->halfedges[1] &&
                 path->extendableness() > 0;
         });
     return result;
 }
 
-void NetTransistor::freeVertex() {
+void RuleApplier::freeVertex() {
     auto freeablePaths = getFreeablePaths();
     if (freeablePaths.empty()) {
         effort++;
@@ -771,7 +771,7 @@ void NetTransistor::freeVertex() {
     }
 }
 
-void NetTransistor::freeOneVertex(Vertex* vertex) {
+void RuleApplier::freeOneVertex(Vertex* vertex) {
     auto vertexHalfEdges = vertex->getHalfEdges();
 
     // Process all vertex halfedges
@@ -788,10 +788,10 @@ void NetTransistor::freeOneVertex(Vertex* vertex) {
     for (auto* vHalfEdge : vertexHalfEdges) {
         auto* edge = vHalfEdge->getEdge();
         
-        auto findPath0 = [vHalfEdge](TransistorPath* path) { 
+        auto findPath0 = [vHalfEdge](MorphismPath* path) { 
             return path->halfedges[0] == vHalfEdge; 
         };
-        auto findPath1 = [vHalfEdge](TransistorPath* path) { 
+        auto findPath1 = [vHalfEdge](MorphismPath* path) { 
             return path->halfedges[1] == vHalfEdge; 
         };
 
@@ -814,7 +814,7 @@ void NetTransistor::freeOneVertex(Vertex* vertex) {
             (*path1)->expandForward();
         } else {
             // Create new path
-            auto* path = new TransistorPath({}, &edges);
+            auto* path = new MorphismPath({}, &edges);
             path->setHalfEdges({vHalfEdge, vHalfEdge});
             path->expandBackward();
             path->expandForward();
@@ -823,7 +823,7 @@ void NetTransistor::freeOneVertex(Vertex* vertex) {
     }
 }
 
-bool NetTransistor::placeVertexPositions(const std::vector<double>& positions) {
+bool RuleApplier::placeVertexPositions(const std::vector<double>& positions) {
     // Place vertices at their new positions
     for (size_t i = 0; i < freeVertices.size(); i++) {
         Vec3 position(
@@ -906,7 +906,7 @@ bool NetTransistor::placeVertexPositions(const std::vector<double>& positions) {
     return true;
 }
 
-void NetTransistor::reject() {
+void RuleApplier::reject() {
     delete graph;
     graph = nullptr;
     

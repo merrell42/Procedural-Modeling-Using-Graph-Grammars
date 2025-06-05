@@ -4,32 +4,32 @@
 
 namespace ms {  
 
-void NetTransistorSettings::setVertex(int id, std::unique_ptr<VertexPlacement> vPlace) {
+void RuleApplierSettings::setVertex(int id, std::unique_ptr<VertexPlacement> vPlace) {
     vertexPlacements[id] = std::move(vPlace);
 }
 
-void NetTransistorSettings::setEdge(int id, std::unique_ptr<EdgePlacement> ePlace) {
+void RuleApplierSettings::setEdge(int id, std::unique_ptr<EdgePlacement> ePlace) {
     edgePlacements[id] = std::move(ePlace);
 }
 
-void NetTransistorSettings::setFace(int id, std::unique_ptr<FacePlacement> fPlace) {
+void RuleApplierSettings::setFace(int id, std::unique_ptr<FacePlacement> fPlace) {
     facePlacements[id] = std::move(fPlace);
 }
 
-void NetTransistorSettings::addToOrder(int id, const std::string& type, int vertexId) {
+void RuleApplierSettings::addToOrder(int id, const std::string& type, int vertexId) {
     if (std::find(orderIds.begin(), orderIds.end(), id) == orderIds.end()) {
         orderIds.push_back(id);
         orderInfo.push_back({type, vertexId});
     }
 }
 
-int NetTransistorSettings::createFace(const Vec3& normal) {
+int RuleApplierSettings::createFace(const Vec3& normal) {
     int id = newFaceCounter--;
     facePlacements[id] = std::make_unique<FacePlacement>(normal, id, this, nullptr /* unsure about this*/);
     return id;
 }
 
-void NetTransistorSettings::mergeFace(int idA, int idB) {
+void RuleApplierSettings::mergeFace(int idA, int idB) {
     uniqueFaceMap[idB] = idA;
     
     // Update all face mappings
@@ -61,7 +61,7 @@ void NetTransistorSettings::mergeFace(int idA, int idB) {
     }
 }
 
-int NetTransistorSettings::findBasisOrder(const int basisId) {
+int RuleApplierSettings::findBasisOrder(const int basisId) {
     for (size_t index = 0; index < orderIds.size(); ++index) {
         if (orderIds[index] == basisId && orderInfo[index].type == "face") {
             return static_cast<int>(index);

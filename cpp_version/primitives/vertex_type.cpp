@@ -64,7 +64,7 @@ void VertexType::setSpliced(bool spliced) {
     this->spliced = spliced;
 }
 
-VertexType* VertexType::import(const Json& json, Shape3D* shape) {    
+VertexType* VertexType::import(const Json& json, Primitives* shape) {    
     auto result = new VertexType();
     bool spliced = json["spliced"];
     result->spliced = spliced;

@@ -21,9 +21,9 @@ struct OrderInfo {
     int vertexId;
 };
 
-class NetTransistorSettings {
+class RuleApplierSettings {
 public:
-    NetTransistorSettings(Vec3 lower, Vec3 upper) : lower(lower), upper(upper) {};
+    RuleApplierSettings(Vec3 lower, Vec3 upper) : lower(lower), upper(upper) {};
 
     VertexPlacement* getVertex(int id) { return vertexPlacements[id].get(); }
     EdgePlacement* getEdge(int id) { return edgePlacements[id].get(); }
