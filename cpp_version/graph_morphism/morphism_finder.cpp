@@ -25,7 +25,7 @@ void MorphismFinder::reset() {
     groundFace = nullptr;
 }
 
-Morphism* MorphismFinder::findMap(Graph* netB) {
+Morphism* MorphismFinder::findMorphism(Graph* graphB) {
     if (!groundFace && groundEnabled) {
         auto faces = model->getCurrent()->getFaceMap();
         if (!faces.empty()) {
@@ -33,9 +33,9 @@ Morphism* MorphismFinder::findMap(Graph* netB) {
         }
     }
 
-    auto verticesB = netB->getVertices();
+    auto verticesB = graphB->getVertices();
     if (verticesB.empty()) {
-        return findStarterMap(netB);
+        return findStarterMorphism(graphB);
     }
 
     // Start with a vertex that is not spliced
@@ -61,15 +61,15 @@ Morphism* MorphismFinder::findMap(Graph* netB) {
         auto vertexA = it->second;
         if ((isConnector || vertexA->getType() == vertexType)) {
             nodesModified = false;
-            auto* info = new MorphismInfo(model, netB);
+            auto* info = new MorphismInfo(model, graphB);
             auto* state = new MorphismState(info);
-            auto* map = assignVertex(state, vertexA, index1);
+            auto* morphism = assignVertex(state, vertexA, index1);
                 
-            if (map) {
-                addOuterFaces(map, netB);
+            if (morphism) {
+                addOuterFaces(morphism, graphB);
                 delete state;
                 delete info;
-                return map;
+                return morphism;
             } else if (nodesModified) {
                 model->reject();
             }
@@ -97,15 +97,15 @@ Morphism* MorphismFinder::assignVertex(MorphismState* state, Vertex* vertexA, in
     return findContinue(state);
 }
 
-void MorphismFinder::addOuterFaces(Morphism* map, Graph* netB) {
+void MorphismFinder::addOuterFaces(Morphism* morphism, Graph* graphB) {
     // TODO: Implement this. For a closed building popping out of the ground. The ground face is the outer face.
-    /*map->outerFaces.clear();
-    auto outerFaces = netB->getOuterFaces();
+    /*morphism->outerFaces.clear();
+    auto outerFaces = graphB->getOuterFaces();
     for (size_t fIndex = 0; fIndex < outerFaces.size(); fIndex++) {
         auto* outerFaceB = outerFaces[fIndex];
         auto* outerHalf = outerFaceB->outerComponent;
-        int vIndex = netB->getInterior()->vertexIndex(outerHalf->getVertex());
-        map->outerFaces.push_back(map->vertexBtoA[vIndex]->getHalfEdges()[outerHalf->vertexIndex]->getFace());
+        int vIndex = graphB->getInterior()->vertexIndex(outerHalf->getVertex());
+        morphism->outerFaces.push_back(morphism->vertexBtoA[vIndex]->getHalfEdges()[outerHalf->vertexIndex]->getFace());
     }*/
 }
 
@@ -119,7 +119,7 @@ Face* MorphismFinder::findFace(FaceType* faceType) {
     }
 
     auto facesA = model->getCurrent()->getFaceMap();
-    // TODO: This conversion from map to vector could be slow with many faces.
+    // TODO: This conversion from morphism to vector could be slow with many faces.
     // We could just select random samples.
     std::vector<Face*> facesVec;
     for (const auto& [_, face] : facesA) {
@@ -145,33 +145,33 @@ Face* MorphismFinder::findFace(FaceType* faceType) {
     return nullptr;
 }
 
-Morphism* MorphismFinder::findStarterMap(Graph* netB) {
-    auto info = std::make_unique<MorphismInfo>(model, netB);
+Morphism* MorphismFinder::findStarterMorphism(Graph* graphB) {
+    auto info = std::make_unique<MorphismInfo>(model, graphB);
     auto state = std::make_unique<MorphismState>(info.get());
 
-    auto faces = netB->getFaces();
+    auto faces = graphB->getFaces();
     if (faces.empty()) {
-        return state->getMap();
+        return state->getMorphism();
     }
 
     auto faceMap = model->getCurrent()->getFaceMap();
     if (!groundEnabled || faceMap.empty()) {
-        return state->getMap();
+        return state->getMorphism();
     }
 
-    auto bFaces = netB->getBFaces();
+    auto bFaces = graphB->getBFaces();
     if (bFaces.size() != 1) {
         std::cout << "Expect one boundary face." << std::endl;
         return nullptr;
     }
     Face* face = findFace(bFaces[0]->getType());
     if (face) {
-        state->getMap()->faceBtoA = {face};
+        state->getMorphism()->faceBtoA = {face};
 
         // The web version supports cases where we have disconnected boundaries and
         // do a volume splice through castVolumeRaySeries.
         // This was always hacky and so I'm not using it here.
-        return state->getMap();
+        return state->getMorphism();
     }
     return nullptr;
 }
@@ -188,7 +188,7 @@ Morphism* MorphismFinder::findContinue(MorphismState* state) {
         queue.erase(queue.begin());
         return spliceHalfEdge(halfedgeData, state);
     }
-    return state->getMap();
+    return state->getMorphism();
 }
 
 bool neighboringHoles(Edge* edge, GraphEdge* edgeB) {
@@ -253,7 +253,7 @@ Morphism* MorphismFinder::spliceHalfEdge(
 ) {
     GraphHalfEdge* halfB = halfedgeData.halfB;
     Vertex* vertexA = halfedgeData.vertexA;
-    Graph* netB = state->getInfo()->graphB;
+    Graph* graphB = state->getInfo()->graphB;
 
     // Find end of splice chain.
     GraphHalfEdge* endB = halfB;
@@ -262,7 +262,7 @@ Morphism* MorphismFinder::spliceHalfEdge(
     }
 
     int vIndexB = indexOf(state->getInfo()->verticesB, endB->getVertex());
-    if (state->getMap()->vertexBtoA[vIndexB]) {
+    if (state->getMorphism()->vertexBtoA[vIndexB]) {
         return findContinue(state);
     }
 
@@ -302,9 +302,9 @@ Morphism* MorphismFinder::spliceHalfEdge(
     Vertex* vertexA0 = intersectHalfEdge->getVertex();
     Vertex* vertexA1 = intersectHalfEdge->next()->getVertex();
 
-    int vIndex0 = indexOf(state->getMap()->getVertexBtoA(), vertexA0);
-    int vIndex1 = indexOf(state->getMap()->getVertexBtoA(), vertexA1);
-    int eIndex = indexOf(state->getMap()->getEdgeBtoA(), intersectHalfEdge->getEdge());
+    int vIndex0 = indexOf(state->getMorphism()->getVertexBtoA(), vertexA0);
+    int vIndex1 = indexOf(state->getMorphism()->getVertexBtoA(), vertexA1);
+    int eIndex = indexOf(state->getMorphism()->getEdgeBtoA(), intersectHalfEdge->getEdge());
 
     if (vIndex0 < 0 && vIndex1 < 0 && eIndex < 0) {
         // Split once for unmatched edge and vertices.
@@ -314,8 +314,8 @@ Morphism* MorphismFinder::spliceHalfEdge(
     } else if (vIndex0 >= 0 && vIndex1 >= 0 && eIndex >= 0) {
         // Split three times for matched edge and vertices
         bool isAtStart0 = intersectHalfEdge->getIsAtStart();
-        GraphVertex* vertexB0 = netB->getVertices()[vIndex0];
-        GraphVertex* vertexB1 = netB->getVertices()[vIndex1];
+        GraphVertex* vertexB0 = graphB->getVertices()[vIndex0];
+        GraphVertex* vertexB1 = graphB->getVertices()[vIndex1];
 
         bool isConnector0 = (vertexB0->connectorIndex() >= 0);
         bool isConnector1 = (vertexB1->connectorIndex() >= 0);
@@ -345,12 +345,12 @@ Morphism* MorphismFinder::spliceHalfEdge(
 
         int vIndexCon = isConnector0 ? vIndex0 : vIndex1;
         if (connectorAtStart) {
-            state->getMap()->vertexBtoA[vIndexCon] = splitVertices[2];
-            state->getMap()->edgeBtoA[eIndex] = splitEdges[3];
+            state->getMorphism()->vertexBtoA[vIndexCon] = splitVertices[2];
+            state->getMorphism()->edgeBtoA[eIndex] = splitEdges[3];
             return assignVertex(state, splitVertices[0], vIndexB);
         } else {
-            state->getMap()->vertexBtoA[vIndexCon] = splitVertices[0];
-            state->getMap()->edgeBtoA[eIndex] = splitEdges[0];
+            state->getMorphism()->vertexBtoA[vIndexCon] = splitVertices[0];
+            state->getMorphism()->edgeBtoA[eIndex] = splitEdges[0];
             return assignVertex(state, splitVertices[2], vIndexB);
         }
     } else if (vIndex0 < 0 || vIndex1 < 0 || eIndex < 0) {
@@ -362,7 +362,7 @@ Morphism* MorphismFinder::spliceHalfEdge(
 
 Morphism* MorphismFinder::assignHalfEdge(HalfEdge* halfedgeA, GraphHalfEdge* halfB, MorphismState* state) {
     auto info = state->getInfo();
-    auto map = state->getMap();
+    auto morphism = state->getMorphism();
 
     GraphVertex* vertexB = halfB->getNext()->getVertex();
     int vIndexB = indexOf(info->verticesB, vertexB);
@@ -370,7 +370,7 @@ Morphism* MorphismFinder::assignHalfEdge(HalfEdge* halfedgeA, GraphHalfEdge* hal
     bool isConnector = vertexB->connectorIndex() >= 0;
     auto vertexType = vertexB->getType();
 
-    if (!isConnector && vertexType->getSpliced() && map->vertexBtoA[vIndexB] == 0) {
+    if (!isConnector && vertexType->getSpliced() && morphism->vertexBtoA[vIndexB] == 0) {
         halfedgeA->getEdge()->fullSplit(random());
         nodesModified = true;
     }
@@ -378,12 +378,12 @@ Morphism* MorphismFinder::assignHalfEdge(HalfEdge* halfedgeA, GraphHalfEdge* hal
     Edge* edgeA = halfedgeA->getEdge();
     GraphEdge* edgeB = halfB->getEdge();
     int eIndexB = indexOf(info->edgesB, edgeB);
-    map->edgeBtoA[eIndexB] = edgeA;
+    morphism->edgeBtoA[eIndexB] = edgeA;
 
     Vertex* vertexA = halfedgeA->next()->getVertex();
-    int vIndexA = indexOf(map->vertexBtoA, vertexA);
+    int vIndexA = indexOf(morphism->vertexBtoA, vertexA);
 
-    if (vIndexA < map->vertexBtoA.size()) {
+    if (vIndexA < morphism->vertexBtoA.size()) {
         if (isConnector || vIndexA == vIndexB) {
             // We've already matched the vertex at the end of halfB.
             return findContinue(state);

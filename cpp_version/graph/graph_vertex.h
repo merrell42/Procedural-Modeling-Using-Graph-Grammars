@@ -36,7 +36,7 @@ public:
     int connectorIndex() const;
     GraphEdge* interiorEdge() const;
 
-    GraphVertex* connectNet(Graph* graph);
+    GraphVertex* connectGraph(Graph* graph);
     void setHalfEdge(GraphHalfEdge* halfEdge, int index);
     void copyConnection(const GraphVertex* copy);
 

@@ -7,49 +7,49 @@
 
 namespace ms {
 
-GraphMutator::GraphMutator(GraphGrammar* hierarchy, Model* model/*, NodeStats* nodeStats*/)
+GraphMutator::GraphMutator(GraphGrammar* hierarchy, Model* model)
     : hierarchy(hierarchy)
     , model(model)
     , edgeTypeStarted() {
     
-    bool groundEnabled = hierarchy->getGroundTransitions().size() > 0;
-    mapFinder = std::make_unique<MorphismFinder>(model, groundEnabled);
+    bool groundEnabled = hierarchy->getGroundProductions().size() > 0;
+    morphismFider = std::make_unique<MorphismFinder>(model, groundEnabled);
 }
 
 void GraphMutator::reset() {
-    mapFinder->reset();
+    morphismFider->reset();
 }
 
 bool GraphMutator::addStartInstance(bool useGround) {
-    auto transition = hierarchy->getStarterTransition(useGround);
-    return applyTransition(transition);
+    auto production = hierarchy->getStarterProduction(useGround);
+    return applyProduction(production);
 }
 
 bool GraphMutator::changeRandomInstance(bool justDestructible) {
-    auto transition = justDestructible ?
-        hierarchy->getRemoveTransition() :
-        hierarchy->getTransition();
-    return applyTransition(transition);
+    auto production = justDestructible ?
+        hierarchy->getRemoveProduction() :
+        hierarchy->getProduction();
+    return applyProduction(production);
 }
 
-bool GraphMutator::applyTransition(Transition transition) {
-    if (!transition.startNet && !transition.endNet) {
+bool GraphMutator::applyProduction(Production production) {
+    if (!production.startGraph && !production.endGraph) {
         return false;
     }
-    timer->start("Find Transition Map");
-    auto morphism = mapFinder->findMap(transition.startNet);
-    timer->stop("Find Transition Map");
+    timer->start("Find Production Map");
+    auto morphism = morphismFider->findMorphism(production.startGraph);
+    timer->stop("Find Production Map");
 
     if (!morphism) {
         return false;
     }
 
-    transition.map = morphism;
+    production.morphism = morphism;
 
     timer->start("Build Normally");
 
     int dims = hierarchy->getDims();
-    auto transistor = RuleApplier::buildNormally(transition, model, dims);
+    auto transistor = RuleApplier::buildNormally(production, model, dims);
     timer->stop("Build Normally");
 
     if (!transistor) {

@@ -8,7 +8,7 @@ void VertexPlacement::initialize() {
 
     for (auto* halfedge : halfedges) {
         if (!halfedge) {
-            // Happens in the ground transition.
+            // Happens in the ground production.
             continue;
         }
         Face* face = halfedge->getFace();

@@ -16,11 +16,11 @@ Morphism* Morphism::copy() const {
 }
 
 Morphism* Morphism::create(const MorphismInfo& info) {
-    auto map = new Morphism();
-    auto netB = info.graphB;
-    map->vertexBtoA.resize(netB->getVertices().size(), nullptr);
-    map->edgeBtoA.resize(netB->getEdges().size(), nullptr);
-    return map;
+    auto morphism = new Morphism();
+    auto graphB = info.graphB;
+    morphism->vertexBtoA.resize(graphB->getVertices().size(), nullptr);
+    morphism->edgeBtoA.resize(graphB->getEdges().size(), nullptr);
+    return morphism;
 }
 
 } // namespace ms 

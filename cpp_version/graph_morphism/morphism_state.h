@@ -19,11 +19,11 @@ struct HalfEdgeData {
 
 class MorphismState {
 public:
-    explicit MorphismState(MorphismInfo* info, Morphism* map = nullptr);
+    explicit MorphismState(MorphismInfo* info, Morphism* morphism = nullptr);
     ~MorphismState() = default;
 
     MorphismInfo* getInfo() const { return info; }
-    Morphism* getMap() { return map; }
+    Morphism* getMorphism() { return morphism; }
     std::vector<HalfEdgeData>& getQueue() { return queue; }
     std::vector<HalfEdgeData>& getSpliceQueue() { return spliceQueue; }
 
@@ -33,7 +33,7 @@ public:
 
 private:
     MorphismInfo* info;
-    Morphism* map;
+    Morphism* morphism;
     std::vector<HalfEdgeData> queue;
     std::vector<HalfEdgeData> spliceQueue;
 };

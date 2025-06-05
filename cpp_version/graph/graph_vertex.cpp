@@ -13,8 +13,8 @@ GraphVertex::GraphVertex()
     , type(nullptr)
     , id(nextId++) {}
 
-GraphVertex* GraphVertex::connectNet(Graph* net) {
-    graph = net;
+GraphVertex* GraphVertex::connectGraph(Graph* newGraph) {
+    graph = newGraph;
     graph->addVertex(this);
     return this;
 }
@@ -38,14 +38,14 @@ int GraphVertex::connectorIndex() const {
 }
 
 void GraphVertex::copyConnection(const GraphVertex* copy) {
-    auto* copyNet = copy->getGraph();
+    auto* copyGraph = copy->getGraph();
 
     halfEdges.clear();
     auto copyHalfEdges = copy->getHalfEdges();
     halfEdges.reserve(copyHalfEdges.size());
     
     for (auto* halfEdge : copyHalfEdges) {
-        halfEdges.push_back(halfEdge ? graph->convertHalfEdge(copyNet, halfEdge) : nullptr);
+        halfEdges.push_back(halfEdge ? graph->convertHalfEdge(copyGraph, halfEdge) : nullptr);
     }
 }
 

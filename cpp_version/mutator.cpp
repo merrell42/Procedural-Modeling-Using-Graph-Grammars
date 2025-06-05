@@ -99,7 +99,7 @@ void Mutator::mutate() {
             }
         }
 
-        if (globalSettings["Fewer Start Transitions"].get<bool>() && model->numSteps > 1) {
+        if (globalSettings["Fewer Start Productions"].get<bool>() && model->numSteps > 1) {
             return;
         }
 

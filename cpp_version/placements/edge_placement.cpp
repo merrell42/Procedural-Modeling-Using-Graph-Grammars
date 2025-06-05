@@ -19,7 +19,7 @@ EdgePlacement::EdgePlacement(Edge* edge, int id, RuleApplierSettings* settings)
     auto halfedges = edge->getHalfEdges();
     for (auto* halfedge : halfedges) {
         if (halfedge) {
-            // Can be null in the ground transition.
+            // Can be null in the ground production.
             vertexIds.push_back(halfedge->getVertex()->getId());
         }
     }

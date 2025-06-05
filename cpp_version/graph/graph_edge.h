@@ -24,7 +24,7 @@ public:
     Graph* getGraph() const;
     int getId() const;
 
-    GraphEdge* connectNet(Graph* graph);
+    GraphEdge* connectGraph(Graph* graph);
     void addHalfEdge(GraphHalfEdge* halfEdge, int index);
     void removeHalfEdge(GraphHalfEdge* halfEdge, int index);
     void copyConnection(const GraphEdge* copy);

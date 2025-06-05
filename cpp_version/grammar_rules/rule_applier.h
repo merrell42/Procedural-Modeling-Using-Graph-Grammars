@@ -16,7 +16,7 @@
 
 namespace ms {
 
-struct Transition;
+struct Production;
 class MorphismPath;
 class Graph;
 class Edge;
@@ -54,12 +54,12 @@ public:
     static constexpr double minLength = 0;
 
     // Static factory method
-    static std::unique_ptr<RuleApplier> buildNormally(const Transition& transition, 
+    static std::unique_ptr<RuleApplier> buildNormally(const Production& production, 
                                                        Model* model, int dims);
 
     bool solve();
     void setup();
-    void create(const Transition& transition, Model* model, int dims);
+    void create(const Production& production, Model* model, int dims);
     void addEdge(Edge* edge, bool includeLength, bool addToGraph);
     EditGraph* createGraph();
     void reject();
@@ -67,9 +67,9 @@ public:
     std::vector<double> getExtents();
 
 private:
-    Graph* startNet = nullptr;
-    Graph* endNet = nullptr;
-    Morphism* map = nullptr;
+    Graph* startGraph = nullptr;
+    Graph* endGraph = nullptr;
+    Morphism* morphism = nullptr;
     bool ground = false;
     int dims = 2;
     

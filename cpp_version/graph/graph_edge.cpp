@@ -25,8 +25,8 @@ int GraphEdge::getId() const {
     return id;
 }
 
-GraphEdge* GraphEdge::connectNet(Graph* net) {
-    graph = net;
+GraphEdge* GraphEdge::connectGraph(Graph* newGraph) {
+    graph = newGraph;
     graph->addEdge(this);
     return this;
 }
@@ -45,7 +45,7 @@ void GraphEdge::removeHalfEdge(GraphHalfEdge* halfEdge, int index) {
 }
 
 void GraphEdge::copyConnection(const GraphEdge* copy) {
-    auto* copyNet = copy->getGraph();
+    auto* graphCopy = copy->getGraph();
     auto copyHalfEdges = copy->getHalfEdges();
     
     halfEdges.clear();
@@ -53,7 +53,7 @@ void GraphEdge::copyConnection(const GraphEdge* copy) {
     
     for (size_t i = 0; i < copyHalfEdges.size(); i++) {
         for (auto* half : copyHalfEdges[i]) {
-            halfEdges[i].push_back(graph->convertHalfEdge(copyNet, half));
+            halfEdges[i].push_back(graph->convertHalfEdge(graphCopy, half));
         }
     }
 }

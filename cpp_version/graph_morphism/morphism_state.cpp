@@ -9,12 +9,12 @@
 
 namespace ms {
 
-MorphismState::MorphismState(MorphismInfo* info, Morphism* existingMap)
+MorphismState::MorphismState(MorphismInfo* info, Morphism* existingMorphism)
     : info(info) {
-    if (existingMap) {
-        map = existingMap->copy();
+    if (existingMorphism) {
+        morphism = existingMorphism->copy();
     } else {
-        map = Morphism::create(*info);
+        morphism = Morphism::create(*info);
     }
 }
 
@@ -24,7 +24,7 @@ void MorphismState::setQueue(const std::vector<HalfEdgeData>& newQueue) {
 
 void MorphismState::assignVertex(Vertex* vertexA, int indexB) {
     auto* vertexB = info->graphB->getVertices()[indexB];
-    map->vertexBtoA[indexB] = vertexA;
+    morphism->vertexBtoA[indexB] = vertexA;
 
     // Add all non-spliced half edges to queue and spliced ones to spliceQueue.
     for (auto* halfB : vertexB->getHalfEdges()) {
@@ -40,7 +40,7 @@ void MorphismState::assignVertex(Vertex* vertexA, int indexB) {
 }
 
 MorphismState* MorphismState::copy() const {
-    auto* result = new MorphismState(info, map);
+    auto* result = new MorphismState(info, morphism);
     result->queue = queue;
     result->spliceQueue = spliceQueue;
     return result;

@@ -14,10 +14,10 @@
 namespace ms {
 
 std::unique_ptr<RuleApplier> RuleApplier::buildNormally(
-    const Transition& transition, Model* model, int dims) {
+    const Production& production, Model* model, int dims) {
     
     auto result = std::make_unique<RuleApplier>();
-    result->create(transition, model, dims);
+    result->create(production, model, dims);
     
     if (result->effort > 0) {
         result->reject();
@@ -26,13 +26,13 @@ std::unique_ptr<RuleApplier> RuleApplier::buildNormally(
     return result;
 }
 
-void RuleApplier::create(const Transition& transition, Model* model_, int dims_) {
-    startNet = transition.startNet;
+void RuleApplier::create(const Production& production, Model* model_, int dims_) {
+    startGraph = production.startGraph;
     model = model_;
-    endNet = transition.endNet;
+    endGraph = production.endGraph;
  
-    map = transition.map;
-    ground = transition.ground;
+    morphism = production.morphism;
+    ground = production.ground;
     dims = dims_;
 
     effort = 0;
@@ -109,7 +109,6 @@ static void destroyEdges(const std::vector<std::vector<Edge*>>& edgeGroup) {
 }
 
 EditGraph* RuleApplier::createGraph() {
-    auto* endGraph = endNet;
     auto& endVertices = endGraph->getVertices();
     auto& endEdges = endGraph->getEdges();
     EditGraph* merged = new EditGraph();
@@ -139,11 +138,11 @@ EditGraph* RuleApplier::createGraph() {
 
     std::vector<std::vector<Edge*>> splitEdges;
     std::vector<std::vector<HalfEdge*>> splitHalfEdges;
-    if (map) {
-        splitEdges.resize(map->edgeBtoA.size());
-        splitHalfEdges.resize(map->edgeBtoA.size());
-        for (size_t i = 0; i < map->edgeBtoA.size(); ++i) {
-            splitEdges[i] = {map->edgeBtoA[i]};
+    if (morphism) {
+        splitEdges.resize(morphism->edgeBtoA.size());
+        splitHalfEdges.resize(morphism->edgeBtoA.size());
+        for (size_t i = 0; i < morphism->edgeBtoA.size(); ++i) {
+            splitEdges[i] = { morphism->edgeBtoA[i]};
         }
     }
 
@@ -176,7 +175,7 @@ EditGraph* RuleApplier::createGraph() {
             }
         }
     }
-    if (startNet->getId() == 0) {
+    if (startGraph->getId() == 0) {
         int x = 0;
     }
 
@@ -203,8 +202,8 @@ EditGraph* RuleApplier::createGraph() {
 
             int connectorIndex = hVertex->connectorIndex();
             if (connectorIndex >= 0) {
-                int startIndex = Util::findIndex(startNet->getEdges(),
-                    startNet->getBVertices()[connectorIndex]->interiorEdge());
+                int startIndex = Util::findIndex(startGraph->getEdges(),
+                    startGraph->getBVertices()[connectorIndex]->interiorEdge());
                 
                 if (splitEdges[startIndex].size() == 1) {
                     int count = 0;
@@ -248,10 +247,10 @@ EditGraph* RuleApplier::createGraph() {
         for (size_t e = 0; e < edgeHalfs.size(); e++) {
             GraphHalfEdge* halfNext = edgeHalfs[e][0]->getNext();
             if (!halfNext->getEdge()) {
-                int boundaryIndex = indexOf(endNet->getBHalfEdges(), halfNext);
-                auto startHalf = startNet->getBHalfEdges()[boundaryIndex];
-                int edgeIndex = indexOf(startNet->getEdges(), startHalf->getPrev()->getEdge());
-                int startIndex = indexOf(startNet->getHalfEdges(), startHalf);
+                int boundaryIndex = indexOf(endGraph->getBHalfEdges(), halfNext);
+                auto startHalf = startGraph->getBHalfEdges()[boundaryIndex];
+                int edgeIndex = indexOf(startGraph->getEdges(), startHalf->getPrev()->getEdge());
+                int startIndex = indexOf(startGraph->getHalfEdges(), startHalf);
                 setHalfToHalfEdge(halfNext, splitHalfEdges[edgeIndex][e]);                
             }
         }
@@ -308,7 +307,7 @@ EditGraph* RuleApplier::createGraph() {
     }
 
     // Process boundary vertices.
-    auto& bVertices = endNet->getBVertices();
+    auto& bVertices = endGraph->getBVertices();
     for (size_t i = 0; i < bVertices.size(); i++) {
         auto halfs = bVertices[i]->getHalfEdges();
         auto it = std::find_if(halfs.begin(), halfs.end(),
@@ -345,8 +344,8 @@ EditGraph* RuleApplier::createGraph() {
 
     // Process outer faces.
     size_t faceIndex = 0;
-    for (GraphFace* outerFace : endNet->getBFaces()) {
-        faceIndex = indexOf(endNet->getFaces(), outerFace);
+    for (GraphFace* outerFace : endGraph->getBFaces()) {
+        faceIndex = indexOf(endGraph->getFaces(), outerFace);
         merged->faces[faceIndex]->setHole(true);
     }
     for (Face* face : merged->faces) {
@@ -360,7 +359,7 @@ EditGraph* RuleApplier::createGraph() {
 
     // Update outer faces map
     //map.outerFacesA.clear();
-    //for (Face* endFace : endNet->getOuterFaces()) {
+    //for (Face* endFace : endGraph->getOuterFaces()) {
     //    map.outerFacesA.push_back(
     //        halfToHalfEdge(endFace->getOuterComponent())->getFace());
     //}
@@ -489,14 +488,14 @@ void RuleApplier::setupFaceCentric() {
 
     // Process fixed faces
     fixedFaces.clear();
-    auto& faceBtoA = map->faceBtoA;
+    auto& faceBtoA = morphism->faceBtoA;
     
     for (size_t i = 0; i < faceBtoA.size(); ++i) {
         auto* fixedFaceA = faceBtoA[i];
-        auto* endFace = endNet->getBFaces()[i];
+        auto* endFace = endGraph->getBFaces()[i];
         
          if (endFace) {
-             int faceIndex = indexOf(endNet->getFaces(), endFace);
+             int faceIndex = indexOf(endGraph->getFaces(), endFace);
              auto* fixedFaceB = graph->faces[faceIndex];
              double d;
 
@@ -620,7 +619,7 @@ void RuleApplier::setPlacements(
 std::pair<std::vector<double>, bool> RuleApplier::sampleFaceCentric() {
     if (ground) {
         std::vector<double> result;
-        auto& vertices = endNet->getVertices();
+        auto& vertices = endGraph->getVertices();
 
         if (vertices.size() == 4) {
             std::vector<double> lower = {0, 0, 0};

@@ -33,7 +33,7 @@ public:
     int getId() const { return id; }
 
     // Graph operations
-    GraphHalfEdge* connectNet(Graph* net);
+    GraphHalfEdge* connectGraph(Graph* newGraph);
     void connectVertex(GraphVertex* v, int index);
     void disconnectHalfEdge();
     void connectHalfEdge(GraphHalfEdge* next);

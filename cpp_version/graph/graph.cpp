@@ -84,16 +84,16 @@ Graph* Graph::import(const Json & json, Primitives* shape) {
     auto result = new Graph();
 
     for (const auto& vertex : interior["vertices"]) {
-        (new GraphVertex())->connectNet(result);
+        (new GraphVertex())->connectGraph(result);
     }
     for (const auto& edge : interior["edges"]) {
-        (new GraphEdge())->connectNet(result);
+        (new GraphEdge())->connectGraph(result);
     }
     for (const auto& halfEdge : interior["halfEdges"]) {
-        (new GraphHalfEdge(true))->connectNet(result);
+        (new GraphHalfEdge(true))->connectGraph(result);
     }
     for (const auto& face : interior["faces"]) {
-        (new GraphFace())->connectNet(result);
+        (new GraphFace())->connectGraph(result);
     }
 
     for (size_t index = 0; index < interior["vertices"].size(); ++index) {

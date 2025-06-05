@@ -17,10 +17,10 @@ class Primitives;
 class EdgeType;
 class VertexType;
 
-struct Transition {
-    Graph* startNet;
-    Graph* endNet;
-    Morphism* map;
+struct Production {
+    Graph* startGraph;
+    Graph* endGraph;
+    Morphism* morphism;
     bool ground;
 };
 
@@ -32,25 +32,25 @@ public:
 
     void reset();
     const std::vector<std::vector<Graph*>>& getGenerations() const;
-    const std::vector<ProductionRule*>& getTransitions() const;
-    const std::vector<ProductionRule*>& getStarterTransitions() const;
-    const std::vector<ProductionRule*>& getGroundTransitions() const;
+    const std::vector<ProductionRule*>& getProductions() const;
+    const std::vector<ProductionRule*>& getStarterProductions() const;
+    const std::vector<ProductionRule*>& getGroundProductions() const;
     bool isGrounded() const;
     int getDims() const { return shape->dims; }
 
-    Transition getTransition();
-    Transition getRemoveTransition();
-    Transition getStarterTransition(bool useGround);
+    Production getProduction();
+    Production getRemoveProduction();
+    Production getStarterProduction(bool useGround);
 
 private:
     std::vector<std::vector<Graph*>> generations;
     std::vector<Graph*> nodeQueue;
-    Graph* emptyNet;
+    Graph* emptyGraph;
 
     Primitives* shape;
-    std::vector<ProductionRule*> transitions;
-    std::vector<ProductionRule*> starterTransitions;
-    std::vector<ProductionRule*> groundTransitions;
+    std::vector<ProductionRule*> productions;
+    std::vector<ProductionRule*> starterProductions;
+    std::vector<ProductionRule*> groundProductions;
     bool grounded;
 
     struct GraphSet {

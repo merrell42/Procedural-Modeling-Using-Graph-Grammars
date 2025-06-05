@@ -37,8 +37,8 @@ public:
     ~MorphismFinder() = default;
 
     // Core functionality
-    Morphism* findMap(Graph* netB);
-    Morphism* findStarterMap(Graph* netB);
+    Morphism* findMorphism(Graph* graphB);
+    Morphism* findStarterMorphism(Graph* graphB);
     void reset();
 
     // Static configuration
@@ -69,7 +69,7 @@ private:
     static void findNearestIntersection(Face* faceA, const Vec3& p0, const Vec3& p1, const Vec2& dir2, IntersectResult& nearestIntersect, int maxDim);
 
     // Static helper methods
-    static void addOuterFaces(Morphism* map, Graph* netB);
+    static void addOuterFaces(Morphism* map, Graph* graphB);
 
     // Cache for spliced vertex types
     static std::unordered_map<int, VertexType*> splicedVertexTypes;

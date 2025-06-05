@@ -22,8 +22,8 @@ GraphHalfEdge::GraphHalfEdge(bool forward)
     , graph(nullptr)
     , id(nextId++) {}
 
-GraphHalfEdge* GraphHalfEdge::connectNet(Graph* net) {
-    graph = net;
+GraphHalfEdge* GraphHalfEdge::connectGraph(Graph* newGraph) {
+    graph = newGraph;
     graph->addHalfEdge(this);
     return this;
 }

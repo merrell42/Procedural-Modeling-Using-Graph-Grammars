@@ -24,7 +24,7 @@ Graph* GraphFace::getGraph() const {
     return graph;
 }
 
-GraphFace* GraphFace::connectNet(Graph* graph) {
+GraphFace* GraphFace::connectGraph(Graph* graph) {
     this->graph = graph;
     graph->addFace(this);
     return this;
@@ -45,12 +45,12 @@ void GraphFace::makeInner(GraphHalfEdge* halfEdge) {
 }
 
 void GraphFace::copyConnection(const GraphFace* copy) {
-    Graph* copyNet = copy->getGraph();
-    outerComponent = graph->convertHalfEdge(copyNet, copy->getOuterComponent());
+    Graph* copyGraph = copy->getGraph();
+    outerComponent = graph->convertHalfEdge(copyGraph, copy->getOuterComponent());
     
     innerComponents.clear();
     for (auto halfEdge : copy->getInnerComponents()) {
-        innerComponents.push_back(graph->convertHalfEdge(copyNet, halfEdge));
+        innerComponents.push_back(graph->convertHalfEdge(copyGraph, halfEdge));
     }
 }
 

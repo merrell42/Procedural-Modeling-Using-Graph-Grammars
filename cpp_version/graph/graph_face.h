@@ -21,7 +21,7 @@ public:
     Graph* getGraph() const;
     FaceType* getType() const { return type; }
     
-    GraphFace* connectNet(Graph* graph);
+    GraphFace* connectGraph(Graph* graph);
     void connectOuter(const std::vector<GraphHalfEdge*>& halfEdges);
     void makeInner(GraphHalfEdge* halfEdge);
     void copyConnection(const GraphFace* copy);
