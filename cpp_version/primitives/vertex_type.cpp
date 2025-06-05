@@ -17,7 +17,7 @@ VertexType::VertexType()
     , id(nextId++) {
 }
 
-const std::vector<Connection>& VertexType::getConnections() const {
+const vector<Connection>& VertexType::getConnections() const {
     return connections;
 }
 
@@ -42,7 +42,7 @@ void VertexType::addEdge(EdgeType* edge, bool isAtStart, double angle) {
     double adjustedAngle = getAdjustedAngle(angle, edge, isAtStart);
 
     // Find insertion point to maintain sorted order.
-    auto it = std::lower_bound(connections.begin(), connections.end(),
+    auto it = lower_bound(connections.begin(), connections.end(),
         Connection{},
         [adjustedAngle, directedId](const Connection& a, const Connection& b) {
             return (a.adjustedAngle < adjustedAngle) ||

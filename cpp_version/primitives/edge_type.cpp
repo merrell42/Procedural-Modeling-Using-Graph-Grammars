@@ -8,12 +8,12 @@ namespace ms {
 
 int EdgeType::nextId = 0;
 
-EdgeType::EdgeType(const std::vector<FaceData>& fData, const Vec3& direction,
-                       const std::map<std::string, bool>& options)
+EdgeType::EdgeType(const vector<FaceData>& fData, const Vec3& direction,
+                       const map<string, bool>& options)
     : faceData(fData)
     , dir(direction)
     , brush(nullptr)
-    , angle(std::atan2(dir.getY(), dir.getX()))
+    , angle(atan2(dir.getY(), dir.getX()))
     , edgeLength(INFINITY)
     , offset(nullptr)
     , isRigid(options.count("isRigid") ? options.at("isRigid") : false)
@@ -59,16 +59,16 @@ double EdgeType::getThickness() const {
     return brush ? brush->getDouble("Thickness") : 1.0f;
 }
 
-std::string EdgeType::boundaryString() const {
+string EdgeType::boundaryString() const {
     if (dir.dot(Vec3::X_AXIS) > 0.99f) return "x";
     if (dir.dot(Vec3::Y_AXIS) > 0.99f) return "y";
     if (dir.dot(Vec3::Z_AXIS) > 0.99f) return "z";
-    return std::string(1, static_cast<char>(id + 'a'));
+    return string(1, static_cast<char>(id + 'a'));
 }
 
 int EdgeType::neighboringFace(int initialIndex, bool above) const {
     int maxDim = Util::maxDim(dir);
-    std::vector<std::pair<double, int>> angles;
+    vector<pair<double, int>> angles;
     
     for (size_t i = 0; i < faceData.size(); i++) {
         const auto& f = faceData[i];
@@ -84,11 +84,11 @@ int EdgeType::neighboringFace(int initialIndex, bool above) const {
             case 1: x = v.getZ(); y = v.getX(); break;
             case 2: x = v.getY(); y = v.getZ(); break;
         }
-        angles.push_back({std::atan2(x, y), i});
+        angles.push_back({atan2(x, y), i});
     }
     
-    std::sort(angles.begin(), angles.end());
-    auto fOrder = std::find_if(angles.begin(), angles.end(),
+    sort(angles.begin(), angles.end());
+    auto fOrder = find_if(angles.begin(), angles.end(),
         [initialIndex](const auto& p) { return p.second == initialIndex; }) - angles.begin();
     
     int neighborOrder = (int)(fOrder + (above ? 1 : -1) + angles.size()) % angles.size();
@@ -96,7 +96,7 @@ int EdgeType::neighboringFace(int initialIndex, bool above) const {
 }
 
 EdgeType* EdgeType::import(const Json& json, Primitives* shape) {
-    std::vector<FaceData> fData;
+    vector<FaceData> fData;
     for (const auto& f : json["faceData"]) {
         fData.push_back({
             shape->faceTypes[f["type"]],
@@ -106,7 +106,7 @@ EdgeType* EdgeType::import(const Json& json, Primitives* shape) {
     
     Vec3 direction = Vec3::import(json["dir"]);
     
-    std::map<std::string, bool> options = {
+    map<string, bool> options = {
         {"isRigid", json["isRigid"]},
         {"isRigidTiled", json["isRigidTiled"]}
     };

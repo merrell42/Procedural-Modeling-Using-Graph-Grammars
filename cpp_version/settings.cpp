@@ -4,7 +4,7 @@
 namespace ms {
 
 Json globalSettings = {
-    {"Extents", std::vector<int>{30, 20, 10}},
+    {"Extents", vector<int>{30, 20, 10}},
     {"Incremental Mutation", true},
     {"Use Boundary Cells", false},
     {"Model Piece Example", "ms.ESCHER_EXAMPLE"},
@@ -85,7 +85,7 @@ Json globalSettings = {
     {"Use WebGL", false},
     {"Show Faces", true},
     {"Cut Holes", true},
-    {"Fewer Start Productions", false},
+    {"Fewer Start Transitions", false},
     {"Example View", true},
     {"Use Graph", true},
     {"Pause when finished", false}

@@ -19,7 +19,7 @@ EdgePlacement::EdgePlacement(Edge* edge, int id, RuleApplierSettings* settings)
     auto halfedges = edge->getHalfEdges();
     for (auto* halfedge : halfedges) {
         if (halfedge) {
-            // Can be null in the ground production.
+            // Can be null in the ground transition.
             vertexIds.push_back(halfedge->getVertex()->getId());
         }
     }
@@ -39,15 +39,15 @@ void EdgePlacement::initialize() {
     auto faces1 = settings->getVertex(vertexIds[1])->freeFaceIds;
 
     // Find intersection of free faces
-    std::vector<int> intersection;
+    vector<int> intersection;
     for (int id : faces0) {
-        if (std::find(faces1.begin(), faces1.end(), id) != faces1.end()) {
+        if (find(faces1.begin(), faces1.end(), id) != faces1.end()) {
             intersection.push_back(id);
         }
     }
 
     // Get unique non-coplanar faces
-    std::vector<int> faceIds = {intersection[0]};
+    vector<int> faceIds = {intersection[0]};
     auto* fPlace0 = settings->getFace(intersection[0]);
     
     for (size_t i = 1; i < intersection.size(); i++) {
@@ -68,7 +68,7 @@ void EdgePlacement::initialize() {
 }
 
 void EdgePlacement::addConstraint(int id) {
-    if (std::find(constraints.begin(), constraints.end(), id) == constraints.end()) {
+    if (find(constraints.begin(), constraints.end(), id) == constraints.end()) {
         constraints.push_back(id);
     }
 

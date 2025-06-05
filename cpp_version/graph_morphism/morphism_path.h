@@ -17,13 +17,13 @@ public:
     };
 
     static int count;
-    static MorphismPath* createPath(const std::vector<HalfEdge*>& halfedges,
-                                   const std::vector<Edge*>& edges,
-                                   std::vector<Edge*>* lines);
+    static MorphismPath* createPath(const vector<HalfEdge*>& halfedges,
+                                   const vector<Edge*>& edges,
+                                   vector<Edge*>* lines);
 
-    MorphismPath(const std::vector<IndexInfo>& indices, std::vector<Edge*>* edges);
+    MorphismPath(const vector<IndexInfo>& indices, vector<Edge*>* edges);
 
-    void setHalfEdges(const std::vector<HalfEdge*>& halfedges);
+    void setHalfEdges(const vector<HalfEdge*>& halfedges);
     int extendableness() const;
     Vertex* randomNextVertex();
     Vertex* rigidNextVertex();
@@ -34,10 +34,10 @@ public:
     void merge(MorphismPath* pathB);
 
     // Member variables
-    std::vector<IndexInfo> indices;
-    std::vector<Edge*>* edges;
-    std::vector<HalfEdge*> halfedges;
-    std::vector<bool> extendable;
+    vector<IndexInfo> indices;
+    vector<Edge*>* edges;
+    vector<HalfEdge*> halfedges;
+    vector<bool> extendable;
     int id;
 };
 

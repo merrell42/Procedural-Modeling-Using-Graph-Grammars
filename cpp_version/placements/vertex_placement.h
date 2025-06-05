@@ -27,9 +27,9 @@ public:
     Vertex* getVertex() const { return vertex; }
     int getId() const { return id; }
     RuleApplierSettings* getSettings() const { return settings; }
-    const std::vector<int>& getFreeFaceIds() const { return freeFaceIds; }
-    const std::vector<int>& getUnfreeFaceIds() const { return unfreeFaceIds; }
-    const std::vector<int>& getCoedgearFaceIds() const { return coedgearFaceIds; }
+    const vector<int>& getFreeFaceIds() const { return freeFaceIds; }
+    const vector<int>& getUnfreeFaceIds() const { return unfreeFaceIds; }
+    const vector<int>& getCoedgearFaceIds() const { return coedgearFaceIds; }
     const Vec3& getSlope() const { return slope; }
     const Vec3& getValue() const { return value; }
 
@@ -39,7 +39,7 @@ public:
     void checkThreeFaces();
     int getNumConstraints() const;
     const Vec3& getPosition() const;
-    std::vector<int> getAllFaceIds() const;
+    vector<int> getAllFaceIds() const;
     bool fixPosition();
     void addConstraint();
     void constrainFace(int id);
@@ -50,17 +50,17 @@ public:
 
     Vec3 slope;
     Vec3 value;
-    std::vector<int> freeFaceIds;
-    std::vector<int> unfreeFaceIds;
+    vector<int> freeFaceIds;
+    vector<int> unfreeFaceIds;
 
 private:
     Vertex* vertex;
     int id;
     RuleApplierSettings* settings;
-    std::vector<int> coedgearFaceIds;
+    vector<int> coedgearFaceIds;
     Matrix* M;
 
-    Matrix* getA(const std::vector<int>& faceIds);
+    Matrix* getA(const vector<int>& faceIds);
     Matrix* getM();
 };
 

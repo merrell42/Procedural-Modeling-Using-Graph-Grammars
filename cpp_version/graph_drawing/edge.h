@@ -14,34 +14,34 @@ namespace ms {
 	class Vertex;
 
 	struct SplitData {
-		std::vector<Edge*> edges;
-		std::vector<HalfEdge*> nextHalfEdges;
+		vector<Edge*> edges;
+		vector<HalfEdge*> nextHalfEdges;
 
-		SplitData(const std::vector<Edge*>& newEdges, const std::vector<HalfEdge*>& newHalfEdges)
+		SplitData(const vector<Edge*>& newEdges, const vector<HalfEdge*>& newHalfEdges)
 			: edges(newEdges), nextHalfEdges(newHalfEdges) {}
 	};
 
 	class Edge {
 	public:
-		Edge(Model* model, int id, EdgeType* type, std::vector<int> halfedgeIds, std::vector<int> bspNodeIds);
+		Edge(Model* model, int id, EdgeType* type, vector<int> halfedgeIds, vector<int> bspNodeIds);
 		Edge* copy();
 		~Edge();
 		int getId() const { return id; };
 		Model* getModel() const { return model; };
 		void setId(int newId) { id = newId; };
-		void setBspNodeIds(const std::vector<int>& newBspNodeIds) { bspNodeIds = newBspNodeIds; }
+		void setBspNodeIds(const vector<int>& newBspNodeIds) { bspNodeIds = newBspNodeIds; }
 		void addBspNodeId(int bspNodeId) { bspNodeIds.push_back(bspNodeId); }
-		const std::vector<int>& getBspNodeIds() const { return bspNodeIds; }
+		const vector<int>& getBspNodeIds() const { return bspNodeIds; }
 		bool addToBsp();
 		void removeFromBsp();
 		HalfEdge* getHalfEdge(int index) const;
-		std::vector<HalfEdge*> getHalfEdges() const;
+		vector<HalfEdge*> getHalfEdges() const;
 		void addHalfEdge(HalfEdge* halfedge, int index);
 		void setHalfEdge(int index, HalfEdge* halfedge);
-        void setHalfEdgeIds(const std::vector<int>& ids);
+        void setHalfEdgeIds(const vector<int>& ids);
 		EdgeType* getEdgeType() const { return type; };
 		SplitData split(bool splitFaces);
-		std::pair<SplitData, Vertex*> fullSplit(double s);
+		pair<SplitData, Vertex*> fullSplit(double s);
 		void destroy();
 		static VertexType* getVertexType(EdgeType* edgeType);
 		bool intersects(Edge* edgeB);
@@ -50,9 +50,9 @@ namespace ms {
 	private:
 		int id;
 		EdgeType* type;	
-		std::vector<int> halfedgeIds;
-		std::vector<int> bspNodeIds;
-		static std::unordered_map<int, VertexType*> splitVertexTypes;
+		vector<int> halfedgeIds;
+		vector<int> bspNodeIds;
+		static unordered_map<int, VertexType*> splitVertexTypes;
 
 		Model* model;
 	};

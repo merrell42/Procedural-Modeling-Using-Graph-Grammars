@@ -13,7 +13,7 @@ GraphEdge::GraphEdge()
     , graph(nullptr)
     , id(nextId++) {}
 
-const std::vector<std::vector<GraphHalfEdge*>>& GraphEdge::getHalfEdges() const {
+const vector<vector<GraphHalfEdge*>>& GraphEdge::getHalfEdges() const {
     return halfEdges;
 }
 
@@ -60,7 +60,7 @@ void GraphEdge::copyConnection(const GraphEdge* copy) {
 
 bool GraphEdge::inGraph() const {
     auto vec = graph->getEdges();
-    return std::find(vec.begin(), vec.end(), this) != vec.end();
+    return find(vec.begin(), vec.end(), this) != vec.end();
 }
 
 void GraphEdge::merge(GraphEdge* edgeB, bool mergeForward) {
@@ -100,7 +100,7 @@ void GraphEdge::import(const Json& json) {
     
     if (json.contains("halfEdges")) {
         for (const auto& arrayJson : json["halfEdges"]) {
-            std::vector<GraphHalfEdge*> halfArray;
+            vector<GraphHalfEdge*> halfArray;
             for (const auto& index : arrayJson) {
                 halfArray.push_back(graphHalfEdges[index.get<int>()]);
             }

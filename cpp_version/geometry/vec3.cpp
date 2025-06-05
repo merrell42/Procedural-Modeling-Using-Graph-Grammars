@@ -22,7 +22,7 @@ double Vec3::getValue(int dim) const {
         case 1: return y;
         case 2: return z;
         default:
-            std::cout << "Invalid dimension" << std::endl;
+            cout << "Invalid dimension" << endl;
             return 0;
     }
 }
@@ -33,7 +33,7 @@ void Vec3::setValue(double value, int dim) {
         case 1: y = value; break;
         case 2: z = value; break;
         default:
-            std::cout << "Invalid dimension" << std::endl;
+            cout << "Invalid dimension" << endl;
     }
 }
 
@@ -79,7 +79,7 @@ Vec3 Vec3::cross(const Vec3& v) const {
 }
 
 double Vec3::length() const {
-    return std::sqrt(length2());
+    return sqrt(length2());
 }
 
 double Vec3::length2() const {
@@ -87,7 +87,7 @@ double Vec3::length2() const {
 }
 
 double Vec3::distance(const Vec3& v) const {
-    return std::sqrt(distance2(v));
+    return sqrt(distance2(v));
 }
 
 double Vec3::distance2(const Vec3& v) const {
@@ -98,8 +98,8 @@ double Vec3::distance2(const Vec3& v) const {
 }
 
 Vec3& Vec3::rotate(const Vec3& axis, double theta) {
-    double cosTheta = std::cos(theta);
-    double sinTheta = std::sin(theta);
+    double cosTheta = cos(theta);
+    double sinTheta = sin(theta);
     double oneMinusCosTheta = 1.0f - cosTheta;
 
     double ux = axis.x;
@@ -125,8 +125,8 @@ Vec3& Vec3::rotate(const Vec3& axis, double theta) {
 }
 
 Vec3& Vec3::rotateX(double theta) {
-    double cosTheta = std::cos(theta);
-    double sinTheta = std::sin(theta);
+    double cosTheta = cos(theta);
+    double sinTheta = sin(theta);
     double newY = y * cosTheta - z * sinTheta;
     double newZ = y * sinTheta + z * cosTheta;
     y = newY;
@@ -135,8 +135,8 @@ Vec3& Vec3::rotateX(double theta) {
 }
 
 Vec3& Vec3::rotateY(double theta) {
-    double cosTheta = std::cos(theta);
-    double sinTheta = std::sin(theta);
+    double cosTheta = cos(theta);
+    double sinTheta = sin(theta);
     double newX = x * cosTheta + z * sinTheta;
     double newZ = -x * sinTheta + z * cosTheta;
     x = newX;
@@ -145,8 +145,8 @@ Vec3& Vec3::rotateY(double theta) {
 }
 
 Vec3& Vec3::rotateZ(double theta) {
-    double cosTheta = std::cos(theta);
-    double sinTheta = std::sin(theta);
+    double cosTheta = cos(theta);
+    double sinTheta = sin(theta);
     double newX = x * cosTheta - y * sinTheta;
     double newY = x * sinTheta + y * cosTheta;
     x = newX;
@@ -168,9 +168,9 @@ Vec2 Vec3::dropDim(int dim) const {
     }
 }
 
-std::string Vec3::toString() const {
-    std::stringstream ss;
-    ss << std::fixed << std::setprecision(3);
+string Vec3::toString() const {
+    stringstream ss;
+    ss << fixed << setprecision(3);
     ss << "(" << x << ", " << y << ", " << z << ")";
     return ss.str();
 }
@@ -184,18 +184,18 @@ Vec3 Vec3::lerp(const Vec3& start, const Vec3& end, double s) {
 }
 
 Vec3 Vec3::unitVec(double theta, double phi) {
-    double sinPhi = std::sin(phi);
+    double sinPhi = sin(phi);
     return Vec3(
-        std::cos(theta) * sinPhi,
-        std::sin(theta) * sinPhi,
-        std::cos(phi)
+        cos(theta) * sinPhi,
+        sin(theta) * sinPhi,
+        cos(phi)
     );
 }
 
 bool Vec3::coordinatesClose(const Vec3& a, const Vec3& b, double tolerance) {
-    return (std::abs(a.x - b.x) <= tolerance && 
-            std::abs(a.y - b.y) <= tolerance &&
-            std::abs(a.z - b.z) <= tolerance);
+    return (abs(a.x - b.x) <= tolerance && 
+            abs(a.y - b.y) <= tolerance &&
+            abs(a.z - b.z) <= tolerance);
 }
 
 Vec3 Vec3::swapAxes() const {

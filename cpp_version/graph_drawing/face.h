@@ -14,15 +14,15 @@ class Plane;
 
 class Face {
 	public:
-		Face(Model* model, int id, FaceType* faceType, std::vector<int> halfedgeIds, bool looped, std::vector<int> bspNodeIds, int groupId, bool hole);
-		Face(Model* model, int id, FaceType* faceType, std::vector<int> halfedgeIds, std::vector<int> bspNodeIds);
+		Face(Model* model, int id, FaceType* faceType, vector<int> halfedgeIds, bool looped, vector<int> bspNodeIds, int groupId, bool hole);
+		Face(Model* model, int id, FaceType* faceType, vector<int> halfedgeIds, vector<int> bspNodeIds);
 		Face* copy();
 		~Face();
 		int getId() const { return id; };
-		std::vector<HalfEdge*> getHalfEdges() const;
+		vector<HalfEdge*> getHalfEdges() const;
 		HalfEdge* getHalfEdge(int index) const;
-		std::vector<Vec3> getPositions() const;
-		std::vector<Vec2> getPositions2D() const;
+		vector<Vec3> getPositions() const;
+		vector<Vec2> getPositions2D() const;
 		FaceType* getFaceType() const { return faceType; }
 		Range dirBounds(const Vec3& dir) const;
 		void append(Face* faceB);
@@ -36,18 +36,18 @@ class Face {
 		void removeHalfEdge(HalfEdge* halfedge);
 		double signedArea();
 		void exportMesh(
-			std::vector<Vec3>& positions,
-			std::vector<Vec3>& normals,
-			std::vector<int>& triangles,
-			std::vector<int>& faceIndices
+			vector<Vec3>& positions,
+			vector<Vec3>& normals,
+			vector<int>& triangles,
+			vector<int>& faceIndices
 		);
 		void addBspNodeId(int bspNodeId) { bspNodeIds.push_back(bspNodeId); }
-		const std::vector<int>& getBspNodeIds() const { return bspNodeIds; } // TODO: Check if this is needed.
+		const vector<int>& getBspNodeIds() const { return bspNodeIds; } // TODO: Check if this is needed.
 		Model* getModel() const { return model; }
 		bool addToBsp();
 		void removeFromBsp();
 		Plane getPlane() const;
-		std::vector<Vec3> getIntersections(Plane* plane);
+		vector<Vec3> getIntersections(Plane* plane);
 		bool containsPoint(Vec3 point);
 		void createGroup();
 		void splitGroup();
@@ -56,15 +56,15 @@ class Face {
 
 	private:
 		int id;
-		std::vector<int> halfedgeIds;
+		vector<int> halfedgeIds;
 		bool looped;
 		FaceType* faceType;
-		std::vector<int> bspNodeIds;
+		vector<int> bspNodeIds;
 		int groupId;
 		bool hole;
 
 		Model* model;
 
-		std::vector<int> getTriangleIndices();
+		vector<int> getTriangleIndices();
 	};
 }

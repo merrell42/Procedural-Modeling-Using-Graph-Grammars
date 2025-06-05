@@ -4,11 +4,11 @@
 namespace ms {
 
 void VertexPlacement::initialize() {
-    std::vector<HalfEdge*> halfedges = vertex->getHalfEdges();
+    vector<HalfEdge*> halfedges = vertex->getHalfEdges();
 
     for (auto* halfedge : halfedges) {
         if (!halfedge) {
-            // Happens in the ground production.
+            // Happens in the ground transition.
             continue;
         }
         Face* face = halfedge->getFace();
@@ -16,7 +16,7 @@ void VertexPlacement::initialize() {
 
         if (!settings->getFace(id)) {
             auto normal = face->getFaceType()->getNormal();
-            settings->facePlacements[id] = std::make_unique<FacePlacement>(normal, id, settings, face);
+            settings->facePlacements[id] = make_unique<FacePlacement>(normal, id, settings, face);
         }
         addFreeFace(id);
     }
@@ -24,14 +24,14 @@ void VertexPlacement::initialize() {
 
 void VertexPlacement::addConstraint() {
     if (freeFaceIds.empty()) {
-        throw std::runtime_error("No free faces available for constraint");
+        throw runtime_error("No free faces available for constraint");
     }
     int freeFaceId = freeFaceIds[0];
     settings->getFace(freeFaceId)->constrain(true, -1);
 }
 
 void VertexPlacement::constrainFace(int id) {
-    auto it = std::find(freeFaceIds.begin(), freeFaceIds.end(), id);
+    auto it = find(freeFaceIds.begin(), freeFaceIds.end(), id);
     if (it != freeFaceIds.end()) {
         freeFaceIds.erase(it);
     }
@@ -83,8 +83,8 @@ void VertexPlacement::propagate() {
     }
 }
 
-Matrix* VertexPlacement::getA(const std::vector<int>& faceIds) {
-    std::vector<std::vector<double>> A(3, std::vector<double>(3));
+Matrix* VertexPlacement::getA(const vector<int>& faceIds) {
+    vector<vector<double>> A(3, vector<double>(3));
 
     for (size_t i = 0; i < 3; i++) {
         int id = faceIds[i];
@@ -101,7 +101,7 @@ Matrix* VertexPlacement::getM() {
         Matrix* A = getA(unfreeFaceIds);
         // The three faces are coledgear.
         // Return null if A is not invertible
-        if (std::abs(Matrix::det(*A)) < 1e-8) {
+        if (abs(Matrix::det(*A)) < 1e-8) {
             delete A;
             return nullptr;
         }
@@ -112,7 +112,7 @@ Matrix* VertexPlacement::getM() {
 }
 
 void VertexPlacement::setPosition() {
-    std::vector<std::vector<double>> D(3, std::vector<double>(1));
+    vector<vector<double>> D(3, vector<double>(1));
 
     for (size_t i = 0; i < 3; i++) {
         int id = unfreeFaceIds[i];
@@ -132,8 +132,8 @@ void VertexPlacement::setPosition() {
 }
 
 Range VertexPlacement::getRange() {
-    std::vector<std::vector<double>> m3(3, std::vector<double>(1));
-    std::vector<std::vector<double>> b3(3, std::vector<double>(1));
+    vector<vector<double>> m3(3, vector<double>(1));
+    vector<vector<double>> b3(3, vector<double>(1));
 
     for (size_t i = 0; i < 3; i++) {
         int id = unfreeFaceIds[i];
@@ -153,7 +153,7 @@ Range VertexPlacement::getRange() {
     delete m3Matrix;
     delete b3Matrix;
 
-    Range range(-std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity());
+    Range range(-numeric_limits<double>::infinity(), numeric_limits<double>::infinity());
     for (int i = 0; i < 3; i++) {
         Range rangeI = Range::transformCreate(m[i][0], b[i][0], Range(settings->lower[i], settings->upper[i]));
         range = range.intersect(rangeI);
@@ -195,7 +195,7 @@ void VertexPlacement::addFreeFace(int id) {
     }
 
     // Check if the ID is already in freeFaceIds.
-    if (std::find(freeFaceIds.begin(), freeFaceIds.end(), id) != freeFaceIds.end()) {
+    if (find(freeFaceIds.begin(), freeFaceIds.end(), id) != freeFaceIds.end()) {
         return;
     }
 
@@ -226,8 +226,8 @@ void VertexPlacement::addFreeFace(int id) {
     //}
 }
 
-std::vector<int> VertexPlacement::getAllFaceIds() const {
-    std::vector<int> allFaceIds;
+vector<int> VertexPlacement::getAllFaceIds() const {
+    vector<int> allFaceIds;
     allFaceIds.reserve(unfreeFaceIds.size() + freeFaceIds.size() + coedgearFaceIds.size());
 
     // Concatenate the vectors.
@@ -245,7 +245,7 @@ int VertexPlacement::getNumConstraints() const {
 
 void VertexPlacement::checkThreeFaces() {
     if (freeFaceIds.size() < 2) {
-        std::cout << "Vertex should have at least two faces.\n";
+        cout << "Vertex should have at least two faces.\n";
     } else if (freeFaceIds.size() == 2) {
         Vec3 n0 = settings->getFace(freeFaceIds[0])->getNormal();
         Vec3 n1 = settings->getFace(freeFaceIds[1])->getNormal();

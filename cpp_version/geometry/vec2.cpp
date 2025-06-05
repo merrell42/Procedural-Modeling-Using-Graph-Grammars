@@ -16,7 +16,7 @@ double Vec2::getValue(int dim) const {
     switch (dim) {
         case 0: return x;
         case 1: return y;
-        default: throw std::runtime_error("Invalid dimension for Vec2");
+        default: throw runtime_error("Invalid dimension for Vec2");
     }
 }
 
@@ -24,7 +24,7 @@ void Vec2::setValue(double value, int dim) {
     switch (dim) {
         case 0: x = value; break;
         case 1: y = value; break;
-        default: throw std::runtime_error("Invalid dimension for Vec2");
+        default: throw runtime_error("Invalid dimension for Vec2");
     }
 }
 
@@ -63,7 +63,7 @@ double Vec2::crossZ(const Vec2& v) const {
 }
 
 double Vec2::length() const {
-    return std::sqrt(length2());
+    return sqrt(length2());
 }
 
 double Vec2::length2() const {
@@ -71,7 +71,7 @@ double Vec2::length2() const {
 }
 
 double Vec2::distance(const Vec2& v) const {
-    return std::sqrt(distance2(v));
+    return sqrt(distance2(v));
 }
 
 double Vec2::distance2(const Vec2& v) const {
@@ -81,8 +81,8 @@ double Vec2::distance2(const Vec2& v) const {
 }
 
 Vec2& Vec2::rotate(double theta) {
-    double cosTheta = std::cos(theta);
-    double sinTheta = std::sin(theta);
+    double cosTheta = cos(theta);
+    double sinTheta = sin(theta);
     double newX = x * cosTheta - y * sinTheta;
     double newY = x * sinTheta + y * cosTheta;
     x = newX;
@@ -120,9 +120,9 @@ Vec3 Vec2::toVec3() const {
     return Vec3(x, y, 0);
 }
 
-std::string Vec2::toString() const {
-    std::stringstream ss;
-    ss << std::fixed << std::setprecision(3);
+string Vec2::toString() const {
+    stringstream ss;
+    ss << fixed << setprecision(3);
     ss << "(" << x << ", " << y << ")";
     return ss.str();
 }
@@ -135,18 +135,18 @@ Vec2 Vec2::lerp(const Vec2& start, const Vec2& end, double s) {
 }
 
 Vec2 Vec2::unitVec(double angle) {
-    return Vec2(std::cos(angle), std::sin(angle));
+    return Vec2(cos(angle), sin(angle));
 }
 
 double Vec2::angle(const Vec2& start, const Vec2& end) {
     double dx = end.x - start.x;
     double dy = end.y - start.y;
-    return std::atan2(dy, dx);
+    return atan2(dy, dx);
 }
 
 bool Vec2::coordinatesClose(const Vec2& a, const Vec2& b, double tolerance) {
-    return (std::abs(a.x - b.x) <= tolerance && 
-            std::abs(a.y - b.y) <= tolerance);
+    return (abs(a.x - b.x) <= tolerance && 
+            abs(a.y - b.y) <= tolerance);
 }
 
 Vec2 Vec2::import(const Json& json) {

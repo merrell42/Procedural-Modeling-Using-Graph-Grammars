@@ -4,20 +4,20 @@
 
 namespace ms {  
 
-void RuleApplierSettings::setVertex(int id, std::unique_ptr<VertexPlacement> vPlace) {
-    vertexPlacements[id] = std::move(vPlace);
+void RuleApplierSettings::setVertex(int id, unique_ptr<VertexPlacement> vPlace) {
+    vertexPlacements[id] = move(vPlace);
 }
 
-void RuleApplierSettings::setEdge(int id, std::unique_ptr<EdgePlacement> ePlace) {
-    edgePlacements[id] = std::move(ePlace);
+void RuleApplierSettings::setEdge(int id, unique_ptr<EdgePlacement> ePlace) {
+    edgePlacements[id] = move(ePlace);
 }
 
-void RuleApplierSettings::setFace(int id, std::unique_ptr<FacePlacement> fPlace) {
-    facePlacements[id] = std::move(fPlace);
+void RuleApplierSettings::setFace(int id, unique_ptr<FacePlacement> fPlace) {
+    facePlacements[id] = move(fPlace);
 }
 
-void RuleApplierSettings::addToOrder(int id, const std::string& type, int vertexId) {
-    if (std::find(orderIds.begin(), orderIds.end(), id) == orderIds.end()) {
+void RuleApplierSettings::addToOrder(int id, const string& type, int vertexId) {
+    if (find(orderIds.begin(), orderIds.end(), id) == orderIds.end()) {
         orderIds.push_back(id);
         orderInfo.push_back({type, vertexId});
     }
@@ -25,7 +25,7 @@ void RuleApplierSettings::addToOrder(int id, const std::string& type, int vertex
 
 int RuleApplierSettings::createFace(const Vec3& normal) {
     int id = newFaceCounter--;
-    facePlacements[id] = std::make_unique<FacePlacement>(normal, id, this, nullptr /* unsure about this*/);
+    facePlacements[id] = make_unique<FacePlacement>(normal, id, this, nullptr /* unsure about this*/);
     return id;
 }
 

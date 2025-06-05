@@ -4,7 +4,7 @@
 
 namespace ms {
 
-Brush::Brush(const std::string& fillStyle, const std::string& strokeStyle)
+Brush::Brush(const string& fillStyle, const string& strokeStyle)
     : Decoration(fillStyle, strokeStyle) {
 
     // Set default properties
@@ -13,35 +13,35 @@ Brush::Brush(const std::string& fillStyle, const std::string& strokeStyle)
     boolProperties["Boundary"] = false;
 }
 
-Brush::Brush(const std::string& fillStyle)
+Brush::Brush(const string& fillStyle)
     : Brush(fillStyle, "") {}
 
-void Brush::set(const std::string& name, double value) {
+void Brush::set(const string& name, double value) {
     doubleProperties[name] = value;
     notifyChange();
 }
 
-void Brush::set(const std::string& name, bool value) {
+void Brush::set(const string& name, bool value) {
     boolProperties[name] = value;
     notifyChange();
 }
 
-void Brush::set(const std::string& name, const std::string& value) {
+void Brush::set(const string& name, const string& value) {
     stringProperties[name] = value;
     notifyChange();
 }
 
-double Brush::getDouble(const std::string& name) const {
+double Brush::getDouble(const string& name) const {
     auto it = doubleProperties.find(name);
     return it != doubleProperties.end() ? it->second : 0.0f;
 }
 
-bool Brush::getBool(const std::string& name) const {
+bool Brush::getBool(const string& name) const {
     auto it = boolProperties.find(name);
     return it != boolProperties.end() ? it->second : false;
 }
 
-std::string Brush::getString(const std::string& name) const {
+string Brush::getString(const string& name) const {
     auto it = stringProperties.find(name);
     return it != stringProperties.end() ? it->second : "";
 }
@@ -51,7 +51,7 @@ Brush* Brush::import(Json json) {
     
     for (const auto& [key, val] : json.items()) {
         if (val.is_string()) {
-            std::string converted_val = val.get<std::string>();
+            string converted_val = val.get<string>();
             brush->set(key, converted_val);
         } else if (val.is_number_float()) {
             double converted_val = (double)val.get<float>();

@@ -61,7 +61,7 @@ void GraphHalfEdge::setFace(GraphFace* f) {
 GraphHalfEdge* GraphHalfEdge::getTwin() const {
     auto halfEdges = edge->getHalfEdges();
     if (halfEdges.size() != 2) {
-        throw std::runtime_error("Expected two halfEdges to get a twin.");
+        throw runtime_error("Expected two halfEdges to get a twin.");
     }
     return halfEdges[1 - edgeIndex][0];
 }

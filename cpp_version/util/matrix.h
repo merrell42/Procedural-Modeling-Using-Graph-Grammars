@@ -2,25 +2,27 @@
 #include <vector>
 #include <memory>
 
+using namespace std;
+
 namespace ms {
 
 class Matrix {
 public:
-    Matrix(const std::vector<std::vector<double>>& data);
+    Matrix(const vector<vector<double>>& data);
     ~Matrix() = default;
 
     // Matrix creation
-    static Matrix matrix(const std::vector<std::vector<double>>& data);
+    static Matrix matrix(const vector<vector<double>>& data);
     static Matrix* zeros(int size0, int size1);
 
     // Core accessors
-    const std::vector<std::vector<double>>& valueOf() const { return data; }
-    const std::vector<int>& getSize() const { return size; }
+    const vector<vector<double>>& valueOf() const { return data; }
+    const vector<int>& getSize() const { return size; }
 
     // Matrix operations
-    void set(const std::vector<int>& index, double value);
-    double get(const std::vector<int>& index) const;
-    Matrix subset(const std::vector<std::vector<int>>& indices, const Matrix* replacement = nullptr);
+    void set(const vector<int>& index, double value);
+    double get(const vector<int>& index) const;
+    Matrix subset(const vector<vector<int>>& indices, const Matrix* replacement = nullptr);
     Matrix& concat(const Matrix& B);
 
     // Matrix operations
@@ -35,12 +37,12 @@ public:
 
     // Helper functions
     static double det2x2(double a, double b, double c, double d);
-    static std::vector<int> index(int index0, int index1);
-    static std::vector<int> range(int lower, int upper);
+    static vector<int> index(int index0, int index1);
+    static vector<int> range(int lower, int upper);
 
 private:
-    std::vector<std::vector<double>> data;
-    std::vector<int> size;
+    vector<vector<double>> data;
+    vector<int> size;
 };
 
 } // namespace ms 

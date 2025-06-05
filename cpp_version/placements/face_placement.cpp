@@ -40,7 +40,7 @@ bool FacePlacement::getFixed() const {
 }
 
 void FacePlacement::addVertexId(int id) {
-    if (std::find(vertexIds.begin(), vertexIds.end(), id) == vertexIds.end()) {
+    if (find(vertexIds.begin(), vertexIds.end(), id) == vertexIds.end()) {
         vertexIds.push_back(id);
     }
 }
@@ -52,7 +52,7 @@ void FacePlacement::addFixedNeighbor(Face* neighbor) {
 bool FacePlacement::coplanar(FacePlacement* fPlaceB) const {
     const Vec3& nA = getNormal();
     const Vec3& nB = fPlaceB->getNormal();
-    return std::abs(nA.dot(nB)) > 1.0 - 1e-4;
+    return abs(nA.dot(nB)) > 1.0 - 1e-4;
 }
 
 void FacePlacement::constrain(bool addBasis, int vertexId) {
@@ -83,7 +83,7 @@ bool FacePlacement::setFromVertex(int vertexId) {
     Vec3 pos = vPlace->getPosition();
     double d = normal.dot(pos);
     
-    if (fixed && std::abs(d - this->d) > 1e-4) {
+    if (fixed && abs(d - this->d) > 1e-4) {
         return false;
     }
     
@@ -114,8 +114,8 @@ Range FacePlacement::getRange(int vertexId) {
 
     if (fixed) {
         if (m == 0) {
-            return Range(-std::numeric_limits<double>::infinity(),
-                        std::numeric_limits<double>::infinity());
+            return Range(-numeric_limits<double>::infinity(),
+                        numeric_limits<double>::infinity());
         }
         return Range((double)value, (double)value);
     }

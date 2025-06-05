@@ -20,8 +20,8 @@ public:
 
     Model* model;
     Graph* graphB;  
-    std::vector<GraphVertex*> verticesB;
-    std::vector<GraphEdge*> edgesB;
+    vector<GraphVertex*> verticesB;
+    vector<GraphEdge*> edgesB;
 };
 
 } // namespace ms 

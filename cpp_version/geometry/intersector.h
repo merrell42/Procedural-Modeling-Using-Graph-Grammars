@@ -5,6 +5,8 @@
 #include <optional>
 #include <cmath>
 
+using namespace std;
+
 namespace ms {
 
 struct IntersectionData {
@@ -37,18 +39,18 @@ public:
         int indexB;
     };
 
-    static std::optional<Vec2> intersect(const Vec2& s1, const Vec2& e1,
+    static optional<Vec2> intersect(const Vec2& s1, const Vec2& e1,
                                        const Vec2& s2, const Vec2& e2);
 
-    static std::optional<Vec2> intersect(const Vec2& s1, const Vec2& e1,
+    static optional<Vec2> intersect(const Vec2& s1, const Vec2& e1,
                                        const Vec2& s2, const Vec2& e2, double thickness);
 
-    static std::optional<FaceIntersection> intersectFaces(
-        const std::vector<Vec2>& facePositionsA,
-        const std::vector<Vec2>& facePositionsB);
+    static optional<FaceIntersection> intersectFaces(
+        const vector<Vec2>& facePositionsA,
+        const vector<Vec2>& facePositionsB);
 
-    static std::vector<IntersectionData> edgeFaceIntersect(
-        const Vec3& edge0Start, const Vec3& edge0End, const std::vector<Vec3>& fPositions, int maxDim);
+    static vector<IntersectionData> edgeFaceIntersect(
+        const Vec3& edge0Start, const Vec3& edge0End, const vector<Vec3>& fPositions, int maxDim);
 
 private:
     Intersector() = delete; // Static class

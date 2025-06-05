@@ -21,12 +21,12 @@ struct FaceData {
 
 class EdgeType {
 public:
-    EdgeType(const std::vector<FaceData>& faceData, const Vec3& dir, 
-               const std::map<std::string, bool>& options = {});
+    EdgeType(const vector<FaceData>& faceData, const Vec3& dir, 
+               const map<string, bool>& options = {});
     ~EdgeType() = default;
 
     // Core accessors
-    const std::vector<FaceData>& getFaceData() const { return faceData; }
+    const vector<FaceData>& getFaceData() const { return faceData; }
     const Vec3& getDir() const { return dir; }
     Brush* getBrush() const { return brush; }
     double getAngle() const { return angle; }
@@ -50,12 +50,12 @@ public:
     bool splittable() const;
     bool extendable() const;
     double getThickness() const;
-    std::string boundaryString() const;
+    string boundaryString() const;
     int neighboringFace(int initialIndex, bool above) const;
 
     static EdgeType* import(const Json& json, Primitives* shape);
 
-    std::vector<FaceData> faceData;
+    vector<FaceData> faceData;
 
 private:
     Vec3 dir;

@@ -28,7 +28,7 @@ struct IntersectResult {
     Face* face;
     IntersectionData* data;
 
-    IntersectResult() : distance(std::numeric_limits<double>::infinity()), face(nullptr), data(nullptr) {}
+    IntersectResult() : distance(numeric_limits<double>::infinity()), face(nullptr), data(nullptr) {}
 };
 
 class MorphismFinder {
@@ -37,8 +37,8 @@ public:
     ~MorphismFinder() = default;
 
     // Core functionality
-    Morphism* findMorphism(Graph* graphB);
-    Morphism* findStarterMorphism(Graph* graphB);
+    Morphism* findMap(Graph* graphB);
+    Morphism* findStarterMap(Graph* graphB);
     void reset();
 
     // Static configuration
@@ -63,16 +63,16 @@ private:
     Morphism* spliceHalfEdge(const HalfEdgeData& halfedgeData, MorphismState* state);
 
     // Ray casting methods
-    /*Face* castVolumeRaySeries(Face* face, const std::vector<GraphHalfEdge*>& rayHalfs, Face* goalFace);*/
-    static IntersectResult castRay(const Vec3& p0, const Vec3& dir, FaceGroup* groupA, const std::map<int, Face*>& faceMap, int maxDim);
-    static HalfEdge* castRaySeries(GraphHalfEdge* halfB, const Vec3& startPos, FaceGroup* groupA, const std::map<int, Face*>& faceMap, int maxDim);
+    /*Face* castVolumeRaySeries(Face* face, const vector<GraphHalfEdge*>& rayHalfs, Face* goalFace);*/
+    static IntersectResult castRay(const Vec3& p0, const Vec3& dir, FaceGroup* groupA, const map<int, Face*>& faceMap, int maxDim);
+    static HalfEdge* castRaySeries(GraphHalfEdge* halfB, const Vec3& startPos, FaceGroup* groupA, const map<int, Face*>& faceMap, int maxDim);
     static void findNearestIntersection(Face* faceA, const Vec3& p0, const Vec3& p1, const Vec2& dir2, IntersectResult& nearestIntersect, int maxDim);
 
     // Static helper methods
     static void addOuterFaces(Morphism* map, Graph* graphB);
 
     // Cache for spliced vertex types
-    static std::unordered_map<int, VertexType*> splicedVertexTypes;
+    static unordered_map<int, VertexType*> splicedVertexTypes;
 };
 
 } // namespace ms 

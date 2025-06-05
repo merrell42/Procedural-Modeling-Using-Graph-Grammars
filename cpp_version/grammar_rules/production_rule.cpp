@@ -4,19 +4,19 @@
 
 namespace ms {
 
-int ProductionRule::nextId = 0;
+int NetTransition::nextId = 0;
 
-ProductionRule::ProductionRule(
-    const std::vector<Graph*>& startGraphs,
-    const std::vector<Graph*>& endGraphs
+NetTransition::NetTransition(
+    const vector<Graph*>& startGraphs,
+    const vector<Graph*>& endGraphs
 ) : startGraphs(startGraphs),
     endGraphs(endGraphs),
     ground(false),
     id(nextId++) {}
 
-ProductionRule* ProductionRule::import(const Json& json, Primitives* shape) {
-    std::vector<Graph*> startGraphs;
-    std::vector<Graph*> endGraphs;
+NetTransition* NetTransition::import(const Json& json, Primitives* shape) {
+    vector<Graph*> startGraphs;
+    vector<Graph*> endGraphs;
     for (size_t index = 0; index < json["n"].size(); ++index) {
         const auto& graphJson = json["n"][index];
         startGraphs.push_back(Graph::import(graphJson, shape));
@@ -33,11 +33,11 @@ ProductionRule* ProductionRule::import(const Json& json, Primitives* shape) {
     size_t faceSize = startGraphs[0]->getBFaces().size();
     for (size_t i = 1; i < startGraphs.size(); i++) {
         if (startGraphs[i]->getBVertices().size() != vertexSize) {
-            throw std::runtime_error("Boundary vertex mismatch");
+            throw runtime_error("Boundary vertex mismatch");
         }
     }
 
-    auto* result = new ProductionRule(startGraphs, endGraphs);
+    auto* result = new NetTransition(startGraphs, endGraphs);
     result->ground = json["ground"];
     return result;
 }

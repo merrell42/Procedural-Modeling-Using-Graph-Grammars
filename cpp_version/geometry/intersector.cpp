@@ -4,13 +4,13 @@
 
 namespace ms {
 
-std::optional<Vec2> Intersector::intersect(
+optional<Vec2> Intersector::intersect(
     const Vec2& s1, const Vec2& e1,
     const Vec2& s2, const Vec2& e2) {
     return intersect(s1, e1, s2, e2, THICKNESS);
 }
 
-std::optional<Vec2> Intersector::intersect(
+optional<Vec2> Intersector::intersect(
     const Vec2& s1, const Vec2& e1,
     const Vec2& s2, const Vec2& e2,
     // Thickness is currently not used.
@@ -23,8 +23,8 @@ std::optional<Vec2> Intersector::intersect(
     double rxs = r.crossZ(s);
 
     // If the cross product is below the minimum the line segments are almost parallel
-    if (std::abs(rxs / r.length() / s.length()) < MIN_CROSS_PRODUCT) {
-        return std::nullopt;
+    if (abs(rxs / r.length() / s.length()) < MIN_CROSS_PRODUCT) {
+        return nullopt;
     }
 
     Vec2 q = s2 - s1;
@@ -46,8 +46,8 @@ std::optional<Vec2> Intersector::intersect(
         Vec2 normal2(-s.y, s.x);
         normal2 = normal2.normalize();
 
-        double d1 = std::abs(q.dot(normal1));
-        double d2 = std::abs(q.dot(normal2));
+        double d1 = abs(q.dot(normal1));
+        double d2 = abs(q.dot(normal2));
 
         // This is incorrect. Look at the web version.
         if (d1 <= thickness1 && d2 <= thickness2) {
@@ -55,16 +55,16 @@ std::optional<Vec2> Intersector::intersect(
         }*/
     }
 
-    return std::nullopt;
+    return nullopt;
 }
 
-std::optional<Intersector::FaceIntersection> Intersector::intersectFaces(
-    const std::vector<Vec2>& facePositionsA,
-    const std::vector<Vec2>& facePositionsB) {
+optional<Intersector::FaceIntersection> Intersector::intersectFaces(
+    const vector<Vec2>& facePositionsA,
+    const vector<Vec2>& facePositionsB) {
 
     // Create copies for manipulation
-    std::vector<Vec2> fPositionsA = facePositionsA;
-    std::vector<Vec2> fPositionsB = facePositionsB;
+    vector<Vec2> fPositionsA = facePositionsA;
+    vector<Vec2> fPositionsB = facePositionsB;
     
     // Ensure the faces are oriented correctly
     double areaA = 0;
@@ -86,14 +86,14 @@ std::optional<Intersector::FaceIntersection> Intersector::intersectFaces(
     }
     
     // Reverse face positions if needed
-    std::vector<Vec2> fPositionsA2 = fPositionsA;
-    std::vector<Vec2> fPositionsB2 = fPositionsB;
+    vector<Vec2> fPositionsA2 = fPositionsA;
+    vector<Vec2> fPositionsB2 = fPositionsB;
     
     if (areaA < 0) {
-        std::reverse(fPositionsA2.begin(), fPositionsA2.end());
+        reverse(fPositionsA2.begin(), fPositionsA2.end());
     }
     if (areaB < 0) {
-        std::reverse(fPositionsB2.begin(), fPositionsB2.end());
+        reverse(fPositionsB2.begin(), fPositionsB2.end());
     }
 
     // Check for intersections between edges
@@ -114,12 +114,12 @@ std::optional<Intersector::FaceIntersection> Intersector::intersectFaces(
         }
     }
     
-    return std::nullopt;
+    return nullopt;
 }
 
-std::vector<IntersectionData> Intersector::edgeFaceIntersect(const Vec3& edge0Start, const Vec3& edge0End, const std::vector<Vec3>& fPositions, int maxDim) {
+vector<IntersectionData> Intersector::edgeFaceIntersect(const Vec3& edge0Start, const Vec3& edge0End, const vector<Vec3>& fPositions, int maxDim) {
     size_t N = fPositions.size();
-    std::vector<Vec2> fPositions2(N);
+    vector<Vec2> fPositions2(N);
 
     // Drop dimension from the positions.
     for (size_t i = 0; i < N; ++i) {
@@ -128,7 +128,7 @@ std::vector<IntersectionData> Intersector::edgeFaceIntersect(const Vec3& edge0St
     Vec2 query0 = edge0Start.dropDim(maxDim);
     Vec2 query1 = edge0End.dropDim(maxDim);
 
-    std::vector<IntersectionData> intersections;
+    vector<IntersectionData> intersections;
     for (size_t i = 0; i < N; ++i) {
         Vec2 v0 = fPositions2[i];
         Vec2 v1 = fPositions2[(i + 1) % N];

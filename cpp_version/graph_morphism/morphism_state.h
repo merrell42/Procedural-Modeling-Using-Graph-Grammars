@@ -2,6 +2,8 @@
 #include <vector>
 #include <memory>
 
+using namespace std;
+
 namespace ms {
 
 class MorphismInfo;
@@ -24,18 +26,18 @@ public:
 
     MorphismInfo* getInfo() const { return info; }
     Morphism* getMorphism() { return morphism; }
-    std::vector<HalfEdgeData>& getQueue() { return queue; }
-    std::vector<HalfEdgeData>& getSpliceQueue() { return spliceQueue; }
+    vector<HalfEdgeData>& getQueue() { return queue; }
+    vector<HalfEdgeData>& getSpliceQueue() { return spliceQueue; }
 
-    void setQueue(const std::vector<HalfEdgeData>& newQueue);
+    void setQueue(const vector<HalfEdgeData>& newQueue);
     void assignVertex(Vertex* vertexA, int indexB);
     MorphismState* copy() const;
 
 private:
     MorphismInfo* info;
     Morphism* morphism;
-    std::vector<HalfEdgeData> queue;
-    std::vector<HalfEdgeData> spliceQueue;
+    vector<HalfEdgeData> queue;
+    vector<HalfEdgeData> spliceQueue;
 };
 
 } // namespace ms 

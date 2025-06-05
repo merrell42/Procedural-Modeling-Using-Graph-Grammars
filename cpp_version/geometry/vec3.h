@@ -3,6 +3,7 @@
 #include "../third_party/json.h"
 
 using Json = nlohmann::json;
+using namespace std;
 
 namespace ms {
 
@@ -36,7 +37,7 @@ public:
     Vec3& rotateZ(double theta);
     Vec3 copy() const;
     Vec2 dropDim(int dim) const;
-    std::string toString() const;
+    string toString() const;
     static Vec3 import(const Json & json);
     Vec3 swapAxes() const;
 

@@ -28,10 +28,10 @@ void GraphVertex::setHalfEdge(GraphHalfEdge* halfEdge, int index) {
 
 int GraphVertex::connectorIndex() const {
     auto bVertices = graph->getBVertices();
-    auto it = std::find(bVertices.begin(), bVertices.end(), this);
+    auto it = find(bVertices.begin(), bVertices.end(), this);
     if (it != bVertices.end()) {
         // Compute the index
-        return (int)std::distance(bVertices.begin(), it);
+        return (int)distance(bVertices.begin(), it);
     } else {
         return -1;
     }
@@ -50,7 +50,7 @@ void GraphVertex::copyConnection(const GraphVertex* copy) {
 }
 
 bool GraphVertex::inGraph() const {
-    return graph && std::find(graph->getVertices().begin(),
+    return graph && find(graph->getVertices().begin(),
                               graph->getVertices().end(),
                               this) != graph->getVertices().end();
 }

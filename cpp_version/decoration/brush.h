@@ -5,25 +5,27 @@
 #include <functional>
 #include <any>
 
+using namespace std;
+
 namespace ms {
 
 class Brush : public Decoration {
 public:
-    Brush(const std::string& fillStyle);
-    Brush(const std::string& fillStyle, const std::string& strokeStyle);
+    Brush(const string& fillStyle);
+    Brush(const string& fillStyle, const string& strokeStyle);
     static Brush* import(Json json);
 
-    void set(const std::string& name, double value) override;
-    void set(const std::string& name, bool value) override;
-    void set(const std::string& name, const std::string& value) override;
-    double getDouble(const std::string& name) const override;
-    bool getBool(const std::string& name) const override;
-    std::string getString(const std::string& name) const override;
+    void set(const string& name, double value) override;
+    void set(const string& name, bool value) override;
+    void set(const string& name, const string& value) override;
+    double getDouble(const string& name) const override;
+    bool getBool(const string& name) const override;
+    string getString(const string& name) const override;
 
 private:
-    std::map<std::string, double> doubleProperties;
-    std::map<std::string, bool> boolProperties;
-    std::map<std::string, std::string> stringProperties;
+    map<string, double> doubleProperties;
+    map<string, bool> boolProperties;
+    map<string, string> stringProperties;
 };
 
 } // namespace ms 

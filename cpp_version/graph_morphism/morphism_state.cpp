@@ -18,7 +18,7 @@ MorphismState::MorphismState(MorphismInfo* info, Morphism* existingMorphism)
     }
 }
 
-void MorphismState::setQueue(const std::vector<HalfEdgeData>& newQueue) {
+void MorphismState::setQueue(const vector<HalfEdgeData>& newQueue) {
     queue = newQueue;
 }
 

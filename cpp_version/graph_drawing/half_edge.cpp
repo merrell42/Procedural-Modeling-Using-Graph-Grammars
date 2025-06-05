@@ -19,10 +19,10 @@ HalfEdge::HalfEdge(Model* model, int id, bool isAtStart, EdgeType* edgeType, Vec
     faceTypeCached = nullptr;
     if (createFace) {
         auto faceType = getFaceType();
-        std::vector<int> halfedgeIds;
+        vector<int> halfedgeIds;
         halfedgeIds.push_back(id);
         faceId = model->newId();
-        std::vector<int> bspNodeIds;
+        vector<int> bspNodeIds;
         auto face = new Face(model, faceId, faceType, halfedgeIds, bspNodeIds);
         face->createGroup();
     }
@@ -73,16 +73,16 @@ void HalfEdge::transfer(Edge* replacement) {
 }
 
 HalfEdge* HalfEdge::next() const {
-    std::vector<HalfEdge*> halfedges = getFace()->getHalfEdges();
+    vector<HalfEdge*> halfedges = getFace()->getHalfEdges();
     size_t N = halfedges.size();
-    auto it = std::find(halfedges.begin(), halfedges.end(), this);
-    size_t index = std::distance(halfedges.begin(), it);
+    auto it = find(halfedges.begin(), halfedges.end(), this);
+    size_t index = distance(halfedges.begin(), it);
     return halfedges[(index + 1) % N];
 }
 
 HalfEdge* HalfEdge::prev() const {
-    std::vector<HalfEdge*> halfedges = getFace()->getHalfEdges();
-    size_t index = std::find(halfedges.begin(), halfedges.end(), this) - halfedges.begin();
+    vector<HalfEdge*> halfedges = getFace()->getHalfEdges();
+    size_t index = find(halfedges.begin(), halfedges.end(), this) - halfedges.begin();
 
     if (index == 0) {
         size_t N = halfedges.size();
@@ -96,10 +96,10 @@ HalfEdge* HalfEdge::prev() const {
 HalfEdge* HalfEdge::twin() const {
     Edge* edge = getEdge();
     if (edge) {
-        std::vector<HalfEdge*> halfedges = edge->getHalfEdges();
-        auto it = std::find(halfedges.begin(), halfedges.end(), this);
+        vector<HalfEdge*> halfedges = edge->getHalfEdges();
+        auto it = find(halfedges.begin(), halfedges.end(), this);
         if (it != halfedges.end()) {
-            size_t index = std::distance(halfedges.begin(), it);
+            size_t index = distance(halfedges.begin(), it);
             // Return the other halfedge.
             return halfedges[1 - index];
         }

@@ -3,34 +3,34 @@
 
 namespace ms {
 
-Decoration::Decoration(const std::string& fillStyle, const std::string& strokeStyle,
-                     const std::function<void()>& onChange)
+Decoration::Decoration(const string& fillStyle, const string& strokeStyle,
+                     const function<void()>& onChange)
     : fillStyle(fillStyle)
     , strokeStyle(strokeStyle)
     , onChange(onChange) {
 }
 
-void Decoration::set(const std::string& name, double value) {
+void Decoration::set(const string& name, double value) {
     notifyChange();
 }
 
-void Decoration::set(const std::string& name, bool value) {
+void Decoration::set(const string& name, bool value) {
     notifyChange();
 }
 
-void Decoration::set(const std::string& name, const std::string& value) {
+void Decoration::set(const string& name, const string& value) {
     notifyChange();
 }
 
-double Decoration::getDouble(const std::string& name) const {
+double Decoration::getDouble(const string& name) const {
     return 0.0f;
 }
 
-bool Decoration::getBool(const std::string& name) const {
+bool Decoration::getBool(const string& name) const {
     return false;
 }
 
-std::string Decoration::getString(const std::string& name) const {
+string Decoration::getString(const string& name) const {
     return "";
 }
 

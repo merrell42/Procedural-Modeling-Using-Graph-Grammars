@@ -14,24 +14,24 @@ class EdgeType;
 class Primitives {
 public:
     Primitives(int dims);
-    Primitives(const std::vector<VertexType*>& vertexTypes,
-            const std::vector<EdgeType*>& edgeTypes,
-            const std::vector<FaceType*>& faceTypes,
-            const std::string& xml,
+    Primitives(const vector<VertexType*>& vertexTypes,
+            const vector<EdgeType*>& edgeTypes,
+            const vector<FaceType*>& faceTypes,
+            const string& xml,
             int dims);
     static Primitives* import(const Json& json);
 
     Primitives* getShape();
-    std::vector<int> getVertices() const;
+    vector<int> getVertices() const;
 
-    std::vector<VertexType*> vertexTypes;
-    std::vector<EdgeType*> edgeTypes;
-    std::vector<FaceType*> faceTypes;
+    vector<VertexType*> vertexTypes;
+    vector<EdgeType*> edgeTypes;
+    vector<FaceType*> faceTypes;
     int dims;
 
 private:
-    std::map<std::string, EdgeType*> splicedEdgeTypes;
-    std::string xml;
+    map<string, EdgeType*> splicedEdgeTypes;
+    string xml;
 };
 
 } // namespace ms 

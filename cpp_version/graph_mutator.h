@@ -8,7 +8,7 @@
 namespace ms {
 
 class Morphism;
-struct Production;
+struct Transition;
 class GraphGrammar;
 
 class GraphMutator {
@@ -21,12 +21,12 @@ public:
     void reset();
 
 private:
-    std::vector<bool> edgeTypeStarted;
+    vector<bool> edgeTypeStarted;
     GraphGrammar* hierarchy;
     Model* model;
-    std::unique_ptr<MorphismFinder> morphismFider;
+    unique_ptr<MorphismFinder> mapFinder;
 
-    bool applyProduction(Production production);
+    bool applyTransition(Transition transition);
 };
 
 } // namespace ms 

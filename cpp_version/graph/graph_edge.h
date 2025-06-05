@@ -18,7 +18,7 @@ public:
     ~GraphEdge() = default;
 
     // Core functionality
-    const std::vector<std::vector<GraphHalfEdge*>>& getHalfEdges() const;
+    const vector<vector<GraphHalfEdge*>>& getHalfEdges() const;
     EdgeType* getType() { return type; }
     void setType(EdgeType* type_) { type = type_; }
     Graph* getGraph() const;
@@ -35,7 +35,7 @@ public:
     void import(const Json& json);
 
 private:
-    std::vector<std::vector<GraphHalfEdge*>> halfEdges;
+    vector<vector<GraphHalfEdge*>> halfEdges;
     EdgeType* type;
     Graph* graph;
     int id;

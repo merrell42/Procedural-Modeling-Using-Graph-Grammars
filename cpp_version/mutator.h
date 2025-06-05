@@ -33,7 +33,7 @@ public:
 
 private:
     Model* model;
-    std::unique_ptr<GraphMutator> graphMutator;
+    unique_ptr<GraphMutator> graphMutator;
 };
 
 } // namespace ms 

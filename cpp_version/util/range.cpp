@@ -32,8 +32,8 @@ double Range::sample() const {
     if (tileLength == 0) {
         return Util::randomUniform(data[0], data[1]);
     } else {
-        double low = std::ceil(data[0] / tileLength);
-        double high = std::floor(data[1] / tileLength);
+        double low = ceil(data[0] / tileLength);
+        double high = floor(data[1] / tileLength);
         return low + Util::randomUniform(0, high - low + 1);
     }
 }
@@ -52,7 +52,7 @@ Range Range::transform(double a, double b) const {
 }
 
 Range Range::transformCreate(double a, double b, const Range& rangeB) {
-    if (std::abs(a) < ERROR_MARGIN) {
+    if (abs(a) < ERROR_MARGIN) {
         if (rangeB.isInside(b)) {
             return Range(-INFINITY, INFINITY);
         } else {
@@ -63,23 +63,23 @@ Range Range::transformCreate(double a, double b, const Range& rangeB) {
 }
 
 void Range::print() const {
-    std::cout << data[0] << ", " << data[1] << std::endl;
+    cout << data[0] << ", " << data[1] << endl;
 }
 
 double Range::gcd2(double x, double y) {
-    return (y < ERROR_MARGIN) ? x : gcd2(y, std::fmod(x, y));
+    return (y < ERROR_MARGIN) ? x : gcd2(y, fmod(x, y));
 }
 
-double Range::gcd(const std::vector<double>& arr) {
-    return std::accumulate(arr.begin(), arr.end(), arr[0],
+double Range::gcd(const vector<double>& arr) {
+    return accumulate(arr.begin(), arr.end(), arr[0],
         [](double a, double b) { return gcd2(a, b); });
 }
 
 double Range::lcm(double a, double b) {
-    if (std::abs(a) < ERROR_MARGIN) {
+    if (abs(a) < ERROR_MARGIN) {
         return b;
     }
-    if (std::abs(b) < ERROR_MARGIN) {
+    if (abs(b) < ERROR_MARGIN) {
         return a;
     }
     return (a * b) / gcd2(a, b);

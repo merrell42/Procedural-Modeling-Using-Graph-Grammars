@@ -3,6 +3,8 @@
 #include <vector>
 #include "vec3.h"
 
+using namespace std;
+
 namespace ms {
 
 class Vec3;
@@ -19,10 +21,10 @@ struct Mesh {
 };
 
 Mesh createMesh(
-    std::vector<Vec3> positions,
-    std::vector<Vec3> normals,
-    std::vector<int> triangles,
-    std::vector<int> faceIndices
+    vector<Vec3> positions,
+    vector<Vec3> normals,
+    vector<int> triangles,
+    vector<int> faceIndices
 );
 
 }

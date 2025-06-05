@@ -1,6 +1,8 @@
 #pragma once
 #include <vector>
 
+using namespace std;
+
 namespace ms {
 
 class Range {
@@ -9,7 +11,7 @@ public:
     Range(double low, double high, double tileLength = 0);
     ~Range() = default;
 
-    const std::vector<double>& getData() const { return data; }
+    const vector<double>& getData() const { return data; }
     double getTileLength() const { return tileLength; }
 
     Range intersect(const Range& rangeB) const;
@@ -20,13 +22,13 @@ public:
     void print() const;
 
     static Range transformCreate(double a, double b, const Range& rangeB);
-    static double gcd(const std::vector<double>& arr);
+    static double gcd(const vector<double>& arr);
     static double lcm(double a, double b);
 
     static constexpr double ERROR_MARGIN = 1e-5f;
 
 private:
-    std::vector<double> data;  // [low, high]
+    vector<double> data;  // [low, high]
     double tileLength;
 
     static double gcd2(double x, double y);

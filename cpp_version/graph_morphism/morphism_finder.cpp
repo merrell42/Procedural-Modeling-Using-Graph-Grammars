@@ -12,7 +12,7 @@
 
 namespace ms {
 
-std::unordered_map<int, VertexType*> MorphismFinder::splicedVertexTypes;
+unordered_map<int, VertexType*> MorphismFinder::splicedVertexTypes;
 
 MorphismFinder::MorphismFinder(Model* model, bool groundEnabled)
     : model(model)
@@ -25,7 +25,7 @@ void MorphismFinder::reset() {
     groundFace = nullptr;
 }
 
-Morphism* MorphismFinder::findMorphism(Graph* graphB) {
+Morphism* MorphismFinder::findMap(Graph* graphB) {
     if (!groundFace && groundEnabled) {
         auto faces = model->getCurrent()->getFaceMap();
         if (!faces.empty()) {
@@ -35,7 +35,7 @@ Morphism* MorphismFinder::findMorphism(Graph* graphB) {
 
     auto verticesB = graphB->getVertices();
     if (verticesB.empty()) {
-        return findStarterMorphism(graphB);
+        return findStarterMap(graphB);
     }
 
     // Start with a vertex that is not spliced
@@ -54,7 +54,7 @@ Morphism* MorphismFinder::findMorphism(Graph* graphB) {
     int attempts = min(N, vertexAttempts);
     int startIndex = Util::randomInt(N);
 
-    auto it = std::next(vertexMap.begin(), startIndex % vertexMap.size()); // Start at valid index
+    auto it = next(vertexMap.begin(), startIndex % vertexMap.size()); // Start at valid index
     size_t count = 0;
 
     while (count < attempts) {
@@ -63,13 +63,13 @@ Morphism* MorphismFinder::findMorphism(Graph* graphB) {
             nodesModified = false;
             auto* info = new MorphismInfo(model, graphB);
             auto* state = new MorphismState(info);
-            auto* morphism = assignVertex(state, vertexA, index1);
+            auto* map = assignVertex(state, vertexA, index1);
                 
-            if (morphism) {
-                addOuterFaces(morphism, graphB);
+            if (map) {
+                addOuterFaces(map, graphB);
                 delete state;
                 delete info;
-                return morphism;
+                return map;
             } else if (nodesModified) {
                 model->reject();
             }
@@ -97,15 +97,15 @@ Morphism* MorphismFinder::assignVertex(MorphismState* state, Vertex* vertexA, in
     return findContinue(state);
 }
 
-void MorphismFinder::addOuterFaces(Morphism* morphism, Graph* graphB) {
+void MorphismFinder::addOuterFaces(Morphism* map, Graph* graphB) {
     // TODO: Implement this. For a closed building popping out of the ground. The ground face is the outer face.
-    /*morphism->outerFaces.clear();
+    /*map->outerFaces.clear();
     auto outerFaces = graphB->getOuterFaces();
     for (size_t fIndex = 0; fIndex < outerFaces.size(); fIndex++) {
         auto* outerFaceB = outerFaces[fIndex];
         auto* outerHalf = outerFaceB->outerComponent;
         int vIndex = graphB->getInterior()->vertexIndex(outerHalf->getVertex());
-        morphism->outerFaces.push_back(morphism->vertexBtoA[vIndex]->getHalfEdges()[outerHalf->vertexIndex]->getFace());
+        map->outerFaces.push_back(map->vertexBtoA[vIndex]->getHalfEdges()[outerHalf->vertexIndex]->getFace());
     }*/
 }
 
@@ -119,22 +119,22 @@ Face* MorphismFinder::findFace(FaceType* faceType) {
     }
 
     auto facesA = model->getCurrent()->getFaceMap();
-    // TODO: This conversion from morphism to vector could be slow with many faces.
+    // TODO: This conversion from map to vector could be slow with many faces.
     // We could just select random samples.
-    std::vector<Face*> facesVec;
+    vector<Face*> facesVec;
     for (const auto& [_, face] : facesA) {
         facesVec.push_back(face);
     }
     int N = (int)facesVec.size();
     int attempts = min(N, faceAttempts);
     int startIndex = Util::randomInt(N);
-    std::vector<Face*> options;
-    std::vector<double> weights;
+    vector<Face*> options;
+    vector<double> weights;
 
     for (int i = 0; i < attempts; i++) {
         auto* faceA = facesVec[(startIndex + i) % N];
         if (faceA && faceA->getFaceType() == faceType && !faceA->isHole()) {
-            weights.push_back(std::abs(faceA->signedArea()));
+            weights.push_back(abs(faceA->signedArea()));
             options.push_back(faceA);
         }
     }
@@ -145,9 +145,9 @@ Face* MorphismFinder::findFace(FaceType* faceType) {
     return nullptr;
 }
 
-Morphism* MorphismFinder::findStarterMorphism(Graph* graphB) {
-    auto info = std::make_unique<MorphismInfo>(model, graphB);
-    auto state = std::make_unique<MorphismState>(info.get());
+Morphism* MorphismFinder::findStarterMap(Graph* graphB) {
+    auto info = make_unique<MorphismInfo>(model, graphB);
+    auto state = make_unique<MorphismState>(info.get());
 
     auto faces = graphB->getFaces();
     if (faces.empty()) {
@@ -161,7 +161,7 @@ Morphism* MorphismFinder::findStarterMorphism(Graph* graphB) {
 
     auto bFaces = graphB->getBFaces();
     if (bFaces.size() != 1) {
-        std::cout << "Expect one boundary face." << std::endl;
+        cout << "Expect one boundary face." << endl;
         return nullptr;
     }
     Face* face = findFace(bFaces[0]->getType());
@@ -178,12 +178,12 @@ Morphism* MorphismFinder::findStarterMorphism(Graph* graphB) {
 
 Morphism* MorphismFinder::findContinue(MorphismState* state) {
     if (!state->getQueue().empty()) {
-        std::vector<HalfEdgeData>& queue = state->getQueue();
+        vector<HalfEdgeData>& queue = state->getQueue();
         HalfEdgeData halfedgeData = queue.front();
         queue.erase(queue.begin());
         return matchHalfEdge(halfedgeData, state);
     } else if (!state->getSpliceQueue().empty()) {
-        std::vector<HalfEdgeData>& queue = state->getSpliceQueue();
+        vector<HalfEdgeData>& queue = state->getSpliceQueue();
         HalfEdgeData halfedgeData = queue.front();
         queue.erase(queue.begin());
         return spliceHalfEdge(halfedgeData, state);
@@ -240,7 +240,7 @@ Morphism* MorphismFinder::matchHalfEdge(
     // it is not an outer face.
     auto faceB = halfB->getFace();
     auto bFaces = faceB->getGraph()->getBFaces();
-    bool isOuter = !faceB->isLoopy() || std::find(bFaces.begin(), bFaces.end(), faceB) != bFaces.end();
+    bool isOuter = !faceB->isLoopy() || find(bFaces.begin(), bFaces.end(), faceB) != bFaces.end();
     if (neighboringHoles(halfedgeA->getEdge(), edgeB) && !isOuter) {
         return nullptr;
     }
@@ -321,15 +321,15 @@ Morphism* MorphismFinder::spliceHalfEdge(
         bool isConnector1 = (vertexB1->connectorIndex() >= 0);
 
         if (!(isConnector0 ^ isConnector1)) {
-            std::cout << "Expected one of the vertices to be a connector." << std::endl;
+            cout << "Expected one of the vertices to be a connector." << endl;
         }
 
         bool connectorAtStart = isConnector0 ? isAtStart0 : !isAtStart0;
         nodesModified = true;
 
         // Perform triple split
-        std::vector<Edge*> splitEdges;
-        std::vector<Vertex*> splitVertices;
+        vector<Edge*> splitEdges;
+        vector<Vertex*> splitVertices;
         Edge* edgeToSplit = intersectHalfEdge->getEdge();
 
         for (int i = 0; i < 3; i++) {
@@ -354,7 +354,7 @@ Morphism* MorphismFinder::spliceHalfEdge(
             return assignVertex(state, splitVertices[2], vIndexB);
         }
     } else if (vIndex0 < 0 || vIndex1 < 0 || eIndex < 0) {
-        std::cout << "Unsure what to do about a partial match" << std::endl;
+        cout << "Unsure what to do about a partial match" << endl;
     }
 
     return nullptr;
@@ -362,7 +362,7 @@ Morphism* MorphismFinder::spliceHalfEdge(
 
 Morphism* MorphismFinder::assignHalfEdge(HalfEdge* halfedgeA, GraphHalfEdge* halfB, MorphismState* state) {
     auto info = state->getInfo();
-    auto morphism = state->getMorphism();
+    auto map = state->getMorphism();
 
     GraphVertex* vertexB = halfB->getNext()->getVertex();
     int vIndexB = indexOf(info->verticesB, vertexB);
@@ -370,7 +370,7 @@ Morphism* MorphismFinder::assignHalfEdge(HalfEdge* halfedgeA, GraphHalfEdge* hal
     bool isConnector = vertexB->connectorIndex() >= 0;
     auto vertexType = vertexB->getType();
 
-    if (!isConnector && vertexType->getSpliced() && morphism->vertexBtoA[vIndexB] == 0) {
+    if (!isConnector && vertexType->getSpliced() && map->vertexBtoA[vIndexB] == 0) {
         halfedgeA->getEdge()->fullSplit(random());
         nodesModified = true;
     }
@@ -378,12 +378,12 @@ Morphism* MorphismFinder::assignHalfEdge(HalfEdge* halfedgeA, GraphHalfEdge* hal
     Edge* edgeA = halfedgeA->getEdge();
     GraphEdge* edgeB = halfB->getEdge();
     int eIndexB = indexOf(info->edgesB, edgeB);
-    morphism->edgeBtoA[eIndexB] = edgeA;
+    map->edgeBtoA[eIndexB] = edgeA;
 
     Vertex* vertexA = halfedgeA->next()->getVertex();
-    int vIndexA = indexOf(morphism->vertexBtoA, vertexA);
+    int vIndexA = indexOf(map->vertexBtoA, vertexA);
 
-    if (vIndexA < morphism->vertexBtoA.size()) {
+    if (vIndexA < map->vertexBtoA.size()) {
         if (isConnector || vIndexA == vIndexB) {
             // We've already matched the vertex at the end of halfB.
             return findContinue(state);
@@ -403,8 +403,8 @@ Morphism* MorphismFinder::assignHalfEdge(HalfEdge* halfedgeA, GraphHalfEdge* hal
 
 // Helper function to find the nearest intersection between a edge and a face
 void MorphismFinder::findNearestIntersection(Face* faceA, const Vec3& p0, const Vec3& p1, const Vec2& dir2, IntersectResult& nearestIntersect, int maxDim) {
-    std::vector<Vec3> fPositions = faceA->getPositions();
-    std::vector<IntersectionData> intersections = Intersector::edgeFaceIntersect(p0, p1, fPositions, maxDim);
+    vector<Vec3> fPositions = faceA->getPositions();
+    vector<IntersectionData> intersections = Intersector::edgeFaceIntersect(p0, p1, fPositions, maxDim);
     
     for (const IntersectionData& intersection : intersections) {
         double distance = dir2.dot(intersection.pos);
@@ -422,14 +422,14 @@ void MorphismFinder::findNearestIntersection(Face* faceA, const Vec3& p0, const 
 
 // Cast a ray and find the nearest intersection
 // TODO: Use BSP tree.
-IntersectResult MorphismFinder::castRay(const Vec3& p0, const Vec3& dir, FaceGroup* groupA, const std::map<int, Face*>& faceMap, int maxDim) {
+IntersectResult MorphismFinder::castRay(const Vec3& p0, const Vec3& dir, FaceGroup* groupA, const map<int, Face*>& faceMap, int maxDim) {
     Vec3 p1 = dir;
     p1.scale(Intersector::FAR_DISTANCE);
     p1.add(p0);
     Vec2 dir2 = dir.dropDim(maxDim);
 
     IntersectResult nearestIntersect;
-    nearestIntersect.distance = std::numeric_limits<double>::infinity();
+    nearestIntersect.distance = numeric_limits<double>::infinity();
     nearestIntersect.face = nullptr;
     nearestIntersect.data = nullptr;
 
@@ -446,7 +446,7 @@ IntersectResult MorphismFinder::castRay(const Vec3& p0, const Vec3& dir, FaceGro
     int attempts = min(N, faceAttempts);
     int startIndex = Util::randomInt(N);
     
-    auto it = std::next(faceMap.begin(), startIndex % N);
+    auto it = next(faceMap.begin(), startIndex % N);
     for (int i = 0; i < attempts; i++) {
         findNearestIntersection(it->second, p0, p1, dir2, nearestIntersect, maxDim);
         
@@ -460,7 +460,7 @@ IntersectResult MorphismFinder::castRay(const Vec3& p0, const Vec3& dir, FaceGro
 }
 
 // Cast a series of rays
-HalfEdge* MorphismFinder::castRaySeries(GraphHalfEdge* halfB, const Vec3& startPos, FaceGroup* groupA, const std::map<int, Face*>& faceMap, int maxDim) {
+HalfEdge* MorphismFinder::castRaySeries(GraphHalfEdge* halfB, const Vec3& startPos, FaceGroup* groupA, const map<int, Face*>& faceMap, int maxDim) {
     Vec3 p0 = startPos;
     GraphHalfEdge* nextB = halfB->getNext();
     

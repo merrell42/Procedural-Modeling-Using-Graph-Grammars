@@ -4,6 +4,7 @@
 #include "../third_party/json.h"
 
 using Json = nlohmann::json;
+using namespace std;
 
 namespace ms {
 
@@ -13,23 +14,23 @@ class Primitives;
 struct DrawOptions;
 struct OrderInfo;
 
-class ProductionRule {
+class NetTransition {
 public:
-    explicit ProductionRule(
-        const std::vector<Graph*>& startGraphs,
-        const std::vector<Graph*>& endGraphs
+    explicit NetTransition(
+        const vector<Graph*>& startGraphs,
+        const vector<Graph*>& endGraphs
     );
-    static ProductionRule* import(const Json& json, Primitives* shape);
-    ~ProductionRule() = default;
+    static NetTransition* import(const Json& json, Primitives* shape);
+    ~NetTransition() = default;
 
-    const std::vector<Graph*>& getStartGraphs() const { return startGraphs; }
-    const std::vector<Graph*>& getEndGraphs() const { return endGraphs; }
+    const vector<Graph*>& getStartGraphs() const { return startGraphs; }
+    const vector<Graph*>& getEndGraphs() const { return endGraphs; }
     bool isGround() const { return ground; }
     int getId() const { return id; }
 
 private:
-    std::vector<Graph*> startGraphs;
-    std::vector<Graph*> endGraphs;
+    vector<Graph*> startGraphs;
+    vector<Graph*> endGraphs;
     bool ground;
     int id;
 

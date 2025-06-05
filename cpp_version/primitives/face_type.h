@@ -9,10 +9,10 @@ class View;
 
 class FaceType {
 public:
-    FaceType(const std::string& material, const Vec3& normal);
+    FaceType(const string& material, const Vec3& normal);
     ~FaceType() = default;
 
-    const std::string& getMaterial() const { return material; }
+    const string& getMaterial() const { return material; }
     const Vec3& getNormal() const { return normal; }
     const Vec3& getU() const { return u; }
     const Vec3& getV() const { return v; }
@@ -25,7 +25,7 @@ public:
     void setMonotonic(bool isMonotonic) { monotonic = isMonotonic; }
 
     double angle(const Vec3& q) const;
-    double getArea(const std::vector<Vec3>& vertices) const;
+    double getArea(const vector<Vec3>& vertices) const;
     Vec3 normalColor() const;
 
     static FaceType* import(const Json& json);
@@ -37,7 +37,7 @@ public:
     int id;
 
 private:
-    std::string material;
+    string material;
     Vec3 normal;
     bool monotonic;
     Vec3* color;
@@ -47,7 +47,7 @@ private:
 
     // Helper methods
     void computeOrthonormalBasis();
-    double polygonArea(const std::vector<Vec2>& points) const;
+    double polygonArea(const vector<Vec2>& points) const;
 };
 
 } // namespace ms 

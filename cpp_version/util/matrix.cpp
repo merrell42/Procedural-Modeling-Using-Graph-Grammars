@@ -5,21 +5,21 @@
 
 namespace ms {
 
-Matrix::Matrix(const std::vector<std::vector<double>>& d)
+Matrix::Matrix(const vector<vector<double>>& d)
     : data(d) {
     size = {static_cast<int>(data.size()),
             static_cast<int>(data.empty() ? 0 : data[0].size())};
 }
 
-void Matrix::set(const std::vector<int>& index, double value) {
+void Matrix::set(const vector<int>& index, double value) {
     data[index[0]][index[1]] = value;
 }
 
-double Matrix::get(const std::vector<int>& index) const {
+double Matrix::get(const vector<int>& index) const {
     return data[index[0]][index[1]];
 }
 
-Matrix Matrix::subset(const std::vector<std::vector<int>>& indices,
+Matrix Matrix::subset(const vector<vector<int>>& indices,
                                         const Matrix* replacement) {
     const auto& indices0 = indices[0];
     const auto& indices1 = indices[1];
@@ -33,8 +33,8 @@ Matrix Matrix::subset(const std::vector<std::vector<int>>& indices,
         return *this;
     }
 
-    std::vector<std::vector<double>> result(indices0.size(),
-                                          std::vector<double>(indices1.size()));
+    vector<vector<double>> result(indices0.size(),
+                                          vector<double>(indices1.size()));
     for (size_t i = 0; i < indices0.size(); i++) {
         for (size_t j = 0; j < indices1.size(); j++) {
             result[i][j] = data[indices0[i]][indices1[j]];
@@ -51,13 +51,13 @@ Matrix& Matrix::concat(const Matrix& B) {
     return *this;
 }
 
-Matrix Matrix::matrix(const std::vector<std::vector<double>>& data) {
+Matrix Matrix::matrix(const vector<vector<double>>& data) {
     return Matrix(data);
 }
 
 Matrix* Matrix::zeros(int size0, int size1) {
-    return new Matrix(std::vector<std::vector<double>>(size0,
-                                                 std::vector<double>(size1, 0.0)));
+    return new Matrix(vector<vector<double>>(size0,
+                                                 vector<double>(size1, 0.0)));
 }
 
 Matrix* Matrix::add(const Matrix* A, const Matrix* B) {
@@ -129,7 +129,7 @@ double Matrix::det(const Matrix& A) {
         double h = d[2][0], i = d[2][1], j = d[2][2];
         return a*f*j + b*g*h + c*e*i - c*f*h - b*e*j - a*g*i;
     }
-    throw std::runtime_error("det only implemented for 2x2 and 3x3");
+    throw runtime_error("det only implemented for 2x2 and 3x3");
 }
 
 Matrix* Matrix::inverse(const Matrix* A) {
@@ -141,7 +141,7 @@ Matrix* Matrix::inverse(const Matrix* A) {
     } else if (A->size[0] == 3 && A->size[1] == 3) {
         double det1 = 1.0 / det(*A);
         const auto& d = A->data;
-        std::vector<std::vector<double>> result(3, std::vector<double>(3));
+        vector<vector<double>> result(3, vector<double>(3));
         
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
@@ -158,7 +158,7 @@ Matrix* Matrix::inverse(const Matrix* A) {
         }
         return new Matrix(result);
     }
-    throw std::runtime_error("inv only implemented for 2x2 and 3x3");
+    throw runtime_error("inv only implemented for 2x2 and 3x3");
 }
 
 double Matrix::dot(const Matrix& A, const Matrix& B) {
@@ -169,12 +169,12 @@ double Matrix::dot(const Matrix& A, const Matrix& B) {
     return sum;
 }
 
-std::vector<int> Matrix::index(int index0, int index1) {
+vector<int> Matrix::index(int index0, int index1) {
     return {index0, index1};
 }
 
-std::vector<int> Matrix::range(int lower, int upper) {
-    std::vector<int> result;
+vector<int> Matrix::range(int lower, int upper) {
+    vector<int> result;
     for (int i = lower; i < upper; i++) {
         result.push_back(i);
     }

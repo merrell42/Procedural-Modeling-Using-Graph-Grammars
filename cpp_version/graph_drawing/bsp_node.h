@@ -16,7 +16,7 @@ namespace ms {
 	class BspNode {
 		public:
 			BspNode(Model* model, int id);
-			BspNode(Model* model, int id, int parentId, int aboveId, int belowId, Plane* plane, std::vector<int> faceIds, std::vector<int> edgeIds);
+			BspNode(Model* model, int id, int parentId, int aboveId, int belowId, Plane* plane, ::vector<int> faceIds, ::vector<int> edgeIds);
 			~BspNode() { delete plane; }
 			BspNode* copy();
 			void setParentId(int newParentId) { parentId = newParentId; }
@@ -32,8 +32,8 @@ namespace ms {
 			int parentId;
 			int aboveId;
 			int belowId;
-			std::vector<int> faceIds;
-			std::vector<int> edgeIds;
+			::vector<int> faceIds;
+			::vector<int> edgeIds;
 			Plane* plane;
 
 			void connectAbove(BspNode* above);

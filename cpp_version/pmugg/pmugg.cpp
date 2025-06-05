@@ -31,7 +31,7 @@ int main() {
 		auto model = new ms::Model();
 		auto mutator = new Mutator(model, new GraphMutator(hierarchy, model));
 		mutator->iterate(100);
-	} catch (const std::exception& e) {
+	} catch (const exception& e) {
 	 	cout << "Error: " << e.what() << endl;
 	}
 }

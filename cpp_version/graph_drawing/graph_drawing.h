@@ -21,11 +21,11 @@ class GraphDrawing {
 	public:
 		GraphDrawing() { bspRootId = -1; }
 		GraphDrawing(
-			std::map<int, HalfEdge*> halfedgeMap,
-			std::map<int, Face*>     faceMap,
-			std::map<int, Edge*>     edgeMap,
-			std::map<int, Vertex*>   vertexMap,
-			std::map<int, BspNode*> bspNodeMap,
+			map<int, HalfEdge*> halfedgeMap,
+			map<int, Face*>     faceMap,
+			map<int, Edge*>     edgeMap,
+			map<int, Vertex*>   vertexMap,
+			map<int, BspNode*> bspNodeMap,
 			int bspRootId
 		);
 		void copy();
@@ -52,12 +52,12 @@ class GraphDrawing {
 		void removeBspNode(BspNode* bspNode);
 		void removeFaceGroup(FaceGroup* faceGroup);
 
-		std::map<int, HalfEdge*> getHalfEdgeMap() { return halfedgeMap; }
-		std::map<int, Face*> getFaceMap() { return faceMap; }
-		std::map<int, Edge*> getEdgeMap() { return edgeMap; }
-		std::map<int, Vertex*> getVertexMap() { return vertexMap; }
-		std::map<int, BspNode*> getBspNodeMap() { return bspNodeMap; }
-		std::map<int, FaceGroup*> getFaceGroupMap() { return faceGroupMap; }
+		map<int, HalfEdge*> getHalfEdgeMap() { return halfedgeMap; }
+		map<int, Face*> getFaceMap() { return faceMap; }
+		map<int, Edge*> getEdgeMap() { return edgeMap; }
+		map<int, Vertex*> getVertexMap() { return vertexMap; }
+		map<int, BspNode*> getBspNodeMap() { return bspNodeMap; }
+		map<int, FaceGroup*> getFaceGroupMap() { return faceGroupMap; }
 
 		// TODO: Make this more efficient.
 		int getVertexIndex(int vertexId) const {
@@ -72,7 +72,7 @@ class GraphDrawing {
 		}
 
 		// Save the mesh to an OBJ file.
-		void save(std::string suffix);
+		void save(string suffix);
 
 		Mesh exportMesh();
 
@@ -84,12 +84,12 @@ class GraphDrawing {
 		int getBspRootId() { return bspRootId; }
 
 	private:
-		std::map<int, HalfEdge*> halfedgeMap;
-		std::map<int, Face*>     faceMap;
-		std::map<int, Edge*>     edgeMap;
-		std::map<int, Vertex*>   vertexMap;
-		std::map<int, BspNode*>  bspNodeMap;
-		std::map<int, FaceGroup*> faceGroupMap;
+		map<int, HalfEdge*> halfedgeMap;
+		map<int, Face*>     faceMap;
+		map<int, Edge*>     edgeMap;
+		map<int, Vertex*>   vertexMap;
+		map<int, BspNode*>  bspNodeMap;
+		map<int, FaceGroup*> faceGroupMap;
 		int bspRootId;
 };
 }

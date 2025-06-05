@@ -16,7 +16,7 @@
 
 namespace ms {
 
-struct Production;
+struct Transition;
 class MorphismPath;
 class Graph;
 class Edge;
@@ -25,9 +25,9 @@ class Vertex;
 struct FixedFace;
 
 struct EditGraph {
-    std::vector<Vertex*> vertices;
-    std::vector<Edge*> edges;
-    std::vector<Face*> faces;
+    vector<Vertex*> vertices;
+    vector<Edge*> edges;
+    vector<Face*> faces;
 };
 
 // Helper struct for edge data
@@ -38,8 +38,8 @@ struct EdgeData {
 };
 
 struct Limits {
-    std::vector<double> min;
-    std::vector<double> max;
+    vector<double> min;
+    vector<double> max;
 };
 
 class RuleApplier {
@@ -54,56 +54,56 @@ public:
     static constexpr double minLength = 0;
 
     // Static factory method
-    static std::unique_ptr<RuleApplier> buildNormally(const Production& production, 
+    static unique_ptr<RuleApplier> buildNormally(const Transition& transition, 
                                                        Model* model, int dims);
 
     bool solve();
     void setup();
-    void create(const Production& production, Model* model, int dims);
+    void create(const Transition& transition, Model* model, int dims);
     void addEdge(Edge* edge, bool includeLength, bool addToGraph);
     EditGraph* createGraph();
     void reject();
     void freeVertex();
-    std::vector<double> getExtents();
+    vector<double> getExtents();
 
 private:
-    Graph* startGraph = nullptr;
-    Graph* endGraph = nullptr;
-    Morphism* morphism = nullptr;
+    Graph* startNet = nullptr;
+    Graph* endNet = nullptr;
+    Morphism* map = nullptr;
     bool ground = false;
     int dims = 2;
     
-    std::vector<MorphismPath*> openPaths;
-    std::vector<EdgeData> edgeData;
-    std::vector<Edge*> edges;
+    vector<MorphismPath*> openPaths;
+    vector<EdgeData> edgeData;
+    vector<Edge*> edges;
     Model* model = nullptr;
 
-    std::vector<Vertex*> freeVertices;
-    std::vector<Edge*> freeEdges;
-    std::vector<FixedFace> fixedFaces;
+    vector<Vertex*> freeVertices;
+    vector<Edge*> freeEdges;
+    vector<FixedFace> fixedFaces;
     Vec3* initialPosition = nullptr;
-    std::vector<int> propagationOrder;
-    std::vector<Edge*> basisEdges;
-    std::vector<int> fixedVertexIds;
+    vector<int> propagationOrder;
+    vector<Edge*> basisEdges;
+    vector<int> fixedVertexIds;
     double effort = 0;
     EditGraph* graph = nullptr;
     double angle = 0;
-    std::unique_ptr<RuleApplierSettings> settings;
+    unique_ptr<RuleApplierSettings> settings;
 
     // Helper functions
     void addFixedFace(Face* faceA, Face* faceB, double d);
     // bool mergeDuplicateEdges();
     void setupFaceCentric();
     bool sampleSolutionSpace();
-    void constrainVertexIds(std::vector<int>& vIds, RuleApplierSettings* settings);
-    std::pair<std::vector<double>, bool> sampleFaceCentric();
-    std::vector<MorphismPath*> getFreeablePaths() const;
+    void constrainVertexIds(vector<int>& vIds, RuleApplierSettings* settings);
+    pair<vector<double>, bool> sampleFaceCentric();
+    vector<MorphismPath*> getFreeablePaths() const;
     void freeOneVertex(Vertex* vertex);
-    bool placeVertexPositions(const std::vector<double>& positions);
+    bool placeVertexPositions(const vector<double>& positions);
     Limits findLimits();
-    bool hasViolations(const std::vector<double>& positions, const Limits& limits);
-    Range getRange(const std::vector<int>& orderIds, const std::vector<OrderInfo>& orderInfo);
-    void setPlacements(const std::vector<int>& orderIds, const std::vector<OrderInfo>& orderInfo);
+    bool hasViolations(const vector<double>& positions, const Limits& limits);
+    Range getRange(const vector<int>& orderIds, const vector<OrderInfo>& orderInfo);
+    void setPlacements(const vector<int>& orderIds, const vector<OrderInfo>& orderInfo);
 };
 
 } // namespace ms 

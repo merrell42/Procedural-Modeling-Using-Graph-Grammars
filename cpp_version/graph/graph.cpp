@@ -31,19 +31,19 @@ void Graph::addFace(GraphFace* face) {
 }
 
 void Graph::removeVertex(GraphVertex* vertex) {
-    vertices.erase(std::remove(vertices.begin(), vertices.end(), vertex), vertices.end());
+    vertices.erase(remove(vertices.begin(), vertices.end(), vertex), vertices.end());
 }
 
 void Graph::removeEdge(GraphEdge* edge) {
-    edges.erase(std::remove(edges.begin(), edges.end(), edge), edges.end());
+    edges.erase(remove(edges.begin(), edges.end(), edge), edges.end());
 }
 
 void Graph::removeHalfEdge(GraphHalfEdge* halfEdge) {
-    halfEdges.erase(std::remove(halfEdges.begin(), halfEdges.end(), halfEdge), halfEdges.end());
+    halfEdges.erase(remove(halfEdges.begin(), halfEdges.end(), halfEdge), halfEdges.end());
 }
 
 void Graph::removeFace(GraphFace* face) {
-    faces.erase(std::remove(faces.begin(), faces.end(), face), faces.end());
+    faces.erase(remove(faces.begin(), faces.end(), face), faces.end());
 }
 
 GraphVertex* Graph::convertVertex(Graph* graphB, GraphVertex* vertexB) {
@@ -63,19 +63,19 @@ GraphFace* Graph::convertFace(Graph* graphB, GraphFace* faceB) {
 }
 
 int Graph::vertexIndex(GraphVertex* vertex) const {
-    return vertex ? (int)(std::find(vertices.begin(), vertices.end(), vertex) - vertices.begin()) : -1;
+    return vertex ? (int)(find(vertices.begin(), vertices.end(), vertex) - vertices.begin()) : -1;
 }
 
 int Graph::edgeIndex(GraphEdge* edge) const {
-    return edge ? (int)(std::find(edges.begin(), edges.end(), edge) - edges.begin()) : -1;
+    return edge ? (int)(find(edges.begin(), edges.end(), edge) - edges.begin()) : -1;
 }
 
 int Graph::halfEdgeIndex(GraphHalfEdge* halfEdge) const {
-    return halfEdge ? (int)(std::find(halfEdges.begin(), halfEdges.end(), halfEdge) - halfEdges.begin()) : -1;
+    return halfEdge ? (int)(find(halfEdges.begin(), halfEdges.end(), halfEdge) - halfEdges.begin()) : -1;
 }
 
 int Graph::faceIndex(GraphFace* face) const {
-    return face ? (int)(std::find(faces.begin(), faces.end(), face) - faces.begin()) : -1;
+    return face ? (int)(find(faces.begin(), faces.end(), face) - faces.begin()) : -1;
 }
 
 Graph* Graph::import(const Json & json, Primitives* shape) {
@@ -114,7 +114,7 @@ Graph* Graph::import(const Json & json, Primitives* shape) {
     for (size_t index = 0; index < json["vertices"].size(); ++index) {
         auto vertexData = json["vertices"][index];
         int type = vertexData["type"].get<int>();
-        auto kind = vertexData["kind"].get<std::string>();
+        auto kind = vertexData["kind"].get<string>();
         result->getVertices()[index]->kind = kind;
         auto vertexType = (kind == "v") ? shape->vertexTypes[type] : edgeVertex;
         result->getVertices()[index]->setType(vertexType);
@@ -154,7 +154,7 @@ Graph* Graph::import(const Json & json, Primitives* shape) {
 // Remove any spliced edges.
 void Graph::removeSplices() {
     // Check if any half edges are spliced
-    bool hasSplices = std::any_of(
+    bool hasSplices = any_of(
         getHalfEdges().begin(),
         getHalfEdges().end(),
         [](GraphHalfEdge* half) { return half->isSpliced(); }

@@ -17,7 +17,7 @@ class EdgePlacement;
 class FacePlacement;
 
 struct OrderInfo {
-    std::string type;
+    string type;
     int vertexId;
 };
 
@@ -29,26 +29,26 @@ public:
     EdgePlacement* getEdge(int id) { return edgePlacements[id].get(); }
     FacePlacement* getFace(int id) { return facePlacements[id].get(); }
 
-    void setVertex(int id, std::unique_ptr<VertexPlacement> vPlace);
-    void setEdge(int id, std::unique_ptr<EdgePlacement> ePlace);
-    void setFace(int id, std::unique_ptr<FacePlacement> fPlace);
+    void setVertex(int id, unique_ptr<VertexPlacement> vPlace);
+    void setEdge(int id, unique_ptr<EdgePlacement> ePlace);
+    void setFace(int id, unique_ptr<FacePlacement> fPlace);
 
-    void addToOrder(int id, const std::string& type, int vertexId);
+    void addToOrder(int id, const string& type, int vertexId);
     int createFace(const Vec3& normal);
     void mergeFace(int idA, int idB);
     int findBasisOrder(const int basisId);
 
     // Member variables
     int newFaceCounter = -1;
-    std::unordered_map<int, std::unique_ptr<VertexPlacement>> vertexPlacements;
-    std::unordered_map<int, std::unique_ptr<EdgePlacement>> edgePlacements;
-    std::unordered_map<int, std::unique_ptr<FacePlacement>> facePlacements;
-    std::vector<int> basisIds;
+    unordered_map<int, unique_ptr<VertexPlacement>> vertexPlacements;
+    unordered_map<int, unique_ptr<EdgePlacement>> edgePlacements;
+    unordered_map<int, unique_ptr<FacePlacement>> facePlacements;
+    vector<int> basisIds;
     Vec3 lower;
     Vec3 upper;
-    std::unordered_map<int, int> uniqueFaceMap;
-    std::vector<int> orderIds;
-    std::vector<OrderInfo> orderInfo;
+    unordered_map<int, int> uniqueFaceMap;
+    vector<int> orderIds;
+    vector<OrderInfo> orderInfo;
 
     static constexpr double defaultLengthMin = 0.2;
     static constexpr double defaultLengthMax = 4;

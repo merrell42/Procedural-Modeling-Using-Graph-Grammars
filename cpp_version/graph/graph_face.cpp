@@ -16,7 +16,7 @@ GraphHalfEdge* GraphFace::getOuterComponent() const {
     return outerComponent;
 }
 
-const std::vector<GraphHalfEdge*>& GraphFace::getInnerComponents() const {
+const vector<GraphHalfEdge*>& GraphFace::getInnerComponents() const {
     return innerComponents;
 }
 
@@ -30,7 +30,7 @@ GraphFace* GraphFace::connectGraph(Graph* graph) {
     return this;
 }
 
-void GraphFace::connectOuter(const std::vector<GraphHalfEdge*>& halfEdges) {
+void GraphFace::connectOuter(const vector<GraphHalfEdge*>& halfEdges) {
     if (!halfEdges.empty()) {
         outerComponent = halfEdges[0];
         for (auto halfEdge : halfEdges) {
@@ -69,8 +69,8 @@ void GraphFace::import(const Json & json) {
     // }
 }
 
-std::vector<GraphHalfEdge*> GraphFace::getConnectedHalfEdges(GraphHalfEdge* start) {
-    std::vector<GraphHalfEdge*> result;
+vector<GraphHalfEdge*> GraphFace::getConnectedHalfEdges(GraphHalfEdge* start) {
+    vector<GraphHalfEdge*> result;
     GraphHalfEdge* current = start;
     do {
         result.push_back(current);
@@ -79,15 +79,15 @@ std::vector<GraphHalfEdge*> GraphFace::getConnectedHalfEdges(GraphHalfEdge* star
     return result;
 }
 
-std::vector<GraphHalfEdge*> GraphFace::getOuterHalfEdges() const {
+vector<GraphHalfEdge*> GraphFace::getOuterHalfEdges() const {
     if (outerComponent) {
         return getConnectedHalfEdges(outerComponent);
     }
-    return std::vector<GraphHalfEdge*>();
+    return vector<GraphHalfEdge*>();
 }
 
-std::vector<GraphHalfEdge*> GraphFace::getInnerHalfEdges() const {
-    std::vector<GraphHalfEdge*> result;
+vector<GraphHalfEdge*> GraphFace::getInnerHalfEdges() const {
+    vector<GraphHalfEdge*> result;
     for (auto component : innerComponents) {
         auto connected = getConnectedHalfEdges(component);
         result.insert(result.end(), connected.begin(), connected.end());
@@ -95,7 +95,7 @@ std::vector<GraphHalfEdge*> GraphFace::getInnerHalfEdges() const {
     return result;
 }
 
-std::vector<GraphHalfEdge*> GraphFace::getHalfEdges() const {
+vector<GraphHalfEdge*> GraphFace::getHalfEdges() const {
     auto result = getOuterHalfEdges();
     auto inner = getInnerHalfEdges();
     result.insert(result.end(), inner.begin(), inner.end());
@@ -121,7 +121,7 @@ bool GraphFace::isLoopy() const {
 
 bool GraphFace::inGraph() const {
     auto faces = graph->getFaces();
-    return std::find(faces.begin(), faces.end(), this) != faces.end();
+    return find(faces.begin(), faces.end(), this) != faces.end();
 }
 
 } // namespace ms 

@@ -21,7 +21,7 @@ void Mutator::iterate(int steps) {
 
     int finishStep = model->numSteps + steps;
     while (model->numSteps < finishStep) {
-        std::cout << model->numSteps << " " << model->getCurrent()->getFaceMap().size() << std::endl;
+        cout << model->numSteps << " " << model->getCurrent()->getFaceMap().size() << endl;
 
         if (model->numSteps == 0) {
             mutateGround();
@@ -56,7 +56,7 @@ void Mutator::mutateGround() {
 };
 
 void Mutator::mutate() {
-    std::vector<double> probabilities = {1, 1, 10};
+    vector<double> probabilities = {1, 1, 10};
     bool done = false;
 
     while (!done) {
@@ -99,7 +99,7 @@ void Mutator::mutate() {
             }
         }
 
-        if (globalSettings["Fewer Start Productions"].get<bool>() && model->numSteps > 1) {
+        if (globalSettings["Fewer Start Transitions"].get<bool>() && model->numSteps > 1) {
             return;
         }
 

@@ -3,6 +3,7 @@
 #include "../third_party/json.h"
 
 using Json = nlohmann::json;
+using namespace std;
 
 namespace ms {
 
@@ -36,7 +37,7 @@ public:
     Vec2 copy() const;
     Vec2 dropDim() const;
     Vec3 toVec3() const;
-    std::string toString() const;
+    string toString() const;
 
     static Vec2 lerp(const Vec2& start, const Vec2& end, double s);
     static Vec2 unitVec(double angle);

@@ -5,11 +5,11 @@
 namespace ms {
 
 GraphDrawing::GraphDrawing(
-	std::map<int, HalfEdge*> halfedgeMap,
-	std::map<int, Face*>     faceMap,
-	std::map<int, Edge*>     edgeMap,
-	std::map<int, Vertex*>   vertexMap,
-	std::map<int, BspNode*> bspNodeMap,
+	map<int, HalfEdge*> halfedgeMap,
+	map<int, Face*>     faceMap,
+	map<int, Edge*>     edgeMap,
+	map<int, Vertex*>   vertexMap,
+	map<int, BspNode*> bspNodeMap,
 	int bspRootId
 ) : halfedgeMap(halfedgeMap)
 	, faceMap(faceMap)
@@ -60,12 +60,12 @@ void GraphDrawing::removeFaceGroup(FaceGroup* faceGroup) {
 	faceGroupMap.erase(faceGroup->getId());
 }
 
-void GraphDrawing::save(std::string suffix) {
-	const std::string filename = "graph_drawing" + suffix + ".obj";
-	const std::string mtlFilename = "graph_drawing.mtl";
-	std::ofstream outFile(filename);
+void GraphDrawing::save(string suffix) {
+	const string filename = "graph_drawing" + suffix + ".obj";
+	const string mtlFilename = "graph_drawing.mtl";
+	ofstream outFile(filename);
 	if (!outFile) {
-		std::cerr << "Error: Could not open file " << filename << " for writing." << std::endl;
+		cerr << "Error: Could not open file " << filename << " for writing." << endl;
 		return;
 	}
 
@@ -73,7 +73,7 @@ void GraphDrawing::save(std::string suffix) {
 	// outFile << "mtllib " << mtlFilename << "\n";
 
 	// Write vertices
-	std::vector<int> vertexIds;
+	vector<int> vertexIds;
 	for (const auto& [id, vertex] : vertexMap) {
 		const Vec3 v = vertex->getPosition();
 		outFile << "v " << v.getX() << " " << v.getY() << " " << v.getZ() << "\n";
@@ -81,10 +81,10 @@ void GraphDrawing::save(std::string suffix) {
 	}
 
 	// Write faces with material assignment
-	std::string currentMaterial;
+	string currentMaterial;
 
 	for (const auto& [id, face] : faceMap) {
-		const std::string material = face->getFaceType()->getMaterial();
+		const string material = face->getFaceType()->getMaterial();
 		if (material != currentMaterial) {
 			currentMaterial = material;
 			// outFile << "usemtl " << currentMaterial << "\n";
@@ -93,24 +93,24 @@ void GraphDrawing::save(std::string suffix) {
 		outFile << "f";
 		for (HalfEdge* halfedge : face->getHalfEdges()) {
 			const int id = halfedge->getVertex()->getId();
-			auto it = std::find(vertexIds.begin(), vertexIds.end(), id);
+			auto it = find(vertexIds.begin(), vertexIds.end(), id);
 
 			if (it != vertexIds.end()) {
-				outFile << " " << (std::distance(vertexIds.begin(), it) + 1); // Compute index
+				outFile << " " << (distance(vertexIds.begin(), it) + 1); // Compute index
 			}
 		}
 		outFile << "\n";
 	}
 
 	outFile.close();
-	std::cout << "OBJ file successfully written to " << filename << std::endl;
+	cout << "OBJ file successfully written to " << filename << endl;
 }
 
 Mesh GraphDrawing::exportMesh() {
-	std::vector<Vec3> positions;
-	std::vector<Vec3> normals;
-	std::vector<int> triangles;
-	std::vector<int> faceIndices;
+	vector<Vec3> positions;
+	vector<Vec3> normals;
+	vector<int> triangles;
+	vector<int> faceIndices;
 
 	for (const auto& [id, face] : faceMap) {
 		face->exportMesh(positions, normals, triangles, faceIndices);

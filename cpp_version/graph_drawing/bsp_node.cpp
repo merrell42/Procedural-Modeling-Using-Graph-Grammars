@@ -14,7 +14,7 @@ namespace ms {
         model->getCurrent()->addBspNode(id, this);
 	}
 
-    BspNode::BspNode(Model* model, int id, int parentId, int aboveId, int belowId, Plane* plane, std::vector<int> faceIds, std::vector<int> edgeIds) :
+    BspNode::BspNode(Model* model, int id, int parentId, int aboveId, int belowId, Plane* plane, vector<int> faceIds, vector<int> edgeIds) :
         model(model),
         id(id),
         parentId(parentId),
@@ -94,12 +94,12 @@ namespace ms {
     }
 
     void BspNode::removeEdge(Edge* edge) {
-        edgeIds.erase(std::remove(edgeIds.begin(), edgeIds.end(), edge->getId()), edgeIds.end());
+        edgeIds.erase(remove(edgeIds.begin(), edgeIds.end(), edge->getId()), edgeIds.end());
         deleteIfEmpty();
     }
 
     void BspNode::removeFace(Face* face) {
-        faceIds.erase(std::remove(faceIds.begin(), faceIds.end(), face->getId()), faceIds.end());
+        faceIds.erase(remove(faceIds.begin(), faceIds.end(), face->getId()), faceIds.end());
         deleteIfEmpty();
     }
 

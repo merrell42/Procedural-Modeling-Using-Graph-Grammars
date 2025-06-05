@@ -15,12 +15,12 @@ public:
     Morphism* copy() const;
     static Morphism* create(const MorphismInfo& info);
 
-    const std::vector<Vertex*>& getVertexBtoA() const { return vertexBtoA; }
-    const std::vector<Edge*>& getEdgeBtoA() const { return edgeBtoA; }
+    const vector<Vertex*>& getVertexBtoA() const { return vertexBtoA; }
+    const vector<Edge*>& getEdgeBtoA() const { return edgeBtoA; }
 
-    std::vector<Vertex*> vertexBtoA;
-    std::vector<Edge*> edgeBtoA;
-    std::vector<Face*> faceBtoA;
+    vector<Vertex*> vertexBtoA;
+    vector<Edge*> edgeBtoA;
+    vector<Face*> faceBtoA;
 };
 
 } // namespace ms 

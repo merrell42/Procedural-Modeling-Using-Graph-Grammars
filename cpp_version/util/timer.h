@@ -4,6 +4,8 @@
 #include <map>
 #include <vector>
 
+using namespace std;
+
 namespace ms {
 
 class Timer {
@@ -11,20 +13,20 @@ public:
     Timer();
     ~Timer() = default;
 
-    void start(const std::string& name);
-    void stop(const std::string& name);
+    void start(const string& name);
+    void stop(const string& name);
     void reset();
 
-    double getTime(const std::string& name) const;
-    int getCount(const std::string& name) const;
-    double getAverage(const std::string& name) const;
+    double getTime(const string& name) const;
+    int getCount(const string& name) const;
+    double getAverage(const string& name) const;
     void printStats() const;
 
     static Timer& instance();
 
 private:
     struct TimerData {
-        std::chrono::high_resolution_clock::time_point startTime;
+        chrono::high_resolution_clock::time_point startTime;
         double totalTime;
         int count;
         bool isRunning;
@@ -35,11 +37,11 @@ private:
             , isRunning(false) {}
     };
 
-    std::map<std::string, TimerData> timers;
-    std::vector<std::string> order;
+    map<string, TimerData> timers;
+    vector<string> order;
 
-    void ensureTimer(const std::string& name);
-    static double toMilliseconds(const std::chrono::high_resolution_clock::duration& duration);
+    void ensureTimer(const string& name);
+    static double toMilliseconds(const chrono::high_resolution_clock::duration& duration);
 };
 
 extern Timer* timer;
@@ -47,7 +49,7 @@ extern Timer* timer;
 // Convenience macro for timing code blocks
 #define TIME_BLOCK(name) \
     ms::Timer::instance().start(name); \
-    auto timer_guard = std::unique_ptr<void, std::function<void(void*)>>( \
+    auto timer_guard = unique_ptr<void, function<void(void*)>>( \
         (void*)1, \
         [name](void*) { ms::Timer::instance().stop(name); } \
     )

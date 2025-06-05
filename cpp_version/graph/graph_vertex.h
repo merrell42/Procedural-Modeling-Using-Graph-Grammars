@@ -23,7 +23,7 @@ public:
     ~GraphVertex() = default;
     void import(const Json& json);
 
-    const std::vector<GraphHalfEdge*>& getHalfEdges() const { return halfEdges; }
+    const vector<GraphHalfEdge*>& getHalfEdges() const { return halfEdges; }
     VertexType* getType() {
         if (kind == "e") {
             // The edge case may not be handled correctly.
@@ -43,10 +43,10 @@ public:
     bool inGraph() const;
 
     // TODO: Replace with edgeType.
-    std::string kind;
+    string kind;
 
 private:
-    std::vector<GraphHalfEdge*> halfEdges;
+    vector<GraphHalfEdge*> halfEdges;
     VertexType* type;
     Graph* graph;
     int id;

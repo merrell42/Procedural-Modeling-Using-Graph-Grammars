@@ -13,11 +13,11 @@
 
 namespace ms {
 
-std::unique_ptr<RuleApplier> RuleApplier::buildNormally(
-    const Production& production, Model* model, int dims) {
+unique_ptr<RuleApplier> RuleApplier::buildNormally(
+    const Transition& transition, Model* model, int dims) {
     
-    auto result = std::make_unique<RuleApplier>();
-    result->create(production, model, dims);
+    auto result = make_unique<RuleApplier>();
+    result->create(transition, model, dims);
     
     if (result->effort > 0) {
         result->reject();
@@ -26,13 +26,13 @@ std::unique_ptr<RuleApplier> RuleApplier::buildNormally(
     return result;
 }
 
-void RuleApplier::create(const Production& production, Model* model_, int dims_) {
-    startGraph = production.startGraph;
+void RuleApplier::create(const Transition& transition, Model* model_, int dims_) {
+    startNet = transition.startNet;
     model = model_;
-    endGraph = production.endGraph;
+    endNet = transition.endNet;
  
-    morphism = production.morphism;
-    ground = production.ground;
+    map = transition.map;
+    ground = transition.ground;
     dims = dims_;
 
     effort = 0;
@@ -40,7 +40,7 @@ void RuleApplier::create(const Production& production, Model* model_, int dims_)
     timer->start("Create Graph");
     // TODO: Merge duplicate edges
     /*if (!mergeDuplicateEdges()) {
-        effort = std::numeric_limits<double>::infinity();
+        effort = numeric_limits<double>::infinity();
         return;
     }*/
 
@@ -48,7 +48,7 @@ void RuleApplier::create(const Production& production, Model* model_, int dims_)
     timer->stop("Create Graph");
 
     if (!graph) {
-        effort = std::numeric_limits<double>::infinity();
+        effort = numeric_limits<double>::infinity();
         return;
     }
 
@@ -81,9 +81,9 @@ void RuleApplier::addEdge(Edge* edge, bool includeLength, bool addToGraph) {
     }
 }
 
-static void destroyEdges(const std::vector<std::vector<Edge*>>& edgeGroup) {
-    std::set<HalfEdge*> halfedgeSet;
-    std::set<Vertex*> vertexSet;
+static void destroyEdges(const vector<vector<Edge*>>& edgeGroup) {
+    set<HalfEdge*> halfedgeSet;
+    set<Vertex*> vertexSet;
     for (const auto& edgeGroup : edgeGroup) {
         for (Edge* edge : edgeGroup) {
             if (edge) {
@@ -109,6 +109,7 @@ static void destroyEdges(const std::vector<std::vector<Edge*>>& edgeGroup) {
 }
 
 EditGraph* RuleApplier::createGraph() {
+    auto* endGraph = endNet;
     auto& endVertices = endGraph->getVertices();
     auto& endEdges = endGraph->getEdges();
     EditGraph* merged = new EditGraph();
@@ -124,8 +125,8 @@ EditGraph* RuleApplier::createGraph() {
     }*/
 
     // Maps from half edges to merge halfedges
-    std::vector<HalfEdge*> mergedHalfEdges(endGraph->getHalfEdges().size());
-    std::fill(mergedHalfEdges.begin(), mergedHalfEdges.end(), nullptr);
+    vector<HalfEdge*> mergedHalfEdges(endGraph->getHalfEdges().size());
+    fill(mergedHalfEdges.begin(), mergedHalfEdges.end(), nullptr);
     auto halfToHalfEdge = [&](GraphHalfEdge* half) -> HalfEdge* {
         int index = Util::findIndex<GraphHalfEdge*>(endGraph->getHalfEdges(), half);
         return mergedHalfEdges[index];
@@ -136,13 +137,13 @@ EditGraph* RuleApplier::createGraph() {
         mergedHalfEdges[index] = halfedge;
     };
 
-    std::vector<std::vector<Edge*>> splitEdges;
-    std::vector<std::vector<HalfEdge*>> splitHalfEdges;
-    if (morphism) {
-        splitEdges.resize(morphism->edgeBtoA.size());
-        splitHalfEdges.resize(morphism->edgeBtoA.size());
-        for (size_t i = 0; i < morphism->edgeBtoA.size(); ++i) {
-            splitEdges[i] = { morphism->edgeBtoA[i]};
+    vector<vector<Edge*>> splitEdges;
+    vector<vector<HalfEdge*>> splitHalfEdges;
+    if (map) {
+        splitEdges.resize(map->edgeBtoA.size());
+        splitHalfEdges.resize(map->edgeBtoA.size());
+        for (size_t i = 0; i < map->edgeBtoA.size(); ++i) {
+            splitEdges[i] = {map->edgeBtoA[i]};
         }
     }
 
@@ -175,23 +176,23 @@ EditGraph* RuleApplier::createGraph() {
             }
         }
     }
-    if (startGraph->getId() == 0) {
+    if (startNet->getId() == 0) {
         int x = 0;
     }
 
     struct EdgeData {
-        std::vector<HalfEdge*> coreHalfEdges;
-        std::vector<GraphHalfEdge*> halfEdges;
+        vector<HalfEdge*> coreHalfEdges;
+        vector<GraphHalfEdge*> halfEdges;
         bool modified;
     };
 
     // Process edges
-    std::vector<EdgeData> edgeData;
+    vector<EdgeData> edgeData;
     for (size_t i = 0; i < endEdges.size(); ++i) {
         auto* endEdge = endEdges[i];
         auto& edgeHalfs = endEdge->getHalfEdges();
-        std::vector<HalfEdge*> coreHalfEdges;
-        std::vector<GraphHalfEdge*> halfEdges;
+        vector<HalfEdge*> coreHalfEdges;
+        vector<GraphHalfEdge*> halfEdges;
         bool modified = false;
 
         for (size_t e = 0; e < edgeHalfs.size(); ++e) {
@@ -202,8 +203,8 @@ EditGraph* RuleApplier::createGraph() {
 
             int connectorIndex = hVertex->connectorIndex();
             if (connectorIndex >= 0) {
-                int startIndex = Util::findIndex(startGraph->getEdges(),
-                    startGraph->getBVertices()[connectorIndex]->interiorEdge());
+                int startIndex = Util::findIndex(startNet->getEdges(),
+                    startNet->getBVertices()[connectorIndex]->interiorEdge());
                 
                 if (splitEdges[startIndex].size() == 1) {
                     int count = 0;
@@ -247,10 +248,10 @@ EditGraph* RuleApplier::createGraph() {
         for (size_t e = 0; e < edgeHalfs.size(); e++) {
             GraphHalfEdge* halfNext = edgeHalfs[e][0]->getNext();
             if (!halfNext->getEdge()) {
-                int boundaryIndex = indexOf(endGraph->getBHalfEdges(), halfNext);
-                auto startHalf = startGraph->getBHalfEdges()[boundaryIndex];
-                int edgeIndex = indexOf(startGraph->getEdges(), startHalf->getPrev()->getEdge());
-                int startIndex = indexOf(startGraph->getHalfEdges(), startHalf);
+                int boundaryIndex = indexOf(endNet->getBHalfEdges(), halfNext);
+                auto startHalf = startNet->getBHalfEdges()[boundaryIndex];
+                int edgeIndex = indexOf(startNet->getEdges(), startHalf->getPrev()->getEdge());
+                int startIndex = indexOf(startNet->getHalfEdges(), startHalf);
                 setHalfToHalfEdge(halfNext, splitHalfEdges[edgeIndex][e]);                
             }
         }
@@ -279,7 +280,7 @@ EditGraph* RuleApplier::createGraph() {
 
     if (failed) {
         // Handle error case
-        std::cerr << "Do not know how this can happen, but halfToHalfEdge is missing an halfedge." << std::endl;
+        cerr << "Do not know how this can happen, but halfToHalfEdge is missing an halfedge." << endl;
         return merged; // Return empty merged data
     }
 
@@ -298,7 +299,7 @@ EditGraph* RuleApplier::createGraph() {
         merged->edges[i] = edge0;
 
         if (datum.modified) {
-            std::vector<Vertex*> newVertices = {
+            vector<Vertex*> newVertices = {
                 datum.coreHalfEdges[0]->getVertex(),
                 datum.coreHalfEdges[1]->getVertex()
             };
@@ -307,10 +308,10 @@ EditGraph* RuleApplier::createGraph() {
     }
 
     // Process boundary vertices.
-    auto& bVertices = endGraph->getBVertices();
+    auto& bVertices = endNet->getBVertices();
     for (size_t i = 0; i < bVertices.size(); i++) {
         auto halfs = bVertices[i]->getHalfEdges();
-        auto it = std::find_if(halfs.begin(), halfs.end(),
+        auto it = find_if(halfs.begin(), halfs.end(),
             [](GraphHalfEdge* half) { return half->getEdge() != nullptr; });
 
         if (it != halfs.end()) {
@@ -318,14 +319,14 @@ EditGraph* RuleApplier::createGraph() {
             GraphHalfEdge* endHalf = const_cast<GraphHalfEdge*>(faceHalfs.back());
             faceHalfs.pop_back();
 
-            std::vector<HalfEdge*> faceHalfEdgesI;
+            vector<HalfEdge*> faceHalfEdgesI;
             for (GraphHalfEdge* half : faceHalfs) {
                 faceHalfEdgesI.push_back(halfToHalfEdge(half));
             }
 
             MorphismPath* path = MorphismPath::createPath(faceHalfEdgesI, merged->edges, &edges);
             HalfEdge* pathEnd = halfToHalfEdge(endHalf);
-            std::vector<HalfEdge*> pathHalfEdges = { faceHalfEdgesI[0], pathEnd };
+            vector<HalfEdge*> pathHalfEdges = { faceHalfEdgesI[0], pathEnd };
             path->setHalfEdges(pathHalfEdges);
             openPaths.push_back(path);
         }
@@ -344,8 +345,8 @@ EditGraph* RuleApplier::createGraph() {
 
     // Process outer faces.
     size_t faceIndex = 0;
-    for (GraphFace* outerFace : endGraph->getBFaces()) {
-        faceIndex = indexOf(endGraph->getFaces(), outerFace);
+    for (GraphFace* outerFace : endNet->getBFaces()) {
+        faceIndex = indexOf(endNet->getFaces(), outerFace);
         merged->faces[faceIndex]->setHole(true);
     }
     for (Face* face : merged->faces) {
@@ -359,7 +360,7 @@ EditGraph* RuleApplier::createGraph() {
 
     // Update outer faces map
     //map.outerFacesA.clear();
-    //for (Face* endFace : endGraph->getOuterFaces()) {
+    //for (Face* endFace : endNet->getOuterFaces()) {
     //    map.outerFacesA.push_back(
     //        halfToHalfEdge(endFace->getOuterComponent())->getFace());
     //}
@@ -379,10 +380,10 @@ void RuleApplier::setup() {
 }
 
 // Static helper function.
-void RuleApplier::constrainVertexIds(std::vector<int>& vertexIds, RuleApplierSettings* settings) {
-    std::vector vIds(vertexIds);
+void RuleApplier::constrainVertexIds(vector<int>& vertexIds, RuleApplierSettings* settings) {
+    vector vIds(vertexIds);
     while (!vIds.empty()) {
-        std::vector<int> newVIdsToConstrain;
+        vector<int> newVIdsToConstrain;
         VertexPlacement* mostConstrained = nullptr;
         int maxConstraints = -1;
 
@@ -403,7 +404,7 @@ void RuleApplier::constrainVertexIds(std::vector<int>& vertexIds, RuleApplierSet
             mostConstrained->addConstraint();
         }
 
-        vIds = std::move(newVIdsToConstrain);
+        vIds = move(newVIdsToConstrain);
     }
 }
 
@@ -412,7 +413,7 @@ void RuleApplier::addFixedFace(Face* fixedFaceA, Face* fixedFaceB, double d) {
     auto* fPlace = settings->getFace(fixedFaceB->getId());
 
     // Check if face is already fixed
-    auto it = std::find_if(fixedFaces.begin(), fixedFaces.end(),
+    auto it = find_if(fixedFaces.begin(), fixedFaces.end(),
         [fPlace](const FixedFace& fixed) {
             return fixed.fPlace == fPlace;
         });
@@ -426,8 +427,8 @@ void RuleApplier::addFixedFace(Face* fixedFaceA, Face* fixedFaceB, double d) {
     fPlace->makeFixed(fixedFace);
 }
 
-std::vector<double> RuleApplier::getExtents() {
-    auto extents = globalSettings["Extents"].get<std::vector<double>>();
+vector<double> RuleApplier::getExtents() {
+    auto extents = globalSettings["Extents"].get<vector<double>>();
     if (dims == 2) {
         extents[2] = 0;
     }
@@ -438,17 +439,17 @@ void RuleApplier::setupFaceCentric() {
     auto extents = getExtents();
     const Vec3 lower(1, 1, 0);
     const Vec3 upper(extents[0] - 1, extents[1] - 1, extents[2]);
-    auto settingsNew = std::make_unique<RuleApplierSettings>(lower, upper);
-    this->settings = std::move(settingsNew);
+    auto settingsNew = make_unique<RuleApplierSettings>(lower, upper);
+    this->settings = move(settingsNew);
     freeVertices.clear();
 
-    std::vector<int> basisIds;
-    std::vector<int> vertexIds;
+    vector<int> basisIds;
+    vector<int> vertexIds;
 
     // Process edges
     for (auto* edge : graph->edges) {
         int id = edge->getId();
-        settings->edgePlacements[id] = std::make_unique<EdgePlacement>(edge, id, settings.get());
+        settings->edgePlacements[id] = make_unique<EdgePlacement>(edge, id, settings.get());
     }
 
     // Process vertices
@@ -459,7 +460,7 @@ void RuleApplier::setupFaceCentric() {
         int id = vertex->getId();
         vertexIds.push_back(id);
         freeVertices.push_back(vertex);
-        settings->vertexPlacements[id] = std::make_unique<VertexPlacement>(vertex, id, settings.get());
+        settings->vertexPlacements[id] = make_unique<VertexPlacement>(vertex, id, settings.get());
         settings->vertexPlacements[id]->initialize();
     }
 
@@ -488,14 +489,14 @@ void RuleApplier::setupFaceCentric() {
 
     // Process fixed faces
     fixedFaces.clear();
-    auto& faceBtoA = morphism->faceBtoA;
+    auto& faceBtoA = map->faceBtoA;
     
     for (size_t i = 0; i < faceBtoA.size(); ++i) {
         auto* fixedFaceA = faceBtoA[i];
-        auto* endFace = endGraph->getBFaces()[i];
+        auto* endFace = endNet->getBFaces()[i];
         
          if (endFace) {
-             int faceIndex = indexOf(endGraph->getFaces(), endFace);
+             int faceIndex = indexOf(endNet->getFaces(), endFace);
              auto* fixedFaceB = graph->faces[faceIndex];
              double d;
 
@@ -532,8 +533,8 @@ void RuleApplier::setupFaceCentric() {
 }
 
 Limits RuleApplier::findLimits() {
-    std::vector<double> minLimit;
-    std::vector<double> maxLimit;
+    vector<double> minLimit;
+    vector<double> maxLimit;
     auto extents = getExtents();
 
     // Handle vertex limits
@@ -548,7 +549,7 @@ Limits RuleApplier::findLimits() {
     for (auto* edge : freeEdges) {
 
         double minLength = 0;
-        double maxLength = std::numeric_limits<double>::infinity();
+        double maxLength = numeric_limits<double>::infinity();
 
         // TODO: Use brushes to set edge lengths.
         /*auto* edgeType = edge->getEdgeType();
@@ -565,7 +566,7 @@ Limits RuleApplier::findLimits() {
     return { minLimit, maxLimit };
 }
 
-bool RuleApplier::hasViolations(const std::vector<double>& positions, const Limits& limits) {
+bool RuleApplier::hasViolations(const vector<double>& positions, const Limits& limits) {
     for (size_t i = 0; i < positions.size(); i++) {
         double value = positions[i];
         if (value < limits.min[i] || value > limits.max[i]) {
@@ -576,11 +577,11 @@ bool RuleApplier::hasViolations(const std::vector<double>& positions, const Limi
 }
 
 Range RuleApplier::getRange(
-    const std::vector<int>& orderIds,
-    const std::vector<OrderInfo>& orderInfo
+    const vector<int>& orderIds,
+    const vector<OrderInfo>& orderInfo
 ) {
-    Range range(-std::numeric_limits<double>::infinity(),
-        std::numeric_limits<double>::infinity());
+    Range range(-numeric_limits<double>::infinity(),
+        numeric_limits<double>::infinity());
 
     for (size_t i = 0; i < orderIds.size(); i++) {
         int id = orderIds[i];
@@ -601,8 +602,8 @@ Range RuleApplier::getRange(
 }
 
 void RuleApplier::setPlacements(
-    const std::vector<int>& orderIds,
-    const std::vector<OrderInfo>& orderInfo
+    const vector<int>& orderIds,
+    const vector<OrderInfo>& orderInfo
 ) {
     for (size_t i = 0; i < orderIds.size(); i++) {
         int id = orderIds[i];
@@ -616,13 +617,13 @@ void RuleApplier::setPlacements(
     }
 }
 
-std::pair<std::vector<double>, bool> RuleApplier::sampleFaceCentric() {
+pair<vector<double>, bool> RuleApplier::sampleFaceCentric() {
     if (ground) {
-        std::vector<double> result;
-        auto& vertices = endGraph->getVertices();
+        vector<double> result;
+        auto& vertices = endNet->getVertices();
 
         if (vertices.size() == 4) {
-            std::vector<double> lower = {0, 0, 0};
+            vector<double> lower = {0, 0, 0};
             auto upper = getExtents();
             for (auto* vertex : vertices) {
                 auto dir = vertex->getHalfEdges()[0]->getDir();
@@ -636,7 +637,7 @@ std::pair<std::vector<double>, bool> RuleApplier::sampleFaceCentric() {
                     result.insert(result.end(), { lower[0], upper[1], lower[2] + 1 });
                 }
             }
-            return std::make_pair(result, true);
+            return make_pair(result, true);
         }
     }
 
@@ -654,7 +655,7 @@ std::pair<std::vector<double>, bool> RuleApplier::sampleFaceCentric() {
         return {};
     }
 
-    std::vector<int> basisOrders;
+    vector<int> basisOrders;
     for (const auto& basisId : settings->basisIds) {
         basisOrders.push_back(settings->findBasisOrder(basisId));
     }
@@ -666,19 +667,19 @@ std::pair<std::vector<double>, bool> RuleApplier::sampleFaceCentric() {
         int start = basisOrders[i];
         int end = basisOrders[i + 1];
 
-        std::vector<int> orderIds(settings->orderIds.begin() + start,
+        vector<int> orderIds(settings->orderIds.begin() + start,
             settings->orderIds.begin() + end);
-        std::vector<OrderInfo> orderInfo(settings->orderInfo.begin() + start,
+        vector<OrderInfo> orderInfo(settings->orderInfo.begin() + start,
             settings->orderInfo.begin() + end);
 
         auto range = getRange(orderIds, orderInfo);
 
         if (fPlace->getFixed() && !range.isInside(fPlace->getD())) {
-            effort = std::numeric_limits<double>::infinity();
-            return std::make_pair(std::vector<double>(), false);
+            effort = numeric_limits<double>::infinity();
+            return make_pair(vector<double>(), false);
         }
         if (range.isEmpty()) {
-            return std::make_pair(std::vector<double>(), false);
+            return make_pair(vector<double>(), false);
         }
         if (!fPlace->getFixed()) {
             double d = range.sample();
@@ -690,7 +691,7 @@ std::pair<std::vector<double>, bool> RuleApplier::sampleFaceCentric() {
         setPlacements(orderIds, orderInfo);
     }
 
-    std::vector<double> positions;
+    vector<double> positions;
     for (auto* vertex : freeVertices) {
         int id = vertex->getId();
         auto position = settings->vertexPlacements[id]->getPosition();
@@ -699,7 +700,7 @@ std::pair<std::vector<double>, bool> RuleApplier::sampleFaceCentric() {
         }
     }
 
-    return std::make_pair(positions, true);
+    return make_pair(positions, true);
 }
 
 bool RuleApplier::sampleSolutionSpace() {
@@ -733,9 +734,9 @@ bool RuleApplier::sampleSolutionSpace() {
     }
 }
 
-std::vector<MorphismPath*> RuleApplier::getFreeablePaths() const {
-    std::vector<MorphismPath*> result;
-    std::copy_if(openPaths.begin(), openPaths.end(), std::back_inserter(result),
+vector<MorphismPath*> RuleApplier::getFreeablePaths() const {
+    vector<MorphismPath*> result;
+    copy_if(openPaths.begin(), openPaths.end(), back_inserter(result),
         [](MorphismPath* path) {
             return path->halfedges[0] != path->halfedges[1] &&
                 path->extendableness() > 0;
@@ -778,7 +779,7 @@ void RuleApplier::freeOneVertex(Vertex* vertex) {
         auto* edge = vHalfEdge->getEdge();
         auto hasEdge = [edge](const EdgeData& data) { return data.edge == edge; };
         
-        if (std::find_if(edgeData.begin(), edgeData.end(), hasEdge) == edgeData.end()) {
+        if (find_if(edgeData.begin(), edgeData.end(), hasEdge) == edgeData.end()) {
             addEdge(edge, true, true);
         }
     }
@@ -794,8 +795,8 @@ void RuleApplier::freeOneVertex(Vertex* vertex) {
             return path->halfedges[1] == vHalfEdge; 
         };
 
-        auto path0 = std::find_if(openPaths.begin(), openPaths.end(), findPath0);
-        auto path1 = std::find_if(openPaths.begin(), openPaths.end(), findPath1);
+        auto path0 = find_if(openPaths.begin(), openPaths.end(), findPath0);
+        auto path1 = find_if(openPaths.begin(), openPaths.end(), findPath1);
 
         if (path0 != openPaths.end() && path1 != openPaths.end()) {
             if (*path0 == *path1) {
@@ -822,7 +823,7 @@ void RuleApplier::freeOneVertex(Vertex* vertex) {
     }
 }
 
-bool RuleApplier::placeVertexPositions(const std::vector<double>& positions) {
+bool RuleApplier::placeVertexPositions(const vector<double>& positions) {
     // Place vertices at their new positions
     for (size_t i = 0; i < freeVertices.size(); i++) {
         Vec3 position(
@@ -848,7 +849,7 @@ bool RuleApplier::placeVertexPositions(const std::vector<double>& positions) {
         return true;
     }
 
-    std::vector<Face*> facesToIntersect;
+    vector<Face*> facesToIntersect;
     for (const auto& [_, fPlace] : settings->facePlacements) {
         if (fPlace->getFace()) {
             facesToIntersect.push_back(fPlace->getFace());
@@ -857,7 +858,7 @@ bool RuleApplier::placeVertexPositions(const std::vector<double>& positions) {
 
     // TODO: Handle holes.
     //// Check face containment
-    //bool success = std::all_of(facesToIntersect.begin(), facesToIntersect.end(),
+    //bool success = all_of(facesToIntersect.begin(), facesToIntersect.end(),
     //    [this](Face* faceA) {
     //        auto faces = faceA->getGroup()->getFaces();
     //        if (faces.size() > 1) {
@@ -866,7 +867,7 @@ bool RuleApplier::placeVertexPositions(const std::vector<double>& positions) {
     //                    return false;
     //                }
     //                if (GlobalSettings::get("Cut Holes")) {
-    //                    return std::all_of(faces.begin(), faces.end(),
+    //                    return all_of(faces.begin(), faces.end(),
     //                        [faceA](Face* faceB) {
     //                            return faceA == faceB || faceB == faces[0] || 
     //                                    faceA->outsideFace(faceB);
@@ -874,7 +875,7 @@ bool RuleApplier::placeVertexPositions(const std::vector<double>& positions) {
     //                }
     //                return true;
     //            } else {
-    //                return std::all_of(faces.begin(), faces.end(),
+    //                return all_of(faces.begin(), faces.end(),
     //                    [faceA](Face* faceB) {
     //                        return faceA == faceB || faceA->containsFace(faceB);
     //                    });
@@ -917,7 +918,7 @@ void RuleApplier::reject() {
     basisEdges.clear();
 
     initialPosition = nullptr;
-    effort = std::numeric_limits<double>::infinity();
+    effort = numeric_limits<double>::infinity();
 }
 
 } // namespace ms 

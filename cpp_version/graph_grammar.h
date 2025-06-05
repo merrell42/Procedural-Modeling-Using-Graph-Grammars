@@ -12,15 +12,15 @@ using Json = nlohmann::json;
 namespace ms {
 
 class Graph;  
-class ProductionRule;
+class NetTransition;
 class Primitives;
 class EdgeType;
 class VertexType;
 
-struct Production {
-    Graph* startGraph;
-    Graph* endGraph;
-    Morphism* morphism;
+struct Transition {
+    Graph* startNet;
+    Graph* endNet;
+    Morphism* map;
     bool ground;
 };
 
@@ -31,39 +31,39 @@ public:
     static GraphGrammar* import(const Json& json);
 
     void reset();
-    const std::vector<std::vector<Graph*>>& getGenerations() const;
-    const std::vector<ProductionRule*>& getProductions() const;
-    const std::vector<ProductionRule*>& getStarterProductions() const;
-    const std::vector<ProductionRule*>& getGroundProductions() const;
+    const vector<vector<Graph*>>& getGenerations() const;
+    const vector<NetTransition*>& getTransitions() const;
+    const vector<NetTransition*>& getStarterTransitions() const;
+    const vector<NetTransition*>& getGroundTransitions() const;
     bool isGrounded() const;
     int getDims() const { return shape->dims; }
 
-    Production getProduction();
-    Production getRemoveProduction();
-    Production getStarterProduction(bool useGround);
+    Transition getTransition();
+    Transition getRemoveTransition();
+    Transition getStarterTransition(bool useGround);
 
 private:
-    std::vector<std::vector<Graph*>> generations;
-    std::vector<Graph*> nodeQueue;
-    Graph* emptyGraph;
+    vector<vector<Graph*>> generations;
+    vector<Graph*> nodeQueue;
+    Graph* emptyNet;
 
     Primitives* shape;
-    std::vector<ProductionRule*> productions;
-    std::vector<ProductionRule*> starterProductions;
-    std::vector<ProductionRule*> groundProductions;
+    vector<NetTransition*> transitions;
+    vector<NetTransition*> starterTransitions;
+    vector<NetTransition*> groundTransitions;
     bool grounded;
 
     struct GraphSet {
-        std::vector<Graph*> face;
-        std::vector<Graph*> edge;
-        std::vector<Graph*> vertex;
-        std::vector<EdgeType*> edgeTypes;
-        std::unordered_map<std::string, EdgeType*> splicedEdgeTypes;
+        vector<Graph*> face;
+        vector<Graph*> edge;
+        vector<Graph*> vertex;
+        vector<EdgeType*> edgeTypes;
+        unordered_map<string, EdgeType*> splicedEdgeTypes;
     };
 
     struct Match {
-        std::vector<int> vertices;
-        std::vector<std::array<int, 4>> edges;
+        vector<int> vertices;
+        vector<array<int, 4>> edges;
     };
 };
 

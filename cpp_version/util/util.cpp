@@ -13,9 +13,9 @@ int randomCount = 0;
 int randomSeed = 42;
 
 double random() {
-    double x = (double)std::sin(randomSeed + randomCount) * (10000 + randomSeed);
+    double x = (double)sin(randomSeed + randomCount) * (10000 + randomSeed);
     randomCount++;
-    return x - std::floor(x);
+    return x - floor(x);
 }
 
 void resetRandom(int seed) {
@@ -41,7 +41,7 @@ int Util::angleTurn(double prev, double next) {
     if (prev > PI - EPS) { prev -= 2 * PI; }
     if (next > PI - EPS) { next -= 2 * PI; }
     
-    if (std::abs(prev - next) <= PI) {
+    if (abs(prev - next) <= PI) {
         return 0;
     } else {
         if (prev >= 0 && next < 0) {
@@ -64,13 +64,13 @@ int Util::angleWedges(double prev, double next) {
         sign = -1;
     }
 
-    if (std::abs(prev - next) + 0.01f * sign > PI) {
+    if (abs(prev - next) + 0.01f * sign > PI) {
         return sign;
     }
     return 0;
 }
 
-int Util::wedgeTurns(const std::vector<double>& angles) {
+int Util::wedgeTurns(const vector<double>& angles) {
     int turns = 0;
     for (size_t i = 0; i < angles.size() - 1; i++) {
         turns += angleWedges(angles[i], angles[i + 1]);
@@ -85,20 +85,20 @@ double Util::fixAngleWedges(double angle) {
 }
 
 template<typename T>
-void Util::maybeRemove(const T& element, std::vector<T>& array) {
-    auto it = std::find(array.begin(), array.end(), element);
+void Util::maybeRemove(const T& element, vector<T>& array) {
+    auto it = find(array.begin(), array.end(), element);
     if (it != array.end()) {
         array.erase(it);
     }
 }
 
 template<typename T>
-void Util::addToObject(std::vector<T>& obj, const std::string& prop, const T& value) {
+void Util::addToObject(vector<T>& obj, const string& prop, const T& value) {
     obj.push_back(value);
 }
 
 template<typename T>
-void Util::addToArray(std::vector<T>& array, const std::vector<int>& indices, const T& value) {
+void Util::addToArray(vector<T>& array, const vector<int>& indices, const T& value) {
     if (indices.empty()) return;
     
     int index = indices[0];
@@ -107,7 +107,7 @@ void Util::addToArray(std::vector<T>& array, const std::vector<int>& indices, co
     }
     
     if (indices.size() > 1) {
-        std::vector<int> remainingIndices(indices.begin() + 1, indices.end());
+        vector<int> remainingIndices(indices.begin() + 1, indices.end());
         addToArray(array[index], remainingIndices, value);
     } else {
         array[index].push_back(value);
@@ -119,10 +119,10 @@ int Util::randomInt(int count) {
 }
 
 template<typename T>
-std::vector<T> Util::removeDuplicates(const std::vector<T>& array) {
-    std::vector<T> result;
+vector<T> Util::removeDuplicates(const vector<T>& array) {
+    vector<T> result;
     for (const auto& elem : array) {
-        if (std::find(result.begin(), result.end(), elem) == result.end()) {
+        if (find(result.begin(), result.end(), elem) == result.end()) {
             result.push_back(elem);
         }
     }
@@ -130,11 +130,11 @@ std::vector<T> Util::removeDuplicates(const std::vector<T>& array) {
 }
 
 template<typename T>
-bool Util::arraysEquivalent(const std::vector<T>& arrayA, const std::vector<T>& arrayB) {
+bool Util::arraysEquivalent(const vector<T>& arrayA, const vector<T>& arrayB) {
     if (arrayA.size() != arrayB.size()) return false;
     
     for (const auto& elem : arrayA) {
-        if (std::find(arrayB.begin(), arrayB.end(), elem) == arrayB.end()) {
+        if (find(arrayB.begin(), arrayB.end(), elem) == arrayB.end()) {
             return false;
         }
     }
@@ -142,14 +142,14 @@ bool Util::arraysEquivalent(const std::vector<T>& arrayA, const std::vector<T>& 
 }
 
 template<typename T>
-bool Util::arraysEqual(const std::vector<T>& arrayA, const std::vector<T>& arrayB) {
+bool Util::arraysEqual(const vector<T>& arrayA, const vector<T>& arrayB) {
     return arrayA == arrayB;
 }
 
 template<typename T>
-const T& Util::last(const std::vector<T>& array) {
+const T& Util::last(const vector<T>& array) {
     if (array.empty()) {
-        throw std::runtime_error("Cannot get last element of empty array");
+        throw runtime_error("Cannot get last element of empty array");
     }
     return array.back();
 }
@@ -158,8 +158,8 @@ double Util::clamp(double lower, double upper, double x) {
     return max(lower, min(upper, x));
 }
 
-std::vector<int> Util::sequence(int a, int b) {
-    std::vector<int> result;
+vector<int> Util::sequence(int a, int b) {
+    vector<int> result;
     result.reserve(b - a + 1);
     for (int i = a; i <= b; i++) {
         result.push_back(i);
@@ -168,24 +168,24 @@ std::vector<int> Util::sequence(int a, int b) {
 }
 
 template<typename T>
-void Util::fastConcat(std::vector<T>& allData, const std::vector<T>& newData) {
+void Util::fastConcat(vector<T>& allData, const vector<T>& newData) {
     allData.insert(allData.end(), newData.begin(), newData.end());
 }
 
 int Util::maxDim(const Vec3& n) {
-    std::array<std::pair<double, int>, 3> coords = {
-        std::make_pair(std::abs(n.getX()), 0),
-        std::make_pair(std::abs(n.getY()), 1),
-        std::make_pair(std::abs(n.getZ()), 2)
+    array<pair<double, int>, 3> coords = {
+        make_pair(abs(n.getX()), 0),
+        make_pair(abs(n.getY()), 1),
+        make_pair(abs(n.getZ()), 2)
     };
 
-    return std::max_element(coords.begin(), coords.end(),
+    return max_element(coords.begin(), coords.end(),
         [](const auto& a, const auto& b) { return a.first < b.first; }
     )->second;
 }
 
-int Util::randomDistribution(const std::vector<double>& probabilityMass) {
-    std::vector<double> sums;
+int Util::randomDistribution(const vector<double>& probabilityMass) {
+    vector<double> sums;
     double sum = 0.0;
     for (double pm : probabilityMass) {
         sum += pm;
@@ -205,7 +205,7 @@ int Util::randomDistribution(const std::vector<double>& probabilityMass) {
 // Function definition
 double Util::randomUniform(double lower, double upper) {
     if (lower > upper) {
-        throw std::invalid_argument("Lower bound is greater than upper bound.");
+        throw invalid_argument("Lower bound is greater than upper bound.");
     }
     double s = random();
     return s * (upper - lower) + lower;

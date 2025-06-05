@@ -3,10 +3,10 @@
 
 namespace ms {
 
-Primitives::Primitives(const std::vector<VertexType*>& vTypes,
-                 const std::vector<EdgeType*>& eTypes,
-                 const std::vector<FaceType*>& fTypes,
-                 const std::string& xmlData,
+Primitives::Primitives(const vector<VertexType*>& vTypes,
+                 const vector<EdgeType*>& eTypes,
+                 const vector<FaceType*>& fTypes,
+                 const string& xmlData,
                  int dims)
     : vertexTypes(vTypes)
     , edgeTypes(eTypes)
@@ -23,19 +23,19 @@ Primitives* Primitives::import(const Json& json) {
     }
     auto shape = new Primitives(dims);
 
-    std::vector<FaceType*> faceTypes;
+    vector<FaceType*> faceTypes;
     for (const auto& type : json.at("faceTypes")) {
         faceTypes.push_back(FaceType::import(type));
     }
     shape->faceTypes = faceTypes;
 
-    std::vector<EdgeType*> edgeTypes;
+    vector<EdgeType*> edgeTypes;
     for (const auto& type : json.at("edgeTypes")) {
         edgeTypes.push_back(EdgeType::import(type, shape));
     }
     shape->edgeTypes = edgeTypes;
     
-    std::vector<VertexType*> vertexTypes;
+    vector<VertexType*> vertexTypes;
     for (const auto& type : json.at("vertexTypes")) {
         vertexTypes.push_back(VertexType::import(type, shape));
     }
@@ -48,7 +48,7 @@ Primitives* Primitives::getShape() {
     return this;
 }
 
-std::vector<int> Primitives::getVertices() const {
+vector<int> Primitives::getVertices() const {
     return {0};
 }
 

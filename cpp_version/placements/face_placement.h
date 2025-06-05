@@ -40,7 +40,7 @@ public:
     Range getRange(int vertexId = -1);
     ChangeMB getChangeMB() const;
 
-    std::vector<int> vertexIds;
+    vector<int> vertexIds;
     int id;
 
 private:
@@ -48,7 +48,7 @@ private:
     Face* face;
     RuleApplierSettings* settings;
     bool free{true};
-    std::vector<Face*> fixedNeighbors;
+    vector<Face*> fixedNeighbors;
     double d{0.0};
     bool fixed{false};
     double slope{0.0};

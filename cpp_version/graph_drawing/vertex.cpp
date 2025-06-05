@@ -3,7 +3,7 @@
 
 namespace ms {
 
-Vertex::Vertex(Model* model, int id, Vec3 position, VertexType* type, std::vector<int> halfedgeIds)
+Vertex::Vertex(Model* model, int id, Vec3 position, VertexType* type, vector<int> halfedgeIds)
 	: model(model)
 	, id(id)
 	, halfedgeIds(halfedgeIds)
@@ -21,11 +21,11 @@ Vertex::Vertex(Model* model, Vec3 position, VertexType* type)
 }
 
 void Vertex::createHalfEdges() {
-	std::vector<Connection> connections = type->getConnections();
+	vector<Connection> connections = type->getConnections();
 
 	for (const auto& connection : connections) {
 		EdgeType* edgeType = connection.edge;
-		const std::vector<FaceData> faceData = edgeType->faceData;
+		const vector<FaceData> faceData = edgeType->faceData;
 
 		for (size_t faceIndex = 0; faceIndex < faceData.size(); ++faceIndex) {
 			const FaceData& faceDatum = faceData[faceIndex];
@@ -48,9 +48,9 @@ HalfEdge* Vertex::createHalfEdge(const Connection& connection, int faceIndex) {
 	auto halfedge = new HalfEdge(model, halfedgeId, connection.isAtStart, connection.edge, dir, vertexId, -1, edgeId, true, faceIndex);
 
 	// Create the edge.
-	std::vector<int> edgeHalfEdgeIds(2, -1);
+	vector<int> edgeHalfEdgeIds(2, -1);
 	edgeHalfEdgeIds[faceIndex] = halfedgeId;
-	std::vector<int> bspNodeIds;
+	vector<int> bspNodeIds;
 	auto edge = new Edge(model, edgeId, connection.edge, edgeHalfEdgeIds, bspNodeIds);
 
 	// Add the halfedge to the vertex.
@@ -73,8 +73,8 @@ HalfEdge* Vertex::getHalfEdge(int index) const {
 	return model->getCurrent()->getHalfEdge(halfedgeIds[index]);
 }
 
-std::vector<HalfEdge*> Vertex::getHalfEdges() const {
-	std::vector<HalfEdge*> result;
+vector<HalfEdge*> Vertex::getHalfEdges() const {
+	vector<HalfEdge*> result;
 	for (int i = 0; i < halfedgeIds.size(); i++) {
 		result.push_back(getHalfEdge(i));
 	}

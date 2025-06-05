@@ -17,27 +17,27 @@ public:
     void import(const Json& json);
 
     GraphHalfEdge* getOuterComponent() const;
-    const std::vector<GraphHalfEdge*>& getInnerComponents() const;
+    const vector<GraphHalfEdge*>& getInnerComponents() const;
     Graph* getGraph() const;
     FaceType* getType() const { return type; }
     
     GraphFace* connectGraph(Graph* graph);
-    void connectOuter(const std::vector<GraphHalfEdge*>& halfEdges);
+    void connectOuter(const vector<GraphHalfEdge*>& halfEdges);
     void makeInner(GraphHalfEdge* halfEdge);
     void copyConnection(const GraphFace* copy);
     void setType(FaceType* type_) { type = type_;}
     
-    static std::vector<GraphHalfEdge*> getConnectedHalfEdges(GraphHalfEdge* start);
-    std::vector<GraphHalfEdge*> getOuterHalfEdges() const;
-    std::vector<GraphHalfEdge*> getInnerHalfEdges() const;
-    std::vector<GraphHalfEdge*> getHalfEdges() const;
+    static vector<GraphHalfEdge*> getConnectedHalfEdges(GraphHalfEdge* start);
+    vector<GraphHalfEdge*> getOuterHalfEdges() const;
+    vector<GraphHalfEdge*> getInnerHalfEdges() const;
+    vector<GraphHalfEdge*> getHalfEdges() const;
     void replaceHalfEdge(GraphHalfEdge* a, GraphHalfEdge* b, bool force);
     bool isLoopy() const;
     bool inGraph() const;
 
 private:
     GraphHalfEdge* outerComponent;
-    std::vector<GraphHalfEdge*> innerComponents;
+    vector<GraphHalfEdge*> innerComponents;
     FaceType* type;
     Graph* graph;
     int id;

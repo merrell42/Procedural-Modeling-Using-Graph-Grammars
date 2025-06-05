@@ -22,7 +22,7 @@ struct Connection {
     bool isAtStart;
 
     Connection(EdgeType* edge = nullptr, bool isAtStart = false, double angle = 0.0f,
-              const std::vector<int>& faceIds = {})
+              const vector<int>& faceIds = {})
         : adjustedAngle(0)
         , angle(angle)
         , dir()
@@ -48,7 +48,7 @@ public:
     ~VertexType() = default;
     static VertexType* import(const Json& json, Primitives* shape);
 
-    const std::vector<Connection>& getConnections() const;
+    const vector<Connection>& getConnections() const;
     bool getSpliced() const;
     int getId() const;
 
@@ -56,7 +56,7 @@ public:
     void setSpliced(bool spliced);
 
 private:
-    std::vector<Connection> connections;
+    vector<Connection> connections;
     bool spliced;
     int id;
 

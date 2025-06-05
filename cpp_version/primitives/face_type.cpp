@@ -10,7 +10,7 @@ namespace ms {
 
 int FaceType::nextId = 0;
 
-FaceType::FaceType(const std::string& mat, const Vec3& n)
+FaceType::FaceType(const string& mat, const Vec3& n)
     : material(mat)
     , normal(n)
     , monotonic(false)
@@ -23,11 +23,11 @@ FaceType::FaceType(const std::string& mat, const Vec3& n)
 void FaceType::computeOrthonormalBasis() {
     // Find the smallest component of the normal.
     int minDim = 0;
-    double minVal = std::abs(normal[0]);
+    double minVal = abs(normal[0]);
     for (int i = 1; i < 3; i++) {
-        if (std::abs(normal[i]) < minVal) {
+        if (abs(normal[i]) < minVal) {
             minDim = i;
-            minVal = std::abs(normal[i]);
+            minVal = abs(normal[i]);
         }
     }
     // Create two vectors orthogonal to the normal.
@@ -40,7 +40,7 @@ void FaceType::computeOrthonormalBasis() {
 double FaceType::angle(const Vec3& q) const {
     double dx = u.dot(q);
     double dy = v.dot(q);
-    double angle = std::atan2(dy, dx);
+    double angle = atan2(dy, dx);
     
     // Angles near pi wrap to -pi.
     if (angle > M_PI - EPS) {
@@ -49,15 +49,15 @@ double FaceType::angle(const Vec3& q) const {
     return angle;
 }
 
-double FaceType::getArea(const std::vector<Vec3>& vertices) const {
-    std::vector<Vec2> projectedVertices;
+double FaceType::getArea(const vector<Vec3>& vertices) const {
+    vector<Vec2> projectedVertices;
     for (const auto& vertex : vertices) {
         projectedVertices.push_back({u.dot(vertex), v.dot(vertex)});
     }
     return -polygonArea(projectedVertices);
 }
 
-double FaceType::polygonArea(const std::vector<Vec2>& points) const {
+double FaceType::polygonArea(const vector<Vec2>& points) const {
     double area = 0;
     for (size_t i = 0; i < points.size(); i++) {
         const auto& p1 = points[i];
@@ -79,9 +79,9 @@ Vec3 FaceType::normalColor() const {
 }
 
 FaceType* FaceType::import(const Json& json) {
-    std::string material = "";
+    string material = "";
     if (json.contains("material") && json["material"].is_string()) {
-        material = json["material"].get<std::string>();
+        material = json["material"].get<string>();
     }
     auto normal = json.contains("normal") ?
         Vec3::import(json["normal"]) : Vec3(0, 0, 1);

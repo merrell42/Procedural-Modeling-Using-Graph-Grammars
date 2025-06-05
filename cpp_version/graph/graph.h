@@ -23,13 +23,13 @@ public:
     ~Graph() = default;
     static Graph* import(const Json& json, Primitives* shape = nullptr);
 
-    const std::vector<GraphVertex*>& getVertices() const { return vertices; }
-    const std::vector<GraphEdge*>& getEdges() const { return edges; }
-    const std::vector<GraphHalfEdge*>& getHalfEdges() const { return halfEdges; }
-    const std::vector<GraphFace*>& getFaces() const { return faces; }
-    const std::vector<GraphVertex*>& getBVertices() const { return bVertices; }
-    const std::vector<GraphHalfEdge*>& getBHalfEdges() const { return bHalfEdges; }
-    const std::vector<GraphFace*>& getBFaces() const { return bFaces; }
+    const vector<GraphVertex*>& getVertices() const { return vertices; }
+    const vector<GraphEdge*>& getEdges() const { return edges; }
+    const vector<GraphHalfEdge*>& getHalfEdges() const { return halfEdges; }
+    const vector<GraphFace*>& getFaces() const { return faces; }
+    const vector<GraphVertex*>& getBVertices() const { return bVertices; }
+    const vector<GraphHalfEdge*>& getBHalfEdges() const { return bHalfEdges; }
+    const vector<GraphFace*>& getBFaces() const { return bFaces; }
     GraphEdge* getEdge(int index) const { return index >= 0 ? edges[index] : nullptr; }
     GraphHalfEdge* getHalfEdge(int index) const { return index >= 0 ? halfEdges[index] : nullptr; }
     int getId() const { return id; }
@@ -57,15 +57,15 @@ public:
     int faceIndex(GraphFace* face) const;
 
 private:
-    std::vector<GraphVertex*> vertices;
-    std::vector<GraphEdge*> edges;
-    std::vector<GraphHalfEdge*> halfEdges;
-    std::vector<GraphFace*> faces;
+    vector<GraphVertex*> vertices;
+    vector<GraphEdge*> edges;
+    vector<GraphHalfEdge*> halfEdges;
+    vector<GraphFace*> faces;
 
     // Boundary vertices, halfEdges, and faces.
-    std::vector<GraphVertex*> bVertices;
-    std::vector<GraphHalfEdge*> bHalfEdges;
-    std::vector<GraphFace*> bFaces;
+    vector<GraphVertex*> bVertices;
+    vector<GraphHalfEdge*> bHalfEdges;
+    vector<GraphFace*> bFaces;
     int id;
 
     static int nextId;

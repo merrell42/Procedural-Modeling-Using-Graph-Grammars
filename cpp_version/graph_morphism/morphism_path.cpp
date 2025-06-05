@@ -9,34 +9,34 @@ namespace ms {
 // Initialize static counter
 int MorphismPath::count = 0;
 
-MorphismPath* MorphismPath::createPath(const std::vector<HalfEdge*>& halfedges,
-                                        const std::vector<Edge*>& edges,
-                                        std::vector<Edge*>* lines) {
-    std::vector<IndexInfo> indices;
+MorphismPath* MorphismPath::createPath(const vector<HalfEdge*>& halfedges,
+                                        const vector<Edge*>& edges,
+                                        vector<Edge*>* lines) {
+    vector<IndexInfo> indices;
     for (auto* halfedge : halfedges) {
-        auto it = std::find_if(edges.begin(), edges.end(),
+        auto it = find_if(edges.begin(), edges.end(),
             [halfedge](Edge* edge) {
                 return edge == halfedge->getEdge();
             });
         if (it == edges.end()) {
-            std::cout << "halfedge is not found in edges." << std::endl;
+            cout << "halfedge is not found in edges." << endl;
             return nullptr;
         }
-        int index = (int)std::distance(edges.begin(), it);
+        int index = (int)distance(edges.begin(), it);
         indices.push_back({index, !halfedge->getIsAtStart()});
     }
     return new MorphismPath(indices, lines);
 }
 
-MorphismPath::MorphismPath(const std::vector<IndexInfo>& indices,
-                             std::vector<Edge*>* edges)
+MorphismPath::MorphismPath(const vector<IndexInfo>& indices,
+                             vector<Edge*>* edges)
     : indices(indices)
     , edges(edges)
     , extendable{true, true}
     , id(count++) {
 }
 
-void MorphismPath::setHalfEdges(const std::vector<HalfEdge*>& halfedges) {
+void MorphismPath::setHalfEdges(const vector<HalfEdge*>& halfedges) {
     this->halfedges = halfedges;
 }
 
@@ -45,7 +45,7 @@ int MorphismPath::extendableness() const {
 }
 
 Vertex* MorphismPath::randomNextVertex() {
-    std::vector<double> probabilities;
+    vector<double> probabilities;
     for (bool e : extendable) {
         probabilities.push_back(e ? 1.0 : 0.0);
     }
@@ -56,7 +56,7 @@ Vertex* MorphismPath::randomNextVertex() {
 Vertex* MorphismPath::rigidNextVertex() {
     for (int i = 0; i < 2; i++) {
         if (extendable[i] && indices.size() >= 2) {
-            std::vector<int> iIndices;
+            vector<int> iIndices;
             if (i == 0) {
                 iIndices = {0, 1};
             } else {
@@ -82,12 +82,12 @@ Edge* MorphismPath::edgeFromIndex(int index) {
 }
 
 MorphismPath::IndexInfo MorphismPath::indexForHalfEdge(HalfEdge* halfedge) {
-    auto it = std::find_if(edges->begin(), edges->end(), 
+    auto it = find_if(edges->begin(), edges->end(), 
         [halfedge](Edge* edge) {
             return edge == halfedge->getEdge();
         });
     return {
-        static_cast<int>(std::distance(edges->begin(), it)),
+        static_cast<int>(distance(edges->begin(), it)),
         halfedge->getIsAtStart()
     };
 }
