@@ -8,8 +8,6 @@
 #include "../graph_drawing/face.h"
 #include "../util/util.h"
 
-
-
 int Graph::nextId = 0;
 
 Graph::Graph() : id(nextId++) {}
@@ -151,6 +149,17 @@ Graph* Graph::import(const Json & json, Primitives* shape) {
     return result;
 }
 
+// If the next half edge is spliced, merge pass it. This effectively removes it.
+void mergePassSplices(GraphHalfEdge* half) {
+    auto* next = half->getNext();
+    if (!half->isSpliced() && next && next->isSpliced()) {
+        auto* newNext = next->getTwin()->getNext();
+        half->getEdge()->merge(newNext->getEdge(), half->getForward());
+        // This is necessary when there are multiple slices in a row.
+        mergePassSplices(half);
+    }
+}
+
 // Remove any spliced edges.
 void Graph::removeSplices() {
     // Check if any half edges are spliced
@@ -171,11 +180,7 @@ void Graph::removeSplices() {
 
     // First pass: merge edges
     for (auto* half : halfEdges) {
-        auto* next = half->getNext();
-        if (!half->isSpliced() && next && next->isSpliced()) {
-            auto* newNext = next->getTwin()->getNext();
-            half->getEdge()->merge(newNext->getEdge(), half->getForward());
-        }
+        mergePassSplices(half);
     }
 
     // Second pass: remove spliced edges
