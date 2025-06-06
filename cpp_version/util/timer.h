@@ -6,8 +6,6 @@
 
 using namespace std;
 
-namespace ms {
-
 class Timer {
 public:
     Timer();
@@ -54,4 +52,3 @@ extern Timer* timer;
         [name](void*) { ms::Timer::instance().stop(name); } \
     )
 
-} // namespace ms 

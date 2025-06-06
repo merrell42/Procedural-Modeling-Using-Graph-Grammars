@@ -9,9 +9,6 @@
 #include <cmath>
 #include <math.h>
 
-
-namespace ms {
-
 class VertexPlacement;
 class EdgePlacement;
 class FacePlacement;
@@ -54,4 +51,3 @@ public:
     static constexpr double defaultLengthMax = 4;
 };
 
-} // namespace ms 

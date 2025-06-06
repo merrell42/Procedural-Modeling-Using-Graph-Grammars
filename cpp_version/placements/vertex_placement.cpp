@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "vertex_placement.h"
 
-namespace ms {
+
 
 void VertexPlacement::initialize() {
     vector<HalfEdge*> halfEdges = vertex->getHalfEdges();
@@ -269,4 +269,3 @@ bool VertexPlacement::fixPosition() {
     return success;
 }
 
-} // namespace ms 

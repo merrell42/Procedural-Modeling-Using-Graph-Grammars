@@ -4,6 +4,4 @@
 using Json = nlohmann::json;
 using namespace std;
 
-namespace ms {
-    extern Json globalSettings;
-} 
+extern Json globalSettings;

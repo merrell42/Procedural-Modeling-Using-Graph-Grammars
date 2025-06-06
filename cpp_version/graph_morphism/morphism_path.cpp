@@ -4,7 +4,7 @@
 #include "../graph_drawing/half_edge.h"
 #include "../util/util.h"
 
-namespace ms {
+
 
 // Initialize static counter
 int MorphismPath::count = 0;
@@ -118,4 +118,3 @@ void MorphismPath::merge(MorphismPath* pathB) {
     indices.insert(indices.end(), pathB->indices.begin(), pathB->indices.end());
 }
 
-} // namespace ms 

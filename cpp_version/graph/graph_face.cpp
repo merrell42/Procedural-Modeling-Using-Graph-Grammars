@@ -4,7 +4,7 @@
 #include "graph.h"
 #include "../geometry/vec3.h"
 
-namespace ms {
+
 
 GraphFace::GraphFace() 
     : outerComponent(nullptr)
@@ -124,4 +124,3 @@ bool GraphFace::inGraph() const {
     return find(faces.begin(), faces.end(), this) != faces.end();
 }
 
-} // namespace ms 

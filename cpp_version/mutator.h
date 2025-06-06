@@ -6,8 +6,6 @@
 #include "../util/timer.h"
 #include "../graph_drawing/model.h"
 
-namespace ms {
-
 class Classifier;
 class Timer;
 class Model;
@@ -36,4 +34,3 @@ private:
     unique_ptr<GraphMutator> graphMutator;
 };
 
-} // namespace ms 

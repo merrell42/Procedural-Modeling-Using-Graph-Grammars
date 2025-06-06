@@ -9,8 +9,6 @@
 #include "bsp_node.h"
 #include "../geometry/mesh.h"
 
-namespace ms {
-
 class HalfEdge;
 class Face;
 class Edge;
@@ -92,4 +90,3 @@ class GraphDrawing {
 		map<int, FaceGroup*> faceGroupMap;
 		int bspRootId;
 };
-}

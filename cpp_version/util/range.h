@@ -3,8 +3,6 @@
 
 using namespace std;
 
-namespace ms {
-
 class Range {
 public:
     Range();
@@ -34,4 +32,3 @@ private:
     static double gcd2(double x, double y);
 };
 
-} // namespace ms 

@@ -6,7 +6,7 @@
 #include "../graph_drawing/model.h"
 #include "../graph_drawing/face_group.h"
 
-namespace ms {
+
 
 class Model;
 class NodeStats;
@@ -75,4 +75,3 @@ private:
     static unordered_map<int, VertexType*> splicedVertexTypes;
 };
 
-} // namespace ms 

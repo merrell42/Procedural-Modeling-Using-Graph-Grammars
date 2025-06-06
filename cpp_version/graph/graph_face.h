@@ -5,8 +5,6 @@
 
 using Json = nlohmann::json;
 
-namespace ms {
-
 class GraphHalfEdge;
 class Graph;
 class FaceType;
@@ -43,4 +41,3 @@ private:
     int id;
 };
 
-} // namespace ms 

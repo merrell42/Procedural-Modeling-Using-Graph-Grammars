@@ -5,10 +5,6 @@
 #include "../graph_drawing/vertex.h"
 #include "../graph_drawing/half_edge.h"
 
-namespace ms {
-
-// class Edge
-
 class MorphismPath {
 public:
     struct IndexInfo {
@@ -41,4 +37,3 @@ public:
     int id;
 };
 
-} // namespace ms 

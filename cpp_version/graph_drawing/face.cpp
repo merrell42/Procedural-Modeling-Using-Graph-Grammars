@@ -8,7 +8,7 @@
 #include "../third_party/earcut/earcut.h"
 #include "../util/util.h"
 
-namespace ms {
+
 
 Face::Face(Model* model, int id, FaceType* faceType, vector<int> halfEdgeIds, bool looped, vector<int> bspNodeIds, int groupId, bool hole)
 	: model(model)
@@ -344,4 +344,3 @@ bool Face::containsPoint(Vec3 point) {
     return (count % 2) == 1;
 }
 
-}

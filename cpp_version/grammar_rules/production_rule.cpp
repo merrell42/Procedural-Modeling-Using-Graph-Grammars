@@ -2,8 +2,6 @@
 #include "production_rule.h"
 #include "../graph/graph.h"
 
-namespace ms {
-
 int NetTransition::nextId = 0;
 
 NetTransition::NetTransition(
@@ -42,4 +40,3 @@ NetTransition* NetTransition::import(const Json& json, Primitives* shape) {
     return result;
 }
 
-} // namespace ms 

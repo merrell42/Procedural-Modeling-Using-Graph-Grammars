@@ -10,7 +10,7 @@
 #include "../settings.h"
 #include "../util/util.h"
 
-namespace ms {
+
 
 unordered_map<int, VertexType*> MorphismFinder::splicedVertexTypes;
 
@@ -501,4 +501,3 @@ HalfEdge* MorphismFinder::castRaySeries(GraphHalfEdge* halfB, const Vec3& startP
     }
 }
 
-} // namespace ms 

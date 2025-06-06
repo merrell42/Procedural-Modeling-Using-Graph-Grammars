@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "model.h"
 
-namespace ms {
+
 
 Model::Model() {
 	current = new GraphDrawing();
@@ -39,6 +39,4 @@ int Model::newId() {
 
 GraphDrawing* Model::getCurrent() {
 	return current;
-}
-
 }

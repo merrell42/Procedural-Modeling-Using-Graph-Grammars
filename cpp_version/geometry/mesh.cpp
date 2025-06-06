@@ -1,8 +1,6 @@
 #include "pch.h"
 #include "mesh.h"
 
-namespace ms {
-
 Mesh createMesh(
     vector<Vec3> positions,
     vector<Vec3> normals,
@@ -34,6 +32,4 @@ Mesh createMesh(
     mesh.numTriangles = (int)triangles.size() / 3;
     mesh.numFaces = (int)faceIndices.size();
     return mesh;
-}
-
 }

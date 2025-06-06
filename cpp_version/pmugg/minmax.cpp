@@ -1,7 +1,5 @@
 #include <algorithm>
 
-namespace ms {
-
 int min(int a, int b) {
     return std::min(a, b);
 }
@@ -20,6 +18,4 @@ float max(float a, float b) {
 }
 double max(double a, double b) {
     return std::max(a, b);
-}
-
 }

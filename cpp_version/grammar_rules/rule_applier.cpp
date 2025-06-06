@@ -11,7 +11,7 @@
 #include <set>
 #include <utility>
 
-namespace ms {
+
 
 unique_ptr<RuleApplier> RuleApplier::buildNormally(
     const Transition& transition, Model* model, int dims) {
@@ -921,4 +921,3 @@ void RuleApplier::reject() {
     effort = numeric_limits<double>::infinity();
 }
 
-} // namespace ms 

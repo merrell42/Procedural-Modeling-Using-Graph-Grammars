@@ -4,8 +4,6 @@
 
 using namespace std;
 
-namespace ms {
-
 class Matrix {
 public:
     Matrix(const vector<vector<double>>& data);
@@ -45,4 +43,3 @@ private:
     vector<int> size;
 };
 
-} // namespace ms 

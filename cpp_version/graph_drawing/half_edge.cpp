@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "half_edge.h"
 
-namespace ms {
+
 
 // TODO: Rename as halfEdge.
 HalfEdge::HalfEdge(Model* model, int id, bool isAtStart, EdgeType* edgeType, Vec3 dir, int vertexId, int faceId_, int edgeId, bool createFace, int faceIndex)
@@ -124,6 +124,4 @@ void HalfEdge::maybeMergeNextFace() {
     if (n) {
         this->getFace()->append(n->getFace());
     }
-}
-
 }

@@ -6,8 +6,6 @@
 #include "../graph/graph_edge.h"
 #include "../graph_drawing/model.h"
 
-namespace ms {
-
 class Graph;
 class NodeStats;
 class Vertex;
@@ -24,4 +22,3 @@ public:
     vector<GraphEdge*> edgesB;
 };
 
-} // namespace ms 

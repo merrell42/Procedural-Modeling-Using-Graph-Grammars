@@ -3,8 +3,6 @@
 #include <string>
 #include "../geometry/vec3.h"
 
-namespace ms {
-
 class View;
 
 class FaceType {
@@ -50,4 +48,3 @@ private:
     double polygonArea(const vector<Vec2>& points) const;
 };
 
-} // namespace ms 

@@ -8,7 +8,7 @@
 #include "../graph_drawing/face.h"
 #include "../util/util.h"
 
-namespace ms {
+
 
 int Graph::nextId = 0;
 
@@ -197,4 +197,3 @@ void Graph::removeSplices() {
     }
 }
 
-} // namespace ms 

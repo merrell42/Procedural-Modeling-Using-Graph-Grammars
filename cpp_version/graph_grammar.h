@@ -9,7 +9,7 @@
 
 using Json = nlohmann::json;
 
-namespace ms {
+
 
 class Graph;  
 class NetTransition;
@@ -67,4 +67,3 @@ private:
     };
 };
 
-} // namespace ms 

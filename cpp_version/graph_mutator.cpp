@@ -5,7 +5,7 @@
 #include "grammar_rules/rule_applier.h"
 #include "settings.h"
 
-namespace ms {
+
 
 GraphMutator::GraphMutator(GraphGrammar* hierarchy, Model* model/*, NodeStats* nodeStats*/)
     : hierarchy(hierarchy)
@@ -79,4 +79,3 @@ bool GraphMutator::applyTransition(Transition transition) {
     return false;
 }
 
-} // namespace ms 

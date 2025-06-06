@@ -11,10 +11,7 @@
 #include "../placements/face_placement.h"
 #include "../util/timer.h"
 #define _USE_MATH_DEFINES
-#include <cmath>
 #include <math.h>
-
-namespace ms {
 
 struct Transition;
 class MorphismPath;
@@ -106,4 +103,3 @@ private:
     void setPlacements(const vector<int>& orderIds, const vector<OrderInfo>& orderInfo);
 };
 
-} // namespace ms 

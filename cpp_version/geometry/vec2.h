@@ -5,8 +5,6 @@
 using Json = nlohmann::json;
 using namespace std;
 
-namespace ms {
-
 class Vec3;
 
 class Vec2 {
@@ -57,4 +55,3 @@ public:
     double y;
 };
 
-} // namespace ms 

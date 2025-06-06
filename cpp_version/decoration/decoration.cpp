@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "decoration.h"
 
-namespace ms {
+
 
 Decoration::Decoration(const string& fillStyle, const string& strokeStyle,
                      const function<void()>& onChange)
@@ -40,4 +40,3 @@ void Decoration::notifyChange() {
     }
 }
 
-} // namespace ms 

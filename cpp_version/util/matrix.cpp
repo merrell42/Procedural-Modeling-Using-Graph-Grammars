@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include <cmath>
 
-namespace ms {
+
 
 Matrix::Matrix(const vector<vector<double>>& d)
     : data(d) {
@@ -181,4 +181,3 @@ vector<int> Matrix::range(int lower, int upper) {
     return result;
 }
 
-} // namespace ms 

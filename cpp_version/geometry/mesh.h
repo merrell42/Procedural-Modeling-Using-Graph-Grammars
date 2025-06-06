@@ -5,8 +5,6 @@
 
 using namespace std;
 
-namespace ms {
-
 class Vec3;
 
 // This is for exporting the graph drawing. It is not used internally.
@@ -26,5 +24,3 @@ Mesh createMesh(
     vector<int> triangles,
     vector<int> faceIndices
 );
-
-}

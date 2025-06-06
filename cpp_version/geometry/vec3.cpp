@@ -6,7 +6,7 @@
 #include <iomanip>
 #include <iostream>
 
-namespace ms {
+
 
 const Vec3 Vec3::ORIGIN(0, 0, 0);
 const Vec3 Vec3::X_AXIS(1, 0, 0);
@@ -210,4 +210,3 @@ Vec3 Vec3::import(const Json& json) {
     }
 }
 
-} // namespace ms 

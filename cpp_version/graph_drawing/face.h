@@ -4,8 +4,6 @@
 #include "../primitives/face_type.h"
 #include "../util/range.h"
 
-namespace ms {
-
 class Model;
 class HalfEdge;
 class FaceType;
@@ -66,5 +64,4 @@ class Face {
 		Model* model;
 
 		vector<int> getTriangleIndices();
-	};
-}
+};

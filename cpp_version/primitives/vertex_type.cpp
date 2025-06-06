@@ -8,7 +8,7 @@
 #include <cmath>
 #include <math.h>
 
-namespace ms {
+
 
 int VertexType::nextId = 0;
 
@@ -36,7 +36,7 @@ void VertexType::addEdge(EdgeType* edge, bool isAtStart, double angle) {
         angle += (double)M_PI;
         dir = dir * -1.0f;
     }
-    angle = ms::Util::fixAngle(angle);
+    angle = Util::fixAngle(angle);
     
     int directedId = 2 * edge->getId() + (isAtStart ? 0 : 1);
     double adjustedAngle = getAdjustedAngle(angle, edge, isAtStart);
@@ -91,4 +91,3 @@ double VertexType::getAdjustedAngle(double angle, EdgeType* edge, bool isAtStart
     return angle + 1e-5f * directedId;
 }
 
-} // namespace ms 

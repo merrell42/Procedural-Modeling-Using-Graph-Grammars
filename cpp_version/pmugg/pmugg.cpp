@@ -13,7 +13,6 @@
 #include "../util/util.h"
 
 using namespace std;
-using namespace ms;
 using Json = nlohmann::json;
 
 int main() {
@@ -28,7 +27,7 @@ int main() {
 		Json parsed = Json::parse(content);
 		cout << parsed["category"] << " " << parsed["name"] << endl;
 		auto hierarchy = GraphGrammar::import(parsed["solution"]);
-		auto model = new ms::Model();
+		auto model = new Model();
 		auto mutator = new Mutator(model, new GraphMutator(hierarchy, model));
 		mutator->iterate(100);
 	} catch (const exception& e) {

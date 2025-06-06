@@ -9,7 +9,7 @@
 #include "util/util.h"
 #include <algorithm>
 
-namespace ms {
+
 
 GraphGrammar::GraphGrammar() {
     reset();
@@ -119,4 +119,3 @@ GraphGrammar* GraphGrammar::import(const Json& json) {
     return hierarchy;
 }
 
-} // namespace ms 

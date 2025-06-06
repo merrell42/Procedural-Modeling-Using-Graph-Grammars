@@ -2,7 +2,7 @@
 #include "intersector.h"
 #include <cmath>
 
-namespace ms {
+
 
 optional<Vec2> Intersector::intersect(
     const Vec2& s1, const Vec2& e1,
@@ -140,4 +140,3 @@ vector<IntersectionData> Intersector::edgeFaceIntersect(const Vec3& edge0Start, 
     return intersections;
 }
 
-} // namespace ms 

@@ -4,7 +4,7 @@
 #include "../util/util.h"
 #include "morphism_info.h"
 
-namespace ms {
+
 
 Morphism::Morphism() {}
 
@@ -23,4 +23,3 @@ Morphism* Morphism::create(const MorphismInfo& info) {
     return morphism;
 }
 
-} // namespace ms 

@@ -6,7 +6,7 @@
 #include "graph_vertex.h"
 #include "../util/util.h"
 
-namespace ms {
+
 
 int GraphHalfEdge::nextId = 0;
 
@@ -106,4 +106,3 @@ void GraphHalfEdge::import(const Json& json) {
     face = graph->getFaces()[json["face"]];
 }
 
-} // namespace ms 

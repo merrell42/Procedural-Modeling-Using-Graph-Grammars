@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "primitives.h"
 
-namespace ms {
+
 
 Primitives::Primitives(const vector<VertexType*>& vTypes,
                  const vector<EdgeType*>& eTypes,
@@ -52,4 +52,3 @@ vector<int> Primitives::getVertices() const {
     return {0};
 }
 
-} // namespace ms 

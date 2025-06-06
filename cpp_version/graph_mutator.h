@@ -5,8 +5,6 @@
 #include "graph_drawing/model.h"
 #include "graph_morphism/morphism_finder.h"
 
-namespace ms {
-
 class Morphism;
 struct Transition;
 class GraphGrammar;
@@ -29,4 +27,3 @@ private:
     bool applyTransition(Transition transition);
 };
 
-} // namespace ms 

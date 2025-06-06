@@ -8,8 +8,6 @@
 
 using Json = nlohmann::json;
 
-namespace ms {
-
 class EdgeType;
 class Primitives;
 
@@ -66,4 +64,3 @@ private:
     static double getAdjustedAngle(double angle, EdgeType* edge, bool isAtStart);
 };
 
-} // namespace ms 

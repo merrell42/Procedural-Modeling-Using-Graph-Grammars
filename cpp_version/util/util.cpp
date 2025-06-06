@@ -7,8 +7,6 @@
 #include <iostream>
 #include "minmax.h"
 
-namespace ms {
-
 int randomCount = 0;
 int randomSeed = 42;
 
@@ -211,4 +209,3 @@ double Util::randomUniform(double lower, double upper) {
     return s * (upper - lower) + lower;
 }
 
-} // namespace ms 

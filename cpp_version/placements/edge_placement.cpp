@@ -8,8 +8,6 @@
 #include "../grammar_rules/rule_applier_settings.h"
 #include "face_placement.h"
 
-namespace ms {
-
 EdgePlacement::EdgePlacement(Edge* edge, int id, RuleApplierSettings* settings)
     : edge(edge)
     , id(id)
@@ -98,5 +96,3 @@ Range EdgePlacement::getRange() const {
 
     return Range::transformCreate(mLength, bLength, Range(lengthMin, lengthMax, tileLength));
 }
-
-} // namespace ms 

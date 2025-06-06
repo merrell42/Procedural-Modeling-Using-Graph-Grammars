@@ -7,8 +7,6 @@
 
 using namespace std;
 
-namespace ms {
-
 class Brush : public Decoration {
 public:
     Brush(const string& fillStyle);
@@ -28,4 +26,3 @@ private:
     map<string, string> stringProperties;
 };
 
-} // namespace ms 

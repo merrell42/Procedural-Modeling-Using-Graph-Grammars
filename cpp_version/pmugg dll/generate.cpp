@@ -16,7 +16,7 @@
 using namespace std;
 using Json = nlohmann::json;
 
-namespace ms {
+
 
 Model* model;
 Mutator* mutator;
@@ -35,7 +35,7 @@ void initialize(const char* filePath, char* result, int len, int seed) {
 	try {
 		Json parsed= Json::parse(content);
 		auto hierarchy = GraphGrammar::import(parsed["solution"]);
-		model = new ms::Model();
+		model = new Model();
 		mutator = new Mutator(model, new GraphMutator(hierarchy, model));
 		strcpy_s(result, len, "Success");
 	} catch (const Json::exception& e) {
@@ -71,5 +71,3 @@ void setSize(float x, float y, float z) {
 	std::vector<double> extents = {x, y, z};
 	globalSettings["Extents"] = extents;
 }
-
-};

@@ -4,20 +4,18 @@
 
 class GraphDrawing;
 
-namespace ms {
-	class Model {
-		public:
-			Model();
-			void accept();
-			void reject();
-			void reset();
-			GraphDrawing* getCurrent();
-			int newId();
-			int numSteps;
+class Model {
+	public:
+		Model();
+		void accept();
+		void reject();
+		void reset();
+		GraphDrawing* getCurrent();
+		int newId();
+		int numSteps;
 
-		private:
-			GraphDrawing* current;
-			GraphDrawing* prev;
-			int idCounter;
-	};
-}
+	private:
+		GraphDrawing* current;
+		GraphDrawing* prev;
+		int idCounter;
+};

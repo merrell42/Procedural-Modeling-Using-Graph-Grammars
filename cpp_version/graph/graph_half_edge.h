@@ -4,8 +4,6 @@
 
 using Json = nlohmann::json;
 
-namespace ms {
-
 class Graph;
 class GraphVertex;
 class GraphEdge;
@@ -60,4 +58,3 @@ private:
     static int nextId;
 };
 
-} // namespace ms 

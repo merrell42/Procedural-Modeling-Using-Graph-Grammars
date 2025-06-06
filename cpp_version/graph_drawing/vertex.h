@@ -5,8 +5,6 @@
 #include "half_edge.h"
 #include <vector>
 
-namespace ms {
-
 class Model;
 class HalfEdge;
 
@@ -35,4 +33,3 @@ class Vertex {
 		Model* model;
 		HalfEdge* createHalfEdge(const HalfEdgeType& halfEdgetype, int faceIndex);
 };
-}

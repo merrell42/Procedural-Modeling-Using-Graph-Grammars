@@ -4,8 +4,6 @@
 
 using namespace std;
 
-namespace ms {
-
 class MorphismInfo;
 class Morphism;
 class GraphHalfEdge;
@@ -40,4 +38,3 @@ private:
     vector<HalfEdgeData> spliceQueue;
 };
 
-} // namespace ms 

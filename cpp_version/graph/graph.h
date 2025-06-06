@@ -7,8 +7,6 @@
 #include "graph_face.h"
 #include "graph_half_edge.h"
 
-namespace ms {
-
 class GraphVertex;
 class GraphEdge;
 class GraphHalfEdge;
@@ -71,4 +69,3 @@ private:
     static int nextId;
 };
 
-} // namespace ms 

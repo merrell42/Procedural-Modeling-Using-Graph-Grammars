@@ -5,8 +5,6 @@
 
 using namespace std;
 
-namespace ms {
-
 class Decoration {
 public:
     Decoration(const string& fillStyle, const string& strokeStyle,
@@ -32,5 +30,3 @@ protected:
 
     void notifyChange();
 };
-
-} // namespace ms 

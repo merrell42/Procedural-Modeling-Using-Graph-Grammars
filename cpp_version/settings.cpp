@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "settings.h"
 
-namespace ms {
+
 
 Json globalSettings = {
     {"Extents", vector<int>{30, 20, 10}},
@@ -91,4 +91,3 @@ Json globalSettings = {
     {"Pause when finished", false}
 };
 
-} // namespace ms 

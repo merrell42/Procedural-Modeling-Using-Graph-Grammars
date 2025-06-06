@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "morphism_info.h"
 
-namespace ms {
+
 
 MorphismInfo::MorphismInfo(Model* model, Graph* graphB)
     : model(model) , graphB(graphB) {
@@ -15,4 +15,3 @@ MorphismInfo::MorphismInfo(const MorphismInfo& other)
     , verticesB(other.verticesB)
     , edgesB(other.edgesB) {}
 
-} // namespace ms 

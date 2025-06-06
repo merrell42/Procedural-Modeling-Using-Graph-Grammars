@@ -6,8 +6,6 @@
 #include "../grammar_rules/rule_applier_settings.h"
 #include "../util/matrix.h"
 
-namespace ms {
-
 class HalfEdge;
 class Vertex;
 class RuleApplierSettings;
@@ -63,5 +61,3 @@ private:
     Matrix* getA(const vector<int>& faceIds);
     Matrix* getM();
 };
-
-} // namespace ms

@@ -7,7 +7,7 @@
 #include "../graph/graph.h"
 #include "../util/util.h"
 
-namespace ms {
+
 
 MorphismState::MorphismState(MorphismInfo* info, Morphism* existingMorphism)
     : info(info) {
@@ -46,4 +46,3 @@ MorphismState* MorphismState::copy() const {
     return result;
 }
 
-} // namespace ms 

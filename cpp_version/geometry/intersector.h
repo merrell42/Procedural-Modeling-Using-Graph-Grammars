@@ -7,8 +7,6 @@
 
 using namespace std;
 
-namespace ms {
-
 struct IntersectionData {
     Vec2 pos;
     int index;
@@ -56,4 +54,3 @@ private:
     Intersector() = delete; // Static class
 };
 
-} // namespace ms 

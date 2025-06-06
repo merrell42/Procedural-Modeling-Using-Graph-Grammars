@@ -4,7 +4,7 @@
 #include "..\decoration\brush.h"
 #include "..\util\util.h"
 
-namespace ms {
+
 
 int EdgeType::nextId = 0;
 
@@ -129,4 +129,3 @@ EdgeType* EdgeType::import(const Json& json, Primitives* shape) {
     return result;
 }
 
-} // namespace ms 

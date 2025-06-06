@@ -4,7 +4,7 @@
 #include "graph_half_edge.h"
 #include "../util/util.h"
 
-namespace ms {
+
 
 int GraphEdge::nextId = 0;
 
@@ -109,4 +109,3 @@ void GraphEdge::import(const Json& json) {
     }
 }
 
-} // namespace ms 

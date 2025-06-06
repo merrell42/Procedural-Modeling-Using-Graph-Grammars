@@ -2,7 +2,7 @@
 #include "rule_applier_settings.h"
 #include "../util/util.h"
 
-namespace ms {  
+  
 
 void RuleApplierSettings::setVertex(int id, unique_ptr<VertexPlacement> vPlace) {
     vertexPlacements[id] = move(vPlace);
@@ -68,6 +68,4 @@ int RuleApplierSettings::findBasisOrder(const int basisId) {
         }
     }
     return -1;
-}
-
 }

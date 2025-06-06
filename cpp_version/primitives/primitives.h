@@ -6,8 +6,6 @@
 #include "edge_type.h"
 #include "face_type.h"
 
-namespace ms {
-
 class VertexType;
 class EdgeType;
 
@@ -34,4 +32,3 @@ private:
     string xml;
 };
 
-} // namespace ms 

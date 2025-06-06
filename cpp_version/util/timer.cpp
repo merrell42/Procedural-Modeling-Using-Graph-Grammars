@@ -5,7 +5,7 @@
 #include <algorithm>
 #include "minmax.h"
 
-namespace ms {
+
 
 Timer::Timer() = default;
 
@@ -114,4 +114,3 @@ double Timer::toMilliseconds(const chrono::high_resolution_clock::duration& dura
 
 Timer* timer = new Timer();
 
-} // namespace ms 

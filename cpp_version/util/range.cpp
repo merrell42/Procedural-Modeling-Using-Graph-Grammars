@@ -6,8 +6,6 @@
 #include "util.h"
 #include "minmax.h"
 
-namespace ms {
-
 Range::Range()
     : data({ 0, 0 })
     , tileLength(0) {}
@@ -85,4 +83,3 @@ double Range::lcm(double a, double b) {
     return (a * b) / gcd2(a, b);
 }
 
-} // namespace ms 

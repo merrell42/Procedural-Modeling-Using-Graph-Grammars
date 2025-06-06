@@ -10,7 +10,7 @@
 #include "../primitives/vertex_type.h"
 #include "../geometry/intersector.h"
 
-namespace ms {
+
 
 Edge::Edge(Model* model, int id, EdgeType* type, vector<int> halfEdgeIds, vector<int> bspNodeIds)
 	: model(model)
@@ -201,6 +201,4 @@ void Edge::removeFromBsp() {
 		}
 	}
 	bspNodeIds.clear();
-}
-
 }

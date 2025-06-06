@@ -2,7 +2,7 @@
 #include "graph_drawing.h"
 #include <fstream>
 
-namespace ms {
+
 
 GraphDrawing::GraphDrawing(
 	map<int, HalfEdge*> halfEdgeMap,
@@ -141,6 +141,4 @@ bool GraphDrawing::bspAddFace(Face* face) {
 
 void GraphDrawing::bspRemoveFace(Face* face) {
 	bspNodeMap[bspRootId]->removeFace(face);
-}
-
 }

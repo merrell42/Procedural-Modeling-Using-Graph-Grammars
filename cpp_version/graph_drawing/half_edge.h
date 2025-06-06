@@ -5,7 +5,7 @@
 #include "edge.h"
 #include "../primitives/edge_type.h"
 
-namespace ms {
+
 
 class Model;
 class EdgeType;
@@ -48,5 +48,3 @@ private:
 	int edgeId;
 	Model* model;
 };
-
-}

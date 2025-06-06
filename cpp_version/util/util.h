@@ -4,8 +4,6 @@
 #include <string>
 #include "../geometry/vec3.h"
 
-namespace ms {
-
 template <typename T> static
 int indexOf(const vector<T>& vec, const T& value) {
     auto it = find(vec.begin(), vec.end(), value);
@@ -115,5 +113,3 @@ private:
     static function<double()> originalRandom;
     static int randomCount;
 };
-
-} // namespace ms   

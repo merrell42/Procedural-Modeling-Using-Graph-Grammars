@@ -4,7 +4,7 @@
 #include "face.h"
 #include "model.h"
 
-namespace ms {
+
 
 class Model;
 class Face;
@@ -31,5 +31,3 @@ private:
     
 	Model* model;
 };
-
-} // namespace ms

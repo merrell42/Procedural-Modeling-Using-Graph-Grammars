@@ -3,7 +3,7 @@
 #include "../geometry/vec3.h"
 #include "../util/range.h"
 
-namespace ms {
+
 
 class Face;
 class FacePlacement;
@@ -55,4 +55,3 @@ private:
     double value{0.0};
 };
 
-} // namespace ms 

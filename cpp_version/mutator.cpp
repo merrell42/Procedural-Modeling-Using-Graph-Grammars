@@ -6,7 +6,7 @@
 #include "../settings.h"
 #include "../util/util.h"
 
-namespace ms {
+
 
 Mutator::Mutator(Model* model, GraphMutator* graphMutator)
     : model(model)
@@ -121,4 +121,3 @@ void Mutator::reject() {
     model->reject();
 }
 
-} // namespace ms 

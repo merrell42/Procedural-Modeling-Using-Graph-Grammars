@@ -6,8 +6,6 @@
 #include <cmath>
 #include <math.h>
 
-namespace ms {
-
 int FaceType::nextId = 0;
 
 FaceType::FaceType(const string& mat, const Vec3& n)
@@ -94,4 +92,3 @@ FaceType* FaceType::import(const Json& json) {
     return result;
 }
 
-} // namespace ms 

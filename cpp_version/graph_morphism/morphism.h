@@ -3,8 +3,6 @@
 #include <memory>
 #include "morphism_info.h"
 
-namespace ms {
-
 class Graph;
 class Edge;
 
@@ -23,4 +21,3 @@ public:
     vector<Face*> faceBtoA;
 };
 
-} // namespace ms 

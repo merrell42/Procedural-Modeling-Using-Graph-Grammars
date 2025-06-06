@@ -9,7 +9,7 @@
 
 using Json = nlohmann::json;
 
-namespace ms {
+
 
 class FaceType;
 class Primitives;
@@ -70,4 +70,3 @@ private:
     static int nextId;
 };
 
-} // namespace ms 

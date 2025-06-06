@@ -2,7 +2,7 @@
 #include "brush.h"
 #include "../util/util.h"
 
-namespace ms {
+
 
 Brush::Brush(const string& fillStyle, const string& strokeStyle)
     : Decoration(fillStyle, strokeStyle) {
@@ -68,4 +68,3 @@ Brush* Brush::import(Json json) {
     return brush;
 }
 
-} // namespace ms 

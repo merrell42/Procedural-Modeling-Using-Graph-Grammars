@@ -7,9 +7,6 @@
 
 using Json = nlohmann::json;
 
-
-namespace ms {
-
 class Graph;
 class GraphHalfEdge;
 class View;
@@ -54,4 +51,3 @@ private:
     static int nextId;
 };
 
-} // namespace ms 

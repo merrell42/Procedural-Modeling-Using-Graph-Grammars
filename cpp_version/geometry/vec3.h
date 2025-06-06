@@ -5,7 +5,7 @@
 using Json = nlohmann::json;
 using namespace std;
 
-namespace ms {
+
 
 class Vec2;
 
@@ -65,4 +65,3 @@ private:
     double z;
 };
 
-} // namespace ms 

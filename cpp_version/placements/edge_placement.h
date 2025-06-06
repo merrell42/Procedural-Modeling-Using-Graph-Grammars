@@ -4,7 +4,7 @@
 #include <vector>
 #include <memory>
 
-namespace ms {
+
 
 class Edge;
 class RuleApplierSettings;
@@ -34,5 +34,3 @@ private:
     RuleApplierSettings* settings;
     std::vector<int> constraints;
 };
-
-} // namespace ms 

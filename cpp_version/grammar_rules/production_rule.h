@@ -6,8 +6,6 @@
 using Json = nlohmann::json;
 using namespace std;
 
-namespace ms {
-
 class Graph;
 class View;
 class Primitives;
@@ -37,4 +35,3 @@ private:
     static int nextId;
 };
 
-} // namespace ms 

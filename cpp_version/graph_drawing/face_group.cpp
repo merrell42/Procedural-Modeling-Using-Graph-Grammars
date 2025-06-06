@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "face_group.h"
 
-namespace ms {
+
 
 FaceGroup::FaceGroup(Model* model, int id) : model(model), id(id), faceIds() {
     model->getCurrent()->addFaceGroup(id, this);
@@ -58,4 +58,3 @@ void FaceGroup::connectHole(FaceGroup* groupB) {
     addFace(faceB);
 }
 
-} // namespace ms 
