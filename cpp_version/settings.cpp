@@ -85,7 +85,7 @@ Json globalSettings = {
     {"Use WebGL", false},
     {"Show Faces", true},
     {"Cut Holes", true},
-    {"Fewer Start Transitions", false},
+    {"Fewer Start Productions", false},
     {"Example View", true},
     {"Use Graph", true},
     {"Pause when finished", false}

@@ -12,14 +12,14 @@ class Primitives;
 struct DrawOptions;
 struct OrderInfo;
 
-class NetTransition {
+class ProductionRule {
 public:
-    explicit NetTransition(
+    explicit ProductionRule(
         const vector<Graph*>& startGraphs,
         const vector<Graph*>& endGraphs
     );
-    static NetTransition* import(const Json& json, Primitives* shape);
-    ~NetTransition() = default;
+    static ProductionRule* import(const Json& json, Primitives* shape);
+    ~ProductionRule() = default;
 
     const vector<Graph*>& getStartGraphs() const { return startGraphs; }
     const vector<Graph*>& getEndGraphs() const { return endGraphs; }

@@ -37,7 +37,7 @@ public:
     ~MorphismFinder() = default;
 
     // Core functionality
-    Morphism* findMap(Graph* graphB);
+    Morphism* findMorphism(Graph* graphB);
     Morphism* findStarterMap(Graph* graphB);
     void reset();
 

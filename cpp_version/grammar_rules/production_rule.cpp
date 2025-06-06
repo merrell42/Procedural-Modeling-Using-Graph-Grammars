@@ -2,9 +2,9 @@
 #include "production_rule.h"
 #include "../graph/graph.h"
 
-int NetTransition::nextId = 0;
+int ProductionRule::nextId = 0;
 
-NetTransition::NetTransition(
+ProductionRule::ProductionRule(
     const vector<Graph*>& startGraphs,
     const vector<Graph*>& endGraphs
 ) : startGraphs(startGraphs),
@@ -12,7 +12,7 @@ NetTransition::NetTransition(
     ground(false),
     id(nextId++) {}
 
-NetTransition* NetTransition::import(const Json& json, Primitives* shape) {
+ProductionRule* ProductionRule::import(const Json& json, Primitives* shape) {
     vector<Graph*> startGraphs;
     vector<Graph*> endGraphs;
     for (size_t index = 0; index < json["n"].size(); ++index) {
@@ -35,7 +35,7 @@ NetTransition* NetTransition::import(const Json& json, Primitives* shape) {
         }
     }
 
-    auto* result = new NetTransition(startGraphs, endGraphs);
+    auto* result = new ProductionRule(startGraphs, endGraphs);
     result->ground = json["ground"];
     return result;
 }

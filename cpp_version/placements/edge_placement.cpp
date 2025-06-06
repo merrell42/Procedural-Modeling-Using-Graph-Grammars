@@ -17,7 +17,7 @@ EdgePlacement::EdgePlacement(Edge* edge, int id, RuleApplierSettings* settings)
     auto halfEdges = edge->getHalfEdges();
     for (auto* halfEdge : halfEdges) {
         if (halfEdge) {
-            // Can be null in the ground transition.
+            // Can be null in the ground rule.
             vertexIds.push_back(halfEdge->getVertex()->getId());
         }
     }

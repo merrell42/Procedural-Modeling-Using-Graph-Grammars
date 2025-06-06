@@ -18,39 +18,39 @@ GraphGrammar::GraphGrammar() {
 void GraphGrammar::reset() {
     generations.clear();
     nodeQueue.clear();
-    emptyNet = nullptr;
+    emptyGraph = nullptr;
 
     shape = nullptr;
-    transitions.clear();
-    starterTransitions.clear();
-    groundTransitions.clear();
+    rules.clear();
+    starterRules.clear();
+    groundRules.clear();
 }
 
 const std::vector<std::vector<Graph*>>& GraphGrammar::getGenerations() const {
     return generations;
 }
 
-const std::vector<NetTransition*>& GraphGrammar::getTransitions() const {
-    return transitions;
+const std::vector<ProductionRule*>& GraphGrammar::getRules() const {
+    return rules;
 }
 
-const std::vector<NetTransition*>& GraphGrammar::getStarterTransitions() const {
-    return starterTransitions;
+const std::vector<ProductionRule*>& GraphGrammar::getStarterRules() const {
+    return starterRules;
 }
 
-const std::vector<NetTransition*>& GraphGrammar::getGroundTransitions() const {
-    return groundTransitions;
+const std::vector<ProductionRule*>& GraphGrammar::getGroundRules() const {
+    return groundRules;
 }
 
 bool GraphGrammar::isGrounded() const {
     return grounded;
 }
 
-Transition GraphGrammar::getTransition() {
-    NetTransition* transition = transitions.empty() ? nullptr : Util::pick<NetTransition*>(transitions);
-    if (transition) {
-        auto startGraphs = transition->getStartGraphs();
-        auto endGraphs = transition->getEndGraphs();
+Production GraphGrammar::getProduction() {
+    ProductionRule* rule = rules.empty() ? nullptr : Util::pick<ProductionRule*>(rules);
+    if (rule) {
+        auto startGraphs = rule->getStartGraphs();
+        auto endGraphs = rule->getEndGraphs();
         int n = (int)startGraphs.size();
         // Pick two unique indices
         int start = Util::randomInt(n);
@@ -63,34 +63,34 @@ Transition GraphGrammar::getTransition() {
     return {nullptr, nullptr, nullptr, false};
 }
 
-Transition GraphGrammar::getRemoveTransition() {
-    bool grounded = starterTransitions.empty();
+Production GraphGrammar::getRemoveProduction() {
+    bool grounded = starterRules.empty();
     if (grounded) {
         return {nullptr, nullptr, nullptr, false};
     }
-    auto* transition = Util::pick(starterTransitions);
-    if (transition) {
-        auto startGraphs = transition->getStartGraphs();
+    auto* rule = Util::pick(starterRules);
+    if (rule) {
+        auto startGraphs = rule->getStartGraphs();
         int n = (int)startGraphs.size();
-        auto* endNet = emptyNet;
-        auto* startNet = startGraphs[Util::randomInt(n - 1) + 1];
-        return {startNet, endNet, nullptr, false};
+        auto* endGraph = emptyGraph;
+        auto* startGraph = startGraphs[Util::randomInt(n - 1) + 1];
+        return {startGraph, endGraph, nullptr, false};
     }
     return {nullptr, nullptr, nullptr, false};
 }
 
-Transition GraphGrammar::getStarterTransition(bool useGround) {
-    bool grounded = (this->grounded && useGround) || starterTransitions.empty();
-    auto& transitions = grounded ? groundTransitions : starterTransitions;
+Production GraphGrammar::getStarterProduction(bool useGround) {
+    bool grounded = (this->grounded && useGround) || starterRules.empty();
+    auto& rules = grounded ? groundRules : starterRules;
     
-    auto* transition = Util::pick(transitions);
-    if (transition) {
-        auto startGraphs = transition->getStartGraphs();
-        auto endGraphs = transition->getEndGraphs();
+    auto* rule = Util::pick(rules);
+    if (rule) {
+        auto startGraphs = rule->getStartGraphs();
+        auto endGraphs = rule->getEndGraphs();
         int n = (int)endGraphs.size();
-        auto* startNet = startGraphs[0];
-        auto* endNet = endGraphs[Util::randomInt(n - 1) + 1];
-        return {startNet, endNet, nullptr, transition->isGround()};
+        auto* startGraph = startGraphs[0];
+        auto* endGraph = endGraphs[Util::randomInt(n - 1) + 1];
+        return {startGraph, endGraph, nullptr, rule->isGround()};
     }
     return {nullptr, nullptr, nullptr, false};
 }
@@ -99,22 +99,22 @@ GraphGrammar* GraphGrammar::import(const Json& json) {
     auto* hierarchy = new GraphGrammar();
     hierarchy->shape = Primitives::import(json["types"]);
     
-    auto importTransition = [&](const Json& transJson) {
-        return NetTransition::import(transJson, hierarchy->shape);
+    auto importRule = [&](const Json& transJson) {
+        return ProductionRule::import(transJson, hierarchy->shape);
     };
     
     for (const auto& transJson : json["transitions"]) {
-        hierarchy->transitions.push_back(importTransition(transJson));
+        hierarchy->rules.push_back(importRule(transJson));
     }
     for (const auto& transJson : json["starterTransitions"]) {
-        hierarchy->starterTransitions.push_back(importTransition(transJson));
+        hierarchy->starterRules.push_back(importRule(transJson));
     }
     for (const auto& transJson : json["groundTransitions"]) {
-        hierarchy->groundTransitions.push_back(importTransition(transJson));
+        hierarchy->groundRules.push_back(importRule(transJson));
     }
     
     hierarchy->grounded = json["grounded"];
-    hierarchy->emptyNet = Graph::import(json["emptyNet"], hierarchy->shape);
+    hierarchy->emptyGraph = Graph::import(json["emptyNet"], hierarchy->shape);
     
     return hierarchy;
 }

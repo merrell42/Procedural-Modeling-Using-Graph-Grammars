@@ -6,7 +6,6 @@
 #include "graph_morphism/morphism_finder.h"
 
 class Morphism;
-struct Transition;
 class GraphGrammar;
 
 class GraphMutator {
@@ -22,8 +21,8 @@ private:
     vector<bool> edgeTypeStarted;
     GraphGrammar* hierarchy;
     Model* model;
-    unique_ptr<MorphismFinder> mapFinder;
+    unique_ptr<MorphismFinder> morphismFinder;
 
-    bool applyTransition(Transition transition);
+    bool applyProduction(Production production);
 };
 

@@ -25,7 +25,7 @@ void MorphismFinder::reset() {
     groundFace = nullptr;
 }
 
-Morphism* MorphismFinder::findMap(Graph* graphB) {
+Morphism* MorphismFinder::findMorphism(Graph* graphB) {
     if (!groundFace && groundEnabled) {
         auto faces = model->getCurrent()->getFaceMap();
         if (!faces.empty()) {
