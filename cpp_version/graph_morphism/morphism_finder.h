@@ -58,9 +58,9 @@ private:
     Face* findFace(FaceType* faceType);
     Morphism* findContinue(MorphismState* state);
     Morphism* assignVertex(MorphismState* state, Vertex* vertexA, int indexB);
-    Morphism* matchHalfEdge(const HalfEdgeData& halfedgeData, MorphismState* state);
-    Morphism* assignHalfEdge(HalfEdge* halfedgeA, GraphHalfEdge* halfB, MorphismState* state);
-    Morphism* spliceHalfEdge(const HalfEdgeData& halfedgeData, MorphismState* state);
+    Morphism* matchHalfEdge(const HalfEdgeData& halfEdgeData, MorphismState* state);
+    Morphism* assignHalfEdge(HalfEdge* halfEdgeA, GraphHalfEdge* halfB, MorphismState* state);
+    Morphism* spliceHalfEdge(const HalfEdgeData& halfEdgeData, MorphismState* state);
 
     // Ray casting methods
     /*Face* castVolumeRaySeries(Face* face, const vector<GraphHalfEdge*>& rayHalfs, Face* goalFace);*/

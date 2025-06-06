@@ -19,11 +19,11 @@ HalfEdge::HalfEdge(Model* model, int id, bool isAtStart, EdgeType* edgeType, Vec
     faceTypeCached = nullptr;
     if (createFace) {
         auto faceType = getFaceType();
-        vector<int> halfedgeIds;
-        halfedgeIds.push_back(id);
+        vector<int> halfEdgeIds;
+        halfEdgeIds.push_back(id);
         faceId = model->newId();
         vector<int> bspNodeIds;
-        auto face = new Face(model, faceId, faceType, halfedgeIds, bspNodeIds);
+        auto face = new Face(model, faceId, faceType, halfEdgeIds, bspNodeIds);
         face->createGroup();
     }
 }
@@ -73,35 +73,35 @@ void HalfEdge::transfer(Edge* replacement) {
 }
 
 HalfEdge* HalfEdge::next() const {
-    vector<HalfEdge*> halfedges = getFace()->getHalfEdges();
-    size_t N = halfedges.size();
-    auto it = find(halfedges.begin(), halfedges.end(), this);
-    size_t index = distance(halfedges.begin(), it);
-    return halfedges[(index + 1) % N];
+    vector<HalfEdge*> halfEdges = getFace()->getHalfEdges();
+    size_t N = halfEdges.size();
+    auto it = find(halfEdges.begin(), halfEdges.end(), this);
+    size_t index = distance(halfEdges.begin(), it);
+    return halfEdges[(index + 1) % N];
 }
 
 HalfEdge* HalfEdge::prev() const {
-    vector<HalfEdge*> halfedges = getFace()->getHalfEdges();
-    size_t index = find(halfedges.begin(), halfedges.end(), this) - halfedges.begin();
+    vector<HalfEdge*> halfEdges = getFace()->getHalfEdges();
+    size_t index = find(halfEdges.begin(), halfEdges.end(), this) - halfEdges.begin();
 
     if (index == 0) {
-        size_t N = halfedges.size();
-        // Wrap around to the last halfedge.
+        size_t N = halfEdges.size();
+        // Wrap around to the last halfEdge.
         index = N;
     }
 
-    return halfedges[index - 1];
+    return halfEdges[index - 1];
 }
 
 HalfEdge* HalfEdge::twin() const {
     Edge* edge = getEdge();
     if (edge) {
-        vector<HalfEdge*> halfedges = edge->getHalfEdges();
-        auto it = find(halfedges.begin(), halfedges.end(), this);
-        if (it != halfedges.end()) {
-            size_t index = distance(halfedges.begin(), it);
-            // Return the other halfedge.
-            return halfedges[1 - index];
+        vector<HalfEdge*> halfEdges = edge->getHalfEdges();
+        auto it = find(halfEdges.begin(), halfEdges.end(), this);
+        if (it != halfEdges.end()) {
+            size_t index = distance(halfEdges.begin(), it);
+            // Return the other halfEdge.
+            return halfEdges[1 - index];
         }
     }
     return nullptr;

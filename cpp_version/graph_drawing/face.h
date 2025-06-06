@@ -14,8 +14,8 @@ class Plane;
 
 class Face {
 	public:
-		Face(Model* model, int id, FaceType* faceType, vector<int> halfedgeIds, bool looped, vector<int> bspNodeIds, int groupId, bool hole);
-		Face(Model* model, int id, FaceType* faceType, vector<int> halfedgeIds, vector<int> bspNodeIds);
+		Face(Model* model, int id, FaceType* faceType, vector<int> halfEdgeIds, bool looped, vector<int> bspNodeIds, int groupId, bool hole);
+		Face(Model* model, int id, FaceType* faceType, vector<int> halfEdgeIds, vector<int> bspNodeIds);
 		Face* copy();
 		~Face();
 		int getId() const { return id; };
@@ -29,11 +29,11 @@ class Face {
 		void setGroup(FaceGroup* group);
 		void setLooped(bool looped_) { looped = looped_; }
 		FaceGroup* getGroup() const;
-		void split(HalfEdge* halfedge);
+		void split(HalfEdge* halfEdge);
 		bool isHole() { return hole; }
 		void destroy();
-		void insert(HalfEdge* halfedge, HalfEdge* prevHalfEdge);
-		void removeHalfEdge(HalfEdge* halfedge);
+		void insert(HalfEdge* halfEdge, HalfEdge* prevHalfEdge);
+		void removeHalfEdge(HalfEdge* halfEdge);
 		double signedArea();
 		void exportMesh(
 			vector<Vec3>& positions,
@@ -56,7 +56,7 @@ class Face {
 
 	private:
 		int id;
-		vector<int> halfedgeIds;
+		vector<int> halfEdgeIds;
 		bool looped;
 		FaceType* faceType;
 		vector<int> bspNodeIds;

@@ -17,8 +17,8 @@ VertexType::VertexType()
     , id(nextId++) {
 }
 
-const vector<Connection>& VertexType::getConnections() const {
-    return connections;
+const vector<HalfEdgeType>& VertexType::getHalfEdgeTypes() const {
+    return halfEdgeTypes;
 }
 
 bool VertexType::getSpliced() const {
@@ -42,22 +42,22 @@ void VertexType::addEdge(EdgeType* edge, bool isAtStart, double angle) {
     double adjustedAngle = getAdjustedAngle(angle, edge, isAtStart);
 
     // Find insertion point to maintain sorted order.
-    auto it = lower_bound(connections.begin(), connections.end(),
-        Connection{},
-        [adjustedAngle, directedId](const Connection& a, const Connection& b) {
+    auto it = lower_bound(halfEdgeTypes.begin(), halfEdgeTypes.end(),
+        HalfEdgeType{},
+        [adjustedAngle, directedId](const HalfEdgeType& a, const HalfEdgeType& b) {
             return (a.adjustedAngle < adjustedAngle) ||
                    (a.adjustedAngle == adjustedAngle && a.directedId < directedId);
         });
 
-    Connection conn;
-    conn.adjustedAngle = adjustedAngle;
-    conn.angle = angle;
-    conn.dir = dir;
-    conn.directedId = directedId;
-    conn.edge = edge;
-    conn.isAtStart = isAtStart;
+    HalfEdgeType halfEdgeType;
+    halfEdgeType.adjustedAngle = adjustedAngle;
+    halfEdgeType.angle = angle;
+    halfEdgeType.dir = dir;
+    halfEdgeType.directedId = directedId;
+    halfEdgeType.edge = edge;
+    halfEdgeType.isAtStart = isAtStart;
 
-    connections.insert(it, conn);
+    halfEdgeTypes.insert(it, halfEdgeType);
 }
 
 void VertexType::setSpliced(bool spliced) {
@@ -69,18 +69,18 @@ VertexType* VertexType::import(const Json& json, Primitives* shape) {
     bool spliced = json["spliced"];
     result->spliced = spliced;
 
-    for (const auto& connJson : json["connections"]) {
-        Connection conn;
-        conn.edge = shape->edgeTypes[connJson["edge"].get<int>()];
-        conn.isAtStart = connJson["isAtStart"];
+    for (const auto& halfEdgeTypeJson : json["connections"]) {
+        HalfEdgeType halfEdgeType;
+        halfEdgeType.edge = shape->edgeTypes[halfEdgeTypeJson["edge"].get<int>()];
+        halfEdgeType.isAtStart = halfEdgeTypeJson["isAtStart"];
         if (!spliced) {
-            conn.adjustedAngle = connJson["adjustedAngle"];
-            conn.angle = connJson["angle"];
-            conn.dir = connJson.contains("dir") ? 
-                Vec3::import(connJson["dir"]) : Vec3();
-            conn.directedId = connJson["directedId"];
+            halfEdgeType.adjustedAngle = halfEdgeTypeJson["adjustedAngle"];
+            halfEdgeType.angle = halfEdgeTypeJson["angle"];
+            halfEdgeType.dir = halfEdgeTypeJson.contains("dir") ? 
+                Vec3::import(halfEdgeTypeJson["dir"]) : Vec3();
+            halfEdgeType.directedId = halfEdgeTypeJson["directedId"];
         }
-        result->connections.push_back(conn);
+        result->halfEdgeTypes.push_back(halfEdgeType);
     }
 
     return result;

@@ -34,9 +34,9 @@ namespace ms {
     bool BspNode::addEdge(Edge* edge) {
         if (edgeIds.size() > 0) {
             auto thisEdge = model->getCurrent()->getEdge(edgeIds[0]);
-            auto halfedges = thisEdge->getHalfEdges();
-            auto p0 = halfedges[0]->getPosition();
-            auto p1 = halfedges[1]->getPosition();
+            auto halfEdges = thisEdge->getHalfEdges();
+            auto p0 = halfEdges[0]->getPosition();
+            auto p1 = halfEdges[1]->getPosition();
         }
 
         PlaneClassification classification = classifyEdge(edge);
@@ -178,9 +178,9 @@ namespace ms {
         if (!plane) {
             return PlaneClassification::ON_PLANE;
         }
-        auto halfedges = edge->getHalfEdges();
-        auto p0 = halfedges[0]->getPosition();
-        auto p1 = halfedges[1]->getPosition();
+        auto halfEdges = edge->getHalfEdges();
+        auto p0 = halfEdges[0]->getPosition();
+        auto p1 = halfEdges[1]->getPosition();
         bool isAbove = (isPointAbovePlane(p0) || isPointAbovePlane(p1));
         bool isBelow = (isPointBelowPlane(p0) || isPointBelowPlane(p1));
         if (isAbove && isBelow) {

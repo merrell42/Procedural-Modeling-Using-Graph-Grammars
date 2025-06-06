@@ -179,27 +179,27 @@ Morphism* MorphismFinder::findStarterMap(Graph* graphB) {
 Morphism* MorphismFinder::findContinue(MorphismState* state) {
     if (!state->getQueue().empty()) {
         vector<HalfEdgeData>& queue = state->getQueue();
-        HalfEdgeData halfedgeData = queue.front();
+        HalfEdgeData halfEdgeData = queue.front();
         queue.erase(queue.begin());
-        return matchHalfEdge(halfedgeData, state);
+        return matchHalfEdge(halfEdgeData, state);
     } else if (!state->getSpliceQueue().empty()) {
         vector<HalfEdgeData>& queue = state->getSpliceQueue();
-        HalfEdgeData halfedgeData = queue.front();
+        HalfEdgeData halfEdgeData = queue.front();
         queue.erase(queue.begin());
-        return spliceHalfEdge(halfedgeData, state);
+        return spliceHalfEdge(halfEdgeData, state);
     }
     return state->getMorphism();
 }
 
-bool neighboringHoles(Edge* edge, GraphEdge* edgeB) {
-    const auto& halfedges = edge->getHalfEdges();
-    const auto& halfEdges = edgeB->getHalfEdges();
+bool neighboringHoles(Edge* edgeA, GraphEdge* edgeB) {
+    const auto& halfEdgesA = edgeA->getHalfEdges();
+    const auto& halfEdgesB = edgeB->getHalfEdges();
 
-    for (int i = 0; i < halfedges.size(); i++) {
-        auto halfedge = halfedges[i];
-        Face* face = halfedge->getFace();
+    for (int i = 0; i < halfEdgesA.size(); i++) {
+        auto halfEdge = halfEdgesA[i];
+        Face* face = halfEdge->getFace();
         bool hasHoles = (face->getGroup()->getFaces().size() > 1) && !face->isHole();
-        if (hasHoles && halfEdges[i][0]->isLoopy()) {
+        if (hasHoles && halfEdgesB[i][0]->isLoopy()) {
             return true;
         }
     }
@@ -207,13 +207,13 @@ bool neighboringHoles(Edge* edge, GraphEdge* edgeB) {
 }
 
 Morphism* MorphismFinder::matchHalfEdge(
-    const HalfEdgeData& halfedgeData,
+    const HalfEdgeData& halfEdgeData,
     MorphismState* state
 ) {
-    GraphHalfEdge* halfB = halfedgeData.halfB;
-    Vertex* vertexA = halfedgeData.vertexA;
+    GraphHalfEdge* halfB = halfEdgeData.halfB;
+    Vertex* vertexA = halfEdgeData.vertexA;
 
-    auto halfedgesA = vertexA->getHalfEdges();
+    auto halfEdgesA = vertexA->getHalfEdges();
     GraphEdge* edgeB = halfB->getEdge();
 
     if (!edgeB) {
@@ -222,37 +222,37 @@ Morphism* MorphismFinder::matchHalfEdge(
 
     EdgeType* typeB = edgeB->getType();
 
-    // Find matching halfedge.
-    HalfEdge* halfedgeA = nullptr;
-    for (auto* ep : halfedgesA) {
-        if (ep->getEdgeType() == typeB &&
-            ep->getIsAtStart() == halfB->getForward()) {
-            halfedgeA = ep;
+    // Find matching halfEdge.
+    HalfEdge* halfEdgeA = nullptr;
+    for (auto* halfA : halfEdgesA) {
+        if (halfA->getEdgeType() == typeB &&
+            halfA->getIsAtStart() == halfB->getForward()) {
+            halfEdgeA = halfA;
             break;
         }
     }
 
-    if (!halfedgeA) {
+    if (!halfEdgeA) {
         return nullptr;
     }
 
-    // Do not use this halfedge if it is attached to a face with interior vertex and
+    // Do not use this halfEdge if it is attached to a face with interior vertex and
     // it is not an outer face.
     auto faceB = halfB->getFace();
     auto bFaces = faceB->getGraph()->getBFaces();
     bool isOuter = !faceB->isLoopy() || find(bFaces.begin(), bFaces.end(), faceB) != bFaces.end();
-    if (neighboringHoles(halfedgeA->getEdge(), edgeB) && !isOuter) {
+    if (neighboringHoles(halfEdgeA->getEdge(), edgeB) && !isOuter) {
         return nullptr;
     }
-    return assignHalfEdge(halfedgeA, halfB, state);
+    return assignHalfEdge(halfEdgeA, halfB, state);
 }
 
 Morphism* MorphismFinder::spliceHalfEdge(
-    const HalfEdgeData& halfedgeData,
+    const HalfEdgeData& halfEdgeData,
     MorphismState* state
 ) {
-    GraphHalfEdge* halfB = halfedgeData.halfB;
-    Vertex* vertexA = halfedgeData.vertexA;
+    GraphHalfEdge* halfB = halfEdgeData.halfB;
+    Vertex* vertexA = halfEdgeData.vertexA;
     Graph* graphB = state->getInfo()->graphB;
 
     // Find end of splice chain.
@@ -266,23 +266,23 @@ Morphism* MorphismFinder::spliceHalfEdge(
         return findContinue(state);
     }
 
-    // Find matching halfedge.
+    // Find matching halfEdge.
     FaceType* faceTypeB = halfB->getEdge()->getType()->getFaceData()[0].type;
-    HalfEdge* halfedgeA = nullptr;
+    HalfEdge* halfEdgeA = nullptr;
 
     for (auto* ep : vertexA->getHalfEdges()) {
         if (ep->getFace()->getFaceType() == faceTypeB) {
-            halfedgeA = ep;
+            halfEdgeA = ep;
             break;
         }
     }
 
-    if (!halfedgeA) {
+    if (!halfEdgeA) {
         return nullptr;
     }
 
     // Cast ray series.
-    FaceGroup* groupA = halfedgeA->getFace()->getGroup();
+    FaceGroup* groupA = halfEdgeA->getFace()->getGroup();
     int maxDim = faceTypeB->getMaxDim();
     const Vec3 startPos = vertexA->getPosition();
 
@@ -360,7 +360,7 @@ Morphism* MorphismFinder::spliceHalfEdge(
     return nullptr;
 }
 
-Morphism* MorphismFinder::assignHalfEdge(HalfEdge* halfedgeA, GraphHalfEdge* halfB, MorphismState* state) {
+Morphism* MorphismFinder::assignHalfEdge(HalfEdge* halfEdgeA, GraphHalfEdge* halfB, MorphismState* state) {
     auto info = state->getInfo();
     auto map = state->getMorphism();
 
@@ -371,16 +371,16 @@ Morphism* MorphismFinder::assignHalfEdge(HalfEdge* halfedgeA, GraphHalfEdge* hal
     auto vertexType = vertexB->getType();
 
     if (!isConnector && vertexType->getSpliced() && map->vertexBtoA[vIndexB] == 0) {
-        halfedgeA->getEdge()->fullSplit(random());
+        halfEdgeA->getEdge()->fullSplit(random());
         nodesModified = true;
     }
 
-    Edge* edgeA = halfedgeA->getEdge();
+    Edge* edgeA = halfEdgeA->getEdge();
     GraphEdge* edgeB = halfB->getEdge();
     int eIndexB = indexOf(info->edgesB, edgeB);
     map->edgeBtoA[eIndexB] = edgeA;
 
-    Vertex* vertexA = halfedgeA->next()->getVertex();
+    Vertex* vertexA = halfEdgeA->next()->getVertex();
     int vIndexA = indexOf(map->vertexBtoA, vertexA);
 
     if (vIndexA < map->vertexBtoA.size()) {
@@ -393,7 +393,7 @@ Morphism* MorphismFinder::assignHalfEdge(HalfEdge* halfedgeA, GraphHalfEdge* hal
         }
     }
 
-    // At this point, halfedgeA and halfB have no match at their ends.
+    // At this point, halfEdgeA and halfB have no match at their ends.
     if (isConnector || vertexA->getType() == vertexType || vertexType->getSpliced()) {
         return assignVertex(state, vertexA, vIndexB);
     } else {

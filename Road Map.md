@@ -11,10 +11,12 @@ These are roughly in priority order weighing cost vs benefits.
 * Get optimizer working like the web version.
 * Improve the structure of the grammar JSONs.
 * Implement on Unreal Engine, Houdini, and Godot.
+* Add tests.
 
 ## Long-Term Goals
 
 * Dig into performance and get it working much faster.
+* Add decorations to faces, vertices, and edges.
 * Apply deformations to create curved organic shapes like the 2D web version.
 * Create 2D edges on the surfaces of 3D objects.
 * Allow grammars with multiple boundaries using volume splicing.

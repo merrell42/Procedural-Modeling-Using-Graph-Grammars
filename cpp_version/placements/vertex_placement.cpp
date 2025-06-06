@@ -4,14 +4,14 @@
 namespace ms {
 
 void VertexPlacement::initialize() {
-    vector<HalfEdge*> halfedges = vertex->getHalfEdges();
+    vector<HalfEdge*> halfEdges = vertex->getHalfEdges();
 
-    for (auto* halfedge : halfedges) {
-        if (!halfedge) {
+    for (auto* halfEdge : halfEdges) {
+        if (!halfEdge) {
             // Happens in the ground transition.
             continue;
         }
-        Face* face = halfedge->getFace();
+        Face* face = halfEdge->getFace();
         int id = face->getId();
 
         if (!settings->getFace(id)) {
@@ -63,16 +63,16 @@ void VertexPlacement::propagate() {
         }
 
         // Handle connected edges.
-        for (HalfEdge* halfedge : vertex->getHalfEdges()) {
-            int edgeId = halfedge->getEdge()->getId();
+        for (HalfEdge* halfEdge : vertex->getHalfEdges()) {
+            int edgeId = halfEdge->getEdge()->getId();
             auto* ePlace = settings->getEdge(edgeId);
             if (ePlace) {
                 ePlace->addConstraint(this->id);
             }
 
-            auto* prev = halfedge->prev();
+            auto* prev = halfEdge->prev();
             if (prev->getEdgeType()->faceData.size() == 1) {
-                // If prev edge only has one halfedge, propagate to previous vertex.
+                // If prev edge only has one halfEdge, propagate to previous vertex.
                 int prevEdgeId = prev->getEdge()->getId();
                 auto* prevEPlace = settings->getEdge(prevEdgeId);
                 if (prevEPlace) {

@@ -74,31 +74,31 @@ void RuleApplier::addEdge(Edge* edge, bool includeLength, bool addToGraph) {
     edges.push_back(edge);
 
     if (addToGraph) {
-        for (auto* halfedge : edgeHalfEdges) {
-            Util::union_(graph->vertices, {halfedge->getVertex()});
+        for (auto* halfEdge : edgeHalfEdges) {
+            Util::union_(graph->vertices, {halfEdge->getVertex()});
         }
         graph->edges.push_back(edge);
     }
 }
 
 static void destroyEdges(const vector<vector<Edge*>>& edgeGroup) {
-    set<HalfEdge*> halfedgeSet;
+    set<HalfEdge*> halfEdgeSet;
     set<Vertex*> vertexSet;
     for (const auto& edgeGroup : edgeGroup) {
         for (Edge* edge : edgeGroup) {
             if (edge) {
-                auto halfedges = edge->getHalfEdges();
-                halfedgeSet.insert(halfedges[0]);
-                halfedgeSet.insert(halfedges[1]);
+                auto halfEdges = edge->getHalfEdges();
+                halfEdgeSet.insert(halfEdges[0]);
+                halfEdgeSet.insert(halfEdges[1]);
                 edge->destroy();
             }
         }
     }
-    for (const auto& halfedge : halfedgeSet) {
-        if (halfedge) {
-            halfedge->getFace()->removeHalfEdge(halfedge);
-            vertexSet.insert(halfedge->getVertex());
-            halfedge->destroy();
+    for (const auto& halfEdge : halfEdgeSet) {
+        if (halfEdge) {
+            halfEdge->getFace()->removeHalfEdge(halfEdge);
+            vertexSet.insert(halfEdge->getVertex());
+            halfEdge->destroy();
         }
     }
     for (const auto& vertex : vertexSet) {
@@ -124,7 +124,7 @@ EditGraph* RuleApplier::createGraph() {
         }
     }*/
 
-    // Maps from half edges to merge halfedges
+    // Maps from half edges to merge halfEdges
     vector<HalfEdge*> mergedHalfEdges(endGraph->getHalfEdges().size());
     fill(mergedHalfEdges.begin(), mergedHalfEdges.end(), nullptr);
     auto halfToHalfEdge = [&](GraphHalfEdge* half) -> HalfEdge* {
@@ -132,9 +132,9 @@ EditGraph* RuleApplier::createGraph() {
         return mergedHalfEdges[index];
     };
     
-    auto setHalfToHalfEdge = [&](GraphHalfEdge* half, HalfEdge* halfedge) {
+    auto setHalfToHalfEdge = [&](GraphHalfEdge* half, HalfEdge* halfEdge) {
         int index = Util::findIndex<GraphHalfEdge*>(endGraph->getHalfEdges(), half);
-        mergedHalfEdges[index] = halfedge;
+        mergedHalfEdges[index] = halfEdge;
     };
 
     vector<vector<Edge*>> splitEdges;
@@ -267,20 +267,20 @@ EditGraph* RuleApplier::createGraph() {
         for (size_t i = 0; i < N; i++) {
             GraphHalfEdge* halfA = const_cast<GraphHalfEdge*>(halfs[i]);
             GraphHalfEdge* halfB = const_cast<GraphHalfEdge*>(halfs[(i + 1) % N]);
-            HalfEdge* halfedgeA = halfToHalfEdge(halfA);
-            HalfEdge* halfedgeB = halfToHalfEdge(halfB);
+            HalfEdge* halfEdgeA = halfToHalfEdge(halfA);
+            HalfEdge* halfEdgeB = halfToHalfEdge(halfB);
 
-            if (!halfedgeA || !halfedgeB) {
+            if (!halfEdgeA || !halfEdgeB) {
                 failed = true;
                 continue;
             }
-            halfedgeA->mergeFaces(halfedgeB);
+            halfEdgeA->mergeFaces(halfEdgeB);
         }
     }
 
     if (failed) {
         // Handle error case
-        cerr << "Do not know how this can happen, but halfToHalfEdge is missing an halfedge." << endl;
+        cerr << "Do not know how this can happen, but halfToHalfEdge is missing an halfEdge." << endl;
         return merged; // Return empty merged data
     }
 
@@ -291,9 +291,9 @@ EditGraph* RuleApplier::createGraph() {
         Edge* edge0 = datum.coreHalfEdges[0]->getEdge();
 
         for (size_t j = 1; j < datum.coreHalfEdges.size(); j++) {
-            HalfEdge* halfedgeJ = datum.coreHalfEdges[j];
-            Edge* edgeJ = halfedgeJ->getEdge();
-            edge0->addHalfEdge(halfedgeJ, datum.halfEdges[j]->getEdgeIndex());
+            HalfEdge* halfEdgeJ = datum.coreHalfEdges[j];
+            Edge* edgeJ = halfEdgeJ->getEdge();
+            edge0->addHalfEdge(halfEdgeJ, datum.halfEdges[j]->getEdgeIndex());
             edgeJ->destroy();
         }
         merged->edges[i] = edge0;
@@ -479,7 +479,7 @@ void RuleApplier::setupFaceCentric() {
     fixedVertexIds.clear();
     for (auto* path : openPaths) {
         for (int j = 0; j < 2; ++j) {
-            auto* pathVertex = path->halfedges[j]->getVertex();
+            auto* pathVertex = path->halfEdges[j]->getVertex();
             int id = pathVertex->getId();
             if (!contains(fixedVertexIds, id)) {
                 fixedVertexIds.push_back(id);
@@ -738,7 +738,7 @@ vector<MorphismPath*> RuleApplier::getFreeablePaths() const {
     vector<MorphismPath*> result;
     copy_if(openPaths.begin(), openPaths.end(), back_inserter(result),
         [](MorphismPath* path) {
-            return path->halfedges[0] != path->halfedges[1] &&
+            return path->halfEdges[0] != path->halfEdges[1] &&
                 path->extendableness() > 0;
         });
     return result;
@@ -774,7 +774,7 @@ void RuleApplier::freeVertex() {
 void RuleApplier::freeOneVertex(Vertex* vertex) {
     auto vertexHalfEdges = vertex->getHalfEdges();
 
-    // Process all vertex halfedges
+    // Process all vertex halfEdges
     for (auto* vHalfEdge : vertexHalfEdges) {
         auto* edge = vHalfEdge->getEdge();
         auto hasEdge = [edge](const EdgeData& data) { return data.edge == edge; };
@@ -784,15 +784,15 @@ void RuleApplier::freeOneVertex(Vertex* vertex) {
         }
     }
 
-    // Process paths for each halfedge
+    // Process paths for each halfEdge
     for (auto* vHalfEdge : vertexHalfEdges) {
         auto* edge = vHalfEdge->getEdge();
         
         auto findPath0 = [vHalfEdge](MorphismPath* path) { 
-            return path->halfedges[0] == vHalfEdge; 
+            return path->halfEdges[0] == vHalfEdge; 
         };
         auto findPath1 = [vHalfEdge](MorphismPath* path) { 
-            return path->halfedges[1] == vHalfEdge; 
+            return path->halfEdges[1] == vHalfEdge; 
         };
 
         auto path0 = find_if(openPaths.begin(), openPaths.end(), findPath0);
@@ -801,7 +801,7 @@ void RuleApplier::freeOneVertex(Vertex* vertex) {
         if (path0 != openPaths.end() && path1 != openPaths.end()) {
             if (*path0 == *path1) {
                 // Same path
-                (*path0)->halfedges.clear();
+                (*path0)->halfEdges.clear();
                 Util::remove(openPaths, *path0);
             } else {
                 // Different paths

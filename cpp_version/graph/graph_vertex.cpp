@@ -37,7 +37,7 @@ int GraphVertex::connectorIndex() const {
     }
 }
 
-void GraphVertex::copyConnection(const GraphVertex* copy) {
+void GraphVertex::copyHalfEdges(const GraphVertex* copy) {
     auto* copyGraph = copy->getGraph();
 
     halfEdges.clear();

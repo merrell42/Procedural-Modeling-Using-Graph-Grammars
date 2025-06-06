@@ -15,22 +15,22 @@ EdgePlacement::EdgePlacement(Edge* edge, int id, RuleApplierSettings* settings)
     , id(id)
     , settings(settings) {
     
-    // Get vertex IDs from halfedges
-    auto halfedges = edge->getHalfEdges();
-    for (auto* halfedge : halfedges) {
-        if (halfedge) {
+    // Get vertex IDs from halfEdges
+    auto halfEdges = edge->getHalfEdges();
+    for (auto* halfEdge : halfEdges) {
+        if (halfEdge) {
             // Can be null in the ground transition.
-            vertexIds.push_back(halfedge->getVertex()->getId());
+            vertexIds.push_back(halfEdge->getVertex()->getId());
         }
     }
 
     // Handle self-loops
     if (vertexIds.size() == 1) {
-        auto* halfedge = edge->getHalfEdges()[0]->next();
-        vertexIds.push_back(halfedge->getVertex()->getId());
+        auto* halfEdge = edge->getHalfEdges()[0]->next();
+        vertexIds.push_back(halfEdge->getVertex()->getId());
     }
 
-    // Set direction from first halfedge
+    // Set direction from first halfEdge
     dir = edge->getHalfEdges()[0]->getDir();
 }
 

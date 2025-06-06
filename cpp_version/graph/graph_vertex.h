@@ -38,7 +38,7 @@ public:
 
     GraphVertex* connectGraph(Graph* graph);
     void setHalfEdge(GraphHalfEdge* halfEdge, int index);
-    void copyConnection(const GraphVertex* copy);
+    void copyHalfEdges(const GraphVertex* copy);
 
     bool inGraph() const;
 

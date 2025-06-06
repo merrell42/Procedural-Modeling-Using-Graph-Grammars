@@ -12,7 +12,7 @@ class HalfEdge;
 
 class Vertex {
 	public:
-		Vertex(Model* model, int id, Vec3 position, VertexType* type, vector<int> halfedgeIds);
+		Vertex(Model* model, int id, Vec3 position, VertexType* type, vector<int> halfEdgeIds);
 		Vertex(Model* model, Vec3 position, VertexType* type);
 		void createHalfEdges();
 		vector<HalfEdge*> getHalfEdges() const;
@@ -30,9 +30,9 @@ class Vertex {
 		int id;
 		Vec3 position;
 		VertexType* type;
-		vector<int> halfedgeIds;
+		vector<int> halfEdgeIds;
 
 		Model* model;
-		HalfEdge* createHalfEdge(const Connection& connection, int faceIndex);
+		HalfEdge* createHalfEdge(const HalfEdgeType& halfEdgetype, int faceIndex);
 };
 }

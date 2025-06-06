@@ -17,18 +17,18 @@ public:
     };
 
     static int count;
-    static MorphismPath* createPath(const vector<HalfEdge*>& halfedges,
+    static MorphismPath* createPath(const vector<HalfEdge*>& halfEdges,
                                    const vector<Edge*>& edges,
                                    vector<Edge*>* lines);
 
     MorphismPath(const vector<IndexInfo>& indices, vector<Edge*>* edges);
 
-    void setHalfEdges(const vector<HalfEdge*>& halfedges);
+    void setHalfEdges(const vector<HalfEdge*>& halfEdges);
     int extendableness() const;
     Vertex* randomNextVertex();
     Vertex* rigidNextVertex();
     Edge* edgeFromIndex(int index);
-    IndexInfo indexForHalfEdge(HalfEdge* halfedge);
+    IndexInfo indexForHalfEdge(HalfEdge* halfEdge);
     void expandBackward();
     void expandForward();
     void merge(MorphismPath* pathB);
@@ -36,7 +36,7 @@ public:
     // Member variables
     vector<IndexInfo> indices;
     vector<Edge*>* edges;
-    vector<HalfEdge*> halfedges;
+    vector<HalfEdge*> halfEdges;
     vector<bool> extendable;
     int id;
 };

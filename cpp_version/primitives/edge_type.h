@@ -25,7 +25,6 @@ public:
                const map<string, bool>& options = {});
     ~EdgeType() = default;
 
-    // Core accessors
     const vector<FaceData>& getFaceData() const { return faceData; }
     const Vec3& getDir() const { return dir; }
     Brush* getBrush() const { return brush; }
@@ -36,13 +35,11 @@ public:
     bool isDestroyed() const { return destroyed; }
     int getId() const { return id; }
 
-    // Modifiers
     void setAngle(double newAngle) { angle = newAngle; }
     void setSpliced(bool newSpliced);
     void setMonotonic(bool newMonotonic) { monotonic = newMonotonic; }
     void destroy() { destroyed = true; }
 
-    // Operations
     bool isLoopy() const;
     bool isBoundary() const;
     bool isConnected() const;

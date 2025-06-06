@@ -23,7 +23,7 @@ namespace ms {
 
 	class Edge {
 	public:
-		Edge(Model* model, int id, EdgeType* type, vector<int> halfedgeIds, vector<int> bspNodeIds);
+		Edge(Model* model, int id, EdgeType* type, vector<int> halfEdgeIds, vector<int> bspNodeIds);
 		Edge* copy();
 		~Edge();
 		int getId() const { return id; };
@@ -36,8 +36,8 @@ namespace ms {
 		void removeFromBsp();
 		HalfEdge* getHalfEdge(int index) const;
 		vector<HalfEdge*> getHalfEdges() const;
-		void addHalfEdge(HalfEdge* halfedge, int index);
-		void setHalfEdge(int index, HalfEdge* halfedge);
+		void addHalfEdge(HalfEdge* halfEdge, int index);
+		void setHalfEdge(int index, HalfEdge* halfEdge);
         void setHalfEdgeIds(const vector<int>& ids);
 		EdgeType* getEdgeType() const { return type; };
 		SplitData split(bool splitFaces);
@@ -50,7 +50,7 @@ namespace ms {
 	private:
 		int id;
 		EdgeType* type;	
-		vector<int> halfedgeIds;
+		vector<int> halfEdgeIds;
 		vector<int> bspNodeIds;
 		static unordered_map<int, VertexType*> splitVertexTypes;
 

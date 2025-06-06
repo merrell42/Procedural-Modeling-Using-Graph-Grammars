@@ -44,7 +44,7 @@ void GraphEdge::removeHalfEdge(GraphHalfEdge* halfEdge, int index) {
     }
 }
 
-void GraphEdge::copyConnection(const GraphEdge* copy) {
+void GraphEdge::copyHalfEdges(const GraphEdge* copy) {
     auto* graphCopy = copy->getGraph();
     auto copyHalfEdges = copy->getHalfEdges();
     

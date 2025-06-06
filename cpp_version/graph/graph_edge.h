@@ -17,7 +17,6 @@ public:
     GraphEdge();
     ~GraphEdge() = default;
 
-    // Core functionality
     const vector<vector<GraphHalfEdge*>>& getHalfEdges() const;
     EdgeType* getType() { return type; }
     void setType(EdgeType* type_) { type = type_; }
@@ -27,9 +26,8 @@ public:
     GraphEdge* connectGraph(Graph* graph);
     void addHalfEdge(GraphHalfEdge* halfEdge, int index);
     void removeHalfEdge(GraphHalfEdge* halfEdge, int index);
-    void copyConnection(const GraphEdge* copy);
+    void copyHalfEdges(const GraphEdge* copy);
 
-    // Validation
     bool inGraph() const;
     void merge(GraphEdge* edgeB, bool mergeForward);
     void import(const Json& json);

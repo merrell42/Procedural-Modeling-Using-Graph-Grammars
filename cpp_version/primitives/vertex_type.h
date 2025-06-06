@@ -13,7 +13,7 @@ namespace ms {
 class EdgeType;
 class Primitives;
 
-struct Connection {
+struct HalfEdgeType {
     double adjustedAngle;
     double angle;
     Vec3 dir;
@@ -21,7 +21,7 @@ struct Connection {
     EdgeType* edge;
     bool isAtStart;
 
-    Connection(EdgeType* edge = nullptr, bool isAtStart = false, double angle = 0.0f,
+    HalfEdgeType(EdgeType* edge = nullptr, bool isAtStart = false, double angle = 0.0f,
               const vector<int>& faceIds = {})
         : adjustedAngle(0)
         , angle(angle)
@@ -30,8 +30,8 @@ struct Connection {
         , edge(edge)
         , isAtStart(isAtStart) {}
 
-    Connection copy() const {
-        Connection result;
+    HalfEdgeType copy() const {
+        HalfEdgeType result;
         result.adjustedAngle = adjustedAngle;
         result.angle = angle;
         result.dir = dir;
@@ -48,7 +48,7 @@ public:
     ~VertexType() = default;
     static VertexType* import(const Json& json, Primitives* shape);
 
-    const vector<Connection>& getConnections() const;
+    const vector<HalfEdgeType>& getHalfEdgeTypes() const;
     bool getSpliced() const;
     int getId() const;
 
@@ -56,7 +56,7 @@ public:
     void setSpliced(bool spliced);
 
 private:
-    vector<Connection> connections;
+    vector<HalfEdgeType> halfEdgeTypes;
     bool spliced;
     int id;
 

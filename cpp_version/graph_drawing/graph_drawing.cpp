@@ -5,13 +5,13 @@
 namespace ms {
 
 GraphDrawing::GraphDrawing(
-	map<int, HalfEdge*> halfedgeMap,
+	map<int, HalfEdge*> halfEdgeMap,
 	map<int, Face*>     faceMap,
 	map<int, Edge*>     edgeMap,
 	map<int, Vertex*>   vertexMap,
 	map<int, BspNode*> bspNodeMap,
 	int bspRootId
-) : halfedgeMap(halfedgeMap)
+) : halfEdgeMap(halfEdgeMap)
 	, faceMap(faceMap)
 	, edgeMap(edgeMap)
 	, vertexMap(vertexMap)
@@ -21,7 +21,7 @@ GraphDrawing::GraphDrawing(
 // This will copy each item into the current model.
 // This happens in the constructor of each item.
 void GraphDrawing::copy() {
-	for (const auto& [id, ptr] : halfedgeMap) {
+	for (const auto& [id, ptr] : halfEdgeMap) {
 		ptr && ptr->copy();
 	}
 	for (const auto& [id, ptr] : faceMap) {
@@ -41,8 +41,8 @@ void GraphDrawing::copy() {
 	}
 }
 
-void GraphDrawing::removeHalfEdge(HalfEdge* halfedge) {
-	halfedgeMap.erase(halfedge->getId());
+void GraphDrawing::removeHalfEdge(HalfEdge* halfEdge) {
+	halfEdgeMap.erase(halfEdge->getId());
 }
 void GraphDrawing::removeFace(Face* face) {
 	faceMap.erase(face->getId());
@@ -91,8 +91,8 @@ void GraphDrawing::save(string suffix) {
 		}
 
 		outFile << "f";
-		for (HalfEdge* halfedge : face->getHalfEdges()) {
-			const int id = halfedge->getVertex()->getId();
+		for (HalfEdge* halfEdge : face->getHalfEdges()) {
+			const int id = halfEdge->getVertex()->getId();
 			auto it = find(vertexIds.begin(), vertexIds.end(), id);
 
 			if (it != vertexIds.end()) {

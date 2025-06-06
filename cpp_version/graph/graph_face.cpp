@@ -44,7 +44,7 @@ void GraphFace::makeInner(GraphHalfEdge* halfEdge) {
     outerComponent = nullptr;
 }
 
-void GraphFace::copyConnection(const GraphFace* copy) {
+void GraphFace::copyHalfEdges(const GraphFace* copy) {
     Graph* copyGraph = copy->getGraph();
     outerComponent = graph->convertHalfEdge(copyGraph, copy->getOuterComponent());
     

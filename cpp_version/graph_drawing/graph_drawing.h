@@ -21,7 +21,7 @@ class GraphDrawing {
 	public:
 		GraphDrawing() { bspRootId = -1; }
 		GraphDrawing(
-			map<int, HalfEdge*> halfedgeMap,
+			map<int, HalfEdge*> halfEdgeMap,
 			map<int, Face*>     faceMap,
 			map<int, Edge*>     edgeMap,
 			map<int, Vertex*>   vertexMap,
@@ -29,15 +29,15 @@ class GraphDrawing {
 			int bspRootId
 		);
 		void copy();
-		HalfEdge* getHalfEdge(int id) { return halfedgeMap[id]; }
+		HalfEdge* getHalfEdge(int id) { return halfEdgeMap[id]; }
 		Face* getFace(int id) {         return faceMap[id]; }
 		Edge* getEdge(int id) {         return edgeMap[id]; }
 		Vertex* getVertex(int id) {     return vertexMap[id];}
 		BspNode* getBspNode(int id) {   return bspNodeMap[id];}
 		FaceGroup* getFaceGroup(int id) {   return faceGroupMap[id];}
 
-		void addHalfEdge(int id, HalfEdge* halfedge) {
-			halfedgeMap[id] = halfedge;
+		void addHalfEdge(int id, HalfEdge* halfEdge) {
+			halfEdgeMap[id] = halfEdge;
 		}
 		void addFace    (int id, Face* face) {         faceMap[id] = face; }
 		void addEdge    (int id, Edge* edge) {         edgeMap[id] = edge; }
@@ -45,14 +45,14 @@ class GraphDrawing {
 		void addBspNode (int id, BspNode* bspNode) { bspNodeMap[id] = bspNode; }
 		void addFaceGroup(int id, FaceGroup* faceGroup) { faceGroupMap[id] = faceGroup; }
 
-		void removeHalfEdge(HalfEdge* halfedge);
+		void removeHalfEdge(HalfEdge* halfEdge);
 		void removeFace(Face* face);
 		void removeEdge(Edge* edge);
 		void removeVertex(Vertex* vertex);
 		void removeBspNode(BspNode* bspNode);
 		void removeFaceGroup(FaceGroup* faceGroup);
 
-		map<int, HalfEdge*> getHalfEdgeMap() { return halfedgeMap; }
+		map<int, HalfEdge*> getHalfEdgeMap() { return halfEdgeMap; }
 		map<int, Face*> getFaceMap() { return faceMap; }
 		map<int, Edge*> getEdgeMap() { return edgeMap; }
 		map<int, Vertex*> getVertexMap() { return vertexMap; }
@@ -84,7 +84,7 @@ class GraphDrawing {
 		int getBspRootId() { return bspRootId; }
 
 	private:
-		map<int, HalfEdge*> halfedgeMap;
+		map<int, HalfEdge*> halfEdgeMap;
 		map<int, Face*>     faceMap;
 		map<int, Edge*>     edgeMap;
 		map<int, Vertex*>   vertexMap;
