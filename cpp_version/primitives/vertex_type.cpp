@@ -74,11 +74,12 @@ VertexType* VertexType::import(const Json& json, Primitives* shape) {
         halfEdgeType.edge = shape->edgeTypes[halfEdgeTypeJson["edge"].get<int>()];
         halfEdgeType.isAtStart = halfEdgeTypeJson["isAtStart"];
         if (!spliced) {
-            halfEdgeType.adjustedAngle = halfEdgeTypeJson["adjustedAngle"];
-            halfEdgeType.angle = halfEdgeTypeJson["angle"];
+            // TODO: Remove unneeded JSON values.
+            // halfEdgeType.adjustedAngle = halfEdgeTypeJson["adjustedAngle"];
+            // halfEdgeType.angle = halfEdgeTypeJson["angle"];
             halfEdgeType.dir = halfEdgeTypeJson.contains("dir") ? 
                 Vec3::import(halfEdgeTypeJson["dir"]) : Vec3();
-            halfEdgeType.directedId = halfEdgeTypeJson["directedId"];
+            // halfEdgeType.directedId = halfEdgeTypeJson["directedId"];
         }
         result->halfEdgeTypes.push_back(halfEdgeType);
     }
