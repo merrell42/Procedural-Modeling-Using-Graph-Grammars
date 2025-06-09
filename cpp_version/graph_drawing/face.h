@@ -25,7 +25,7 @@ class Face {
 		Range dirBounds(const Vec3& dir) const;
 		void append(Face* faceB);
 		void setGroup(FaceGroup* group);
-		void setLooped(bool looped_) { looped = looped_; }
+		void setLooped(bool newLooped);
 		FaceGroup* getGroup() const;
 		void split(HalfEdge* halfEdge);
 		bool isHole() { return hole; }
@@ -39,8 +39,8 @@ class Face {
 			vector<int>& triangles,
 			vector<int>& faceIndices
 		);
-		void addBspNodeId(int bspNodeId) { bspNodeIds.push_back(bspNodeId); }
-		const vector<int>& getBspNodeIds() const { return bspNodeIds; } // TODO: Check if this is needed.
+		void addBspNodeId(int bspNodeId);
+		const vector<int>& getBspNodeIds() const;
 		Model* getModel() const { return model; }
 		bool addToBsp();
 		void removeFromBsp();
@@ -49,8 +49,8 @@ class Face {
 		bool containsPoint(Vec3 point);
 		void createGroup();
 		void splitGroup();
-		void setHole(bool newHole) { hole = newHole; }
-		bool isHole() const { return hole; }
+		void setHole(bool newHole);
+		bool isHole() const;
 
 	private:
 		int id;

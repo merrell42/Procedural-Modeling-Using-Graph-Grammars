@@ -21,16 +21,16 @@ public:
     ~Graph() = default;
     static Graph* import(const Json& json, Primitives* shape = nullptr);
 
-    const vector<GraphVertex*>& getVertices() const { return vertices; }
-    const vector<GraphEdge*>& getEdges() const { return edges; }
-    const vector<GraphHalfEdge*>& getHalfEdges() const { return halfEdges; }
-    const vector<GraphFace*>& getFaces() const { return faces; }
-    const vector<GraphVertex*>& getBVertices() const { return bVertices; }
-    const vector<GraphHalfEdge*>& getBHalfEdges() const { return bHalfEdges; }
-    const vector<GraphFace*>& getBFaces() const { return bFaces; }
-    GraphEdge* getEdge(int index) const { return index >= 0 ? edges[index] : nullptr; }
-    GraphHalfEdge* getHalfEdge(int index) const { return index >= 0 ? halfEdges[index] : nullptr; }
-    int getId() const { return id; }
+    const vector<GraphVertex*>& getVertices() const;
+    const vector<GraphEdge*>& getEdges() const;
+    const vector<GraphHalfEdge*>& getHalfEdges() const;
+    const vector<GraphFace*>& getFaces() const;
+    const vector<GraphVertex*>& getBVertices() const;
+    const vector<GraphHalfEdge*>& getBHalfEdges() const;
+    const vector<GraphFace*>& getBFaces() const;
+    GraphEdge* getEdge(int index) const;
+    GraphHalfEdge* getHalfEdge(int index) const;
+    int getId() const;
 
     // Graph operations
     void addVertex(GraphVertex* vertex);

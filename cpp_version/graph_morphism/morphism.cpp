@@ -4,8 +4,6 @@
 #include "../util/util.h"
 #include "morphism_info.h"
 
-
-
 Morphism::Morphism() {}
 
 Morphism* Morphism::copy() const {
@@ -22,4 +20,13 @@ Morphism* Morphism::create(const MorphismInfo& info) {
     morphism->edgeBtoA.resize(graphB->getEdges().size(), nullptr);
     return morphism;
 }
+
+const vector<Vertex*>& Morphism::getVertexBtoA() const {
+    return vertexBtoA;
+}
+
+const vector<Edge*>& Morphism::getEdgeBtoA() const {
+    return edgeBtoA;
+}
+
 

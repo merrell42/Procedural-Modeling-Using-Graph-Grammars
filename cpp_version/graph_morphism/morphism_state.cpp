@@ -7,8 +7,6 @@
 #include "../graph/graph.h"
 #include "../util/util.h"
 
-
-
 MorphismState::MorphismState(MorphismInfo* info, Morphism* existingMorphism)
     : info(info) {
     if (existingMorphism) {
@@ -46,3 +44,18 @@ MorphismState* MorphismState::copy() const {
     return result;
 }
 
+MorphismInfo* MorphismState::getInfo() const {
+    return info;
+}
+
+Morphism* MorphismState::getMorphism() {
+    return morphism;
+}
+
+vector<HalfEdgeData>& MorphismState::getQueue() {
+    return queue;
+}
+
+vector<HalfEdgeData>& MorphismState::getSpliceQueue() {
+    return spliceQueue;
+}

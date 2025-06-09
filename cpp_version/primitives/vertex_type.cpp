@@ -8,8 +8,6 @@
 #include <cmath>
 #include <math.h>
 
-
-
 int VertexType::nextId = 0;
 
 VertexType::VertexType()
@@ -92,3 +90,22 @@ double VertexType::getAdjustedAngle(double angle, EdgeType* edge, bool isAtStart
     return angle + 1e-5f * directedId;
 }
 
+HalfEdgeType::HalfEdgeType(EdgeType* newEdge, bool newIsAtStart, double newAngle,
+                const vector<int>& faceIds)
+    : adjustedAngle(0)
+    , angle(newAngle)
+    , dir()
+    , directedId(0)
+    , edge(newEdge)
+    , isAtStart(newIsAtStart) {}
+
+HalfEdgeType HalfEdgeType::copy() const {
+    HalfEdgeType result;
+    result.adjustedAngle = adjustedAngle;
+    result.angle = angle;
+    result.dir = dir;
+    result.directedId = directedId;
+    result.edge = edge;
+    result.isAtStart = isAtStart;
+    return result;
+}

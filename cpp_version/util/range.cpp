@@ -83,3 +83,10 @@ double Range::lcm(double a, double b) {
     return (a * b) / gcd2(a, b);
 }
 
+const vector<double>& Range::getData() const {
+    return data;
+}
+
+double Range::getTileLength() const {
+    return tileLength;
+}

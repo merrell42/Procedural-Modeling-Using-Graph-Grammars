@@ -17,7 +17,7 @@ public:
 
     const vector<vector<GraphHalfEdge*>>& getHalfEdges() const;
     EdgeType* getType() { return type; }
-    void setType(EdgeType* type_) { type = type_; }
+    void setType(EdgeType* type_);
     Graph* getGraph() const;
     int getId() const;
 

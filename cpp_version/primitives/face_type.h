@@ -10,17 +10,17 @@ public:
     FaceType(const string& material, const Vec3& normal);
     ~FaceType() = default;
 
-    const string& getMaterial() const { return material; }
-    const Vec3& getNormal() const { return normal; }
-    const Vec3& getU() const { return u; }
-    const Vec3& getV() const { return v; }
-    bool isMonotonic() const { return monotonic; }
-    const Vec3* getColor() const { return color; }
-    int getId() const { return id; }
-    int getMaxDim() const { return maxDim; }
+    const string& getMaterial() const;
+    const Vec3& getNormal() const;
+    const Vec3& getU() const;
+    const Vec3& getV() const;
+    bool isMonotonic() const;
+    const Vec3* getColor() const;
+    int getId() const;
+    int getMaxDim() const;
 
-    void setColor(Vec3* newColor) { color = newColor; }
-    void setMonotonic(bool isMonotonic) { monotonic = isMonotonic; }
+    void setColor(Vec3* newColor);
+    void setMonotonic(bool isMonotonic);
 
     double angle(const Vec3& q) const;
     double getArea(const vector<Vec3>& vertices) const;

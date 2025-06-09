@@ -4,8 +4,6 @@
 #include <vector>
 #include <memory>
 
-
-
 class Edge;
 class RuleApplierSettings;
 class Range;
@@ -15,12 +13,12 @@ public:
     EdgePlacement(Edge* edge, int id, RuleApplierSettings* settings);
     ~EdgePlacement() = default;
 
-    Edge* getEdge() const { return edge; }
-    int getId() const { return id; }
-    const std::vector<int>& getVertexIds() const { return vertexIds; }
-    const Vec3& getDir() const { return dir; }
-    RuleApplierSettings* getSettings() const { return settings; }
-    const std::vector<int>& getConstraints() const { return constraints; }
+    Edge* getEdge() const;
+    int getId() const;
+    const vector<int>& getVertexIds() const;
+    const Vec3& getDir() const;
+    RuleApplierSettings* getSettings() const;
+    const vector<int>& getConstraints() const;
 
     void initialize();
     void addConstraint(int id);

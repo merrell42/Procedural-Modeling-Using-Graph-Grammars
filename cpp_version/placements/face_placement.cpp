@@ -7,8 +7,6 @@
 #include "../util/range.h"
 #include <iostream>
 
-
-
 FacePlacement::FacePlacement(const Vec3& normal, int id, RuleApplierSettings* settings, Face* face)
     : normal(normal)
     , face(face)
@@ -150,4 +148,3 @@ ChangeMB FacePlacement::getChangeMB() const {
     double b = value;
     return {m, b};
 }
-

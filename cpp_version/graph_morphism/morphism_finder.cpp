@@ -10,8 +10,6 @@
 #include "../settings.h"
 #include "../util/util.h"
 
-
-
 unordered_map<int, VertexType*> MorphismFinder::splicedVertexTypes;
 
 MorphismFinder::MorphismFinder(Model* model, bool groundEnabled)

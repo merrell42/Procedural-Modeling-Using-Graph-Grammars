@@ -9,8 +9,8 @@ public:
     Range(double low, double high, double tileLength = 0);
     ~Range() = default;
 
-    const vector<double>& getData() const { return data; }
-    double getTileLength() const { return tileLength; }
+    const vector<double>& getData() const;
+    double getTileLength() const;
 
     Range intersect(const Range& rangeB) const;
     bool isEmpty() const;

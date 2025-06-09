@@ -1,8 +1,6 @@
 #include "pch.h"
 #include "primitives.h"
 
-
-
 Primitives::Primitives(const vector<VertexType*>& vTypes,
                  const vector<EdgeType*>& eTypes,
                  const vector<FaceType*>& fTypes,

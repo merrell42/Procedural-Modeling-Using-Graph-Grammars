@@ -30,6 +30,10 @@ BspNode* BspNode::copy() {
 	return new BspNode(model, id, parentId, aboveId, belowId, newPlane, faceIds, edgeIds);
 }
 
+void BspNode::setParentId(int newParentId) {
+    parentId = newParentId;
+}
+
 bool BspNode::addEdge(Edge* edge) {
     if (edgeIds.size() > 0) {
         auto thisEdge = model->getCurrent()->getEdge(edgeIds[0]);

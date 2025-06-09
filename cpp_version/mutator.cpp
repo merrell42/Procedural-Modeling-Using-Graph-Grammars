@@ -6,8 +6,6 @@
 #include "../settings.h"
 #include "../util/util.h"
 
-
-
 Mutator::Mutator(Model* model, GraphMutator* graphMutator)
     : model(model)
     , graphMutator(graphMutator) {}

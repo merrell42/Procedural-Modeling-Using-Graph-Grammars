@@ -5,8 +5,6 @@
 #include <sstream>
 #include <iomanip>
 
-
-
 const Vec2 Vec2::ORIGIN(0, 0);
 
 Vec2::Vec2(double x_, double y_)

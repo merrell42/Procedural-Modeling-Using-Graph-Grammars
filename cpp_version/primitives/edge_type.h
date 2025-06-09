@@ -9,8 +9,6 @@
 
 using Json = nlohmann::json;
 
-
-
 class FaceType;
 class Primitives;
 
@@ -25,20 +23,18 @@ public:
                const map<string, bool>& options = {});
     ~EdgeType() = default;
 
-    const vector<FaceData>& getFaceData() const { return faceData; }
-    const Vec3& getDir() const { return dir; }
-    Brush* getBrush() const { return brush; }
-    double getAngle() const { return angle; }
-    double getEdgeLength() const { return edgeLength; }
-    bool getIsRigid() const { return isRigid; }
-    bool getSpliced() const { return spliced; }
-    bool isDestroyed() const { return destroyed; }
-    int getId() const { return id; }
+    const vector<FaceData>& getFaceData() const;
+    const Vec3& getDir() const;
+    Brush* getBrush() const;
+    double getAngle() const;
+    double getEdgeLength() const;
+    bool getIsRigid() const;
+    bool getSpliced() const;
+    int getId() const;
 
-    void setAngle(double newAngle) { angle = newAngle; }
+    void setAngle(double newAngle);
     void setSpliced(bool newSpliced);
-    void setMonotonic(bool newMonotonic) { monotonic = newMonotonic; }
-    void destroy() { destroyed = true; }
+    void setMonotonic(bool newMonotonic);
 
     bool isLoopy() const;
     bool isBoundary() const;
@@ -64,7 +60,6 @@ private:
     bool isRigidTiled;
     bool monotonic;
     bool spliced;
-    bool destroyed;
     int id;
 
     static int nextId;

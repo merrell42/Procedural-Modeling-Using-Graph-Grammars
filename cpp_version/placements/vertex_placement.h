@@ -22,14 +22,14 @@ public:
     VertexPlacement(Vertex* vertex, int id, RuleApplierSettings* settings) : vertex(vertex), id(id), settings(settings), M(nullptr) {}
     ~VertexPlacement() = default;
 
-    Vertex* getVertex() const { return vertex; }
-    int getId() const { return id; }
-    RuleApplierSettings* getSettings() const { return settings; }
-    const vector<int>& getFreeFaceIds() const { return freeFaceIds; }
-    const vector<int>& getUnfreeFaceIds() const { return unfreeFaceIds; }
-    const vector<int>& getCoedgearFaceIds() const { return coedgearFaceIds; }
-    const Vec3& getSlope() const { return slope; }
-    const Vec3& getValue() const { return value; }
+    Vertex* getVertex() const;
+    int getId() const;
+    RuleApplierSettings* getSettings() const;
+    const vector<int>& getFreeFaceIds() const;
+    const vector<int>& getUnfreeFaceIds() const;
+    const vector<int>& getColinearFaceIds() const;
+    const Vec3& getSlope() const;
+    const Vec3& getValue() const;
 
     void initialize();
     void addFixedNeighbor(const FixedFace& fixedFace);
@@ -55,7 +55,7 @@ private:
     Vertex* vertex;
     int id;
     RuleApplierSettings* settings;
-    vector<int> coedgearFaceIds;
+    vector<int> colinearFaceIds;
     Matrix* M;
 
     Matrix* getA(const vector<int>& faceIds);

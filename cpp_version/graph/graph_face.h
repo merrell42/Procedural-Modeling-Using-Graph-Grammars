@@ -23,7 +23,7 @@ public:
     void connectOuter(const vector<GraphHalfEdge*>& halfEdges);
     void makeInner(GraphHalfEdge* halfEdge);
     void copyHalfEdges(const GraphFace* copy);
-    void setType(FaceType* type_) { type = type_;}
+    void setType(FaceType* type_);
     
     static vector<GraphHalfEdge*> getConnectedHalfEdges(GraphHalfEdge* start);
     vector<GraphHalfEdge*> getOuterHalfEdges() const;

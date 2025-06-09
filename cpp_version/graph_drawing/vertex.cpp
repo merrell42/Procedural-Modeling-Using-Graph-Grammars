@@ -1,8 +1,6 @@
 #include "pch.h"
 #include "vertex.h"
 
-
-
 Vertex::Vertex(Model* model, int id, Vec3 position, VertexType* type, vector<int> halfEdgeIds)
 	: model(model)
 	, id(id)
@@ -79,4 +77,16 @@ vector<HalfEdge*> Vertex::getHalfEdges() const {
 		result.push_back(getHalfEdge(i));
 	}
 	return result;
+}
+
+int Vertex::getId() const {
+	return id;
+}
+
+Vec3 Vertex::getPosition() const {
+	return position;
+}
+
+void Vertex::setPosition(Vec3 newPosition) {
+	position = newPosition;
 }

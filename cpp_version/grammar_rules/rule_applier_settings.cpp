@@ -2,8 +2,6 @@
 #include "rule_applier_settings.h"
 #include "../util/util.h"
 
-  
-
 void RuleApplierSettings::setVertex(int id, unique_ptr<VertexPlacement> vPlace) {
     vertexPlacements[id] = move(vPlace);
 }

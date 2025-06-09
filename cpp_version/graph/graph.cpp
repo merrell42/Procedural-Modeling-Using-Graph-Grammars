@@ -202,3 +202,42 @@ void Graph::removeSplices() {
     }
 }
 
+const vector<GraphVertex*>& Graph::getVertices() const {
+    return vertices;
+}
+
+const vector<GraphEdge*>& Graph::getEdges() const {
+    return edges;
+}
+
+const vector<GraphHalfEdge*>& Graph::getHalfEdges() const {
+    return halfEdges;
+}
+
+const vector<GraphFace*>& Graph::getFaces() const {
+    return faces;
+}
+
+const vector<GraphVertex*>& Graph::getBVertices() const {
+    return bVertices;
+}
+
+const vector<GraphHalfEdge*>& Graph::getBHalfEdges() const {
+    return bHalfEdges;
+}
+
+const vector<GraphFace*>& Graph::getBFaces() const {
+    return bFaces;
+}
+
+GraphEdge* Graph::getEdge(int index) const {
+    return index >= 0 ? edges[index] : nullptr;
+}
+
+GraphHalfEdge* Graph::getHalfEdge(int index) const {
+    return index >= 0 ? halfEdges[index] : nullptr;
+}
+
+int Graph::getId() const {
+    return id;
+}

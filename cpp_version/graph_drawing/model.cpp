@@ -1,8 +1,6 @@
 #include "pch.h"
 #include "model.h"
 
-
-
 Model::Model() {
 	current = new GraphDrawing();
 	prev = new GraphDrawing();

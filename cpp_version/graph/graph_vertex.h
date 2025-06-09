@@ -21,15 +21,10 @@ public:
     void import(const Json& json);
 
     const vector<GraphHalfEdge*>& getHalfEdges() const { return halfEdges; }
-    VertexType* getType() {
-        if (kind == "e") {
-            // The edge case may not be handled correctly.
-        }
-        return type;
-    }
-    void setType(VertexType* type_) { type = type_; }
-    Graph* getGraph() const { return graph; }
-    int getId() const { return id; }
+    VertexType* getType();
+    void setType(VertexType* newType);
+    Graph* getGraph() const;
+    int getId() const;
     int connectorIndex() const;
     GraphEdge* interiorEdge() const;
 

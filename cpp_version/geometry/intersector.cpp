@@ -2,8 +2,6 @@
 #include "intersector.h"
 #include <cmath>
 
-
-
 optional<Vec2> Intersector::intersect(
     const Vec2& s1, const Vec2& e1,
     const Vec2& s2, const Vec2& e2) {

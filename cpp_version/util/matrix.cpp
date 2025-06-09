@@ -3,8 +3,6 @@
 #include <stdexcept>
 #include <cmath>
 
-
-
 Matrix::Matrix(const vector<vector<double>>& d)
     : data(d) {
     size = {static_cast<int>(data.size()),

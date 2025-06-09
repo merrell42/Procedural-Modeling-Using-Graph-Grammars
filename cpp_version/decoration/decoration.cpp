@@ -1,8 +1,6 @@
 #include "pch.h"
 #include "decoration.h"
 
-
-
 Decoration::Decoration(const string& fillStyle, const string& strokeStyle,
                      const function<void()>& onChange)
     : fillStyle(fillStyle)

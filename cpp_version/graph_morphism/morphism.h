@@ -13,8 +13,8 @@ public:
     Morphism* copy() const;
     static Morphism* create(const MorphismInfo& info);
 
-    const vector<Vertex*>& getVertexBtoA() const { return vertexBtoA; }
-    const vector<Edge*>& getEdgeBtoA() const { return edgeBtoA; }
+    const vector<Vertex*>& getVertexBtoA() const;
+    const vector<Edge*>& getEdgeBtoA() const;
 
     vector<Vertex*> vertexBtoA;
     vector<Edge*> edgeBtoA;

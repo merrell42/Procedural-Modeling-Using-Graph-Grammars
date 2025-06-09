@@ -4,8 +4,6 @@
 #include "graph.h"
 #include "../geometry/vec3.h"
 
-
-
 GraphFace::GraphFace() 
     : outerComponent(nullptr)
     , type(nullptr)
@@ -124,3 +122,6 @@ bool GraphFace::inGraph() const {
     return find(faces.begin(), faces.end(), this) != faces.end();
 }
 
+void GraphFace::setType(FaceType* type_) {
+    type = type_;
+}

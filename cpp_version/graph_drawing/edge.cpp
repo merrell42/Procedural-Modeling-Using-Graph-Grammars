@@ -202,3 +202,28 @@ void Edge::removeFromBsp() {
 	}
 	bspNodeIds.clear();
 }
+
+
+int Edge::getId() const {
+	return id;
+}
+
+Model* Edge::getModel() const {
+	return model;
+}
+
+void Edge::setId(int newId) {
+	id = newId;
+}
+
+void Edge::setBspNodeIds(const vector<int>& newBspNodeIds) {
+	bspNodeIds = newBspNodeIds;
+}
+
+const vector<int>& Edge::getBspNodeIds() const {
+	return bspNodeIds;
+}
+
+void Edge::addBspNodeId(int bspNodeId) {
+	bspNodeIds.push_back(bspNodeId);
+}

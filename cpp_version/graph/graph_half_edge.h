@@ -17,18 +17,17 @@ public:
     ~GraphHalfEdge() = default;
     void import(const Json& json);
 
-    // Core accessors
-    bool getForward() const { return forward; }
-    GraphVertex* getVertex() const { return vertex; }
-    GraphEdge* getEdge() const { return edge; }
-    GraphHalfEdge* getPrev() const { return prev; }
-    GraphHalfEdge* getNext() const { return next; }
+    bool getForward() const;
+    GraphVertex* getVertex() const;
+    GraphEdge* getEdge() const;
+    GraphHalfEdge* getPrev() const;
+    GraphHalfEdge* getNext() const;
     GraphHalfEdge* getTwin() const;
-    GraphFace* getFace() const { return face; }
-    Graph* getGraph() const { return graph; }
-    int getVertexIndex() const { return vertexIndex; }
-    int getEdgeIndex() const { return edgeIndex; }
-    int getId() const { return id; }
+    GraphFace* getFace() const;
+    Graph* getGraph() const;
+    int getVertexIndex() const;
+    int getEdgeIndex() const;
+    int getId() const;
 
     // Graph operations
     GraphHalfEdge* connectGraph(Graph* newGraph);

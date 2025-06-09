@@ -2,19 +2,14 @@
 #include "brush.h"
 #include "../util/util.h"
 
-
-
 Brush::Brush(const string& fillStyle, const string& strokeStyle)
     : Decoration(fillStyle, strokeStyle) {
-
-    // Set default properties
     doubleProperties["Width"] = 1.0f;
     doubleProperties["Bend"] = 0.0f;
     boolProperties["Boundary"] = false;
 }
 
-Brush::Brush(const string& fillStyle)
-    : Brush(fillStyle, "") {}
+Brush::Brush(const string& fillStyle) : Brush(fillStyle, "") {}
 
 void Brush::set(const string& name, double value) {
     doubleProperties[name] = value;

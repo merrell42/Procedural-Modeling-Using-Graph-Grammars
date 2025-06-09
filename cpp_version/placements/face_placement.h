@@ -3,8 +3,6 @@
 #include "../geometry/vec3.h"
 #include "../util/range.h"
 
-
-
 class Face;
 class FacePlacement;
 class RuleApplierSettings;

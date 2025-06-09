@@ -5,8 +5,6 @@
 #include "grammar_rules/rule_applier.h"
 #include "settings.h"
 
-
-
 GraphMutator::GraphMutator(GraphGrammar* hierarchy, Model* model/*, NodeStats* nodeStats*/)
     : hierarchy(hierarchy)
     , model(model)

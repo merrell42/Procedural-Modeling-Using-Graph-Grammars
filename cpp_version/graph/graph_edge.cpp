@@ -4,8 +4,6 @@
 #include "graph_half_edge.h"
 #include "../util/util.h"
 
-
-
 int GraphEdge::nextId = 0;
 
 GraphEdge::GraphEdge()
@@ -109,3 +107,6 @@ void GraphEdge::import(const Json& json) {
     }
 }
 
+void GraphEdge::setType(EdgeType* type_) {
+    type = type_;
+}

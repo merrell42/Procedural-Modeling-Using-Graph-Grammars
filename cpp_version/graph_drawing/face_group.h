@@ -4,8 +4,6 @@
 #include "face.h"
 #include "model.h"
 
-
-
 class Model;
 class Face;
 

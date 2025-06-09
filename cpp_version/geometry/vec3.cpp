@@ -6,8 +6,6 @@
 #include <iomanip>
 #include <iostream>
 
-
-
 const Vec3 Vec3::ORIGIN(0, 0, 0);
 const Vec3 Vec3::X_AXIS(1, 0, 0);
 const Vec3 Vec3::Y_AXIS(0, 1, 0);

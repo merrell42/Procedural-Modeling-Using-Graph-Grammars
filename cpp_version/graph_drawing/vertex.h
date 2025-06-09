@@ -14,10 +14,10 @@ class Vertex {
 		Vertex(Model* model, Vec3 position, VertexType* type);
 		void createHalfEdges();
 		vector<HalfEdge*> getHalfEdges() const;
-		int getId() const { return id; }
+		int getId() const;
 		HalfEdge* getHalfEdge(int index) const;
-		Vec3 getPosition() const { return position; }
-		void setPosition(Vec3 newPosition) { position = newPosition; }
+		Vec3 getPosition() const;
+		void setPosition(Vec3 newPosition);
 		Vertex* copy();
 		VertexType* getType() const {
 			return type;

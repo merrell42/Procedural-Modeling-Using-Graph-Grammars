@@ -20,7 +20,6 @@ EdgeType::EdgeType(const vector<FaceData>& fData, const Vec3& direction,
     , isRigidTiled(options.count("isRigidTiled") ? options.at("isRigidTiled") : false)
     , monotonic(false)
     , spliced(false)
-    , destroyed(false)
     , id(nextId++) {}
 
 void EdgeType::setSpliced(bool newSpliced) {
@@ -28,6 +27,14 @@ void EdgeType::setSpliced(bool newSpliced) {
     if (spliced) {
         brush = new Brush("#aaa");
     }
+}
+
+void EdgeType::setAngle(double newAngle) {
+    angle = newAngle;
+}
+
+void EdgeType::setMonotonic(bool newMonotonic) {
+    monotonic = newMonotonic;
 }
 
 bool EdgeType::isLoopy() const {
@@ -129,3 +136,34 @@ EdgeType* EdgeType::import(const Json& json, Primitives* shape) {
     return result;
 }
 
+const vector<FaceData>& EdgeType::getFaceData() const {
+    return faceData;
+}
+
+const Vec3& EdgeType::getDir() const {
+    return dir;
+}
+
+Brush* EdgeType::getBrush() const {
+    return brush;
+}
+
+double EdgeType::getEdgeLength() const {
+    return edgeLength;
+}
+
+bool EdgeType::getIsRigid() const {
+    return isRigid;
+}
+
+bool EdgeType::getSpliced() const {
+    return spliced;
+}
+
+double EdgeType::getAngle() const {
+    return angle;
+}
+
+int EdgeType::getId() const {
+    return id;
+}

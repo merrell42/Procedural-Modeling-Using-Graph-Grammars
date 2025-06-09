@@ -5,8 +5,6 @@
 #include <algorithm>
 #include "minmax.h"
 
-
-
 Timer::Timer() = default;
 
 Timer& Timer::instance() {

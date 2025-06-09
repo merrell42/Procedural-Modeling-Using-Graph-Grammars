@@ -25,12 +25,12 @@ public:
 	Edge(Model* model, int id, EdgeType* type, vector<int> halfEdgeIds, vector<int> bspNodeIds);
 	Edge* copy();
 	~Edge();
-	int getId() const { return id; };
-	Model* getModel() const { return model; };
-	void setId(int newId) { id = newId; };
-	void setBspNodeIds(const vector<int>& newBspNodeIds) { bspNodeIds = newBspNodeIds; }
-	void addBspNodeId(int bspNodeId) { bspNodeIds.push_back(bspNodeId); }
-	const vector<int>& getBspNodeIds() const { return bspNodeIds; }
+	int getId() const;
+	Model* getModel() const;
+	void setId(int newId);
+	void setBspNodeIds(const vector<int>& newBspNodeIds);
+	void addBspNodeId(int bspNodeId);
+	const vector<int>& getBspNodeIds() const;
 	bool addToBsp();
 	void removeFromBsp();
 	HalfEdge* getHalfEdge(int index) const;

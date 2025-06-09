@@ -4,8 +4,6 @@
 #include "../graph_drawing/half_edge.h"
 #include "../util/util.h"
 
-
-
 // Initialize static counter
 int MorphismPath::count = 0;
 

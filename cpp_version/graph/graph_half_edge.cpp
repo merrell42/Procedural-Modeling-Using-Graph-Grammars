@@ -6,8 +6,6 @@
 #include "graph_vertex.h"
 #include "../util/util.h"
 
-
-
 int GraphHalfEdge::nextId = 0;
 
 GraphHalfEdge::GraphHalfEdge(bool forward)
@@ -106,3 +104,43 @@ void GraphHalfEdge::import(const Json& json) {
     face = graph->getFaces()[json["face"]];
 }
 
+
+bool GraphHalfEdge::getForward() const {
+    return forward;
+}
+
+GraphVertex* GraphHalfEdge::getVertex() const {
+    return vertex;
+}
+
+GraphEdge* GraphHalfEdge::getEdge() const {
+    return edge;
+}
+
+GraphHalfEdge* GraphHalfEdge::getPrev() const {
+    return prev;
+}
+
+GraphHalfEdge* GraphHalfEdge::getNext() const {
+    return next;
+}
+
+GraphFace* GraphHalfEdge::getFace() const {
+    return face;
+}
+
+Graph* GraphHalfEdge::getGraph() const {
+    return graph;
+}
+
+int GraphHalfEdge::getVertexIndex() const {
+    return vertexIndex;
+}
+
+int GraphHalfEdge::getEdgeIndex() const {
+    return edgeIndex;
+}
+
+int GraphHalfEdge::getId() const {
+    return id;
+}

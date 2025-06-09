@@ -12,32 +12,16 @@ class EdgeType;
 class Primitives;
 
 struct HalfEdgeType {
+    HalfEdgeType(EdgeType* newEdge = nullptr, bool newIsAtStart = false, double newAngle = 0.0f,
+            const vector<int>& faceIds = {});
+    HalfEdgeType copy() const;
+        
     double adjustedAngle;
     double angle;
     Vec3 dir;
     int directedId;
     EdgeType* edge;
     bool isAtStart;
-
-    HalfEdgeType(EdgeType* edge = nullptr, bool isAtStart = false, double angle = 0.0f,
-              const vector<int>& faceIds = {})
-        : adjustedAngle(0)
-        , angle(angle)
-        , dir()
-        , directedId(0)
-        , edge(edge)
-        , isAtStart(isAtStart) {}
-
-    HalfEdgeType copy() const {
-        HalfEdgeType result;
-        result.adjustedAngle = adjustedAngle;
-        result.angle = angle;
-        result.dir = dir;
-        result.directedId = directedId;
-        result.edge = edge;
-        result.isAtStart = isAtStart;
-        return result;
-    }
 };
 
 class VertexType {

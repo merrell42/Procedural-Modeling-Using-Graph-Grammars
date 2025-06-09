@@ -22,10 +22,10 @@ public:
     explicit MorphismState(MorphismInfo* info, Morphism* morphism = nullptr);
     ~MorphismState() = default;
 
-    MorphismInfo* getInfo() const { return info; }
-    Morphism* getMorphism() { return morphism; }
-    vector<HalfEdgeData>& getQueue() { return queue; }
-    vector<HalfEdgeData>& getSpliceQueue() { return spliceQueue; }
+    MorphismInfo* getInfo() const;
+    Morphism* getMorphism();
+    vector<HalfEdgeData>& getQueue();
+    vector<HalfEdgeData>& getSpliceQueue();
 
     void setQueue(const vector<HalfEdgeData>& newQueue);
     void assignVertex(Vertex* vertexA, int indexB);

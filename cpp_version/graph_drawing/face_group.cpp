@@ -1,13 +1,11 @@
 #include "pch.h"
 #include "face_group.h"
 
-
-
 FaceGroup::FaceGroup(Model* model, int id) : model(model), id(id), faceIds() {
     model->getCurrent()->addFaceGroup(id, this);
 }
 
-FaceGroup::FaceGroup(Model* model, int id, ::vector<int> faceIds) : model(model), id(id), faceIds(faceIds) {
+FaceGroup::FaceGroup(Model* model, int id, vector<int> faceIds) : model(model), id(id), faceIds(faceIds) {
     model->getCurrent()->addFaceGroup(id, this);
 }
 
@@ -29,8 +27,8 @@ void FaceGroup::removeFace(Face* face) {
     faceIds.erase(std::remove(faceIds.begin(), faceIds.end(), face->getId()), faceIds.end());
 }
 
-::vector<Face*> FaceGroup::getFaces() const {
-	::vector<Face*> result;
+vector<Face*> FaceGroup::getFaces() const {
+	vector<Face*> result;
 	for (int i = 0; i < faceIds.size(); i++) {
 		result.push_back(model->getCurrent()->getFace(faceIds[i]));
 	}

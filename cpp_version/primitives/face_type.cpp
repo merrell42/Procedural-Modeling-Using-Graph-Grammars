@@ -92,3 +92,42 @@ FaceType* FaceType::import(const Json& json) {
     return result;
 }
 
+const string& FaceType::getMaterial() const {
+    return material;
+}
+
+const Vec3& FaceType::getNormal() const {
+    return normal;
+}
+
+const Vec3& FaceType::getU() const {
+    return u;
+}
+
+const Vec3& FaceType::getV() const {
+    return v;
+}
+
+bool FaceType::isMonotonic() const {
+    return monotonic;
+}
+
+const Vec3* FaceType::getColor() const {
+    return color;
+}
+
+int FaceType::getId() const {
+    return id;
+}
+
+int FaceType::getMaxDim() const {
+    return maxDim;
+}
+
+void FaceType::setColor(Vec3* newColor) {
+    color = newColor;
+}
+
+void FaceType::setMonotonic(bool isMonotonic) {
+    monotonic = isMonotonic;
+}

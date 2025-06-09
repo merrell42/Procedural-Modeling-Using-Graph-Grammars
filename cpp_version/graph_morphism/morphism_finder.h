@@ -6,8 +6,6 @@
 #include "../graph_drawing/model.h"
 #include "../graph_drawing/face_group.h"
 
-
-
 class Model;
 class NodeStats;
 class Morphism;

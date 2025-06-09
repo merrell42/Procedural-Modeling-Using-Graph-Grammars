@@ -1,9 +1,6 @@
 #include "pch.h"
 #include "half_edge.h"
 
-
-
-// TODO: Rename as halfEdge.
 HalfEdge::HalfEdge(Model* model, int id, bool isAtStart, EdgeType* edgeType, Vec3 dir, int vertexId, int faceId_, int edgeId, bool createFace, int faceIndex)
 	: model(model)
 	, id(id)
@@ -125,3 +122,18 @@ void HalfEdge::maybeMergeNextFace() {
         this->getFace()->append(n->getFace());
     }
 }
+
+bool HalfEdge::getIsAtStart() const {
+	return isAtStart;
+}
+
+int HalfEdge::getId() const {
+	return id;
+}
+
+Vec3 HalfEdge::getDir() const {
+	return dir;
+}
+
+
+

@@ -4,8 +4,6 @@
 #include "graph_half_edge.h"
 #include "../util/util.h"
 
-
-
 int GraphVertex::nextId = 0;
 
 GraphVertex::GraphVertex()
@@ -79,3 +77,21 @@ void GraphVertex::import(const Json& json) {
     }
 }
 
+void GraphVertex::setType(VertexType* newType) {
+    type = newType;
+}
+
+Graph* GraphVertex::getGraph() const {
+    return graph;
+}
+
+int GraphVertex::getId() const {
+    return id;
+}
+
+VertexType* GraphVertex::getType() {
+    if (kind == "e") {
+        // The edge case may not be handled correctly.
+    }
+    return type;
+}

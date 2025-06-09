@@ -17,10 +17,10 @@ class HalfEdge {
 public:
 	HalfEdge(Model* model, int id, bool isAtStart, EdgeType*, Vec3 dir, int vertexId, int faceId, int edgeId, bool createFace, int faceIndex);
 	HalfEdge* copy();
-	bool getIsAtStart() const { return isAtStart; }
-	int getId() const { return id; };
+	bool getIsAtStart() const;
+	int getId() const;
 	EdgeType* getEdgeType() const;
-	Vec3 getDir() const { return dir; }
+	Vec3 getDir() const;
 	Vertex* getVertex() const;
 	Edge* getEdge() const;
 	Face* getFace() const;

@@ -1,8 +1,6 @@
 #include "pch.h"
 #include "vertex_placement.h"
 
-
-
 void VertexPlacement::initialize() {
     vector<HalfEdge*> halfEdges = vertex->getHalfEdges();
 
@@ -37,12 +35,12 @@ void VertexPlacement::constrainFace(int id) {
     }
     unfreeFaceIds.push_back(id);
 
-    // Check if the face IDs are coedgear.
+    // Check if the face IDs are colinear.
     if (unfreeFaceIds.size() == 3) {
         auto* M = getM();
         if (!M) {
             unfreeFaceIds.pop_back();
-            coedgearFaceIds.push_back(id);
+            colinearFaceIds.push_back(id);
         }
     }
 }
@@ -51,9 +49,9 @@ void VertexPlacement::propagate() {
     if (unfreeFaceIds.size() >= 3) {
         settings->addToOrder(this->id, "vertex", -1);
         
-        // Handle free faces and coedgear faces.
+        // Handle free faces and colinear faces.
         auto freeIds = freeFaceIds;
-        freeIds.insert(freeIds.end(), coedgearFaceIds.begin(), coedgearFaceIds.end());
+        freeIds.insert(freeIds.end(), colinearFaceIds.begin(), colinearFaceIds.end());
         
         for (int faceId : freeIds) {
             auto* fPlace = settings->getFace(faceId);
@@ -220,7 +218,7 @@ void VertexPlacement::addFreeFace(int id) {
 
     settings->getFace(id)->addVertexId(this->id); // Add the vertex ID to the face
 
-    // Check for coedgearity
+    // Check for colinearity
     //if (freeFaceIds.size() == 3 && getA(freeFaceIds).empty()) {
     //    freeFaceIds.pop_back(); // Remove the last face ID
     //}
@@ -228,12 +226,12 @@ void VertexPlacement::addFreeFace(int id) {
 
 vector<int> VertexPlacement::getAllFaceIds() const {
     vector<int> allFaceIds;
-    allFaceIds.reserve(unfreeFaceIds.size() + freeFaceIds.size() + coedgearFaceIds.size());
+    allFaceIds.reserve(unfreeFaceIds.size() + freeFaceIds.size() + colinearFaceIds.size());
 
     // Concatenate the vectors.
     allFaceIds.insert(allFaceIds.end(), unfreeFaceIds.begin(), unfreeFaceIds.end());
     allFaceIds.insert(allFaceIds.end(), freeFaceIds.begin(), freeFaceIds.end());
-    allFaceIds.insert(allFaceIds.end(), coedgearFaceIds.begin(), coedgearFaceIds.end());
+    allFaceIds.insert(allFaceIds.end(), colinearFaceIds.begin(), colinearFaceIds.end());
 
     return allFaceIds; // Return the combined vector.
 }
@@ -269,3 +267,35 @@ bool VertexPlacement::fixPosition() {
     return success;
 }
 
+
+Vertex* VertexPlacement::getVertex() const {
+    return vertex;
+}
+
+int VertexPlacement::getId() const {
+    return id;
+}
+
+RuleApplierSettings* VertexPlacement::getSettings() const {
+    return settings;
+}
+
+const vector<int>& VertexPlacement::getFreeFaceIds() const {
+    return freeFaceIds;
+}
+
+const vector<int>& VertexPlacement::getUnfreeFaceIds() const {
+    return unfreeFaceIds;
+}
+
+const vector<int>& VertexPlacement::getColinearFaceIds() const {
+    return colinearFaceIds;
+}
+
+const Vec3& VertexPlacement::getSlope() const {
+    return slope;
+}
+
+const Vec3& VertexPlacement::getValue() const {
+    return value;
+}

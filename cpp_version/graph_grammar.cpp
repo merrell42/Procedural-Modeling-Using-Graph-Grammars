@@ -9,8 +9,6 @@
 #include "util/util.h"
 #include <algorithm>
 
-
-
 GraphGrammar::GraphGrammar() {
     reset();
 }
