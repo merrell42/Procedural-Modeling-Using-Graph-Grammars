@@ -29,21 +29,11 @@ public:
     Vec3 cross(const Vec3& v) const;
     double length() const;
     double length2() const;
-    double distance(const Vec3& v) const;
-    double distance2(const Vec3& v) const;
-    Vec3& rotate(const Vec3& axis, double theta);
-    Vec3& rotateX(double theta);
-    Vec3& rotateY(double theta);
-    Vec3& rotateZ(double theta);
     Vec3 copy() const;
     Vec2 dropDim(int dim) const;
-    string toString() const;
     static Vec3 import(const Json & json);
-    Vec3 swapAxes() const;
 
     static Vec3 lerp(const Vec3& start, const Vec3& end, double s);
-    static Vec3 unitVec(double theta, double phi);
-    static bool coordinatesClose(const Vec3& a, const Vec3& b, double tolerance);
 
     Vec3 operator+(const Vec3& v) const { return Vec3(x + v.x, y + v.y, z + v.z); }
     Vec3 operator-(const Vec3& v) const { return Vec3(x - v.x, y - v.y, z - v.z); }

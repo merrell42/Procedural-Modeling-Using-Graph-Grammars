@@ -1,24 +1,24 @@
 #pragma once
-#include "decoration.h"
 #include <map>
 #include <vector>
 #include <functional>
 #include <any>
+#include "../third_party/json.h"
 
 using namespace std;
+using Json = nlohmann::json;
 
-class Brush : public Decoration {
+class Brush {
 public:
-    Brush(const string& fillStyle);
-    Brush(const string& fillStyle, const string& strokeStyle);
+    Brush();
     static Brush* import(Json json);
 
-    void set(const string& name, double value) override;
-    void set(const string& name, bool value) override;
-    void set(const string& name, const string& value) override;
-    double getDouble(const string& name) const override;
-    bool getBool(const string& name) const override;
-    string getString(const string& name) const override;
+    void set(const string& name, double value);
+    void set(const string& name, bool value);
+    void set(const string& name, const string& value);
+    double getDouble(const string& name) const;
+    bool getBool(const string& name) const;
+    string getString(const string& name) const;
 
 private:
     map<string, double> doubleProperties;

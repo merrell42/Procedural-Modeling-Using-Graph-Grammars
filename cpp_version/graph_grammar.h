@@ -29,11 +29,7 @@ public:
     static GraphGrammar* import(const Json& json);
 
     void reset();
-    const vector<vector<Graph*>>& getGenerations() const;
-    const vector<ProductionRule*>& getRules() const;
-    const vector<ProductionRule*>& getStarterRules() const;
     const vector<ProductionRule*>& getGroundRules() const;
-    bool isGrounded() const;
     int getDims() const { return shape->dims; }
 
     Production getProduction();

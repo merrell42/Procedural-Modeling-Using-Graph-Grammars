@@ -32,19 +32,8 @@ public:
     bool getSpliced() const;
     int getId() const;
 
-    void setAngle(double newAngle);
     void setSpliced(bool newSpliced);
-    void setMonotonic(bool newMonotonic);
-
-    bool isLoopy() const;
-    bool isBoundary() const;
-    bool isConnected() const;
-    bool singleFragment() const;
-    bool splittable() const;
     bool extendable() const;
-    double getThickness() const;
-    string boundaryString() const;
-    int neighboringFace(int initialIndex, bool above) const;
 
     static EdgeType* import(const Json& json, Primitives* shape);
 

@@ -44,16 +44,6 @@ public:
     void removeFace(GraphFace* face);
     void removeSplices();
 
-    GraphVertex* convertVertex(Graph* graphB, GraphVertex* vertexB);
-    GraphEdge* convertEdge(Graph* graphB, GraphEdge* edgeB);
-    GraphHalfEdge* convertHalfEdge(Graph* graphB, GraphHalfEdge* halfEdgeB);
-    GraphFace* convertFace(Graph* graphB, GraphFace* faceB);
-
-    int vertexIndex(GraphVertex* vertex) const;
-    int edgeIndex(GraphEdge* edge) const;
-    int halfEdgeIndex(GraphHalfEdge* halfEdge) const;
-    int faceIndex(GraphFace* face) const;
-
 private:
     vector<GraphVertex*> vertices;
     vector<GraphEdge*> edges;

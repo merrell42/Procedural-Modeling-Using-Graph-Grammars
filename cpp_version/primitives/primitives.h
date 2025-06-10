@@ -19,9 +19,6 @@ public:
             int dims);
     static Primitives* import(const Json& json);
 
-    Primitives* getShape();
-    vector<int> getVertices() const;
-
     vector<VertexType*> vertexTypes;
     vector<EdgeType*> edgeTypes;
     vector<FaceType*> faceTypes;

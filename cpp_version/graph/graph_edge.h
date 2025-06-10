@@ -16,16 +16,10 @@ public:
     ~GraphEdge() = default;
 
     const vector<vector<GraphHalfEdge*>>& getHalfEdges() const;
-    EdgeType* getType() { return type; }
+    EdgeType* getType();
     void setType(EdgeType* type_);
-    Graph* getGraph() const;
-    int getId() const;
 
     GraphEdge* connectGraph(Graph* graph);
-    void addHalfEdge(GraphHalfEdge* halfEdge, int index);
-    void removeHalfEdge(GraphHalfEdge* halfEdge, int index);
-    void copyHalfEdges(const GraphEdge* copy);
-
     bool inGraph() const;
     void merge(GraphEdge* edgeB, bool mergeForward);
     void import(const Json& json);

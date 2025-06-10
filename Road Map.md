@@ -3,7 +3,6 @@ These are roughly in priority order weighing cost vs benefits.
 ## Short-Term Goals
 
 * Add better documentation.
-* Delete unused functions.
 * Find and remove memory leaks.
 * Measure code performance and fix simple issues.
 * Add all grammars from web version.

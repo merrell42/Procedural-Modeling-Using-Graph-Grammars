@@ -27,13 +27,11 @@ public:
 	Vec3 getPosition() const;
 	HalfEdge* next() const;
 	HalfEdge* prev() const;
-	HalfEdge* twin() const;
 	void setEdge(Edge* edge);
 	void setFace(Face* face);
 	void mergeFaces(HalfEdge* next);
 	FaceType* getFaceType();
 	void transfer(Edge* replacement);
-	void maybeMergeNextFace();
 	void destroy();
 
 private:

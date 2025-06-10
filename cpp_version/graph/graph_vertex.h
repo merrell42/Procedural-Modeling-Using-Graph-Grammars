@@ -23,14 +23,11 @@ public:
     const vector<GraphHalfEdge*>& getHalfEdges() const { return halfEdges; }
     VertexType* getType();
     void setType(VertexType* newType);
-    Graph* getGraph() const;
-    int getId() const;
     int connectorIndex() const;
     GraphEdge* interiorEdge() const;
 
     GraphVertex* connectGraph(Graph* graph);
     void setHalfEdge(GraphHalfEdge* halfEdge, int index);
-    void copyHalfEdges(const GraphVertex* copy);
 
     bool inGraph() const;
 

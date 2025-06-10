@@ -17,7 +17,6 @@ public:
     double sample() const;
     bool isInside(double x) const;
     Range transform(double a, double b) const;
-    void print() const;
 
     static Range transformCreate(double a, double b, const Range& rangeB);
     static double gcd(const vector<double>& arr);

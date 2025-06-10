@@ -27,11 +27,6 @@ class Util {
 public:
     // Angle operations
     static double fixAngle(double angle);
-    static double angleDifference(double a, double b);
-    static int angleTurn(double prev, double next);
-    static int angleWedges(double prev, double next);
-    static int wedgeTurns(const vector<double>& angles);
-    static double fixAngleWedges(double angle);
 
     // Array operations
     template<typename T>
@@ -41,15 +36,6 @@ public:
             array.erase(it);
         }
     }
-    
-    template<typename T>
-    static void maybeRemove(const T& element, vector<T>& array);
-    
-    template<typename T>
-    static void addToObject(vector<T>& obj, const string& prop, const T& value);
-    
-    template<typename T>
-    static void addToArray(vector<T>& array, const vector<int>& indices, const T& value);
 
     template<typename T>
     static void union_(vector<T>& a, const vector<T>& b) {
@@ -73,22 +59,6 @@ public:
     // Random operations
     static int randomInt(int count);
     static int randomDistribution(const vector<double>& probabilityMass);
-
-    // Array utilities
-    template<typename T>
-    static vector<T> removeDuplicates(const vector<T>& array);
-    
-    template<typename T>
-    static bool arraysEquivalent(const vector<T>& arrayA, const vector<T>& arrayB);
-    
-    template<typename T>
-    static bool arraysEqual(const vector<T>& arrayA, const vector<T>& arrayB);
-    
-    template<typename T>
-    static const T& last(const vector<T>& array);
-    
-    static double clamp(double lower, double upper, double x);
-    static vector<int> sequence(int a, int b);
     
     template<typename T>
     static void fastConcat(vector<T>& allData, const vector<T>& newData);

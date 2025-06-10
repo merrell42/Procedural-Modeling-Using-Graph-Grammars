@@ -74,13 +74,6 @@ bool GraphHalfEdge::isLoopy() {
     return last->getNext() != nullptr;
 }
 
-const FaceData* GraphHalfEdge::getFaceDatum() const {
-    if (!edge) {
-        return nullptr;
-    }
-    return &edge->getType()->getFaceData()[edgeIndex];
-}
-
 Vec3 GraphHalfEdge::getDir() const {
     if (!edge) {
         // This maybe should be null.
@@ -129,18 +122,10 @@ GraphFace* GraphHalfEdge::getFace() const {
     return face;
 }
 
-Graph* GraphHalfEdge::getGraph() const {
-    return graph;
-}
-
 int GraphHalfEdge::getVertexIndex() const {
     return vertexIndex;
 }
 
 int GraphHalfEdge::getEdgeIndex() const {
     return edgeIndex;
-}
-
-int GraphHalfEdge::getId() const {
-    return id;
 }

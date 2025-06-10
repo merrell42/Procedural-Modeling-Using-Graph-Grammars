@@ -14,7 +14,6 @@ class Primitives;
 struct HalfEdgeType {
     HalfEdgeType(EdgeType* newEdge = nullptr, bool newIsAtStart = false, double newAngle = 0.0f,
             const vector<int>& faceIds = {});
-    HalfEdgeType copy() const;
         
     double adjustedAngle;
     double angle;
@@ -32,7 +31,6 @@ public:
 
     const vector<HalfEdgeType>& getHalfEdgeTypes() const;
     bool getSpliced() const;
-    int getId() const;
 
     void addEdge(EdgeType* edge, bool isAtStart, double angle);
     void setSpliced(bool spliced);

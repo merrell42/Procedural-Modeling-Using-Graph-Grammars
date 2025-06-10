@@ -60,10 +60,6 @@ Range Range::transformCreate(double a, double b, const Range& rangeB) {
     return rangeB.transform(1.0f / a, -b / a);
 }
 
-void Range::print() const {
-    cout << data[0] << ", " << data[1] << endl;
-}
-
 double Range::gcd2(double x, double y) {
     return (y < ERROR_MARGIN) ? x : gcd2(y, fmod(x, y));
 }

@@ -9,73 +9,9 @@ Matrix::Matrix(const vector<vector<double>>& d)
             static_cast<int>(data.empty() ? 0 : data[0].size())};
 }
 
-void Matrix::set(const vector<int>& index, double value) {
-    data[index[0]][index[1]] = value;
-}
-
-double Matrix::get(const vector<int>& index) const {
-    return data[index[0]][index[1]];
-}
-
-Matrix Matrix::subset(const vector<vector<int>>& indices,
-                                        const Matrix* replacement) {
-    const auto& indices0 = indices[0];
-    const auto& indices1 = indices[1];
-
-    if (replacement) {
-        for (size_t i = 0; i < indices0.size(); i++) {
-            for (size_t j = 0; j < indices1.size(); j++) {
-                data[indices0[i]][indices1[j]] = replacement->data[i][j];
-            }
-        }
-        return *this;
-    }
-
-    vector<vector<double>> result(indices0.size(),
-                                          vector<double>(indices1.size()));
-    for (size_t i = 0; i < indices0.size(); i++) {
-        for (size_t j = 0; j < indices1.size(); j++) {
-            result[i][j] = data[indices0[i]][indices1[j]];
-        }
-    }
-    return Matrix(result);
-}
-
-Matrix& Matrix::concat(const Matrix& B) {
-    size[1] += B.size[1];
-    for (size_t i = 0; i < data.size(); i++) {
-        data[i].insert(data[i].end(), B.data[i].begin(), B.data[i].end());
-    }
-    return *this;
-}
-
-Matrix Matrix::matrix(const vector<vector<double>>& data) {
-    return Matrix(data);
-}
-
 Matrix* Matrix::zeros(int size0, int size1) {
     return new Matrix(vector<vector<double>>(size0,
                                                  vector<double>(size1, 0.0)));
-}
-
-Matrix* Matrix::add(const Matrix* A, const Matrix* B) {
-    auto result = zeros(A->size[0], A->size[1]);
-    for (int i = 0; i < A->size[0]; i++) {
-        for (int j = 0; j < A->size[1]; j++) {
-            result->data[i][j] = A->data[i][j] + B->data[i][j];
-        }
-    }
-    return result;
-}
-
-Matrix* Matrix::subtract(const Matrix* A, const Matrix* B) {
-    auto result = zeros(A->size[0], A->size[1]);
-    for (int i = 0; i < A->size[0]; i++) {
-        for (int j = 0; j < A->size[1]; j++) {
-            result->data[i][j] = A->data[i][j] - B->data[i][j];
-        }
-    }
-    return result;
 }
 
 Matrix* Matrix::multiply(const Matrix* A, const Matrix* B) {
@@ -87,26 +23,6 @@ Matrix* Matrix::multiply(const Matrix* A, const Matrix* B) {
                 sum += A->data[i][k] * B->data[k][j];
             }
             result->data[i][j] = sum;
-        }
-    }
-    return result;
-}
-
-Matrix* Matrix::multiply(const Matrix* A, double scalar) {
-    auto result = zeros(A->size[0], A->size[1]);
-    for (int i = 0; i < A->size[0]; i++) {
-        for (int j = 0; j < A->size[1]; j++) {
-            result->data[i][j] = A->data[i][j] * scalar;
-        }
-    }
-    return result;
-}
-
-Matrix* Matrix::transpose(const Matrix* A) {
-    auto result = zeros(A->size[1], A->size[0]);
-    for (int i = 0; i < A->size[0]; i++) {
-        for (int j = 0; j < A->size[1]; j++) {
-            result->data[j][i] = A->data[i][j];
         }
     }
     return result;
@@ -158,24 +74,3 @@ Matrix* Matrix::inverse(const Matrix* A) {
     }
     throw runtime_error("inv only implemented for 2x2 and 3x3");
 }
-
-double Matrix::dot(const Matrix& A, const Matrix& B) {
-    double sum = 0;
-    for (int i = 0; i < A.size[0]; i++) {
-        sum += A.data[i][0] * B.data[i][0];
-    }
-    return sum;
-}
-
-vector<int> Matrix::index(int index0, int index1) {
-    return {index0, index1};
-}
-
-vector<int> Matrix::range(int lower, int upper) {
-    vector<int> result;
-    for (int i = lower; i < upper; i++) {
-        result.push_back(i);
-    }
-    return result;
-}
-

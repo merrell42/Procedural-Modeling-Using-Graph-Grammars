@@ -2,28 +2,22 @@
 #include "brush.h"
 #include "../util/util.h"
 
-Brush::Brush(const string& fillStyle, const string& strokeStyle)
-    : Decoration(fillStyle, strokeStyle) {
+Brush::Brush() {
     doubleProperties["Width"] = 1.0f;
     doubleProperties["Bend"] = 0.0f;
     boolProperties["Boundary"] = false;
 }
 
-Brush::Brush(const string& fillStyle) : Brush(fillStyle, "") {}
-
 void Brush::set(const string& name, double value) {
     doubleProperties[name] = value;
-    notifyChange();
 }
 
 void Brush::set(const string& name, bool value) {
     boolProperties[name] = value;
-    notifyChange();
 }
 
 void Brush::set(const string& name, const string& value) {
     stringProperties[name] = value;
-    notifyChange();
 }
 
 double Brush::getDouble(const string& name) const {
@@ -42,7 +36,7 @@ string Brush::getString(const string& name) const {
 }
 
 Brush* Brush::import(Json json) {
-    auto brush = new Brush("", "");
+    auto brush = new Brush();
     
     for (const auto& [key, val] : json.items()) {
         if (val.is_string()) {

@@ -56,65 +56,6 @@ optional<Vec2> Intersector::intersect(
     return nullopt;
 }
 
-optional<Intersector::FaceIntersection> Intersector::intersectFaces(
-    const vector<Vec2>& facePositionsA,
-    const vector<Vec2>& facePositionsB) {
-
-    // Create copies for manipulation
-    vector<Vec2> fPositionsA = facePositionsA;
-    vector<Vec2> fPositionsB = facePositionsB;
-    
-    // Ensure the faces are oriented correctly
-    double areaA = 0;
-    double areaB = 0;
-    
-    size_t Na = fPositionsA.size();
-    size_t Nb = fPositionsB.size();
-    
-    for (size_t i = 0; i < Na; i++) {
-        const Vec2& p1 = fPositionsA[i];
-        const Vec2& p2 = fPositionsA[(i + 1) % Na];
-        areaA += p1.crossZ(p2);
-    }
-    
-    for (size_t i = 0; i < Nb; i++) {
-        const Vec2& p1 = fPositionsB[i];
-        const Vec2& p2 = fPositionsB[(i + 1) % Nb];
-        areaB += p1.crossZ(p2);
-    }
-    
-    // Reverse face positions if needed
-    vector<Vec2> fPositionsA2 = fPositionsA;
-    vector<Vec2> fPositionsB2 = fPositionsB;
-    
-    if (areaA < 0) {
-        reverse(fPositionsA2.begin(), fPositionsA2.end());
-    }
-    if (areaB < 0) {
-        reverse(fPositionsB2.begin(), fPositionsB2.end());
-    }
-
-    // Check for intersections between edges
-    for (size_t i = 0; i < Na; i++) {
-        const Vec2& a0 = fPositionsA2[i];
-        const Vec2& a1 = fPositionsA2[(i + 1) % Na];
-        
-        for (size_t j = 0; j < Nb; j++) {
-            const Vec2& b0 = fPositionsB2[j];
-            const Vec2& b1 = fPositionsB2[(j + 1) % Nb];
-            
-            auto intersection = intersect(a0, a1, b0, b1, 0);
-            if (intersection) {
-                return FaceIntersection{*intersection, 
-                                      static_cast<int>(i), 
-                                      static_cast<int>(j)};
-            }
-        }
-    }
-    
-    return nullopt;
-}
-
 vector<IntersectionData> Intersector::edgeFaceIntersect(const Vec3& edge0Start, const Vec3& edge0End, const vector<Vec3>& fPositions, int maxDim) {
     size_t N = fPositions.size();
     vector<Vec2> fPositions2(N);

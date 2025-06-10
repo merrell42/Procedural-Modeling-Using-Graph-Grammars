@@ -43,10 +43,6 @@ public:
     static optional<Vec2> intersect(const Vec2& s1, const Vec2& e1,
                                        const Vec2& s2, const Vec2& e2, double thickness);
 
-    static optional<FaceIntersection> intersectFaces(
-        const vector<Vec2>& facePositionsA,
-        const vector<Vec2>& facePositionsB);
-
     static vector<IntersectionData> edgeFaceIntersect(
         const Vec3& edge0Start, const Vec3& edge0End, const vector<Vec3>& fPositions, int maxDim);
 

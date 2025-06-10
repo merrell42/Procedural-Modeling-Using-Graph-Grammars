@@ -22,15 +22,6 @@ public:
     VertexPlacement(Vertex* vertex, int id, RuleApplierSettings* settings) : vertex(vertex), id(id), settings(settings), M(nullptr) {}
     ~VertexPlacement() = default;
 
-    Vertex* getVertex() const;
-    int getId() const;
-    RuleApplierSettings* getSettings() const;
-    const vector<int>& getFreeFaceIds() const;
-    const vector<int>& getUnfreeFaceIds() const;
-    const vector<int>& getColinearFaceIds() const;
-    const Vec3& getSlope() const;
-    const Vec3& getValue() const;
-
     void initialize();
     void addFixedNeighbor(const FixedFace& fixedFace);
     void addFreeFace(int id);

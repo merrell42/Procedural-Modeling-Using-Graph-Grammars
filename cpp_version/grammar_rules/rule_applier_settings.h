@@ -26,10 +26,6 @@ public:
     EdgePlacement* getEdge(int id) { return edgePlacements[id].get(); }
     FacePlacement* getFace(int id) { return facePlacements[id].get(); }
 
-    void setVertex(int id, unique_ptr<VertexPlacement> vPlace);
-    void setEdge(int id, unique_ptr<EdgePlacement> ePlace);
-    void setFace(int id, unique_ptr<FacePlacement> fPlace);
-
     void addToOrder(int id, const string& type, int vertexId);
     int createFace(const Vec3& normal);
     void mergeFace(int idA, int idB);

@@ -90,20 +90,6 @@ HalfEdge* HalfEdge::prev() const {
     return halfEdges[index - 1];
 }
 
-HalfEdge* HalfEdge::twin() const {
-    Edge* edge = getEdge();
-    if (edge) {
-        vector<HalfEdge*> halfEdges = edge->getHalfEdges();
-        auto it = find(halfEdges.begin(), halfEdges.end(), this);
-        if (it != halfEdges.end()) {
-            size_t index = distance(halfEdges.begin(), it);
-            // Return the other halfEdge.
-            return halfEdges[1 - index];
-        }
-    }
-    return nullptr;
-}
-
 void HalfEdge::setEdge(Edge* edge) {
     edgeId = edge->getId();
 }
@@ -114,13 +100,6 @@ void HalfEdge::setFace(Face* face) {
 
 void HalfEdge::mergeFaces(HalfEdge* next) {
     getFace()->append(next->getFace());
-}
-
-void HalfEdge::maybeMergeNextFace() {
-    HalfEdge* n = next();
-    if (n) {
-        this->getFace()->append(n->getFace());
-    }
 }
 
 bool HalfEdge::getIsAtStart() const {

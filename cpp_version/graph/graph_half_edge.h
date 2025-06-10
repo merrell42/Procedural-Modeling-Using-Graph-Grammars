@@ -24,10 +24,8 @@ public:
     GraphHalfEdge* getNext() const;
     GraphHalfEdge* getTwin() const;
     GraphFace* getFace() const;
-    Graph* getGraph() const;
     int getVertexIndex() const;
     int getEdgeIndex() const;
-    int getId() const;
 
     // Graph operations
     GraphHalfEdge* connectGraph(Graph* newGraph);
@@ -39,7 +37,6 @@ public:
 
     bool isSpliced() const;
     bool isLoopy();
-    const FaceData* getFaceDatum() const;
     Vec3 getDir() const;
 
 private:

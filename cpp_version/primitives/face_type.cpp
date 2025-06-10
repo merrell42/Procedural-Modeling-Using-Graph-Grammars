@@ -11,8 +11,6 @@ int FaceType::nextId = 0;
 FaceType::FaceType(const string& mat, const Vec3& n)
     : material(mat)
     , normal(n)
-    , monotonic(false)
-    , color(nullptr)
     , id(nextId++) {
     computeOrthonormalBasis();
     maxDim = Util::maxDim(normal);
@@ -35,46 +33,6 @@ void FaceType::computeOrthonormalBasis() {
     v = normal.cross(u).normalize();
 }
 
-double FaceType::angle(const Vec3& q) const {
-    double dx = u.dot(q);
-    double dy = v.dot(q);
-    double angle = atan2(dy, dx);
-    
-    // Angles near pi wrap to -pi.
-    if (angle > M_PI - EPS) {
-        return -angle;
-    }
-    return angle;
-}
-
-double FaceType::getArea(const vector<Vec3>& vertices) const {
-    vector<Vec2> projectedVertices;
-    for (const auto& vertex : vertices) {
-        projectedVertices.push_back({u.dot(vertex), v.dot(vertex)});
-    }
-    return -polygonArea(projectedVertices);
-}
-
-double FaceType::polygonArea(const vector<Vec2>& points) const {
-    double area = 0;
-    for (size_t i = 0; i < points.size(); i++) {
-        const auto& p1 = points[i];
-        const auto& p2 = points[(i + 1) % points.size()];
-        area += p1.getX() * p2.getY() - p2.getX() * p1.getY();
-    }
-    return area / 2;
-}
-
-Vec3 FaceType::normalColor() const {
-    if (color) {
-        return *color;
-    }
-    return Vec3(
-        0.5f * normal.getX() + 0.5f,
-        0.5f * normal.getY() + 0.5f,
-        0.5f * normal.getZ() + 0.5f
-    );
-}
 
 FaceType* FaceType::import(const Json& json) {
     string material = "";
@@ -100,34 +58,6 @@ const Vec3& FaceType::getNormal() const {
     return normal;
 }
 
-const Vec3& FaceType::getU() const {
-    return u;
-}
-
-const Vec3& FaceType::getV() const {
-    return v;
-}
-
-bool FaceType::isMonotonic() const {
-    return monotonic;
-}
-
-const Vec3* FaceType::getColor() const {
-    return color;
-}
-
-int FaceType::getId() const {
-    return id;
-}
-
 int FaceType::getMaxDim() const {
     return maxDim;
-}
-
-void FaceType::setColor(Vec3* newColor) {
-    color = newColor;
-}
-
-void FaceType::setMonotonic(bool isMonotonic) {
-    monotonic = isMonotonic;
 }

@@ -6,13 +6,6 @@
 
 Morphism::Morphism() {}
 
-Morphism* Morphism::copy() const {
-    auto* result = new Morphism();
-    result->vertexBtoA = vertexBtoA;
-    result->edgeBtoA = edgeBtoA;
-    return result;
-}
-
 Morphism* Morphism::create(const MorphismInfo& info) {
     auto morphism = new Morphism();
     auto graphB = info.graphB;

@@ -10,7 +10,6 @@ class Morphism {
 public:
     Morphism();
     ~Morphism() = default;
-    Morphism* copy() const;
     static Morphism* create(const MorphismInfo& info);
 
     const vector<Vertex*>& getVertexBtoA() const;

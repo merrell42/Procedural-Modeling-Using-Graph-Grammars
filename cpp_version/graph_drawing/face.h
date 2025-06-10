@@ -40,7 +40,6 @@ class Face {
 			vector<int>& faceIndices
 		);
 		void addBspNodeId(int bspNodeId);
-		const vector<int>& getBspNodeIds() const;
 		Model* getModel() const { return model; }
 		bool addToBsp();
 		void removeFromBsp();
@@ -50,7 +49,6 @@ class Face {
 		void createGroup();
 		void splitGroup();
 		void setHole(bool newHole);
-		bool isHole() const;
 
 	private:
 		int id;

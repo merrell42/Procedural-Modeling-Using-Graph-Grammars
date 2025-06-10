@@ -266,36 +266,3 @@ bool VertexPlacement::fixPosition() {
 
     return success;
 }
-
-
-Vertex* VertexPlacement::getVertex() const {
-    return vertex;
-}
-
-int VertexPlacement::getId() const {
-    return id;
-}
-
-RuleApplierSettings* VertexPlacement::getSettings() const {
-    return settings;
-}
-
-const vector<int>& VertexPlacement::getFreeFaceIds() const {
-    return freeFaceIds;
-}
-
-const vector<int>& VertexPlacement::getUnfreeFaceIds() const {
-    return unfreeFaceIds;
-}
-
-const vector<int>& VertexPlacement::getColinearFaceIds() const {
-    return colinearFaceIds;
-}
-
-const Vec3& VertexPlacement::getSlope() const {
-    return slope;
-}
-
-const Vec3& VertexPlacement::getValue() const {
-    return value;
-}

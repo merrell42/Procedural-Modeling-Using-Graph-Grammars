@@ -39,9 +39,6 @@
     <ClInclude Include="..\graph_drawing\vertex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\decoration\decoration.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\util\range.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -180,9 +177,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\decoration\brush.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\decoration\decoration.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\util\range.cpp">

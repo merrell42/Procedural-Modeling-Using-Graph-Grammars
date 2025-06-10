@@ -25,81 +25,12 @@ EdgeType::EdgeType(const vector<FaceData>& fData, const Vec3& direction,
 void EdgeType::setSpliced(bool newSpliced) {
     spliced = newSpliced;
     if (spliced) {
-        brush = new Brush("#aaa");
+        brush = new Brush();
     }
-}
-
-void EdgeType::setAngle(double newAngle) {
-    angle = newAngle;
-}
-
-void EdgeType::setMonotonic(bool newMonotonic) {
-    monotonic = newMonotonic;
-}
-
-bool EdgeType::isLoopy() const {
-    return brush ? brush->getBool("Loopy") : true;
-}
-
-bool EdgeType::isBoundary() const {
-    return brush ? brush->getBool("Boundary") : false;
-}
-
-bool EdgeType::isConnected() const {
-    if (spliced) return false;
-    return brush ? brush->getBool("Fully Connected") : false;
-}
-
-bool EdgeType::singleFragment() const {
-    return isBoundary();
-}
-
-bool EdgeType::splittable() const {
-    return !(!isLoopy() || isBoundary() || isConnected());
 }
 
 bool EdgeType::extendable() const {
     return !isRigid || isRigidTiled;
-}
-
-double EdgeType::getThickness() const {
-    return brush ? brush->getDouble("Thickness") : 1.0f;
-}
-
-string EdgeType::boundaryString() const {
-    if (dir.dot(Vec3::X_AXIS) > 0.99f) return "x";
-    if (dir.dot(Vec3::Y_AXIS) > 0.99f) return "y";
-    if (dir.dot(Vec3::Z_AXIS) > 0.99f) return "z";
-    return string(1, static_cast<char>(id + 'a'));
-}
-
-int EdgeType::neighboringFace(int initialIndex, bool above) const {
-    int maxDim = Util::maxDim(dir);
-    vector<pair<double, int>> angles;
-    
-    for (size_t i = 0; i < faceData.size(); i++) {
-        const auto& f = faceData[i];
-        Vec3 v = dir.cross(f.type->getNormal());
-        if (!f.onRight) {
-            v.scale(-1);
-        }
-        
-        double x = 0;
-        double y = 0;
-        switch(maxDim) {
-            case 0: x = v.getX(); y = v.getY(); break;
-            case 1: x = v.getZ(); y = v.getX(); break;
-            case 2: x = v.getY(); y = v.getZ(); break;
-        }
-        angles.push_back({atan2(x, y), i});
-    }
-    
-    sort(angles.begin(), angles.end());
-    auto fOrder = find_if(angles.begin(), angles.end(),
-        [initialIndex](const auto& p) { return p.second == initialIndex; }) - angles.begin();
-    
-    int neighborOrder = (int)(fOrder + (above ? 1 : -1) + angles.size()) % angles.size();
-    return angles[neighborOrder].second;
 }
 
 EdgeType* EdgeType::import(const Json& json, Primitives* shape) {

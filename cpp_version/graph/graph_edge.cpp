@@ -15,45 +15,14 @@ const vector<vector<GraphHalfEdge*>>& GraphEdge::getHalfEdges() const {
     return halfEdges;
 }
 
-Graph* GraphEdge::getGraph() const {
-    return graph;
-}
-
-int GraphEdge::getId() const {
-    return id;
+EdgeType* GraphEdge::getType() {
+    return type;
 }
 
 GraphEdge* GraphEdge::connectGraph(Graph* newGraph) {
     graph = newGraph;
     graph->addEdge(this);
     return this;
-}
-
-void GraphEdge::addHalfEdge(GraphHalfEdge* halfEdge, int index) {
-    if (index >= halfEdges.size()) {
-        halfEdges.resize(index + 1);
-    }
-    halfEdges[index].push_back(halfEdge);
-}
-
-void GraphEdge::removeHalfEdge(GraphHalfEdge* halfEdge, int index) {
-    if (index < halfEdges.size()) {
-        halfEdges.erase(halfEdges.begin() + index);
-    }
-}
-
-void GraphEdge::copyHalfEdges(const GraphEdge* copy) {
-    auto* graphCopy = copy->getGraph();
-    auto copyHalfEdges = copy->getHalfEdges();
-    
-    halfEdges.clear();
-    halfEdges.resize(copyHalfEdges.size());
-    
-    for (size_t i = 0; i < copyHalfEdges.size(); i++) {
-        for (auto* half : copyHalfEdges[i]) {
-            halfEdges[i].push_back(graph->convertHalfEdge(graphCopy, half));
-        }
-    }
 }
 
 bool GraphEdge::inGraph() const {

@@ -12,19 +12,7 @@ public:
 
     const string& getMaterial() const;
     const Vec3& getNormal() const;
-    const Vec3& getU() const;
-    const Vec3& getV() const;
-    bool isMonotonic() const;
-    const Vec3* getColor() const;
-    int getId() const;
     int getMaxDim() const;
-
-    void setColor(Vec3* newColor);
-    void setMonotonic(bool isMonotonic);
-
-    double angle(const Vec3& q) const;
-    double getArea(const vector<Vec3>& vertices) const;
-    Vec3 normalColor() const;
 
     static FaceType* import(const Json& json);
 
@@ -37,7 +25,6 @@ public:
 private:
     string material;
     Vec3 normal;
-    bool monotonic;
     Vec3* color;
     int maxDim;
 
@@ -45,6 +32,5 @@ private:
 
     // Helper methods
     void computeOrthonormalBasis();
-    double polygonArea(const vector<Vec2>& points) const;
 };
 

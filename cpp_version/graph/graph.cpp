@@ -44,38 +44,6 @@ void Graph::removeFace(GraphFace* face) {
     faces.erase(remove(faces.begin(), faces.end(), face), faces.end());
 }
 
-GraphVertex* Graph::convertVertex(Graph* graphB, GraphVertex* vertexB) {
-    return vertexB ? vertices[graphB->vertexIndex(vertexB)] : nullptr;
-}
-
-GraphEdge* Graph::convertEdge(Graph* graphB, GraphEdge* edgeB) {
-    return edgeB ? edges[graphB->edgeIndex(edgeB)] : nullptr;
-}
-
-GraphHalfEdge* Graph::convertHalfEdge(Graph* graphB, GraphHalfEdge* halfEdgeB) {
-    return halfEdgeB ? halfEdges[graphB->halfEdgeIndex(halfEdgeB)] : nullptr;
-}
-
-GraphFace* Graph::convertFace(Graph* graphB, GraphFace* faceB) {
-    return faceB ? faces[graphB->faceIndex(faceB)] : nullptr;
-}
-
-int Graph::vertexIndex(GraphVertex* vertex) const {
-    return vertex ? (int)(find(vertices.begin(), vertices.end(), vertex) - vertices.begin()) : -1;
-}
-
-int Graph::edgeIndex(GraphEdge* edge) const {
-    return edge ? (int)(find(edges.begin(), edges.end(), edge) - edges.begin()) : -1;
-}
-
-int Graph::halfEdgeIndex(GraphHalfEdge* halfEdge) const {
-    return halfEdge ? (int)(find(halfEdges.begin(), halfEdges.end(), halfEdge) - halfEdges.begin()) : -1;
-}
-
-int Graph::faceIndex(GraphFace* face) const {
-    return face ? (int)(find(faces.begin(), faces.end(), face) - faces.begin()) : -1;
-}
-
 Graph* Graph::import(const Json & json, Primitives* shape) {
     auto interior = json["interior"];
 

@@ -13,13 +13,6 @@ public:
     EdgePlacement(Edge* edge, int id, RuleApplierSettings* settings);
     ~EdgePlacement() = default;
 
-    Edge* getEdge() const;
-    int getId() const;
-    const vector<int>& getVertexIds() const;
-    const Vec3& getDir() const;
-    RuleApplierSettings* getSettings() const;
-    const vector<int>& getConstraints() const;
-
     void initialize();
     void addConstraint(int id);
     Range getRange() const;

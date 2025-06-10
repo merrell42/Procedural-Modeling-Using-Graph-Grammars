@@ -23,10 +23,6 @@ bool VertexType::getSpliced() const {
     return spliced;
 }
 
-int VertexType::getId() const {
-    return id;
-}
-
 void VertexType::addEdge(EdgeType* edge, bool isAtStart, double angle) {
     // Angle becomes the angle going out from the vertex through the edge.
     auto dir = edge->getDir();
@@ -98,14 +94,3 @@ HalfEdgeType::HalfEdgeType(EdgeType* newEdge, bool newIsAtStart, double newAngle
     , directedId(0)
     , edge(newEdge)
     , isAtStart(newIsAtStart) {}
-
-HalfEdgeType HalfEdgeType::copy() const {
-    HalfEdgeType result;
-    result.adjustedAngle = adjustedAngle;
-    result.angle = angle;
-    result.dir = dir;
-    result.directedId = directedId;
-    result.edge = edge;
-    result.isAtStart = isAtStart;
-    return result;
-}

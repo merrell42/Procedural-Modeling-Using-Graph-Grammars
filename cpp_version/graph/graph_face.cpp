@@ -14,10 +14,6 @@ GraphHalfEdge* GraphFace::getOuterComponent() const {
     return outerComponent;
 }
 
-const vector<GraphHalfEdge*>& GraphFace::getInnerComponents() const {
-    return innerComponents;
-}
-
 Graph* GraphFace::getGraph() const {
     return graph;
 }
@@ -26,30 +22,6 @@ GraphFace* GraphFace::connectGraph(Graph* graph) {
     this->graph = graph;
     graph->addFace(this);
     return this;
-}
-
-void GraphFace::connectOuter(const vector<GraphHalfEdge*>& halfEdges) {
-    if (!halfEdges.empty()) {
-        outerComponent = halfEdges[0];
-        for (auto halfEdge : halfEdges) {
-            halfEdge->setFace(this);
-        }
-    }
-}
-
-void GraphFace::makeInner(GraphHalfEdge* halfEdge) {
-    innerComponents.push_back(halfEdge);
-    outerComponent = nullptr;
-}
-
-void GraphFace::copyHalfEdges(const GraphFace* copy) {
-    Graph* copyGraph = copy->getGraph();
-    outerComponent = graph->convertHalfEdge(copyGraph, copy->getOuterComponent());
-    
-    innerComponents.clear();
-    for (auto halfEdge : copy->getInnerComponents()) {
-        innerComponents.push_back(graph->convertHalfEdge(copyGraph, halfEdge));
-    }
 }
 
 void GraphFace::import(const Json & json) {
@@ -84,22 +56,6 @@ vector<GraphHalfEdge*> GraphFace::getOuterHalfEdges() const {
     return vector<GraphHalfEdge*>();
 }
 
-vector<GraphHalfEdge*> GraphFace::getInnerHalfEdges() const {
-    vector<GraphHalfEdge*> result;
-    for (auto component : innerComponents) {
-        auto connected = getConnectedHalfEdges(component);
-        result.insert(result.end(), connected.begin(), connected.end());
-    }
-    return result;
-}
-
-vector<GraphHalfEdge*> GraphFace::getHalfEdges() const {
-    auto result = getOuterHalfEdges();
-    auto inner = getInnerHalfEdges();
-    result.insert(result.end(), inner.begin(), inner.end());
-    return result;
-}
-
 void GraphFace::replaceHalfEdge(GraphHalfEdge* a, GraphHalfEdge* b, bool force) {
     if ((outerComponent == a) || (force && outerComponent)) {
         outerComponent = b;
@@ -115,11 +71,6 @@ void GraphFace::replaceHalfEdge(GraphHalfEdge* a, GraphHalfEdge* b, bool force) 
 
 bool GraphFace::isLoopy() const {
     return outerComponent->isLoopy();
-}
-
-bool GraphFace::inGraph() const {
-    auto faces = graph->getFaces();
-    return find(faces.begin(), faces.end(), this) != faces.end();
 }
 
 void GraphFace::setType(FaceType* type_) {

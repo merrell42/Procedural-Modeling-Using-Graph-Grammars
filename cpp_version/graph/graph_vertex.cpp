@@ -35,18 +35,6 @@ int GraphVertex::connectorIndex() const {
     }
 }
 
-void GraphVertex::copyHalfEdges(const GraphVertex* copy) {
-    auto* copyGraph = copy->getGraph();
-
-    halfEdges.clear();
-    auto copyHalfEdges = copy->getHalfEdges();
-    halfEdges.reserve(copyHalfEdges.size());
-    
-    for (auto* halfEdge : copyHalfEdges) {
-        halfEdges.push_back(halfEdge ? graph->convertHalfEdge(copyGraph, halfEdge) : nullptr);
-    }
-}
-
 bool GraphVertex::inGraph() const {
     return graph && find(graph->getVertices().begin(),
                               graph->getVertices().end(),
@@ -79,14 +67,6 @@ void GraphVertex::import(const Json& json) {
 
 void GraphVertex::setType(VertexType* newType) {
     type = newType;
-}
-
-Graph* GraphVertex::getGraph() const {
-    return graph;
-}
-
-int GraphVertex::getId() const {
-    return id;
 }
 
 VertexType* GraphVertex::getType() {

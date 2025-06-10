@@ -41,12 +41,3 @@ Primitives* Primitives::import(const Json& json) {
 
     return shape;
 }
-
-Primitives* Primitives::getShape() {
-    return this;
-}
-
-vector<int> Primitives::getVertices() const {
-    return {0};
-}
-

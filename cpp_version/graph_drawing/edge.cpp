@@ -10,8 +10,6 @@
 #include "../primitives/vertex_type.h"
 #include "../geometry/intersector.h"
 
-
-
 Edge::Edge(Model* model, int id, EdgeType* type, vector<int> halfEdgeIds, vector<int> bspNodeIds)
 	: model(model)
 	, type(type)

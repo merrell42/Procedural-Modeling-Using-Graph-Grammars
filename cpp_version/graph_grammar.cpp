@@ -24,24 +24,8 @@ void GraphGrammar::reset() {
     groundRules.clear();
 }
 
-const std::vector<std::vector<Graph*>>& GraphGrammar::getGenerations() const {
-    return generations;
-}
-
-const std::vector<ProductionRule*>& GraphGrammar::getRules() const {
-    return rules;
-}
-
-const std::vector<ProductionRule*>& GraphGrammar::getStarterRules() const {
-    return starterRules;
-}
-
 const std::vector<ProductionRule*>& GraphGrammar::getGroundRules() const {
     return groundRules;
-}
-
-bool GraphGrammar::isGrounded() const {
-    return grounded;
 }
 
 Production GraphGrammar::getProduction() {

@@ -7,13 +7,8 @@
 #include "../graph/graph.h"
 #include "../util/util.h"
 
-MorphismState::MorphismState(MorphismInfo* info, Morphism* existingMorphism)
-    : info(info) {
-    if (existingMorphism) {
-        morphism = existingMorphism->copy();
-    } else {
-        morphism = Morphism::create(*info);
-    }
+MorphismState::MorphismState(MorphismInfo* info) : info(info) {
+    morphism = Morphism::create(*info);
 }
 
 void MorphismState::setQueue(const vector<HalfEdgeData>& newQueue) {
@@ -35,13 +30,6 @@ void MorphismState::assignVertex(Vertex* vertexA, int indexB) {
             queue.push_back(HalfEdgeData(halfB, vertexA));
         }
     }
-}
-
-MorphismState* MorphismState::copy() const {
-    auto* result = new MorphismState(info, morphism);
-    result->queue = queue;
-    result->spliceQueue = spliceQueue;
-    return result;
 }
 
 MorphismInfo* MorphismState::getInfo() const {

@@ -96,27 +96,3 @@ Range EdgePlacement::getRange() const {
 
     return Range::transformCreate(mLength, bLength, Range(lengthMin, lengthMax, tileLength));
 }
-
-Edge* EdgePlacement::getEdge() const {
-    return edge;
-}
-
-int EdgePlacement::getId() const {
-    return id;
-}
-
-const vector<int>& EdgePlacement::getVertexIds() const {
-    return vertexIds;
-}
-
-const Vec3& EdgePlacement::getDir() const {
-    return dir;
-}
-
-RuleApplierSettings* EdgePlacement::getSettings() const {
-    return settings;
-}
-
-const vector<int>& EdgePlacement::getConstraints() const {
-    return constraints;
-}

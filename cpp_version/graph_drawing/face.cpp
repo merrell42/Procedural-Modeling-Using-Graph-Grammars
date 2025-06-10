@@ -352,15 +352,6 @@ void Face::addBspNodeId(int bspNodeId) {
     bspNodeIds.push_back(bspNodeId);
 }
 
-// TODO: Check if this is needed.
-const vector<int>& Face::getBspNodeIds() const {
-    return bspNodeIds;
-}
-
 void Face::setHole(bool newHole) {
     hole = newHole;
-}
-
-bool Face::isHole() const {
-    return hole;
 }

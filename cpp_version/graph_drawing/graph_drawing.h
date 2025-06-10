@@ -57,8 +57,6 @@ class GraphDrawing {
 		map<int, BspNode*> getBspNodeMap() { return bspNodeMap; }
 		map<int, FaceGroup*> getFaceGroupMap() { return faceGroupMap; }
 
-		int getVertexIndex(int vertexId) const;
-
 		// Save the mesh to an OBJ file.
 		void save(string suffix);
 

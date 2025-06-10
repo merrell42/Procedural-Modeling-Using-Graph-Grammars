@@ -2,18 +2,6 @@
 #include "rule_applier_settings.h"
 #include "../util/util.h"
 
-void RuleApplierSettings::setVertex(int id, unique_ptr<VertexPlacement> vPlace) {
-    vertexPlacements[id] = move(vPlace);
-}
-
-void RuleApplierSettings::setEdge(int id, unique_ptr<EdgePlacement> ePlace) {
-    edgePlacements[id] = move(ePlace);
-}
-
-void RuleApplierSettings::setFace(int id, unique_ptr<FacePlacement> fPlace) {
-    facePlacements[id] = move(fPlace);
-}
-
 void RuleApplierSettings::addToOrder(int id, const string& type, int vertexId) {
     if (find(orderIds.begin(), orderIds.end(), id) == orderIds.end()) {
         orderIds.push_back(id);

@@ -140,16 +140,3 @@ bool GraphDrawing::bspAddFace(Face* face) {
 void GraphDrawing::bspRemoveFace(Face* face) {
 	bspNodeMap[bspRootId]->removeFace(face);
 }
-
-
-// TODO: Make this more efficient.
-int GraphDrawing::getVertexIndex(int vertexId) const {
-	int index = 0;
-	for (const auto& [id, vertex] : vertexMap) {
-		if (id == vertexId) {
-			return index;
-		}
-		index++;
-	}
-	return -1;
-}

@@ -19,7 +19,7 @@ struct HalfEdgeData {
 
 class MorphismState {
 public:
-    explicit MorphismState(MorphismInfo* info, Morphism* morphism = nullptr);
+    explicit MorphismState(MorphismInfo* info);
     ~MorphismState() = default;
 
     MorphismInfo* getInfo() const;
@@ -29,7 +29,6 @@ public:
 
     void setQueue(const vector<HalfEdgeData>& newQueue);
     void assignVertex(Vertex* vertexA, int indexB);
-    MorphismState* copy() const;
 
 private:
     MorphismInfo* info;
