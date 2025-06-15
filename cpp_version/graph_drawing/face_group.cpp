@@ -42,14 +42,16 @@ void FaceGroup::destroyIfEmpty() {
     }
 }
 
-void FaceGroup::connectHole(FaceGroup* groupB) {
+// Merge groupB into this group. This assumes that groupB has one face.
+// groupB is a hole group.
+void FaceGroup::merge(FaceGroup* groupB) {
     if (groupB == this) {
         // This face has already been added.
         return;
     }
     auto facesB = groupB->getFaces();
 	if (facesB.size() != 1) {
-        ::cout << "Hole group should have one face" << ::endl;
+        cout << "Merged group should have one face." << endl;
 	}
 	auto faceB = facesB[0];
     groupB->removeFace(faceB);

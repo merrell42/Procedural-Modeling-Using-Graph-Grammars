@@ -8,8 +8,6 @@
 #include "../third_party/earcut/earcut.h"
 #include "../util/util.h"
 
-
-
 Face::Face(Model* model, int id, FaceType* faceType, vector<int> halfEdgeIds, bool looped, vector<int> bspNodeIds, int groupId, bool hole)
 	: model(model)
 	, id(id)
@@ -129,6 +127,7 @@ void Face::split(HalfEdge* halfEdge) {
     vector<HalfEdge*> halfEdges = getHalfEdges();
     auto index = find(halfEdges.begin(), halfEdges.end(), halfEdge) - halfEdges.begin();
 
+    // If looped, cut the loop at the halfEdge and keep this as one face starting there.
     if (looped) {
         setLooped(false);
         vector<int> newOrder(halfEdgeIds.begin() + index, halfEdgeIds.end());
@@ -140,35 +139,34 @@ void Face::split(HalfEdge* halfEdge) {
             return;
         }
 
+        // If not looped, cut off the end of the face.
+        // Starting at index create a new face. Move all halfEdge past index to the new face.
         vector<HalfEdge*> splitHalfEdges(halfEdges.begin() + index, halfEdges.end());
         vector<int> splitHalfEdgeIds(halfEdgeIds.begin() + index, halfEdgeIds.end());
         Face* newFace = new Face(model, model->newId(), faceType, splitHalfEdgeIds, vector<int>());
+        for (auto& splitHalfEdge : splitHalfEdges) {
+            splitHalfEdge->setFace(newFace);
+        }
+        halfEdgeIds.erase(halfEdgeIds.begin() + index, halfEdgeIds.end());
         if (isHole()) {
             newFace->setHole(true);
         }
 
+        // Add it to the existing face group.
         bool insertAtStart = !isHole();
         if (insertAtStart) {
             getGroup()->insertFace(newFace, 0);
         } else {
             getGroup()->addFace(newFace);
         }
-
-        for (auto& splitHalfEdge : splitHalfEdges) {
-            splitHalfEdge->setFace(newFace);
-        }
-        halfEdgeIds.erase(halfEdgeIds.begin() + index, halfEdgeIds.end());
     }
 }
 
 void Face::insert(HalfEdge* halfEdge, HalfEdge* prevHalfEdge) {
     vector<HalfEdge*> halfEdges = this->getHalfEdges();
 
-    // Insert the new halfEdge at the correct position
-    int id = halfEdge->getId();
+    // Find the insertion index. It is inserted after prevHalfEdge.
     int prevId = prevHalfEdge->getId();
-    
-    // Find the index by comparing IDs instead of pointers
     size_t index = -1;
     for (size_t i = 0; i < halfEdges.size(); i++) {
         if (halfEdges[i]->getId() == prevId) {
@@ -176,14 +174,10 @@ void Face::insert(HalfEdge* halfEdge, HalfEdge* prevHalfEdge) {
             break;
         }
     }
-    
-    if (index >= 0) {
-        halfEdgeIds.insert(halfEdgeIds.begin() + index + 1, id);
-        halfEdge->setFace(this);
-    } else {
-        halfEdgeIds.insert(halfEdgeIds.begin(), id);
-        halfEdge->setFace(this);
-    }
+
+    int id = halfEdge->getId();
+    halfEdgeIds.insert(halfEdgeIds.begin() + index + 1, id);
+    halfEdge->setFace(this);
 }
 
 void Face::removeHalfEdge(HalfEdge* halfEdge) {
@@ -193,7 +187,8 @@ void Face::removeHalfEdge(HalfEdge* halfEdge) {
     }
 }
 
-double Face::signedArea() {
+// Find the signed area using the shoelace formula.
+double Face::signedArea() const {
     auto positions2D = getPositions2D();
     double sum = 0.0f;
     size_t n = positions2D.size();
@@ -211,7 +206,7 @@ void Face::exportMesh(
     vector<Vec3>& normals,
     vector<int>& triangles,
     vector<int>& faceIndices
-) {
+) const {
     int startIndex = (int)positions.size();
     auto facePositions = getPositions();
     positions.insert(positions.end(), facePositions.begin(), facePositions.end());
@@ -243,7 +238,7 @@ void Face::exportMesh(
     faceIndices.push_back((int)positions.size());
 }
 
-vector<int> Face::getTriangleIndices() {
+vector<int> Face::getTriangleIndices() const {
     using Point = array<double, 2>;
     vector<vector<Point>> polygons;
     vector<Point> polygon;
@@ -291,7 +286,7 @@ void Face::splitGroup() {
     createGroup();
 }
 
-vector<Vec3> Face::getIntersections(Plane* plane) {
+vector<Vec3> Face::getIntersections(Plane* plane) const {
     auto positions = getPositions();
     auto n = positions.size();
     vector<bool> isAbove(n);
@@ -313,7 +308,7 @@ vector<Vec3> Face::getIntersections(Plane* plane) {
     return intersections;
 }
 
-bool Face::containsPoint(Vec3 point) {
+bool Face::containsPoint(Vec3 point) const {
     int maxDim = faceType->getMaxDim();
     Vec2 point2D = point.dropDim(maxDim);
     auto positions = getPositions2D();

@@ -7,7 +7,7 @@
 class Model;
 class Face;
 
-// A face group represent an outer face with holes poked into it.
+// A face group represent a single outer face with holes poked into it.
 // The first face in the group is the outer face. The other faces are holes.
 class FaceGroup {
 public:
@@ -21,7 +21,7 @@ public:
     void removeFace(Face* face);
     vector<Face*> getFaces() const;
     void destroyIfEmpty();
-    void connectHole(FaceGroup* groupB);
+    void merge(FaceGroup* groupB);
 
 private:
     int id;

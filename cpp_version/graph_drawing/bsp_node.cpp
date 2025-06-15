@@ -25,6 +25,14 @@ BspNode::BspNode(Model* model, int id, int parentId, int aboveId, int belowId, P
     model->getCurrent()->addBspNode(id, this);
 }
 
+BspNode::~BspNode() {
+    delete plane;
+}
+
+int BspNode::getId() {
+    return id;
+}
+
 BspNode* BspNode::copy() {
     auto newPlane = plane ? new Plane(*plane) : nullptr;
 	return new BspNode(model, id, parentId, aboveId, belowId, newPlane, faceIds, edgeIds);
@@ -34,6 +42,7 @@ void BspNode::setParentId(int newParentId) {
     parentId = newParentId;
 }
 
+// Returns true, if the edge does not intersect any other edges.
 bool BspNode::addEdge(Edge* edge) {
     // If this node has no edges, add it here.
     if (edgeIds.size() > 0) {
@@ -43,6 +52,7 @@ bool BspNode::addEdge(Edge* edge) {
         auto p1 = halfEdges[1]->getPosition();
     }
 
+    // Based on the plane, add the edge to one of the two child nodes or both.
     PlaneClassification classification = classifyEdge(edge);
     switch (classification) {
         case PlaneClassification::ON_PLANE:
@@ -70,7 +80,9 @@ bool BspNode::addEdge(Edge* edge) {
     }
 }
 
+// Returns true, if the face does not intersect any other faces.
 bool BspNode::addFace(Face* face) {
+    // Based on the plane, add the face here or to one of the two child nodes or both.
     PlaneClassification classification = classifyFace(face);
     switch (classification) {
         case PlaneClassification::ON_PLANE:
@@ -107,18 +119,26 @@ void BspNode::removeFace(Face* face) {
     deleteIfEmpty();
 }
 
+// Delete nodes if they are empty.
 void BspNode::deleteIfEmpty() {
+    // Return if not empty.
     if (edgeIds.size() > 0 || faceIds.size() > 0) {
         return;
     }
+
+    // If this has no children, delete the node.
     if (aboveId == -1 && belowId == -1) {
         auto current = model->getCurrent();
         current->removeBspNode(this);
+
+        // If this is the root of the tree, delete the tree.
         if (parentId == -1) {
             current->setBspRootId(-1);
             delete this;
             return;
         }
+
+        // Otherwise, remove it from its parent.
         auto parent = current->getBspNode(parentId);
         if (parent->aboveId == id) {
             parent->aboveId = -1;
@@ -128,14 +148,16 @@ void BspNode::deleteIfEmpty() {
         }
         parent->deleteIfEmpty();
     } else if (aboveId == -1 || belowId == -1) {
+        // If one child is present, delete this node and promote the child to be a
+        // child of the grandparent.
         auto current = model->getCurrent();
         current->removeBspNode(this);
 
-        // Promote the child to be a child of the parent.
         int childId = aboveId == -1 ? belowId : aboveId;
         auto child = current->getBspNode(childId);
         child->parentId = parentId;
         if (parentId == -1) {
+            // Handle root case.
             current->setBspRootId(childId);
         } else {
             auto parent = current->getBspNode(parentId);
@@ -149,16 +171,19 @@ void BspNode::deleteIfEmpty() {
     }
 }
 
+// Connect an above child to this node.
 void BspNode::connectAbove(BspNode* above) {
     aboveId = above->getId();
     above->setParentId(id);
 }
 
+// Connect a below child to this node.
 void BspNode::connectBelow(BspNode* below) {
     belowId = below->getId();
     below->setParentId(id);
 }
 
+// Connect an edge to this node.
 void BspNode::connectEdge(Edge* edge) {
     edgeIds.push_back(edge->getId());
     edge->addBspNodeId(id);
@@ -170,6 +195,7 @@ void BspNode::connectEdge(Edge* edge) {
     }
 }
 
+// Connect a face to this node.
 void BspNode::connectFace(Face* face) {
     faceIds.push_back(face->getId());
     face->addBspNodeId(id);
@@ -178,6 +204,7 @@ void BspNode::connectFace(Face* face) {
     }
 }
 
+// Classify an edge based on the plane.
 PlaneClassification BspNode::classifyEdge(Edge* edge) {
     if (!plane) {
         return PlaneClassification::ON_PLANE;
@@ -199,6 +226,7 @@ PlaneClassification BspNode::classifyEdge(Edge* edge) {
     return PlaneClassification::ON_PLANE;
 }
 
+// Classify a face based on the plane.
 PlaneClassification BspNode::classifyFace(Face* face) {
     if (faceIds.size() == 0) {
         return PlaneClassification::ON_PLANE;
@@ -206,13 +234,13 @@ PlaneClassification BspNode::classifyFace(Face* face) {
     auto positions = face->getPositions();
     bool isAbove = false;
     bool isBelow = false;
-    for (auto position : positions) {
+    for (const auto& position : positions) {
         if (isPointAbovePlane(position)) {
             isAbove = true;
             break;
         }
     }
-    for (auto position : positions) {
+    for (const auto& position : positions) {
         if (isPointBelowPlane(position)) {
             isBelow = true;
             break;
@@ -234,7 +262,7 @@ Plane* BspNode::getPlane() {
     return plane;
 }
 
-
+// Get the above child node. Create it if it doesn't exist.
 BspNode* BspNode::getAboveNode() {
     auto current = model->getCurrent();
     if (aboveId == -1) {
@@ -248,6 +276,7 @@ BspNode* BspNode::getAboveNode() {
     return current->getBspNode(aboveId);
 }
 
+// Get the below child node. Create it if it doesn't exist.
 BspNode* BspNode::getBelowNode() {
     auto current = model->getCurrent();
     if (belowId == -1) {
@@ -261,6 +290,7 @@ BspNode* BspNode::getBelowNode() {
     return current->getBspNode(belowId);
 }
 
+// Detect edge intersections.
 bool BspNode::hasEdgeIntersection(Edge* edgeA) {
     auto current = model->getCurrent();
     for (int edgeId : edgeIds) {
@@ -272,6 +302,7 @@ bool BspNode::hasEdgeIntersection(Edge* edgeA) {
     return false;
 }
 
+// Detect face intersections.
 bool BspNode::hasFaceIntersection(Face* faceA) {
     auto current = model->getCurrent();
     // TODO: It might be more efficient to first check if the planes are parallel.
@@ -279,7 +310,7 @@ bool BspNode::hasFaceIntersection(Face* faceA) {
     auto intersections = faceA->getIntersections(plane);
     for (int faceId : faceIds) {
         Face* faceB = current->getFace(faceId);
-        for (Vec3 intersection : intersections) {
+        for (const Vec3& intersection : intersections) {
             if (faceB->containsPoint(intersection)) {
                 return true;
             }

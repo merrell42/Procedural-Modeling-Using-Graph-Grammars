@@ -94,7 +94,7 @@ void FacePlacement::makeFixed(const FixedFace& fixedFace) {
         settings->getVertex(id)->addFixedNeighbor(fixedFace);
     }
     constrain(true, -1);
-    fixedFace.faceA->getGroup()->connectHole(face->getGroup());
+    fixedFace.faceA->getGroup()->merge(face->getGroup());
 }
 
 Range FacePlacement::getRange(int vertexId) {

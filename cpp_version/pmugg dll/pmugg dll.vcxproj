@@ -155,6 +155,7 @@
     <ClInclude Include="..\grammar_rules\production_rule.h" />
     <ClInclude Include="..\grammar_rules\rule_applier.h" />
     <ClInclude Include="..\grammar_rules\rule_applier_settings.h" />
+    <ClInclude Include="..\graph\edge_settings.h" />
     <ClInclude Include="..\graph\graph.h" />
     <ClInclude Include="..\graph\graph_edge.h" />
     <ClInclude Include="..\graph\graph_face.h" />
@@ -200,6 +201,7 @@
     <ClCompile Include="..\grammar_rules\production_rule.cpp" />
     <ClCompile Include="..\grammar_rules\rule_applier.cpp" />
     <ClCompile Include="..\grammar_rules\rule_applier_settings.cpp" />
+    <ClCompile Include="..\graph\edge_settings.cpp" />
     <ClCompile Include="..\graph\graph.cpp" />
     <ClCompile Include="..\graph\graph_edge.cpp" />
     <ClCompile Include="..\graph\graph_face.cpp" />

@@ -23,7 +23,7 @@ Edge::~Edge() {
 	removeFromBsp();
 }
 
-// Define and initialize the static member
+// A static list of vertex types that are created when splitting an edge.
 unordered_map<int, VertexType*> Edge::splitVertexTypes;
 
 Edge* Edge::copy() {
@@ -47,11 +47,11 @@ void Edge::addHalfEdge(HalfEdge* halfEdge, int index) {
 	setHalfEdge(index, halfEdge);
 	halfEdge->setEdge(this);
 }
+
 void Edge::setHalfEdge(int index, HalfEdge* halfEdge) {
 	halfEdgeIds[index] = halfEdge->getId();
 }
 
-// New function to set halfEdge IDs directly.
 void Edge::setHalfEdgeIds(const vector<int>& ids) {
 	halfEdgeIds.resize(ids.size());
 	std::copy(ids.begin(), ids.end(), halfEdgeIds.begin());
@@ -60,14 +60,15 @@ void Edge::setHalfEdgeIds(const vector<int>& ids) {
 void Edge::destroy() {
 	model->getCurrent()->removeEdge(this);
 	delete this;
-};
+}
 
+// Split this edge into two new edges.
 SplitData Edge::split(bool splitFaces) {
     timer->start("split No Vertex");
 
-    // Create two new edges as copies of the current edge.
-	Edge* edge0 = this->copy();
-	Edge* edge1 = this->copy();
+    // Create two copies of this edge.
+	Edge* edge0 = copy();
+	Edge* edge1 = copy();
     vector<Edge*> newEdges = { edge0, edge1 };
 	edge0->setId(model->newId());
 	edge1->setId(model->newId());
@@ -76,17 +77,18 @@ SplitData Edge::split(bool splitFaces) {
 	edge0->setHalfEdgeIds({ -1, -1 });
 	edge1->setHalfEdgeIds({ -1, -1 });
 
-    // Get old halfEdges and set new ones.
-    vector<HalfEdge*> halfEdges = this->getHalfEdges();
+    vector<HalfEdge*> halfEdges = getHalfEdges();
     vector<HalfEdge*> nextHalfEdges;
     for (auto& halfEdge : halfEdges) {
         nextHalfEdges.push_back(halfEdge->next());
     }
 	if (splitFaces) {
+		// Split the face into two pieces.
 		for (auto& halfEdge : halfEdges) {
 			halfEdge->getFace()->split(halfEdge->next());
 		}
 	}
+	// Transfer existing half-edges to new edges.
     for (auto& halfEdge : halfEdges) {
         halfEdge->transfer(newEdges[halfEdge->getIsAtStart() ? 0 : 1]);
     }
@@ -97,23 +99,25 @@ SplitData Edge::split(bool splitFaces) {
     return SplitData(newEdges, nextHalfEdges);
 }
 
-pair<SplitData, Vertex*> Edge::fullSplit(double s) {
-	Vec3 middlePos = Vec3::lerp(
-		this->getHalfEdges()[0]->getPosition(),
-		this->getHalfEdges()[1]->getPosition(), s);
+EdgeType* Edge::getEdgeType() const {
+	return type;
+}
 
-	auto edgeType = this->getEdgeType();
-	auto modelCopy = model;
+pair<SplitData, Vertex*> Edge::fullSplit(double s) {
+	// Interpolate middle position.
+	Vec3 middlePos = Vec3::lerp(
+		getHalfEdges()[0]->getPosition(),
+		getHalfEdges()[1]->getPosition(), s);
+
 	SplitData split = this->split(false);
-	VertexType* vertexType = Edge::getVertexType(edgeType);
-	Vertex* newVertex = new Vertex(modelCopy, middlePos, vertexType);
+	VertexType* vertexType = Edge::getVertexType(getEdgeType());
+	Vertex* newVertex = new Vertex(model, middlePos, vertexType);
 	newVertex->createHalfEdges();
 	
 	vector<Edge*> addedEdges;
 	for (auto halfEdge : newVertex->getHalfEdges()) {
 		addedEdges.push_back(halfEdge->getEdge());
 	}
-	
 	vector<Face*> addedFaces;
 	for (auto halfEdge : newVertex->getHalfEdges()) {
 		addedFaces.push_back(halfEdge->getFace());
@@ -155,11 +159,11 @@ pair<SplitData, Vertex*> Edge::fullSplit(double s) {
 
 VertexType* Edge::getVertexType(EdgeType* edgeType) {
 	const int id = edgeType->getId();
-    // Check if the vertex type already exists or if it's an old version.
+    // Create the split vertex type if it doesn't exist.
     if (splitVertexTypes.find(id) == splitVertexTypes.end() ||
         splitVertexTypes[id]->getHalfEdgeTypes()[0].edge != edgeType) {
 
-        // Spliced vertices have two edges.
+        // Create a spliced vertex with two edges.
 		VertexType* vertexType = new VertexType();
         vertexType->addEdge(edgeType, true, edgeType->getAngle());
         vertexType->addEdge(edgeType, false, edgeType->getAngle());
@@ -170,6 +174,8 @@ VertexType* Edge::getVertexType(EdgeType* edgeType) {
     return splitVertexTypes[id];
 }
 
+// Drop one of the dimensions and check for intersections.
+// This assumes the edges are on the same plane.
 bool Edge::intersects(Edge* edgeB) {
     auto result = Intersector::intersect(
         this->getHalfEdges()[0]->getPosition().dropDim(2),
