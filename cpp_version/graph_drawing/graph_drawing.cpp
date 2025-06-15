@@ -2,22 +2,8 @@
 #include "graph_drawing.h"
 #include <fstream>
 
-GraphDrawing::GraphDrawing(
-	map<int, HalfEdge*> halfEdgeMap,
-	map<int, Face*>     faceMap,
-	map<int, Edge*>     edgeMap,
-	map<int, Vertex*>   vertexMap,
-	map<int, BspNode*> bspNodeMap,
-	int bspRootId
-) : halfEdgeMap(halfEdgeMap)
-	, faceMap(faceMap)
-	, edgeMap(edgeMap)
-	, vertexMap(vertexMap)
-	, bspNodeMap(bspNodeMap)
-	, bspRootId(bspRootId) {}
-
-// This will copy each item into the current model.
-// This happens in the constructor of each item.
+// This copies each item into the current model.
+// Each item is copied in the constructor of each item.
 void GraphDrawing::copy() {
 	for (const auto& [id, ptr] : halfEdgeMap) {
 		ptr && ptr->copy();
@@ -109,11 +95,9 @@ Mesh GraphDrawing::exportMesh() {
 	vector<Vec3> normals;
 	vector<int> triangles;
 	vector<int> faceIndices;
-
 	for (const auto& [id, face] : faceMap) {
 		face->exportMesh(positions, normals, triangles, faceIndices);
 	}
-
 	return createMesh(positions, normals, triangles, faceIndices);
 }
 

@@ -19,18 +19,18 @@ Vertex::Vertex(Model* model, Vec3 position, VertexType* type)
 }
 
 void Vertex::createHalfEdges() {
-	vector<HalfEdgeType> halfEdgetypes = type->getHalfEdgeTypes();
+	vector<HalfEdgeType> halfEdgeTypes = type->getHalfEdgeTypes();
 
-	for (const auto& halfEdgetype : halfEdgetypes) {
-		EdgeType* edgeType = halfEdgetype.edge;
+	for (const auto& halfEdgeType : halfEdgeTypes) {
+		EdgeType* edgeType = halfEdgeType.edge;
 		const vector<FaceData> faceData = edgeType->faceData;
 
 		for (size_t faceIndex = 0; faceIndex < faceData.size(); ++faceIndex) {
 			const FaceData& faceDatum = faceData[faceIndex];
-			bool position = faceDatum.onRight ^ halfEdgetype.isAtStart;
-
-			if (position) {
-				createHalfEdge(halfEdgetype, (int)faceIndex);
+			bool doCreate = faceDatum.onRight ^ halfEdgeType.isAtStart;
+			// Most edges have two faces, we only create a half-edge half the time.
+			if (doCreate) {
+				createHalfEdge(halfEdgeType, (int)faceIndex);
 			}
 		}
 	}
@@ -89,4 +89,8 @@ Vec3 Vertex::getPosition() const {
 
 void Vertex::setPosition(Vec3 newPosition) {
 	position = newPosition;
+}
+
+VertexType* Vertex::getType() const {
+	return type;
 }

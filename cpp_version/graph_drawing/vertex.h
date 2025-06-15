@@ -12,24 +12,23 @@ class Vertex {
 	public:
 		Vertex(Model* model, int id, Vec3 position, VertexType* type, vector<int> halfEdgeIds);
 		Vertex(Model* model, Vec3 position, VertexType* type);
-		void createHalfEdges();
 		vector<HalfEdge*> getHalfEdges() const;
 		int getId() const;
 		HalfEdge* getHalfEdge(int index) const;
 		Vec3 getPosition() const;
-		void setPosition(Vec3 newPosition);
 		Vertex* copy();
-		VertexType* getType() const {
-			return type;
-		}
+		VertexType* getType() const;
+
+		void createHalfEdges();
+		void setPosition(Vec3 newPosition);
 		void destroy();
 
 	private:
+		Model* model;
 		int id;
 		Vec3 position;
 		VertexType* type;
 		vector<int> halfEdgeIds;
 
-		Model* model;
 		HalfEdge* createHalfEdge(const HalfEdgeType& halfEdgetype, int faceIndex);
 };
