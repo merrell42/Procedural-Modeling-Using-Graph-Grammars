@@ -10,6 +10,7 @@ These are roughly in priority order weighing cost vs benefits.
 * Get optimizer working like the web version.
 * Improve the structure of the grammar JSONs.
 * Implement on Unreal Engine, Houdini, and Godot.
+* Display the grammars and example models.
 * Add tests.
 
 ## Long-Term Goals

@@ -11,20 +11,18 @@
 #include "../third_party/json.h"
 #include "../graph_drawing/model.h"
 #include "../util/util.h"
+#include "../json versioning/readJsonFile.h"
 
 using namespace std;
 using Json = nlohmann::json;
 
 int main() {
-	// ifstream file("../../grammar data/2D Basic Shapes/square filled.json");
-	// ifstream file("../../grammar data/2D Branches/intersection.json");
-	ifstream file("../../grammar data/3D Shapes/box-grounded.json");
-	string content((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
-	file.close();
+	string filePath = "../../grammar data/2D Basic Shapes/square filled.json";
+	// string filePath = "../../grammar data/3D Shapes/box-grounded.json";
 	resetRandom(2);
 
 	try {
-		Json parsed = Json::parse(content);
+		Json parsed = readJsonFile(filePath, true);
 		cout << parsed["category"] << " " << parsed["name"] << endl;
 		auto hierarchy = GraphGrammar::import(parsed["solution"]);
 		auto model = new Model();

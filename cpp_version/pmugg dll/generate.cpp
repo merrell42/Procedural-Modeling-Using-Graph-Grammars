@@ -8,15 +8,13 @@
 #include "../mutator.h"
 #include "../graph_mutator.h"
 #include "../primitives/primitives.h"
-#include "../third_party/json.h"
 #include "../graph_drawing/model.h"
 #include "../util/util.h"
 #include "../settings.h"
+#include "../json versioning/readJsonFile.h"
 
 using namespace std;
 using Json = nlohmann::json;
-
-
 
 Model* model;
 Mutator* mutator;
@@ -24,16 +22,8 @@ Mutator* mutator;
 void initialize(const char* filePath, char* result, int len, int seed) {
 	resetRandom(seed);
 
-	ifstream file(filePath);
-	if (!file.is_open()) {
-		strcpy_s(result, len, "Error: Could not open file");
-		return;
-	}
-		
-	string content((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
-	file.close();
 	try {
-		Json parsed= Json::parse(content);
+		Json parsed = readJsonFile(filePath);
 		auto hierarchy = GraphGrammar::import(parsed["solution"]);
 		model = new Model();
 		mutator = new Mutator(model, new GraphMutator(hierarchy, model));
