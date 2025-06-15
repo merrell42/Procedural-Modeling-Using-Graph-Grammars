@@ -1,10 +1,8 @@
 #include "pch.h"
 #include "edge_type.h"
 #include "face_type.h"
-#include "..\decoration\brush.h"
+#include "..\graph\edge_settings.h"
 #include "..\util\util.h"
-
-
 
 int EdgeType::nextId = 0;
 
@@ -12,7 +10,7 @@ EdgeType::EdgeType(const vector<FaceData>& fData, const Vec3& direction,
                        const map<string, bool>& options)
     : faceData(fData)
     , dir(direction)
-    , brush(nullptr)
+    , edgeSettings(nullptr)
     , angle(atan2(dir.getY(), dir.getX()))
     , edgeLength(INFINITY)
     , offset(nullptr)
@@ -25,7 +23,7 @@ EdgeType::EdgeType(const vector<FaceData>& fData, const Vec3& direction,
 void EdgeType::setSpliced(bool newSpliced) {
     spliced = newSpliced;
     if (spliced) {
-        brush = new Brush();
+        edgeSettings = new EdgeSettings();
     }
 }
 
@@ -51,10 +49,10 @@ EdgeType* EdgeType::import(const Json& json, Primitives* shape) {
     
     auto* result = new EdgeType(fData, direction, options);
     
-    if (json.contains("brush") && !json["brush"].is_null()) {
-        result->brush = Brush::import(json["brush"]);
+    if (json.contains("edgeSettings") && !json["edgeSettings"].is_null()) {
+        result->edgeSettings = EdgeSettings::import(json["edgeSettings"]);
     }
-    // I think edge length is only needed for old grammars that have no brushes.
+    // I think edge length is only needed for old grammars that have no edgeSettings.
     // result->edgeLength = json["edgeLength"].is_null() ? Util::INF : json["edgeLength"].get<double>();
     /*result->angle = json.contains("angle") ?
         json["angle"].get<double>() :
@@ -75,8 +73,8 @@ const Vec3& EdgeType::getDir() const {
     return dir;
 }
 
-Brush* EdgeType::getBrush() const {
-    return brush;
+EdgeSettings* EdgeType::getEdgeSettings() const {
+    return edgeSettings;
 }
 
 double EdgeType::getEdgeLength() const {

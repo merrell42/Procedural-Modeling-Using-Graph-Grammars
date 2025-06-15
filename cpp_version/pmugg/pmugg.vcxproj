@@ -132,7 +132,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\decoration\brush.cpp" />
     <ClCompile Include="..\geometry\intersector.cpp" />
     <ClCompile Include="..\geometry\mesh.cpp" />
     <ClCompile Include="..\geometry\vec2.cpp" />
@@ -140,6 +139,7 @@
     <ClCompile Include="..\grammar_rules\production_rule.cpp" />
     <ClCompile Include="..\grammar_rules\rule_applier.cpp" />
     <ClCompile Include="..\grammar_rules\rule_applier_settings.cpp" />
+    <ClCompile Include="..\graph\edge_settings.cpp" />
     <ClCompile Include="..\graph\graph.cpp" />
     <ClCompile Include="..\graph\graph_edge.cpp" />
     <ClCompile Include="..\graph\graph_face.cpp" />
@@ -177,7 +177,6 @@
     <ClCompile Include="pmugg.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\decoration\brush.h" />
     <ClInclude Include="..\geometry\intersector.h" />
     <ClInclude Include="..\geometry\mesh.h" />
     <ClInclude Include="..\geometry\plane.h" />
@@ -186,6 +185,7 @@
     <ClInclude Include="..\grammar_rules\production_rule.h" />
     <ClInclude Include="..\grammar_rules\rule_applier.h" />
     <ClInclude Include="..\grammar_rules\rule_applier_settings.h" />
+    <ClInclude Include="..\graph\edge_settings.h" />
     <ClInclude Include="..\graph\graph.h" />
     <ClInclude Include="..\graph\graph_edge.h" />
     <ClInclude Include="..\graph\graph_face.h" />

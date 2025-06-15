@@ -4,7 +4,7 @@
 #include <map>
 #include "../geometry/vec3.h"
 #include "primitives.h"
-#include "../decoration/brush.h"
+#include "../graph/edge_settings.h"
 #include "../third_party/json.h"
 
 using Json = nlohmann::json;
@@ -25,7 +25,7 @@ public:
 
     const vector<FaceData>& getFaceData() const;
     const Vec3& getDir() const;
-    Brush* getBrush() const;
+    EdgeSettings* getEdgeSettings() const;
     double getAngle() const;
     double getEdgeLength() const;
     bool getIsRigid() const;
@@ -41,7 +41,7 @@ public:
 
 private:
     Vec3 dir;
-    Brush* brush;
+    EdgeSettings* edgeSettings;
     double angle;
     double edgeLength;
     Vec3* offset;

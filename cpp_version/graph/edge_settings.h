@@ -8,10 +8,10 @@
 using namespace std;
 using Json = nlohmann::json;
 
-class Brush {
+class EdgeSettings {
 public:
-    Brush();
-    static Brush* import(Json json);
+    EdgeSettings();
+    static EdgeSettings* import(Json json);
 
     void set(const string& name, double value);
     void set(const string& name, bool value);

@@ -548,12 +548,12 @@ Limits RuleApplier::findLimits() {
         double minLength = 0;
         double maxLength = numeric_limits<double>::infinity();
 
-        // TODO: Use brushes to set edge lengths.
+        // TODO: Use edgeSettings to set edge lengths.
         /*auto* edgeType = edge->getEdgeType();
-        auto* brush = edgeType->getBrush();
-        if (brush && brush->get("Strict Length")) {
-            minLength = brush->get("Min Length");
-            maxLength = brush->get("Max Length");
+        auto* edgeSettings = edgeType->getEdgeSettings();
+        if (edgeSettings && edgeSettings->get("Strict Length")) {
+            minLength = edgeSettings->get("Min Length");
+            maxLength = edgeSettings->get("Max Length");
         }*/
 
         minLimit.push_back(minLength);

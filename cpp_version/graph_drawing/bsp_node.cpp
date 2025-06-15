@@ -35,6 +35,7 @@ void BspNode::setParentId(int newParentId) {
 }
 
 bool BspNode::addEdge(Edge* edge) {
+    // If this node has no edges, add it here.
     if (edgeIds.size() > 0) {
         auto thisEdge = model->getCurrent()->getEdge(edgeIds[0]);
         auto halfEdges = thisEdge->getHalfEdges();
@@ -56,7 +57,7 @@ bool BspNode::addEdge(Edge* edge) {
             return below->addEdge(edge);
         }
         case PlaneClassification::BOTH: {
-            // This could be made slightly more efficient as we already know the edge is on both sides.
+            // hasEdgeIntersection could be made slightly more efficient as we already know the edge is on both sides.
             if (hasEdgeIntersection(edge)) {
                 return false;
             }

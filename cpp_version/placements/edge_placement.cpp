@@ -4,7 +4,7 @@
 #include "../graph_drawing/half_edge.h"
 #include "../graph_drawing/vertex.h"
 #include "../util/range.h"
-#include "../decoration/brush.h"
+#include "../graph/edge_settings.h"
 #include "../grammar_rules/rule_applier_settings.h"
 #include "face_placement.h"
 
@@ -85,13 +85,13 @@ Range EdgePlacement::getRange() const {
     auto mLength = dir.dot(mb1.m - mb0.m);
     auto bLength = dir.dot(mb1.b - mb0.b);
 
-    auto* brush = edge ? edge->getEdgeType()->getBrush() : nullptr;
-    double lengthMin = brush ? brush->getDouble("Min Length") : RuleApplierSettings::defaultLengthMin;
-    double lengthMax = brush ? brush->getDouble("Max Length") : RuleApplierSettings::defaultLengthMax;
+    auto* edgeSettings = edge ? edge->getEdgeType()->getEdgeSettings() : nullptr;
+    double lengthMin = edgeSettings ? edgeSettings->getDouble("Min Length") : RuleApplierSettings::defaultLengthMin;
+    double lengthMax = edgeSettings ? edgeSettings->getDouble("Max Length") : RuleApplierSettings::defaultLengthMax;
     double tileLength = 0;
     
-    if (brush && brush->getBool("Rigid Tiled")) {
-        tileLength = brush->getDouble("Tile Length");
+    if (edgeSettings && edgeSettings->getBool("Rigid Tiled")) {
+        tileLength = edgeSettings->getDouble("Tile Length");
     }
 
     return Range::transformCreate(mLength, bLength, Range(lengthMin, lengthMax, tileLength));
