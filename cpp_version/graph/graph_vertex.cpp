@@ -24,21 +24,8 @@ void GraphVertex::setHalfEdge(GraphHalfEdge* halfEdge, int index) {
     halfEdges[index] = halfEdge;
 }
 
-int GraphVertex::connectorIndex() const {
-    auto bVertices = graph->getBVertices();
-    auto it = find(bVertices.begin(), bVertices.end(), this);
-    if (it != bVertices.end()) {
-        // Compute the index
-        return (int)distance(bVertices.begin(), it);
-    } else {
-        return -1;
-    }
-}
-
-bool GraphVertex::inGraph() const {
-    return graph && find(graph->getVertices().begin(),
-                              graph->getVertices().end(),
-                              this) != graph->getVertices().end();
+int GraphVertex::boundaryIndex() const {
+    return indexOf(graph->getBVertices(), this);
 }
 
 GraphEdge* GraphVertex::interiorEdge() const {
@@ -70,8 +57,5 @@ void GraphVertex::setType(VertexType* newType) {
 }
 
 VertexType* GraphVertex::getType() {
-    if (kind == "e") {
-        // The edge case may not be handled correctly.
-    }
     return type;
 }

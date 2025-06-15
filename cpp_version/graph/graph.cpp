@@ -130,42 +130,31 @@ void mergePassSplices(GraphHalfEdge* half) {
 
 // Remove any spliced edges.
 void Graph::removeSplices() {
-    // Check if any half edges are spliced
-    bool hasSplices = any_of(
-        getHalfEdges().begin(),
-        getHalfEdges().end(),
-        [](GraphHalfEdge* half) { return half->isSpliced(); }
-    );
-
+    // Return early if there are no splices.
+    auto halfEdges = getHalfEdges();
+    bool hasSplices = false;
+    for (const auto& half : halfEdges) {
+        if (half->isSpliced()) {
+            hasSplices = true;
+            break;
+        }
+    }
     if (!hasSplices) {
         return;
     }
 
-    // This part is dangerous in Javascript.
-    // result->getConnectors();
-
-    auto halfEdges = getHalfEdges(); // Make a copy of the vector
-
-    // First pass: merge edges
+    // Merge pass each spliced half-edge.
     for (auto* half : halfEdges) {
         mergePassSplices(half);
     }
 
-    // Second pass: remove spliced edges
-    halfEdges = getHalfEdges(); // Get fresh copy after merges
+    // Remove the spliced half-edges.
+    halfEdges = getHalfEdges();
     for (auto* half : halfEdges) {
         if (half->isSpliced()) {
             removeHalfEdge(half);
-            auto* vertex = half->getVertex();
-            // TODO: I'm not sure if this check is necessary.
-            if (vertex->inGraph()) {
-                removeVertex(vertex);
-            }
-            auto* edge = half->getEdge();
-            // TODO: I'm not sure if this check is necessary.
-            if (edge->inGraph()) {
-                removeEdge(edge);
-            }
+            removeVertex(half->getVertex());
+            removeEdge(half->getEdge());
         }
     }
 }

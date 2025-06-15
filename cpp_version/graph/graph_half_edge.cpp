@@ -36,14 +36,14 @@ void GraphHalfEdge::connectVertex(GraphVertex* v, int index) {
     vertex->setHalfEdge(this, index);
 }
 
-void GraphHalfEdge::disconnectHalfEdge() {
+void GraphHalfEdge::disconnect() {
     if (next) {
         next->setPrev(nullptr);
     }
     next = nullptr;
 }
 
-void GraphHalfEdge::connectHalfEdge(GraphHalfEdge* n) {
+void GraphHalfEdge::connectNext(GraphHalfEdge* n) {
     next = n;
     n->setPrev(this);
 }
@@ -68,7 +68,7 @@ bool GraphHalfEdge::isSpliced() const {
     return edge && edge->getType()->getSpliced();
 }
 
-bool GraphHalfEdge::isLoopy() {
+bool GraphHalfEdge::isLoopy() const {
     auto connected = GraphFace::getConnectedHalfEdges(this);
     auto* last = connected.back();
     return last->getNext() != nullptr;

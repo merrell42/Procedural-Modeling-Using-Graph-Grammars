@@ -15,7 +15,7 @@ const vector<vector<GraphHalfEdge*>>& GraphEdge::getHalfEdges() const {
     return halfEdges;
 }
 
-EdgeType* GraphEdge::getType() {
+EdgeType* GraphEdge::getType() const {
     return type;
 }
 
@@ -23,11 +23,6 @@ GraphEdge* GraphEdge::connectGraph(Graph* newGraph) {
     graph = newGraph;
     graph->addEdge(this);
     return this;
-}
-
-bool GraphEdge::inGraph() const {
-    auto vec = graph->getEdges();
-    return find(vec.begin(), vec.end(), this) != vec.end();
 }
 
 void GraphEdge::merge(GraphEdge* edgeB, bool mergeForward) {
@@ -41,21 +36,21 @@ void GraphEdge::merge(GraphEdge* edgeB, bool mergeForward) {
         
         if (!(forward ^ mergeForward)) {
             auto* nextB = halfB->getNext();
-            halfA->disconnectHalfEdge();
-            halfB->disconnectHalfEdge();
-            halfA->connectHalfEdge(nextB);
+            halfA->disconnect();
+            halfB->disconnect();
+            halfA->connectNext(nextB);
         } else {
             auto* prevB = halfB->getPrev();
             if (prevB) {
-                prevB->disconnectHalfEdge();
-                halfB->disconnectHalfEdge();
-                prevB->connectHalfEdge(halfA);
+                prevB->disconnect();
+                halfB->disconnect();
+                prevB->connectNext(halfA);
             }
             halfA->connectVertex(halfB->getVertex(), halfB->getVertexIndex());
         }
         
         auto* face = halfB->getFace();
-        face->replaceHalfEdge(halfB, halfA, false);
+        face->replaceHalfEdge(halfB, halfA);
         interior->removeHalfEdge(halfB);
     }
     interior->removeEdge(edgeB);
@@ -76,6 +71,6 @@ void GraphEdge::import(const Json& json) {
     }
 }
 
-void GraphEdge::setType(EdgeType* type_) {
-    type = type_;
+void GraphEdge::setType(EdgeType* newType) {
+    type = newType;
 }

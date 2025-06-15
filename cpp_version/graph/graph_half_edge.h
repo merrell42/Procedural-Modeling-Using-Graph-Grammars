@@ -26,23 +26,22 @@ public:
     GraphFace* getFace() const;
     int getVertexIndex() const;
     int getEdgeIndex() const;
+    bool isSpliced() const;
+    bool isLoopy() const;
+    Vec3 getDir() const;
 
-    // Graph operations
     GraphHalfEdge* connectGraph(Graph* newGraph);
     void connectVertex(GraphVertex* v, int index);
-    void disconnectHalfEdge();
-    void connectHalfEdge(GraphHalfEdge* next);
+    void disconnect();
+    void connectNext(GraphHalfEdge* next);
     void setPrev(GraphHalfEdge* p);
     void setFace(GraphFace* f);
-
-    bool isSpliced() const;
-    bool isLoopy();
-    Vec3 getDir() const;
 
 private:
     bool forward;
     GraphVertex* vertex;
     GraphEdge* edge;
+    // The indices within the vertex and edge.
     int vertexIndex;
     int edgeIndex;
     GraphHalfEdge* prev;

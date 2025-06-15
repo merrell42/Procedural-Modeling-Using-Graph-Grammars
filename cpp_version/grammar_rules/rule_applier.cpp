@@ -150,7 +150,7 @@ EditGraph* RuleApplier::createGraph() {
     for (size_t i = 0; i < numVertices; ++i) {
         auto* v = endVertices[i];
 
-        if (v->connectorIndex() < 0) {
+        if (v->boundaryIndex() < 0) {
             auto* type = v->getType();
             
             // Create a random position. This was for debugging in the web version.
@@ -198,10 +198,10 @@ EditGraph* RuleApplier::createGraph() {
             int hIndex = Util::findIndex(endVertices, hVertex);
             auto* core = merged->vertices[hIndex];
 
-            int connectorIndex = hVertex->connectorIndex();
-            if (connectorIndex >= 0) {
+            int boundaryIndex = hVertex->boundaryIndex();
+            if (boundaryIndex >= 0) {
                 int startIndex = Util::findIndex(startGraph->getEdges(),
-                    startGraph->getBVertices()[connectorIndex]->interiorEdge());
+                    startGraph->getBVertices()[boundaryIndex]->interiorEdge());
                 
                 if (splitEdges[startIndex].size() == 1) {
                     int count = 0;

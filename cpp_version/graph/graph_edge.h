@@ -14,15 +14,15 @@ class GraphEdge {
 public:
     GraphEdge();
     ~GraphEdge() = default;
+    void import(const Json& json);
 
     const vector<vector<GraphHalfEdge*>>& getHalfEdges() const;
-    EdgeType* getType();
-    void setType(EdgeType* type_);
+    EdgeType* getType() const;
+    void setType(EdgeType* newType);
 
     GraphEdge* connectGraph(Graph* graph);
-    bool inGraph() const;
+    // Merge two colinear edges into one.
     void merge(GraphEdge* edgeB, bool mergeForward);
-    void import(const Json& json);
 
 private:
     vector<vector<GraphHalfEdge*>> halfEdges;

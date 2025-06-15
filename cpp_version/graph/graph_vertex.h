@@ -23,13 +23,13 @@ public:
     const vector<GraphHalfEdge*>& getHalfEdges() const { return halfEdges; }
     VertexType* getType();
     void setType(VertexType* newType);
-    int connectorIndex() const;
+    // The index of the vertex on the graph boundary.
+    int boundaryIndex() const;
+    // Returns the first edge next to the vertex.
     GraphEdge* interiorEdge() const;
 
     GraphVertex* connectGraph(Graph* graph);
     void setHalfEdge(GraphHalfEdge* halfEdge, int index);
-
-    bool inGraph() const;
 
     // TODO: Replace with edgeType.
     string kind;

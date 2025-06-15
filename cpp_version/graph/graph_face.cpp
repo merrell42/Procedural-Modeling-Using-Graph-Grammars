@@ -39,11 +39,11 @@ void GraphFace::import(const Json & json) {
     // }
 }
 
-vector<GraphHalfEdge*> GraphFace::getConnectedHalfEdges(GraphHalfEdge* start) {
+vector<GraphHalfEdge*> GraphFace::getConnectedHalfEdges(const GraphHalfEdge* start) {
     vector<GraphHalfEdge*> result;
-    GraphHalfEdge* current = start;
+    const GraphHalfEdge* current = start;
     do {
-        result.push_back(current);
+        result.push_back(const_cast<GraphHalfEdge*>(current));
         current = current->getNext();
     } while (current && current != start);
     return result;
@@ -56,13 +56,13 @@ vector<GraphHalfEdge*> GraphFace::getOuterHalfEdges() const {
     return vector<GraphHalfEdge*>();
 }
 
-void GraphFace::replaceHalfEdge(GraphHalfEdge* a, GraphHalfEdge* b, bool force) {
-    if ((outerComponent == a) || (force && outerComponent)) {
+void GraphFace::replaceHalfEdge(GraphHalfEdge* a, GraphHalfEdge* b) {
+    if (outerComponent == a) {
         outerComponent = b;
     }
     
     for (size_t i = 0; i < innerComponents.size(); i++) {
-        if ((innerComponents[i] == a) || (force && innerComponents[i])) {
+        if (innerComponents[i] == a) {
             innerComponents[i] = b;
         }
     }
@@ -73,6 +73,6 @@ bool GraphFace::isLoopy() const {
     return outerComponent->isLoopy();
 }
 
-void GraphFace::setType(FaceType* type_) {
-    type = type_;
+void GraphFace::setType(FaceType* newType) {
+    type = newType;
 }

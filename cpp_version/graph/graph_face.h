@@ -19,15 +19,16 @@ public:
     FaceType* getType() const { return type; }
     
     GraphFace* connectGraph(Graph* graph);
-    void setType(FaceType* type_);
+    void setType(FaceType* newType);
     
-    static vector<GraphHalfEdge*> getConnectedHalfEdges(GraphHalfEdge* start);
+    static vector<GraphHalfEdge*> getConnectedHalfEdges(const GraphHalfEdge* start);
     vector<GraphHalfEdge*> getOuterHalfEdges() const;
-    void replaceHalfEdge(GraphHalfEdge* a, GraphHalfEdge* b, bool force);
+    void replaceHalfEdge(GraphHalfEdge* a, GraphHalfEdge* b);
     bool isLoopy() const;
 
 private:
     GraphHalfEdge* outerComponent;
+    // Inner components are not currently used, but they may be needed for holes in the future.
     vector<GraphHalfEdge*> innerComponents;
     FaceType* type;
     Graph* graph;

@@ -15,24 +15,29 @@ class View;
 class Primitives;
 struct DrawOptions;
 
+// A graph represents an abstract angle graph. Like a graph drawing it
+// is a doubly connected edge list (DCEL) with vertices, edges, half-edges, and faces.
+// But the vertices and other geometry have no position.
 class Graph {
 public:
     Graph();
     ~Graph() = default;
+    // Import a graph from a JSON object.
     static Graph* import(const Json& json, Primitives* shape = nullptr);
 
     const vector<GraphVertex*>& getVertices() const;
     const vector<GraphEdge*>& getEdges() const;
     const vector<GraphHalfEdge*>& getHalfEdges() const;
     const vector<GraphFace*>& getFaces() const;
+
     const vector<GraphVertex*>& getBVertices() const;
     const vector<GraphHalfEdge*>& getBHalfEdges() const;
     const vector<GraphFace*>& getBFaces() const;
+
     GraphEdge* getEdge(int index) const;
     GraphHalfEdge* getHalfEdge(int index) const;
     int getId() const;
 
-    // Graph operations
     void addVertex(GraphVertex* vertex);
     void addEdge(GraphEdge* edge);
     void addHalfEdge(GraphHalfEdge* halfEdge);
@@ -50,7 +55,7 @@ private:
     vector<GraphHalfEdge*> halfEdges;
     vector<GraphFace*> faces;
 
-    // Boundary vertices, halfEdges, and faces.
+    // Boundary vertices, halfEdges, and faces. They are on the graph boundary.
     vector<GraphVertex*> bVertices;
     vector<GraphHalfEdge*> bHalfEdges;
     vector<GraphFace*> bFaces;

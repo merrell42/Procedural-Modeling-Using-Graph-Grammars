@@ -42,7 +42,7 @@ Morphism* MorphismFinder::findMorphism(Graph* graphB) {
         index1++;
     }
 
-    bool isConnector = verticesB[index1]->connectorIndex() >= 0;
+    bool isConnector = verticesB[index1]->boundaryIndex() >= 0;
     auto* vertexType = verticesB[index1]->getType();
     auto vertexMap = model->getCurrent()->getVertexMap();
     int N = (int)vertexMap.size();
@@ -315,8 +315,8 @@ Morphism* MorphismFinder::spliceHalfEdge(
         GraphVertex* vertexB0 = graphB->getVertices()[vIndex0];
         GraphVertex* vertexB1 = graphB->getVertices()[vIndex1];
 
-        bool isConnector0 = (vertexB0->connectorIndex() >= 0);
-        bool isConnector1 = (vertexB1->connectorIndex() >= 0);
+        bool isConnector0 = (vertexB0->boundaryIndex() >= 0);
+        bool isConnector1 = (vertexB1->boundaryIndex() >= 0);
 
         if (!(isConnector0 ^ isConnector1)) {
             cout << "Expected one of the vertices to be a connector." << endl;
@@ -365,7 +365,7 @@ Morphism* MorphismFinder::assignHalfEdge(HalfEdge* halfEdgeA, GraphHalfEdge* hal
     GraphVertex* vertexB = halfB->getNext()->getVertex();
     int vIndexB = indexOf(info->verticesB, vertexB);
 
-    bool isConnector = vertexB->connectorIndex() >= 0;
+    bool isConnector = vertexB->boundaryIndex() >= 0;
     auto vertexType = vertexB->getType();
 
     if (!isConnector && vertexType->getSpliced() && map->vertexBtoA[vIndexB] == 0) {
