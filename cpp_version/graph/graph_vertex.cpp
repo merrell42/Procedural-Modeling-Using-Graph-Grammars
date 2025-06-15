@@ -25,7 +25,7 @@ void GraphVertex::setHalfEdge(GraphHalfEdge* halfEdge, int index) {
 }
 
 int GraphVertex::boundaryIndex() const {
-    return indexOf(graph->getBVertices(), this);
+    return indexOf(graph->getBVertices(), const_cast<GraphVertex*>(this));
 }
 
 GraphEdge* GraphVertex::interiorEdge() const {
