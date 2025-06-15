@@ -109,9 +109,11 @@ pair<SplitData, Vertex*> Edge::fullSplit(double s) {
 		getHalfEdges()[0]->getPosition(),
 		getHalfEdges()[1]->getPosition(), s);
 
+	auto edgeType = getEdgeType();
+	auto modelCopy = model;
 	SplitData split = this->split(false);
-	VertexType* vertexType = Edge::getVertexType(getEdgeType());
-	Vertex* newVertex = new Vertex(model, middlePos, vertexType);
+	VertexType* vertexType = Edge::getVertexType(edgeType);
+	Vertex* newVertex = new Vertex(modelCopy, middlePos, vertexType);
 	newVertex->createHalfEdges();
 	
 	vector<Edge*> addedEdges;
