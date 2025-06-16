@@ -150,13 +150,13 @@
     <ClInclude Include="..\graph\edge_settings.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\json versioning\readJsonFile.h">
+    <ClInclude Include="..\json versioning\json_migrations.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\json versioning\jsonVersionManager.h">
+    <ClInclude Include="..\json versioning\json_version_manager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\json versioning\jsonMigrations.h">
+    <ClInclude Include="..\json versioning\read_json_file.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -293,13 +293,13 @@
     <ClCompile Include="..\graph\edge_settings.cpp">
       <Filter>Header Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\json versioning\readJsonFile.cpp">
+    <ClCompile Include="..\json versioning\json_migrations.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\json versioning\jsonMigrations.cpp">
+    <ClCompile Include="..\json versioning\json_version_manager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\json versioning\jsonVersionManager.cpp">
+    <ClCompile Include="..\json versioning\read_json_file.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

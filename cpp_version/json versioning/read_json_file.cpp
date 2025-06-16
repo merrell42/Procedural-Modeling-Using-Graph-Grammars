@@ -1,7 +1,7 @@
 #include "pch.h"
-#include "readJsonFile.h"
-#include "jsonVersionManager.h"
-#include "jsonMigrations.h"
+#include "read_json_file.h"
+#include "json_version_manager.h"
+#include "json_migrations.h"
 #include <fstream>
 
 using namespace std;

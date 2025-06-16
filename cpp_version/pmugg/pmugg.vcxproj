@@ -160,9 +160,9 @@
     <ClCompile Include="..\graph_morphism\morphism_path.cpp" />
     <ClCompile Include="..\graph_morphism\morphism_state.cpp" />
     <ClCompile Include="..\graph_mutator.cpp" />
-    <ClCompile Include="..\json versioning\jsonMigrations.cpp" />
-    <ClCompile Include="..\json versioning\jsonVersionManager.cpp" />
-    <ClCompile Include="..\json versioning\readJsonFile.cpp" />
+    <ClCompile Include="..\json versioning\json_migrations.cpp" />
+    <ClCompile Include="..\json versioning\json_version_manager.cpp" />
+    <ClCompile Include="..\json versioning\read_json_file.cpp" />
     <ClCompile Include="..\mutator.cpp" />
     <ClCompile Include="..\placements\edge_placement.cpp" />
     <ClCompile Include="..\placements\face_placement.cpp" />
@@ -209,9 +209,9 @@
     <ClInclude Include="..\graph_morphism\morphism_path.h" />
     <ClInclude Include="..\graph_morphism\morphism_state.h" />
     <ClInclude Include="..\graph_mutator.h" />
-    <ClInclude Include="..\json versioning\jsonMigrations.h" />
-    <ClInclude Include="..\json versioning\jsonVersionManager.h" />
-    <ClInclude Include="..\json versioning\readJsonFile.h" />
+    <ClInclude Include="..\json versioning\json_migrations.h" />
+    <ClInclude Include="..\json versioning\json_version_manager.h" />
+    <ClInclude Include="..\json versioning\read_json_file.h" />
     <ClInclude Include="..\mutator.h" />
     <ClInclude Include="..\placements\edge_placement.h" />
     <ClInclude Include="..\placements\face_placement.h" />
