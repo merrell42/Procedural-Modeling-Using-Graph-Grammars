@@ -26,12 +26,6 @@ struct EditGraph {
     vector<Face*> faces;
 };
 
-// Helper struct for edge data
-struct EdgeData {
-    Edge* edge = nullptr;
-    // double length = 0;
-};
-
 struct Limits {
     vector<double> min;
     vector<double> max;
@@ -69,7 +63,6 @@ private:
     int dims = 2;
     
     vector<MorphismPath*> openPaths;
-    vector<EdgeData> edgeData;
     vector<Edge*> edges;
     Model* model = nullptr;
 

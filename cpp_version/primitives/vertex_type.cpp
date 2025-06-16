@@ -3,10 +3,6 @@
 #include "edge_type.h"
 #include "primitives.h"
 #include "../util/util.h"
-#include <algorithm>
-#define _USE_MATH_DEFINES
-#include <cmath>
-#include <math.h>
 
 int VertexType::nextId = 0;
 
@@ -51,12 +47,8 @@ VertexType* VertexType::import(const Json& json, Primitives* shape) {
         halfEdgeType.edge = shape->edgeTypes[halfEdgeTypeJson["edge"].get<int>()];
         halfEdgeType.isAtStart = halfEdgeTypeJson["isAtStart"];
         if (!spliced) {
-            // TODO: Remove unneeded JSON values.
-            // halfEdgeType.adjustedAngle = halfEdgeTypeJson["adjustedAngle"];
-            // halfEdgeType.angle = halfEdgeTypeJson["angle"];
             halfEdgeType.dir = halfEdgeTypeJson.contains("dir") ? 
                 Vec3::import(halfEdgeTypeJson["dir"]) : Vec3();
-            // halfEdgeType.directedId = halfEdgeTypeJson["directedId"];
         }
         result->halfEdgeTypes.push_back(halfEdgeType);
     }

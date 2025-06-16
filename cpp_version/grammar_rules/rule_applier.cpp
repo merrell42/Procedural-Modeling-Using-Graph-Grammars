@@ -56,15 +56,10 @@ void RuleApplier::create(const Production& production, Model* model_, int dims_)
 }
 
 void RuleApplier::addEdge(Edge* edge, bool addToGraph) {
-    EdgeData datum;
-    datum.edge = edge;
-    
-    auto edgeHalfEdges = edge->getHalfEdges();
-    
-    edgeData.push_back(datum);
     edges.push_back(edge);
 
     if (addToGraph) {
+        auto edgeHalfEdges = edge->getHalfEdges();
         for (auto* halfEdge : edgeHalfEdges) {
             Util::union_(graph->vertices, {halfEdge->getVertex()});
         }
@@ -767,9 +762,8 @@ void RuleApplier::freeOneVertex(Vertex* vertex) {
     // Process all vertex halfEdges
     for (auto* vHalfEdge : vertexHalfEdges) {
         auto* edge = vHalfEdge->getEdge();
-        auto hasEdge = [edge](const EdgeData& data) { return data.edge == edge; };
-        
-        if (find_if(edgeData.begin(), edgeData.end(), hasEdge) == edgeData.end()) {
+        // Add edge if it's not already in edges.
+        if (std::find(edges.begin(), edges.end(), edge) == edges.end()) {
             addEdge(edge, true);
         }
     }
@@ -899,8 +893,7 @@ bool RuleApplier::placeVertexPositions(const vector<double>& positions) {
 void RuleApplier::reject() {
     delete graph;
     graph = nullptr;
-    
-    edgeData.clear();
+
     edges.clear();
     freeVertices.clear();
     freeEdges.clear();
