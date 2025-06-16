@@ -1,41 +1,153 @@
 #include "pch.h"
 #include "jsonVersionManager.h"
 
-// Example update function from version 0 to 1
-/*void jsonMigration1(Json& json) {
-    if (!json.contains("newField")) {
-        json["newField"] = "default value";
-    }
-    
-    // Example: Rename a field
-    /*if (json.contains("oldFieldName")) {
-        json["newFieldName"] = json["oldFieldName"];
-        json.erase("oldFieldName");
-    }
-    
-    // Example: Transform data
-    if (json.contains("numbers") && json["numbers"].is_array()) {
-        for (auto& num : json["numbers"]) {
-            // Example: Double all numbers
-            num = num.get<double>() * 2;
+void edgeTypesMigration1(Json& json) {
+    for (auto& edgeType : json["edgeTypes"]) {
+        Json newEdgeType;
+        // Only keep specified fields
+        const vector<string> allowedFields = {
+            "faceData", "dir", "isRigid", "isRigidTiled", "spliced"
+        };
+        
+        for (const auto& field : allowedFields) {
+            if (edgeType.contains(field)) {
+                newEdgeType[field] = edgeType[field];
+            }
         }
-    } */
-//}
+
+        if (edgeType.contains("brush")) {
+            Json edgeSettings = edgeType["brush"];
+            Json newSettings;
+            const vector<string> allowedFields = {
+                "Min Length", "Max Length", "Tile Length", "Rigid Tiled"
+            };
+            for (const auto& field : allowedFields) {
+                if (edgeSettings.contains(field)) {
+                    newSettings[field] = edgeSettings[field];
+                }
+            }
+            newEdgeType["edgeSettings"] = newSettings;
+        }
+
+        edgeType = newEdgeType;
+    }
+}
+
+void faceTypesMigration1(Json& json) {
+    for (auto& faceType : json["faceTypes"]) {
+        Json newFaceType;
+        const vector<string> allowedFields = {
+            "material", "normal", "color"
+        };
+        
+        for (const auto& field : allowedFields) {
+            if (faceType.contains(field)) {
+                newFaceType[field] = faceType[field];
+            }
+        }
+        if (newFaceType.contains("material") && !newFaceType["material"].is_string()) {
+            newFaceType.erase("material");
+        }
+        faceType = newFaceType;
+    }
+}
+
+void vertexTypesMigration1(Json& json) {
+    for (auto& vertexType : json["vertexTypes"]) {
+        vertexType.erase("decoration");
+        if (vertexType.contains("connections")) {
+            Json halfEdges = vertexType["connections"];
+            for (auto& halfEdge : halfEdges) {
+                Json newHalfEdge;
+                const vector<string> allowedFields = {
+                    "edge", "isAtStart", "dir"
+                };
+                for (const auto& field : allowedFields) {
+                    if (halfEdge.contains(field)) {
+                        newHalfEdge[field] = halfEdge[field];
+                    }
+                }
+                halfEdge = newHalfEdge;
+            }
+            vertexType["halfEdgeTypes"] = halfEdges;
+            vertexType.erase("connections");
+        }
+    }
+}
+
+void edgeOrFaceTypeMigration1(Json& types) {
+    Json newTypes = Json::array();
+    for (const auto& type : types) {
+        if (type.contains("type")) {
+            newTypes.push_back(type["type"]);
+        }
+    }
+    types = newTypes;
+}
+
+void vertexTypeMigration1(Json& types) {
+    Json newTypes = Json::array();
+    for (const auto& type : types) {
+        Json newType;
+        if (type.contains("type")) {
+            newType["type"] = type["type"];
+        }
+        if (type.contains("kind")) {
+            newType["kind"] = type["kind"];
+        }
+        newTypes.push_back(newType);
+    }
+    types = newTypes;
+}
+
+void interiorMigration1(Json& interior) {
+    interior.erase("connectorGroups");
+    
+    // Filter vertices to only keep halfEdges
+    Json vertices = interior["vertices"];
+    for (auto& vertex : vertices) {
+        Json newVertex;
+        if (vertex.contains("halfEdges")) {
+            newVertex["halfEdges"] = vertex["halfEdges"];
+        }
+        vertex = newVertex;
+    }
+    interior["vertices"] = vertices;
+
+    // Filter faces to only keep outerComponent
+    Json faces = interior["faces"];
+    for (auto& face : faces) {
+        Json newFace;
+        if (face.contains("outerComponent")) {
+            newFace["outerComponent"] = face["outerComponent"];
+        }
+        face = newFace;
+    }
+    interior["faces"] = faces;
+}
 
 void graphMigration1(Json& json) {
     Json newJson;
     
     if (json.contains("interior")) {
-        newJson["interior"] = json["interior"];
+        Json interior = json["interior"];
+        interiorMigration1(interior);
+        newJson["interior"] = interior;
     }
     if (json.contains("vertices")) {
-        newJson["vertexTypes"] = json["vertices"];
+        Json vertexTypes = json["vertices"];
+        vertexTypeMigration1(vertexTypes);
+        newJson["vertexTypes"] = vertexTypes;
     }
     if (json.contains("edges")) {
-        newJson["edgeTypes"] = json["edges"];
+        Json edgeTypes = json["edges"];
+        edgeOrFaceTypeMigration1(edgeTypes);
+        newJson["edgeTypes"] = edgeTypes;
     }
     if (json.contains("faces")) {
-        newJson["faceTypes"] = json["faces"];
+        Json faceTypes = json["faces"];
+        edgeOrFaceTypeMigration1(faceTypes);
+        newJson["faceTypes"] = faceTypes;
     }
     if (json.contains("morphism")) {
         newJson["morphism"] = json["morphism"];
@@ -94,6 +206,11 @@ void jsonMigration1(Json& json) {
     }
     // Apply migration to all transition arrays
     transitionArraysMigration(json);
+    json.erase("useNetworks");
+    json["types"].erase("xml");
+    edgeTypesMigration1(json["types"]);
+    faceTypesMigration1(json["types"]);
+    vertexTypesMigration1(json["types"]);
 }
 
 void registerJsonMigrations() {

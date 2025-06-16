@@ -42,7 +42,7 @@ VertexType* VertexType::import(const Json& json, Primitives* shape) {
     bool spliced = json["spliced"];
     result->spliced = spliced;
 
-    for (const auto& halfEdgeTypeJson : json["connections"]) {
+    for (const auto& halfEdgeTypeJson : json["halfEdgeTypes"]) {
         HalfEdgeType halfEdgeType;
         halfEdgeType.edge = shape->edgeTypes[halfEdgeTypeJson["edge"].get<int>()];
         halfEdgeType.isAtStart = halfEdgeTypeJson["isAtStart"];

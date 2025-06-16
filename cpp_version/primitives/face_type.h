@@ -16,8 +16,6 @@ public:
 
     static FaceType* import(const Json& json);
 
-    static constexpr double EPS = 1e-5;
-
     Vec3 u;
     Vec3 v;
     int id;

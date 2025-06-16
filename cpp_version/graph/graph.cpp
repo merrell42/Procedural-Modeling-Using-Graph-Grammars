@@ -87,12 +87,12 @@ Graph* Graph::import(const Json& json, Primitives* shape) {
     }
     for (size_t index = 0; index < json["edgeTypes"].size(); ++index) {
         auto edgeData = json["edgeTypes"][index];
-        int type = edgeData["type"].get<int>();
+        int type = edgeData.get<int>();
         result->getEdges()[index]->setType(shape->edgeTypes[type]);
     }
     for (size_t index = 0; index < json["faceTypes"].size(); ++index) {
         auto faceData = json["faceTypes"][index];
-        int type = faceData["type"].get<int>();
+        int type = faceData.get<int>();
         result->getFaces()[index]->setType(shape->faceTypes[type]);
     }
     if (json.contains("morphism")) {

@@ -44,15 +44,13 @@ EdgeType* EdgeType::import(const Json& json, Primitives* shape) {
     };
     
     auto* result = new EdgeType(fData, direction, options);
-    
+
+    // TODO: Edge Settings are often repeated. Save one copy and use an index to it.
     if (json.contains("edgeSettings") && !json["edgeSettings"].is_null()) {
         result->edgeSettings = EdgeSettings::import(json["edgeSettings"]);
     }
     // I think edge length is only needed for old grammars that have no edgeSettings.
     // result->edgeLength = json["edgeLength"].is_null() ? Util::INF : json["edgeLength"].get<double>();
-    /*result->angle = json.contains("angle") ?
-        json["angle"].get<double>() :
-        Vec2::angle(Vec2::ORIGIN, result->dir);*/
     result->setSpliced(json["spliced"]);
     
     return result;
