@@ -1,1 +1,5369 @@
-{"category":"2D Regions","name":"Octagons","solution":{"useNetworks":true,"types":{"vertexTypes":[{"connections":[{"adjustedAngle":-2.3522444901923447,"angle":-2.356194490192345,"dir":{"x":-0.7071067811865476,"y":-0.7071067811865475,"z":0},"directedId":395,"edge":0,"faceIds":[1,0],"isAtStart":false},{"adjustedAngle":1.5747763267948969,"angle":1.5707963267948968,"dir":{"x":-1.6081226496766364e-16,"y":1,"z":0},"directedId":398,"edge":2,"faceIds":[1,0],"isAtStart":true}],"decoration":null,"spliced":false},{"connections":[{"adjustedAngle":0.7893381633974483,"angle":0.7853981633974483,"dir":{"x":0.7071067811865476,"y":0.7071067811865475,"z":0},"directedId":394,"edge":0,"faceIds":[0,1],"isAtStart":true},{"adjustedAngle":3.145562653589793,"angle":3.141592653589793,"dir":{"x":-1,"y":-2.220446049250313e-16,"z":0},"directedId":397,"edge":1,"faceIds":[0,1],"isAtStart":false}],"decoration":null,"spliced":false},{"connections":[{"adjustedAngle":-2.3522444901923447,"angle":-2.356194490192345,"dir":{"x":-0.7071067811865476,"y":-0.7071067811865475,"z":0},"directedId":395,"edge":0,"faceIds":[1,0],"isAtStart":false},{"adjustedAngle":0.003960000000000222,"angle":2.220446049250313e-16,"dir":{"x":1,"y":2.220446049250313e-16,"z":0},"directedId":396,"edge":1,"faceIds":[1,0],"isAtStart":true}],"decoration":null,"spliced":false},{"connections":[{"adjustedAngle":-1.5668063267948966,"angle":-1.5707963267948966,"dir":{"x":1.6081226496766364e-16,"y":-1,"z":0},"directedId":399,"edge":2,"faceIds":[1,0],"isAtStart":false},{"adjustedAngle":0.7893381633974483,"angle":0.7853981633974483,"dir":{"x":0.7071067811865476,"y":0.7071067811865475,"z":0},"directedId":394,"edge":0,"faceIds":[1,0],"isAtStart":true}],"decoration":null,"spliced":false},{"connections":[{"adjustedAngle":-0.7813881633974483,"angle":-0.7853981633974483,"dir":{"x":0.7071067811865477,"y":-0.7071067811865475,"z":0},"directedId":401,"edge":3,"faceIds":[1,0],"isAtStart":false},{"adjustedAngle":1.5747763267948969,"angle":1.5707963267948968,"dir":{"x":-1.6081226496766364e-16,"y":1,"z":0},"directedId":398,"edge":2,"faceIds":[1,0],"isAtStart":true}],"decoration":null,"spliced":false},{"connections":[{"adjustedAngle":0.004030000000000001,"angle":0,"dir":{"x":1,"y":1.2246467991473532e-16,"z":0},"directedId":403,"edge":4,"faceIds":[1,0],"isAtStart":false},{"adjustedAngle":2.360194490192345,"angle":2.356194490192345,"dir":{"x":-0.7071067811865477,"y":0.7071067811865475,"z":0},"directedId":400,"edge":3,"faceIds":[1,0],"isAtStart":true}],"decoration":null,"spliced":false},{"connections":[{"adjustedAngle":-0.7813881633974483,"angle":-0.7853981633974483,"dir":{"x":0.7071067811865477,"y":-0.7071067811865475,"z":0},"directedId":401,"edge":3,"faceIds":[1,0],"isAtStart":false},{"adjustedAngle":3.1456126535897933,"angle":3.141592653589793,"dir":{"x":-1,"y":-1.2246467991473532e-16,"z":0},"directedId":402,"edge":4,"faceIds":[1,0],"isAtStart":true}],"decoration":null,"spliced":false},{"connections":[{"adjustedAngle":-1.5668063267948966,"angle":-1.5707963267948966,"dir":{"x":1.6081226496766364e-16,"y":-1,"z":0},"directedId":399,"edge":2,"faceIds":[1,0],"isAtStart":false},{"adjustedAngle":2.360194490192345,"angle":2.356194490192345,"dir":{"x":-0.7071067811865477,"y":0.7071067811865475,"z":0},"directedId":400,"edge":3,"faceIds":[1,0],"isAtStart":true}],"decoration":null,"spliced":false},{"connections":[{"adjustedAngle":0.7894481633974483,"angle":0.7853981633974483,"dir":{"x":0.7071067811865475,"y":0.7071067811865476,"z":0},"directedId":405,"edge":5,"faceIds":[1,0],"isAtStart":false},{"adjustedAngle":3.1456126535897933,"angle":3.141592653589793,"dir":{"x":-1,"y":-1.2246467991473532e-16,"z":0},"directedId":402,"edge":4,"faceIds":[1,0],"isAtStart":true}],"decoration":null,"spliced":false},{"connections":[{"adjustedAngle":-2.352154490192345,"angle":-2.356194490192345,"dir":{"x":-0.7071067811865475,"y":-0.7071067811865476,"z":0},"directedId":404,"edge":5,"faceIds":[0,1],"isAtStart":true},{"adjustedAngle":1.5748663267948968,"angle":1.5707963267948968,"dir":{"x":-2.83276944882399e-16,"y":1,"z":0},"directedId":407,"edge":6,"faceIds":[0,1],"isAtStart":false}],"decoration":null,"spliced":false},{"connections":[{"adjustedAngle":-1.5667363267948964,"angle":-1.5707963267948963,"dir":{"x":2.83276944882399e-16,"y":-1,"z":0},"directedId":406,"edge":6,"faceIds":[0,1],"isAtStart":true},{"adjustedAngle":0.7894481633974483,"angle":0.7853981633974483,"dir":{"x":0.7071067811865475,"y":0.7071067811865476,"z":0},"directedId":405,"edge":5,"faceIds":[0,1],"isAtStart":false}],"decoration":null,"spliced":false},{"connections":[{"adjustedAngle":-2.352154490192345,"angle":-2.356194490192345,"dir":{"x":-0.7071067811865475,"y":-0.7071067811865476,"z":0},"directedId":404,"edge":5,"faceIds":[0,1],"isAtStart":true},{"adjustedAngle":0.004030000000000001,"angle":0,"dir":{"x":1,"y":1.2246467991473532e-16,"z":0},"directedId":403,"edge":4,"faceIds":[0,1],"isAtStart":false}],"decoration":null,"spliced":false},{"connections":[{"adjustedAngle":-1.5667363267948964,"angle":-1.5707963267948963,"dir":{"x":2.83276944882399e-16,"y":-1,"z":0},"directedId":406,"edge":6,"faceIds":[0,1],"isAtStart":true},{"adjustedAngle":2.360284490192345,"angle":2.356194490192345,"dir":{"x":-0.7071067811865477,"y":0.7071067811865474,"z":0},"directedId":409,"edge":7,"faceIds":[0,1],"isAtStart":false}],"decoration":null,"spliced":false},{"connections":[{"adjustedAngle":-0.7813181633974481,"angle":-0.7853981633974481,"dir":{"x":0.7071067811865477,"y":-0.7071067811865474,"z":0},"directedId":408,"edge":7,"faceIds":[0,1],"isAtStart":true},{"adjustedAngle":3.145562653589793,"angle":3.141592653589793,"dir":{"x":-1,"y":-2.220446049250313e-16,"z":0},"directedId":397,"edge":1,"faceIds":[0,1],"isAtStart":false}],"decoration":null,"spliced":false},{"connections":[{"adjustedAngle":0.003960000000000222,"angle":2.220446049250313e-16,"dir":{"x":1,"y":2.220446049250313e-16,"z":0},"directedId":396,"edge":1,"faceIds":[0,1],"isAtStart":true},{"adjustedAngle":2.360284490192345,"angle":2.356194490192345,"dir":{"x":-0.7071067811865477,"y":0.7071067811865474,"z":0},"directedId":409,"edge":7,"faceIds":[0,1],"isAtStart":false}],"decoration":null,"spliced":false},{"connections":[{"adjustedAngle":-0.7813181633974481,"angle":-0.7853981633974481,"dir":{"x":0.7071067811865477,"y":-0.7071067811865474,"z":0},"directedId":408,"edge":7,"faceIds":[0,1],"isAtStart":true},{"adjustedAngle":1.5748663267948968,"angle":1.5707963267948968,"dir":{"x":-2.83276944882399e-16,"y":1,"z":0},"directedId":407,"edge":6,"faceIds":[0,1],"isAtStart":false}],"decoration":null,"spliced":false}],"edgeTypes":[{"faceData":[{"type":1,"onRight":true},{"type":0,"onRight":false}],"brush":{"Image":"","color":"","Tiled":true,"Tile Length":1,"Width":0.05,"Thickness":0.05,"Min Length":0.1,"Max Length":4,"Bend":10,"Strict Length":false,"Power":-1,"Power Law":false,"Offset":0,"Rigid":false,"Rigid Tiled":false,"Flip":false,"Classified by angle":true,"Bidirectional Edges":true,"Synthetic":true,"Grounded":false,"Boundary":false,"Fully Connected":false,"Loopy":true,"Sinusoid":false,"Bend Low-Pass":5,"Bend Length":0.1,"Bend Period":1,"Bend Harmonics Levels":1,"borderColor":"","Visible":true},"dir":{"x":0.7071067811865476,"y":0.7071067811865475,"z":0},"isRigid":false,"isRigidTiled":false,"edgeLength":null,"angle":0.7853981633974483,"offset":null,"spliced":false},{"faceData":[{"type":1,"onRight":true},{"type":0,"onRight":false}],"brush":{"Image":"","color":"","Tiled":true,"Tile Length":1,"Width":0.05,"Thickness":0.05,"Min Length":0.1,"Max Length":4,"Bend":10,"Strict Length":false,"Power":-1,"Power Law":false,"Offset":0,"Rigid":false,"Rigid Tiled":false,"Flip":false,"Classified by angle":true,"Bidirectional Edges":true,"Synthetic":true,"Grounded":false,"Boundary":false,"Fully Connected":false,"Loopy":true,"Sinusoid":false,"Bend Low-Pass":5,"Bend Length":0.1,"Bend Period":1,"Bend Harmonics Levels":1,"borderColor":"","Visible":true},"dir":{"x":1,"y":2.220446049250313e-16,"z":0},"isRigid":false,"isRigidTiled":false,"edgeLength":null,"angle":2.220446049250313e-16,"offset":null,"spliced":false},{"faceData":[{"type":1,"onRight":true},{"type":0,"onRight":false}],"brush":{"Image":"","color":"","Tiled":true,"Tile Length":1,"Width":0.05,"Thickness":0.05,"Min Length":0.1,"Max Length":4,"Bend":10,"Strict Length":false,"Power":-1,"Power Law":false,"Offset":0,"Rigid":false,"Rigid Tiled":false,"Flip":false,"Classified by angle":true,"Bidirectional Edges":true,"Synthetic":true,"Grounded":false,"Boundary":false,"Fully Connected":false,"Loopy":true,"Sinusoid":false,"Bend Low-Pass":5,"Bend Length":0.1,"Bend Period":1,"Bend Harmonics Levels":1,"borderColor":"","Visible":true},"dir":{"x":-1.6081226496766364e-16,"y":1,"z":0},"isRigid":false,"isRigidTiled":false,"edgeLength":null,"angle":1.5707963267948968,"offset":null,"spliced":false},{"faceData":[{"type":1,"onRight":true},{"type":0,"onRight":false}],"brush":{"Image":"","color":"","Tiled":true,"Tile Length":1,"Width":0.05,"Thickness":0.05,"Min Length":0.1,"Max Length":4,"Bend":10,"Strict Length":false,"Power":-1,"Power Law":false,"Offset":0,"Rigid":false,"Rigid Tiled":false,"Flip":false,"Classified by angle":true,"Bidirectional Edges":true,"Synthetic":true,"Grounded":false,"Boundary":false,"Fully Connected":false,"Loopy":true,"Sinusoid":false,"Bend Low-Pass":5,"Bend Length":0.1,"Bend Period":1,"Bend Harmonics Levels":1,"borderColor":"","Visible":true},"dir":{"x":-0.7071067811865477,"y":0.7071067811865475,"z":0},"isRigid":false,"isRigidTiled":false,"edgeLength":null,"angle":-3.9269908169872414,"offset":null,"spliced":false},{"faceData":[{"type":1,"onRight":true},{"type":0,"onRight":false}],"brush":{"Image":"","color":"","Tiled":true,"Tile Length":1,"Width":0.05,"Thickness":0.05,"Min Length":0.1,"Max Length":4,"Bend":10,"Strict Length":false,"Power":-1,"Power Law":false,"Offset":0,"Rigid":false,"Rigid Tiled":false,"Flip":false,"Classified by angle":true,"Bidirectional Edges":true,"Synthetic":true,"Grounded":false,"Boundary":false,"Fully Connected":false,"Loopy":true,"Sinusoid":false,"Bend Low-Pass":5,"Bend Length":0.1,"Bend Period":1,"Bend Harmonics Levels":1,"borderColor":"","Visible":true},"dir":{"x":-1,"y":-1.2246467991473532e-16,"z":0},"isRigid":false,"isRigidTiled":false,"edgeLength":null,"angle":-3.141592653589793,"offset":null,"spliced":false},{"faceData":[{"type":1,"onRight":true},{"type":0,"onRight":false}],"brush":{"Image":"","color":"","Tiled":true,"Tile Length":1,"Width":0.05,"Thickness":0.05,"Min Length":0.1,"Max Length":4,"Bend":10,"Strict Length":false,"Power":-1,"Power Law":false,"Offset":0,"Rigid":false,"Rigid Tiled":false,"Flip":false,"Classified by angle":true,"Bidirectional Edges":true,"Synthetic":true,"Grounded":false,"Boundary":false,"Fully Connected":false,"Loopy":true,"Sinusoid":false,"Bend Low-Pass":5,"Bend Length":0.1,"Bend Period":1,"Bend Harmonics Levels":1,"borderColor":"","Visible":true},"dir":{"x":-0.7071067811865475,"y":-0.7071067811865476,"z":0},"isRigid":false,"isRigidTiled":false,"edgeLength":null,"angle":-2.356194490192345,"offset":null,"spliced":false},{"faceData":[{"type":1,"onRight":true},{"type":0,"onRight":false}],"brush":{"Image":"","color":"","Tiled":true,"Tile Length":1,"Width":0.05,"Thickness":0.05,"Min Length":0.1,"Max Length":4,"Bend":10,"Strict Length":false,"Power":-1,"Power Law":false,"Offset":0,"Rigid":false,"Rigid Tiled":false,"Flip":false,"Classified by angle":true,"Bidirectional Edges":true,"Synthetic":true,"Grounded":false,"Boundary":false,"Fully Connected":false,"Loopy":true,"Sinusoid":false,"Bend Low-Pass":5,"Bend Length":0.1,"Bend Period":1,"Bend Harmonics Levels":1,"borderColor":"","Visible":true},"dir":{"x":2.83276944882399e-16,"y":-1,"z":0},"isRigid":false,"isRigidTiled":false,"edgeLength":null,"angle":-1.5707963267948963,"offset":null,"spliced":false},{"faceData":[{"type":1,"onRight":true},{"type":0,"onRight":false}],"brush":{"Image":"","color":"","Tiled":true,"Tile Length":1,"Width":0.05,"Thickness":0.05,"Min Length":0.1,"Max Length":4,"Bend":10,"Strict Length":false,"Power":-1,"Power Law":false,"Offset":0,"Rigid":false,"Rigid Tiled":false,"Flip":false,"Classified by angle":true,"Bidirectional Edges":true,"Synthetic":true,"Grounded":false,"Boundary":false,"Fully Connected":false,"Loopy":true,"Sinusoid":false,"Bend Low-Pass":5,"Bend Length":0.1,"Bend Period":1,"Bend Harmonics Levels":1,"borderColor":"","Visible":true},"dir":{"x":0.7071067811865477,"y":-0.7071067811865474,"z":0},"isRigid":false,"isRigidTiled":false,"edgeLength":null,"angle":-0.7853981633974481,"offset":null,"spliced":false}],"faceTypes":[{"color":null,"material":null,"normal":{"x":0,"y":0,"z":1}},{"color":null,"material":{"borderColor":"","element":null,"properties":{"color":{"value":"rgb(192, 240, 255)","label":"color","type":{"inputBox":null,"isString":true},"attachment":null},"Image":{"value":"None","label":"Image","type":{"inputBox":null,"isString":true},"attachment":null},"Width":{"value":5,"label":"Width","type":{"inputBox":null},"attachment":null},"Height":{"value":5,"label":"Height","type":{"inputBox":null},"attachment":null},"Fixed Origin":{"value":false,"label":"Fixed Origin","type":{"box":null},"attachment":null},"Boundary":{"value":false,"label":"Boundary","type":{"box":null},"attachment":null}},"faceType":null,"id":191},"normal":{"x":0,"y":0,"z":1}}],"xml":"","dims":2},"transitions":[{"n":[{"interior":{"vertices":[{"halfEdges":[1,2],"group":-1},{"halfEdges":[0,3],"group":-1}],"edges":[{"halfEdges":[[0],[2]]}],"halfEdges":[{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":1,"edge":0,"prev":-1,"next":1,"face":0},{"forward":false,"edgeIndex":-1,"vertexIndex":0,"vertex":0,"edge":-1,"prev":0,"next":-1,"face":0},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":0,"edge":0,"prev":-1,"next":3,"face":1},{"forward":false,"edgeIndex":-1,"vertexIndex":1,"vertex":1,"edge":-1,"prev":2,"next":-1,"face":1}],"faces":[{"outerComponent":0,"innerComponents":[]},{"outerComponent":2,"innerComponents":[]}],"connectorGroups":[]},"boundary":{"vertices":[{"halfEdges":[0,1],"group":-1},{"halfEdges":[2,3],"group":-1}],"edges":[{"halfEdges":[[2],[0]]},{"halfEdges":[[1],[3]]}],"halfEdges":[{"forward":false,"edgeIndex":1,"vertexIndex":0,"vertex":0,"edge":0,"prev":3,"next":3,"face":0},{"forward":true,"edgeIndex":0,"vertexIndex":1,"vertex":0,"edge":1,"prev":2,"next":2,"face":1},{"forward":true,"edgeIndex":0,"vertexIndex":0,"vertex":1,"edge":0,"prev":1,"next":1,"face":1},{"forward":false,"edgeIndex":1,"vertexIndex":1,"vertex":1,"edge":1,"prev":0,"next":0,"face":0}],"faces":[{"outerComponent":0,"innerComponents":[]},{"outerComponent":1,"innerComponents":[]}],"connectorGroups":[]},"vertices":[{"interior":0,"boundary":0,"kind":"e","type":2},{"interior":1,"boundary":1,"kind":"e","type":2}],"edges":[{"interior":0,"type":2}],"faces":[{"interior":0,"boundary":0,"type":1,"turns":0,"wildcard":false},{"interior":1,"boundary":1,"type":0,"turns":1,"wildcard":false}],"volumes":[{"boundary":0,"type":null},{"boundary":1,"type":null}],"morphism":{"halfs":[0,2,3,1],"vertices":[1,0],"faces":[]}},{"interior":{"vertices":[{"halfEdges":[0,7],"group":-1},{"halfEdges":[1,2],"group":-1},{"halfEdges":[6,4],"group":-1},{"halfEdges":[3,5],"group":-1}],"edges":[{"halfEdges":[[0],[2]]},{"halfEdges":[[6],[7]]},{"halfEdges":[[3],[4]]}],"halfEdges":[{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":0,"edge":0,"prev":6,"next":1,"face":1},{"forward":false,"edgeIndex":-1,"vertexIndex":0,"vertex":1,"edge":-1,"prev":0,"next":-1,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":1,"edge":0,"prev":-1,"next":7,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":3,"edge":2,"prev":-1,"next":6,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":2,"edge":2,"prev":7,"next":5,"face":0},{"forward":false,"edgeIndex":-1,"vertexIndex":1,"vertex":3,"edge":-1,"prev":4,"next":-1,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":2,"edge":1,"prev":3,"next":0,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":0,"edge":1,"prev":2,"next":4,"face":0}],"faces":[{"outerComponent":2,"innerComponents":[]},{"outerComponent":3,"innerComponents":[]}],"connectorGroups":[]},"boundary":{"vertices":[{"halfEdges":[0,2],"group":-1},{"halfEdges":[1,3],"group":-1}],"edges":[{"halfEdges":[[2],[3]]},{"halfEdges":[[1],[0]]}],"halfEdges":[{"forward":false,"edgeIndex":1,"vertexIndex":0,"vertex":0,"edge":1,"prev":3,"next":3,"face":0},{"forward":true,"edgeIndex":0,"vertexIndex":0,"vertex":1,"edge":1,"prev":2,"next":2,"face":1},{"forward":true,"edgeIndex":0,"vertexIndex":1,"vertex":0,"edge":0,"prev":1,"next":1,"face":1},{"forward":false,"edgeIndex":1,"vertexIndex":1,"vertex":1,"edge":0,"prev":0,"next":0,"face":0}],"faces":[{"outerComponent":0,"innerComponents":[]},{"outerComponent":2,"innerComponents":[]}],"connectorGroups":[]},"vertices":[{"interior":0,"boundary":-1,"kind":"v","type":3},{"interior":1,"boundary":0,"kind":"e","type":2},{"interior":2,"boundary":-1,"kind":"v","type":0},{"interior":3,"boundary":1,"kind":"e","type":2}],"edges":[{"interior":0,"type":2},{"interior":1,"type":0},{"interior":2,"type":2}],"faces":[{"interior":0,"boundary":0,"type":0,"turns":1,"wildcard":false},{"interior":1,"boundary":1,"type":1,"turns":0,"wildcard":false}],"volumes":[{"boundary":0,"type":null},{"boundary":1,"type":null}],"morphism":{"halfs":[3,2,5,1],"vertices":[3,1],"faces":[]}},{"interior":{"vertices":[{"halfEdges":[0,7],"group":-1},{"halfEdges":[1,2],"group":-1},{"halfEdges":[6,4],"group":-1},{"halfEdges":[3,5],"group":-1}],"edges":[{"halfEdges":[[0],[2]]},{"halfEdges":[[6],[7]]},{"halfEdges":[[3],[4]]}],"halfEdges":[{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":0,"edge":0,"prev":6,"next":1,"face":1},{"forward":false,"edgeIndex":-1,"vertexIndex":0,"vertex":1,"edge":-1,"prev":0,"next":-1,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":1,"edge":0,"prev":-1,"next":7,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":3,"edge":2,"prev":-1,"next":6,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":2,"edge":2,"prev":7,"next":5,"face":0},{"forward":false,"edgeIndex":-1,"vertexIndex":1,"vertex":3,"edge":-1,"prev":4,"next":-1,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":2,"edge":1,"prev":3,"next":0,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":0,"edge":1,"prev":2,"next":4,"face":0}],"faces":[{"outerComponent":2,"innerComponents":[]},{"outerComponent":3,"innerComponents":[]}],"connectorGroups":[]},"boundary":{"vertices":[{"halfEdges":[0,2],"group":-1},{"halfEdges":[1,3],"group":-1}],"edges":[{"halfEdges":[[2],[3]]},{"halfEdges":[[1],[0]]}],"halfEdges":[{"forward":false,"edgeIndex":1,"vertexIndex":0,"vertex":0,"edge":1,"prev":3,"next":3,"face":0},{"forward":true,"edgeIndex":0,"vertexIndex":0,"vertex":1,"edge":1,"prev":2,"next":2,"face":1},{"forward":true,"edgeIndex":0,"vertexIndex":1,"vertex":0,"edge":0,"prev":1,"next":1,"face":1},{"forward":false,"edgeIndex":1,"vertexIndex":1,"vertex":1,"edge":0,"prev":0,"next":0,"face":0}],"faces":[{"outerComponent":0,"innerComponents":[]},{"outerComponent":2,"innerComponents":[]}],"connectorGroups":[]},"vertices":[{"interior":0,"boundary":-1,"kind":"v","type":7},{"interior":1,"boundary":0,"kind":"e","type":2},{"interior":2,"boundary":-1,"kind":"v","type":4},{"interior":3,"boundary":1,"kind":"e","type":2}],"edges":[{"interior":0,"type":2},{"interior":1,"type":3},{"interior":2,"type":2}],"faces":[{"interior":0,"boundary":0,"type":0,"turns":1,"wildcard":false},{"interior":1,"boundary":1,"type":1,"turns":0,"wildcard":false}],"volumes":[{"boundary":0,"type":null},{"boundary":1,"type":null}],"morphism":{"halfs":[3,2,5,1],"vertices":[3,1],"faces":[]}}],"ground":false},{"n":[{"interior":{"vertices":[{"halfEdges":[1,2],"group":-1},{"halfEdges":[0,3],"group":-1}],"edges":[{"halfEdges":[[0],[2]]}],"halfEdges":[{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":1,"edge":0,"prev":-1,"next":1,"face":0},{"forward":false,"edgeIndex":-1,"vertexIndex":0,"vertex":0,"edge":-1,"prev":0,"next":-1,"face":0},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":0,"edge":0,"prev":-1,"next":3,"face":1},{"forward":false,"edgeIndex":-1,"vertexIndex":1,"vertex":1,"edge":-1,"prev":2,"next":-1,"face":1}],"faces":[{"outerComponent":0,"innerComponents":[]},{"outerComponent":2,"innerComponents":[]}],"connectorGroups":[]},"boundary":{"vertices":[{"halfEdges":[0,1],"group":-1},{"halfEdges":[2,3],"group":-1}],"edges":[{"halfEdges":[[2],[0]]},{"halfEdges":[[1],[3]]}],"halfEdges":[{"forward":false,"edgeIndex":1,"vertexIndex":0,"vertex":0,"edge":0,"prev":3,"next":3,"face":0},{"forward":true,"edgeIndex":0,"vertexIndex":1,"vertex":0,"edge":1,"prev":2,"next":2,"face":1},{"forward":true,"edgeIndex":0,"vertexIndex":0,"vertex":1,"edge":0,"prev":1,"next":1,"face":1},{"forward":false,"edgeIndex":1,"vertexIndex":1,"vertex":1,"edge":1,"prev":0,"next":0,"face":0}],"faces":[{"outerComponent":0,"innerComponents":[]},{"outerComponent":1,"innerComponents":[]}],"connectorGroups":[]},"vertices":[{"interior":0,"boundary":0,"kind":"e","type":0},{"interior":1,"boundary":1,"kind":"e","type":0}],"edges":[{"interior":0,"type":0}],"faces":[{"interior":0,"boundary":0,"type":1,"turns":0,"wildcard":false},{"interior":1,"boundary":1,"type":0,"turns":1,"wildcard":false}],"volumes":[{"boundary":0,"type":null},{"boundary":1,"type":null}],"morphism":{"halfs":[0,2,3,1],"vertices":[1,0],"faces":[]}},{"interior":{"vertices":[{"halfEdges":[0,7],"group":-1},{"halfEdges":[1,2],"group":-1},{"halfEdges":[6,4],"group":-1},{"halfEdges":[3,5],"group":-1}],"edges":[{"halfEdges":[[0],[2]]},{"halfEdges":[[6],[7]]},{"halfEdges":[[3],[4]]}],"halfEdges":[{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":0,"edge":0,"prev":6,"next":1,"face":1},{"forward":false,"edgeIndex":-1,"vertexIndex":0,"vertex":1,"edge":-1,"prev":0,"next":-1,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":1,"edge":0,"prev":-1,"next":7,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":3,"edge":2,"prev":-1,"next":6,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":2,"edge":2,"prev":7,"next":5,"face":0},{"forward":false,"edgeIndex":-1,"vertexIndex":1,"vertex":3,"edge":-1,"prev":4,"next":-1,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":2,"edge":1,"prev":3,"next":0,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":0,"edge":1,"prev":2,"next":4,"face":0}],"faces":[{"outerComponent":2,"innerComponents":[]},{"outerComponent":3,"innerComponents":[]}],"connectorGroups":[]},"boundary":{"vertices":[{"halfEdges":[0,2],"group":-1},{"halfEdges":[1,3],"group":-1}],"edges":[{"halfEdges":[[2],[3]]},{"halfEdges":[[1],[0]]}],"halfEdges":[{"forward":false,"edgeIndex":1,"vertexIndex":0,"vertex":0,"edge":1,"prev":3,"next":3,"face":0},{"forward":true,"edgeIndex":0,"vertexIndex":0,"vertex":1,"edge":1,"prev":2,"next":2,"face":1},{"forward":true,"edgeIndex":0,"vertexIndex":1,"vertex":0,"edge":0,"prev":1,"next":1,"face":1},{"forward":false,"edgeIndex":1,"vertexIndex":1,"vertex":1,"edge":0,"prev":0,"next":0,"face":0}],"faces":[{"outerComponent":0,"innerComponents":[]},{"outerComponent":2,"innerComponents":[]}],"connectorGroups":[]},"vertices":[{"interior":0,"boundary":-1,"kind":"v","type":0},{"interior":1,"boundary":0,"kind":"e","type":0},{"interior":2,"boundary":-1,"kind":"v","type":3},{"interior":3,"boundary":1,"kind":"e","type":0}],"edges":[{"interior":0,"type":0},{"interior":1,"type":2},{"interior":2,"type":0}],"faces":[{"interior":0,"boundary":0,"type":0,"turns":1,"wildcard":false},{"interior":1,"boundary":1,"type":1,"turns":0,"wildcard":false}],"volumes":[{"boundary":0,"type":null},{"boundary":1,"type":null}],"morphism":{"halfs":[3,2,5,1],"vertices":[3,1],"faces":[]}},{"interior":{"vertices":[{"halfEdges":[0,7],"group":-1},{"halfEdges":[1,2],"group":-1},{"halfEdges":[4,6],"group":-1},{"halfEdges":[3,5],"group":-1}],"edges":[{"halfEdges":[[0],[2]]},{"halfEdges":[[6],[7]]},{"halfEdges":[[3],[4]]}],"halfEdges":[{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":0,"edge":0,"prev":6,"next":1,"face":1},{"forward":false,"edgeIndex":-1,"vertexIndex":0,"vertex":1,"edge":-1,"prev":0,"next":-1,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":1,"edge":0,"prev":-1,"next":7,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":3,"edge":2,"prev":-1,"next":6,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":2,"edge":2,"prev":7,"next":5,"face":0},{"forward":false,"edgeIndex":-1,"vertexIndex":1,"vertex":3,"edge":-1,"prev":4,"next":-1,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":1,"vertex":2,"edge":1,"prev":3,"next":0,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":0,"edge":1,"prev":2,"next":4,"face":0}],"faces":[{"outerComponent":2,"innerComponents":[]},{"outerComponent":3,"innerComponents":[]}],"connectorGroups":[]},"boundary":{"vertices":[{"halfEdges":[0,2],"group":-1},{"halfEdges":[1,3],"group":-1}],"edges":[{"halfEdges":[[2],[3]]},{"halfEdges":[[1],[0]]}],"halfEdges":[{"forward":false,"edgeIndex":1,"vertexIndex":0,"vertex":0,"edge":1,"prev":3,"next":3,"face":0},{"forward":true,"edgeIndex":0,"vertexIndex":0,"vertex":1,"edge":1,"prev":2,"next":2,"face":1},{"forward":true,"edgeIndex":0,"vertexIndex":1,"vertex":0,"edge":0,"prev":1,"next":1,"face":1},{"forward":false,"edgeIndex":1,"vertexIndex":1,"vertex":1,"edge":0,"prev":0,"next":0,"face":0}],"faces":[{"outerComponent":0,"innerComponents":[]},{"outerComponent":2,"innerComponents":[]}],"connectorGroups":[]},"vertices":[{"interior":0,"boundary":-1,"kind":"v","type":2},{"interior":1,"boundary":0,"kind":"e","type":0},{"interior":2,"boundary":-1,"kind":"v","type":1},{"interior":3,"boundary":1,"kind":"e","type":0}],"edges":[{"interior":0,"type":0},{"interior":1,"type":1},{"interior":2,"type":0}],"faces":[{"interior":0,"boundary":0,"type":0,"turns":1,"wildcard":false},{"interior":1,"boundary":1,"type":1,"turns":0,"wildcard":false}],"volumes":[{"boundary":0,"type":null},{"boundary":1,"type":null}],"morphism":{"halfs":[3,2,5,1],"vertices":[3,1],"faces":[]}}],"ground":false},{"n":[{"interior":{"vertices":[{"halfEdges":[1,2],"group":-1},{"halfEdges":[0,3],"group":-1}],"edges":[{"halfEdges":[[0],[2]]}],"halfEdges":[{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":1,"edge":0,"prev":-1,"next":1,"face":0},{"forward":false,"edgeIndex":-1,"vertexIndex":0,"vertex":0,"edge":-1,"prev":0,"next":-1,"face":0},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":0,"edge":0,"prev":-1,"next":3,"face":1},{"forward":false,"edgeIndex":-1,"vertexIndex":1,"vertex":1,"edge":-1,"prev":2,"next":-1,"face":1}],"faces":[{"outerComponent":0,"innerComponents":[]},{"outerComponent":2,"innerComponents":[]}],"connectorGroups":[]},"boundary":{"vertices":[{"halfEdges":[0,1],"group":-1},{"halfEdges":[2,3],"group":-1}],"edges":[{"halfEdges":[[2],[0]]},{"halfEdges":[[1],[3]]}],"halfEdges":[{"forward":false,"edgeIndex":1,"vertexIndex":0,"vertex":0,"edge":0,"prev":3,"next":3,"face":0},{"forward":true,"edgeIndex":0,"vertexIndex":1,"vertex":0,"edge":1,"prev":2,"next":2,"face":1},{"forward":true,"edgeIndex":0,"vertexIndex":0,"vertex":1,"edge":0,"prev":1,"next":1,"face":1},{"forward":false,"edgeIndex":1,"vertexIndex":1,"vertex":1,"edge":1,"prev":0,"next":0,"face":0}],"faces":[{"outerComponent":0,"innerComponents":[]},{"outerComponent":1,"innerComponents":[]}],"connectorGroups":[]},"vertices":[{"interior":0,"boundary":0,"kind":"e","type":1},{"interior":1,"boundary":1,"kind":"e","type":1}],"edges":[{"interior":0,"type":1}],"faces":[{"interior":0,"boundary":0,"type":1,"turns":0,"wildcard":false},{"interior":1,"boundary":1,"type":0,"turns":1,"wildcard":false}],"volumes":[{"boundary":0,"type":null},{"boundary":1,"type":null}],"morphism":{"halfs":[0,2,3,1],"vertices":[1,0],"faces":[]}},{"interior":{"vertices":[{"halfEdges":[7,0],"group":-1},{"halfEdges":[1,2],"group":-1},{"halfEdges":[6,4],"group":-1},{"halfEdges":[3,5],"group":-1}],"edges":[{"halfEdges":[[6],[7]]},{"halfEdges":[[0],[2]]},{"halfEdges":[[3],[4]]}],"halfEdges":[{"forward":false,"edgeIndex":0,"vertexIndex":1,"vertex":0,"edge":1,"prev":6,"next":1,"face":1},{"forward":false,"edgeIndex":-1,"vertexIndex":0,"vertex":1,"edge":-1,"prev":0,"next":-1,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":1,"edge":1,"prev":-1,"next":7,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":3,"edge":2,"prev":-1,"next":6,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":2,"edge":2,"prev":7,"next":5,"face":0},{"forward":false,"edgeIndex":-1,"vertexIndex":1,"vertex":3,"edge":-1,"prev":4,"next":-1,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":2,"edge":0,"prev":3,"next":0,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":0,"edge":0,"prev":2,"next":4,"face":0}],"faces":[{"outerComponent":2,"innerComponents":[]},{"outerComponent":3,"innerComponents":[]}],"connectorGroups":[]},"boundary":{"vertices":[{"halfEdges":[0,2],"group":-1},{"halfEdges":[1,3],"group":-1}],"edges":[{"halfEdges":[[1],[0]]},{"halfEdges":[[2],[3]]}],"halfEdges":[{"forward":false,"edgeIndex":1,"vertexIndex":0,"vertex":0,"edge":0,"prev":3,"next":3,"face":0},{"forward":true,"edgeIndex":0,"vertexIndex":0,"vertex":1,"edge":0,"prev":2,"next":2,"face":1},{"forward":true,"edgeIndex":0,"vertexIndex":1,"vertex":0,"edge":1,"prev":1,"next":1,"face":1},{"forward":false,"edgeIndex":1,"vertexIndex":1,"vertex":1,"edge":1,"prev":0,"next":0,"face":0}],"faces":[{"outerComponent":0,"innerComponents":[]},{"outerComponent":2,"innerComponents":[]}],"connectorGroups":[]},"vertices":[{"interior":0,"boundary":-1,"kind":"v","type":1},{"interior":1,"boundary":0,"kind":"e","type":1},{"interior":2,"boundary":-1,"kind":"v","type":2},{"interior":3,"boundary":1,"kind":"e","type":1}],"edges":[{"interior":0,"type":0},{"interior":1,"type":1},{"interior":2,"type":1}],"faces":[{"interior":0,"boundary":1,"type":0,"turns":1,"wildcard":false},{"interior":1,"boundary":0,"type":1,"turns":0,"wildcard":false}],"volumes":[{"boundary":0,"type":null},{"boundary":1,"type":null}],"morphism":{"halfs":[3,2,5,1],"vertices":[3,1],"faces":[]}},{"interior":{"vertices":[{"halfEdges":[7,0],"group":-1},{"halfEdges":[1,2],"group":-1},{"halfEdges":[4,6],"group":-1},{"halfEdges":[3,5],"group":-1}],"edges":[{"halfEdges":[[6],[7]]},{"halfEdges":[[0],[2]]},{"halfEdges":[[3],[4]]}],"halfEdges":[{"forward":false,"edgeIndex":0,"vertexIndex":1,"vertex":0,"edge":1,"prev":6,"next":1,"face":1},{"forward":false,"edgeIndex":-1,"vertexIndex":0,"vertex":1,"edge":-1,"prev":0,"next":-1,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":1,"edge":1,"prev":-1,"next":7,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":3,"edge":2,"prev":-1,"next":6,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":2,"edge":2,"prev":7,"next":5,"face":0},{"forward":false,"edgeIndex":-1,"vertexIndex":1,"vertex":3,"edge":-1,"prev":4,"next":-1,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":1,"vertex":2,"edge":0,"prev":3,"next":0,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":0,"edge":0,"prev":2,"next":4,"face":0}],"faces":[{"outerComponent":2,"innerComponents":[]},{"outerComponent":3,"innerComponents":[]}],"connectorGroups":[]},"boundary":{"vertices":[{"halfEdges":[0,2],"group":-1},{"halfEdges":[1,3],"group":-1}],"edges":[{"halfEdges":[[1],[0]]},{"halfEdges":[[2],[3]]}],"halfEdges":[{"forward":false,"edgeIndex":1,"vertexIndex":0,"vertex":0,"edge":0,"prev":3,"next":3,"face":0},{"forward":true,"edgeIndex":0,"vertexIndex":0,"vertex":1,"edge":0,"prev":2,"next":2,"face":1},{"forward":true,"edgeIndex":0,"vertexIndex":1,"vertex":0,"edge":1,"prev":1,"next":1,"face":1},{"forward":false,"edgeIndex":1,"vertexIndex":1,"vertex":1,"edge":1,"prev":0,"next":0,"face":0}],"faces":[{"outerComponent":0,"innerComponents":[]},{"outerComponent":2,"innerComponents":[]}],"connectorGroups":[]},"vertices":[{"interior":0,"boundary":-1,"kind":"v","type":13},{"interior":1,"boundary":0,"kind":"e","type":1},{"interior":2,"boundary":-1,"kind":"v","type":14},{"interior":3,"boundary":1,"kind":"e","type":1}],"edges":[{"interior":0,"type":7},{"interior":1,"type":1},{"interior":2,"type":1}],"faces":[{"interior":0,"boundary":1,"type":0,"turns":1,"wildcard":false},{"interior":1,"boundary":0,"type":1,"turns":0,"wildcard":false}],"volumes":[{"boundary":0,"type":null},{"boundary":1,"type":null}],"morphism":{"halfs":[3,2,5,1],"vertices":[3,1],"faces":[]}}],"ground":false},{"n":[{"interior":{"vertices":[{"halfEdges":[1,2],"group":-1},{"halfEdges":[0,3],"group":-1}],"edges":[{"halfEdges":[[0],[2]]}],"halfEdges":[{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":1,"edge":0,"prev":-1,"next":1,"face":0},{"forward":false,"edgeIndex":-1,"vertexIndex":0,"vertex":0,"edge":-1,"prev":0,"next":-1,"face":0},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":0,"edge":0,"prev":-1,"next":3,"face":1},{"forward":false,"edgeIndex":-1,"vertexIndex":1,"vertex":1,"edge":-1,"prev":2,"next":-1,"face":1}],"faces":[{"outerComponent":0,"innerComponents":[]},{"outerComponent":2,"innerComponents":[]}],"connectorGroups":[]},"boundary":{"vertices":[{"halfEdges":[0,1],"group":-1},{"halfEdges":[2,3],"group":-1}],"edges":[{"halfEdges":[[2],[0]]},{"halfEdges":[[1],[3]]}],"halfEdges":[{"forward":false,"edgeIndex":1,"vertexIndex":0,"vertex":0,"edge":0,"prev":3,"next":3,"face":0},{"forward":true,"edgeIndex":0,"vertexIndex":1,"vertex":0,"edge":1,"prev":2,"next":2,"face":1},{"forward":true,"edgeIndex":0,"vertexIndex":0,"vertex":1,"edge":0,"prev":1,"next":1,"face":1},{"forward":false,"edgeIndex":1,"vertexIndex":1,"vertex":1,"edge":1,"prev":0,"next":0,"face":0}],"faces":[{"outerComponent":0,"innerComponents":[]},{"outerComponent":1,"innerComponents":[]}],"connectorGroups":[]},"vertices":[{"interior":0,"boundary":0,"kind":"e","type":3},{"interior":1,"boundary":1,"kind":"e","type":3}],"edges":[{"interior":0,"type":3}],"faces":[{"interior":0,"boundary":0,"type":1,"turns":0,"wildcard":false},{"interior":1,"boundary":1,"type":0,"turns":1,"wildcard":false}],"volumes":[{"boundary":0,"type":null},{"boundary":1,"type":null}],"morphism":{"halfs":[0,2,3,1],"vertices":[1,0],"faces":[]}},{"interior":{"vertices":[{"halfEdges":[0,7],"group":-1},{"halfEdges":[1,2],"group":-1},{"halfEdges":[6,4],"group":-1},{"halfEdges":[3,5],"group":-1}],"edges":[{"halfEdges":[[0],[2]]},{"halfEdges":[[6],[7]]},{"halfEdges":[[3],[4]]}],"halfEdges":[{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":0,"edge":0,"prev":6,"next":1,"face":1},{"forward":false,"edgeIndex":-1,"vertexIndex":0,"vertex":1,"edge":-1,"prev":0,"next":-1,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":1,"edge":0,"prev":-1,"next":7,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":3,"edge":2,"prev":-1,"next":6,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":2,"edge":2,"prev":7,"next":5,"face":0},{"forward":false,"edgeIndex":-1,"vertexIndex":1,"vertex":3,"edge":-1,"prev":4,"next":-1,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":2,"edge":1,"prev":3,"next":0,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":0,"edge":1,"prev":2,"next":4,"face":0}],"faces":[{"outerComponent":2,"innerComponents":[]},{"outerComponent":3,"innerComponents":[]}],"connectorGroups":[]},"boundary":{"vertices":[{"halfEdges":[0,2],"group":-1},{"halfEdges":[1,3],"group":-1}],"edges":[{"halfEdges":[[2],[3]]},{"halfEdges":[[1],[0]]}],"halfEdges":[{"forward":false,"edgeIndex":1,"vertexIndex":0,"vertex":0,"edge":1,"prev":3,"next":3,"face":0},{"forward":true,"edgeIndex":0,"vertexIndex":0,"vertex":1,"edge":1,"prev":2,"next":2,"face":1},{"forward":true,"edgeIndex":0,"vertexIndex":1,"vertex":0,"edge":0,"prev":1,"next":1,"face":1},{"forward":false,"edgeIndex":1,"vertexIndex":1,"vertex":1,"edge":0,"prev":0,"next":0,"face":0}],"faces":[{"outerComponent":0,"innerComponents":[]},{"outerComponent":2,"innerComponents":[]}],"connectorGroups":[]},"vertices":[{"interior":0,"boundary":-1,"kind":"v","type":4},{"interior":1,"boundary":0,"kind":"e","type":3},{"interior":2,"boundary":-1,"kind":"v","type":7},{"interior":3,"boundary":1,"kind":"e","type":3}],"edges":[{"interior":0,"type":3},{"interior":1,"type":2},{"interior":2,"type":3}],"faces":[{"interior":0,"boundary":0,"type":0,"turns":1,"wildcard":false},{"interior":1,"boundary":1,"type":1,"turns":0,"wildcard":false}],"volumes":[{"boundary":0,"type":null},{"boundary":1,"type":null}],"morphism":{"halfs":[3,2,5,1],"vertices":[3,1],"faces":[]}},{"interior":{"vertices":[{"halfEdges":[0,7],"group":-1},{"halfEdges":[1,2],"group":-1},{"halfEdges":[6,4],"group":-1},{"halfEdges":[3,5],"group":-1}],"edges":[{"halfEdges":[[0],[2]]},{"halfEdges":[[6],[7]]},{"halfEdges":[[3],[4]]}],"halfEdges":[{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":0,"edge":0,"prev":6,"next":1,"face":1},{"forward":false,"edgeIndex":-1,"vertexIndex":0,"vertex":1,"edge":-1,"prev":0,"next":-1,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":1,"edge":0,"prev":-1,"next":7,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":3,"edge":2,"prev":-1,"next":6,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":2,"edge":2,"prev":7,"next":5,"face":0},{"forward":false,"edgeIndex":-1,"vertexIndex":1,"vertex":3,"edge":-1,"prev":4,"next":-1,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":2,"edge":1,"prev":3,"next":0,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":0,"edge":1,"prev":2,"next":4,"face":0}],"faces":[{"outerComponent":2,"innerComponents":[]},{"outerComponent":3,"innerComponents":[]}],"connectorGroups":[]},"boundary":{"vertices":[{"halfEdges":[0,2],"group":-1},{"halfEdges":[1,3],"group":-1}],"edges":[{"halfEdges":[[2],[3]]},{"halfEdges":[[1],[0]]}],"halfEdges":[{"forward":false,"edgeIndex":1,"vertexIndex":0,"vertex":0,"edge":1,"prev":3,"next":3,"face":0},{"forward":true,"edgeIndex":0,"vertexIndex":0,"vertex":1,"edge":1,"prev":2,"next":2,"face":1},{"forward":true,"edgeIndex":0,"vertexIndex":1,"vertex":0,"edge":0,"prev":1,"next":1,"face":1},{"forward":false,"edgeIndex":1,"vertexIndex":1,"vertex":1,"edge":0,"prev":0,"next":0,"face":0}],"faces":[{"outerComponent":0,"innerComponents":[]},{"outerComponent":2,"innerComponents":[]}],"connectorGroups":[]},"vertices":[{"interior":0,"boundary":-1,"kind":"v","type":6},{"interior":1,"boundary":0,"kind":"e","type":3},{"interior":2,"boundary":-1,"kind":"v","type":5},{"interior":3,"boundary":1,"kind":"e","type":3}],"edges":[{"interior":0,"type":3},{"interior":1,"type":4},{"interior":2,"type":3}],"faces":[{"interior":0,"boundary":0,"type":0,"turns":1,"wildcard":false},{"interior":1,"boundary":1,"type":1,"turns":0,"wildcard":false}],"volumes":[{"boundary":0,"type":null},{"boundary":1,"type":null}],"morphism":{"halfs":[3,2,5,1],"vertices":[3,1],"faces":[]}}],"ground":false},{"n":[{"interior":{"vertices":[{"halfEdges":[1,2],"group":-1},{"halfEdges":[0,3],"group":-1}],"edges":[{"halfEdges":[[0],[2]]}],"halfEdges":[{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":1,"edge":0,"prev":-1,"next":1,"face":0},{"forward":false,"edgeIndex":-1,"vertexIndex":0,"vertex":0,"edge":-1,"prev":0,"next":-1,"face":0},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":0,"edge":0,"prev":-1,"next":3,"face":1},{"forward":false,"edgeIndex":-1,"vertexIndex":1,"vertex":1,"edge":-1,"prev":2,"next":-1,"face":1}],"faces":[{"outerComponent":0,"innerComponents":[]},{"outerComponent":2,"innerComponents":[]}],"connectorGroups":[]},"boundary":{"vertices":[{"halfEdges":[0,1],"group":-1},{"halfEdges":[2,3],"group":-1}],"edges":[{"halfEdges":[[2],[0]]},{"halfEdges":[[1],[3]]}],"halfEdges":[{"forward":false,"edgeIndex":1,"vertexIndex":0,"vertex":0,"edge":0,"prev":3,"next":3,"face":0},{"forward":true,"edgeIndex":0,"vertexIndex":1,"vertex":0,"edge":1,"prev":2,"next":2,"face":1},{"forward":true,"edgeIndex":0,"vertexIndex":0,"vertex":1,"edge":0,"prev":1,"next":1,"face":1},{"forward":false,"edgeIndex":1,"vertexIndex":1,"vertex":1,"edge":1,"prev":0,"next":0,"face":0}],"faces":[{"outerComponent":0,"innerComponents":[]},{"outerComponent":1,"innerComponents":[]}],"connectorGroups":[]},"vertices":[{"interior":0,"boundary":0,"kind":"e","type":4},{"interior":1,"boundary":1,"kind":"e","type":4}],"edges":[{"interior":0,"type":4}],"faces":[{"interior":0,"boundary":0,"type":1,"turns":1,"wildcard":false},{"interior":1,"boundary":1,"type":0,"turns":0,"wildcard":false}],"volumes":[{"boundary":0,"type":null},{"boundary":1,"type":null}],"morphism":{"halfs":[0,2,3,1],"vertices":[1,0],"faces":[]}},{"interior":{"vertices":[{"halfEdges":[0,7],"group":-1},{"halfEdges":[1,2],"group":-1},{"halfEdges":[6,4],"group":-1},{"halfEdges":[3,5],"group":-1}],"edges":[{"halfEdges":[[0],[2]]},{"halfEdges":[[6],[7]]},{"halfEdges":[[3],[4]]}],"halfEdges":[{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":0,"edge":0,"prev":6,"next":1,"face":1},{"forward":false,"edgeIndex":-1,"vertexIndex":0,"vertex":1,"edge":-1,"prev":0,"next":-1,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":1,"edge":0,"prev":-1,"next":7,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":3,"edge":2,"prev":-1,"next":6,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":2,"edge":2,"prev":7,"next":5,"face":0},{"forward":false,"edgeIndex":-1,"vertexIndex":1,"vertex":3,"edge":-1,"prev":4,"next":-1,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":2,"edge":1,"prev":3,"next":0,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":0,"edge":1,"prev":2,"next":4,"face":0}],"faces":[{"outerComponent":2,"innerComponents":[]},{"outerComponent":3,"innerComponents":[]}],"connectorGroups":[]},"boundary":{"vertices":[{"halfEdges":[0,2],"group":-1},{"halfEdges":[1,3],"group":-1}],"edges":[{"halfEdges":[[2],[3]]},{"halfEdges":[[1],[0]]}],"halfEdges":[{"forward":false,"edgeIndex":1,"vertexIndex":0,"vertex":0,"edge":1,"prev":3,"next":3,"face":0},{"forward":true,"edgeIndex":0,"vertexIndex":0,"vertex":1,"edge":1,"prev":2,"next":2,"face":1},{"forward":true,"edgeIndex":0,"vertexIndex":1,"vertex":0,"edge":0,"prev":1,"next":1,"face":1},{"forward":false,"edgeIndex":1,"vertexIndex":1,"vertex":1,"edge":0,"prev":0,"next":0,"face":0}],"faces":[{"outerComponent":0,"innerComponents":[]},{"outerComponent":2,"innerComponents":[]}],"connectorGroups":[]},"vertices":[{"interior":0,"boundary":-1,"kind":"v","type":5},{"interior":1,"boundary":0,"kind":"e","type":4},{"interior":2,"boundary":-1,"kind":"v","type":6},{"interior":3,"boundary":1,"kind":"e","type":4}],"edges":[{"interior":0,"type":4},{"interior":1,"type":3},{"interior":2,"type":4}],"faces":[{"interior":0,"boundary":0,"type":0,"turns":0,"wildcard":false},{"interior":1,"boundary":1,"type":1,"turns":1,"wildcard":false}],"volumes":[{"boundary":0,"type":null},{"boundary":1,"type":null}],"morphism":{"halfs":[3,2,5,1],"vertices":[3,1],"faces":[]}},{"interior":{"vertices":[{"halfEdges":[7,0],"group":-1},{"halfEdges":[1,2],"group":-1},{"halfEdges":[6,4],"group":-1},{"halfEdges":[3,5],"group":-1}],"edges":[{"halfEdges":[[6],[7]]},{"halfEdges":[[0],[2]]},{"halfEdges":[[3],[4]]}],"halfEdges":[{"forward":false,"edgeIndex":0,"vertexIndex":1,"vertex":0,"edge":1,"prev":6,"next":1,"face":1},{"forward":false,"edgeIndex":-1,"vertexIndex":0,"vertex":1,"edge":-1,"prev":0,"next":-1,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":1,"edge":1,"prev":-1,"next":7,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":3,"edge":2,"prev":-1,"next":6,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":2,"edge":2,"prev":7,"next":5,"face":0},{"forward":false,"edgeIndex":-1,"vertexIndex":1,"vertex":3,"edge":-1,"prev":4,"next":-1,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":2,"edge":0,"prev":3,"next":0,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":0,"edge":0,"prev":2,"next":4,"face":0}],"faces":[{"outerComponent":2,"innerComponents":[]},{"outerComponent":3,"innerComponents":[]}],"connectorGroups":[]},"boundary":{"vertices":[{"halfEdges":[0,2],"group":-1},{"halfEdges":[1,3],"group":-1}],"edges":[{"halfEdges":[[1],[0]]},{"halfEdges":[[2],[3]]}],"halfEdges":[{"forward":false,"edgeIndex":1,"vertexIndex":0,"vertex":0,"edge":0,"prev":3,"next":3,"face":0},{"forward":true,"edgeIndex":0,"vertexIndex":0,"vertex":1,"edge":0,"prev":2,"next":2,"face":1},{"forward":true,"edgeIndex":0,"vertexIndex":1,"vertex":0,"edge":1,"prev":1,"next":1,"face":1},{"forward":false,"edgeIndex":1,"vertexIndex":1,"vertex":1,"edge":1,"prev":0,"next":0,"face":0}],"faces":[{"outerComponent":0,"innerComponents":[]},{"outerComponent":2,"innerComponents":[]}],"connectorGroups":[]},"vertices":[{"interior":0,"boundary":-1,"kind":"v","type":11},{"interior":1,"boundary":0,"kind":"e","type":4},{"interior":2,"boundary":-1,"kind":"v","type":8},{"interior":3,"boundary":1,"kind":"e","type":4}],"edges":[{"interior":0,"type":5},{"interior":1,"type":4},{"interior":2,"type":4}],"faces":[{"interior":0,"boundary":1,"type":0,"turns":0,"wildcard":false},{"interior":1,"boundary":0,"type":1,"turns":1,"wildcard":false}],"volumes":[{"boundary":0,"type":null},{"boundary":1,"type":null}],"morphism":{"halfs":[3,2,5,1],"vertices":[3,1],"faces":[]}}],"ground":false},{"n":[{"interior":{"vertices":[{"halfEdges":[1,2],"group":-1},{"halfEdges":[0,3],"group":-1}],"edges":[{"halfEdges":[[0],[2]]}],"halfEdges":[{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":1,"edge":0,"prev":-1,"next":1,"face":0},{"forward":false,"edgeIndex":-1,"vertexIndex":0,"vertex":0,"edge":-1,"prev":0,"next":-1,"face":0},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":0,"edge":0,"prev":-1,"next":3,"face":1},{"forward":false,"edgeIndex":-1,"vertexIndex":1,"vertex":1,"edge":-1,"prev":2,"next":-1,"face":1}],"faces":[{"outerComponent":0,"innerComponents":[]},{"outerComponent":2,"innerComponents":[]}],"connectorGroups":[]},"boundary":{"vertices":[{"halfEdges":[0,1],"group":-1},{"halfEdges":[2,3],"group":-1}],"edges":[{"halfEdges":[[2],[0]]},{"halfEdges":[[1],[3]]}],"halfEdges":[{"forward":false,"edgeIndex":1,"vertexIndex":0,"vertex":0,"edge":0,"prev":3,"next":3,"face":0},{"forward":true,"edgeIndex":0,"vertexIndex":1,"vertex":0,"edge":1,"prev":2,"next":2,"face":1},{"forward":true,"edgeIndex":0,"vertexIndex":0,"vertex":1,"edge":0,"prev":1,"next":1,"face":1},{"forward":false,"edgeIndex":1,"vertexIndex":1,"vertex":1,"edge":1,"prev":0,"next":0,"face":0}],"faces":[{"outerComponent":0,"innerComponents":[]},{"outerComponent":1,"innerComponents":[]}],"connectorGroups":[]},"vertices":[{"interior":0,"boundary":0,"kind":"e","type":5},{"interior":1,"boundary":1,"kind":"e","type":5}],"edges":[{"interior":0,"type":5}],"faces":[{"interior":0,"boundary":0,"type":1,"turns":1,"wildcard":false},{"interior":1,"boundary":1,"type":0,"turns":0,"wildcard":false}],"volumes":[{"boundary":0,"type":null},{"boundary":1,"type":null}],"morphism":{"halfs":[0,2,3,1],"vertices":[1,0],"faces":[]}},{"interior":{"vertices":[{"halfEdges":[0,7],"group":-1},{"halfEdges":[1,2],"group":-1},{"halfEdges":[4,6],"group":-1},{"halfEdges":[3,5],"group":-1}],"edges":[{"halfEdges":[[0],[2]]},{"halfEdges":[[6],[7]]},{"halfEdges":[[3],[4]]}],"halfEdges":[{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":0,"edge":0,"prev":6,"next":1,"face":1},{"forward":false,"edgeIndex":-1,"vertexIndex":0,"vertex":1,"edge":-1,"prev":0,"next":-1,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":1,"edge":0,"prev":-1,"next":7,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":3,"edge":2,"prev":-1,"next":6,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":2,"edge":2,"prev":7,"next":5,"face":0},{"forward":false,"edgeIndex":-1,"vertexIndex":1,"vertex":3,"edge":-1,"prev":4,"next":-1,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":1,"vertex":2,"edge":1,"prev":3,"next":0,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":0,"edge":1,"prev":2,"next":4,"face":0}],"faces":[{"outerComponent":2,"innerComponents":[]},{"outerComponent":3,"innerComponents":[]}],"connectorGroups":[]},"boundary":{"vertices":[{"halfEdges":[0,2],"group":-1},{"halfEdges":[1,3],"group":-1}],"edges":[{"halfEdges":[[2],[3]]},{"halfEdges":[[1],[0]]}],"halfEdges":[{"forward":false,"edgeIndex":1,"vertexIndex":0,"vertex":0,"edge":1,"prev":3,"next":3,"face":0},{"forward":true,"edgeIndex":0,"vertexIndex":0,"vertex":1,"edge":1,"prev":2,"next":2,"face":1},{"forward":true,"edgeIndex":0,"vertexIndex":1,"vertex":0,"edge":0,"prev":1,"next":1,"face":1},{"forward":false,"edgeIndex":1,"vertexIndex":1,"vertex":1,"edge":0,"prev":0,"next":0,"face":0}],"faces":[{"outerComponent":0,"innerComponents":[]},{"outerComponent":2,"innerComponents":[]}],"connectorGroups":[]},"vertices":[{"interior":0,"boundary":-1,"kind":"v","type":8},{"interior":1,"boundary":0,"kind":"e","type":5},{"interior":2,"boundary":-1,"kind":"v","type":11},{"interior":3,"boundary":1,"kind":"e","type":5}],"edges":[{"interior":0,"type":5},{"interior":1,"type":4},{"interior":2,"type":5}],"faces":[{"interior":0,"boundary":0,"type":0,"turns":0,"wildcard":false},{"interior":1,"boundary":1,"type":1,"turns":1,"wildcard":false}],"volumes":[{"boundary":0,"type":null},{"boundary":1,"type":null}],"morphism":{"halfs":[3,2,5,1],"vertices":[3,1],"faces":[]}},{"interior":{"vertices":[{"halfEdges":[7,0],"group":-1},{"halfEdges":[1,2],"group":-1},{"halfEdges":[4,6],"group":-1},{"halfEdges":[3,5],"group":-1}],"edges":[{"halfEdges":[[6],[7]]},{"halfEdges":[[0],[2]]},{"halfEdges":[[3],[4]]}],"halfEdges":[{"forward":false,"edgeIndex":0,"vertexIndex":1,"vertex":0,"edge":1,"prev":6,"next":1,"face":1},{"forward":false,"edgeIndex":-1,"vertexIndex":0,"vertex":1,"edge":-1,"prev":0,"next":-1,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":1,"edge":1,"prev":-1,"next":7,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":3,"edge":2,"prev":-1,"next":6,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":2,"edge":2,"prev":7,"next":5,"face":0},{"forward":false,"edgeIndex":-1,"vertexIndex":1,"vertex":3,"edge":-1,"prev":4,"next":-1,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":1,"vertex":2,"edge":0,"prev":3,"next":0,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":0,"edge":0,"prev":2,"next":4,"face":0}],"faces":[{"outerComponent":2,"innerComponents":[]},{"outerComponent":3,"innerComponents":[]}],"connectorGroups":[]},"boundary":{"vertices":[{"halfEdges":[0,2],"group":-1},{"halfEdges":[1,3],"group":-1}],"edges":[{"halfEdges":[[1],[0]]},{"halfEdges":[[2],[3]]}],"halfEdges":[{"forward":false,"edgeIndex":1,"vertexIndex":0,"vertex":0,"edge":0,"prev":3,"next":3,"face":0},{"forward":true,"edgeIndex":0,"vertexIndex":0,"vertex":1,"edge":0,"prev":2,"next":2,"face":1},{"forward":true,"edgeIndex":0,"vertexIndex":1,"vertex":0,"edge":1,"prev":1,"next":1,"face":1},{"forward":false,"edgeIndex":1,"vertexIndex":1,"vertex":1,"edge":1,"prev":0,"next":0,"face":0}],"faces":[{"outerComponent":0,"innerComponents":[]},{"outerComponent":2,"innerComponents":[]}],"connectorGroups":[]},"vertices":[{"interior":0,"boundary":-1,"kind":"v","type":10},{"interior":1,"boundary":0,"kind":"e","type":5},{"interior":2,"boundary":-1,"kind":"v","type":9},{"interior":3,"boundary":1,"kind":"e","type":5}],"edges":[{"interior":0,"type":6},{"interior":1,"type":5},{"interior":2,"type":5}],"faces":[{"interior":0,"boundary":1,"type":0,"turns":0,"wildcard":false},{"interior":1,"boundary":0,"type":1,"turns":1,"wildcard":false}],"volumes":[{"boundary":0,"type":null},{"boundary":1,"type":null}],"morphism":{"halfs":[3,2,5,1],"vertices":[3,1],"faces":[]}}],"ground":false},{"n":[{"interior":{"vertices":[{"halfEdges":[1,2],"group":-1},{"halfEdges":[0,3],"group":-1}],"edges":[{"halfEdges":[[0],[2]]}],"halfEdges":[{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":1,"edge":0,"prev":-1,"next":1,"face":0},{"forward":false,"edgeIndex":-1,"vertexIndex":0,"vertex":0,"edge":-1,"prev":0,"next":-1,"face":0},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":0,"edge":0,"prev":-1,"next":3,"face":1},{"forward":false,"edgeIndex":-1,"vertexIndex":1,"vertex":1,"edge":-1,"prev":2,"next":-1,"face":1}],"faces":[{"outerComponent":0,"innerComponents":[]},{"outerComponent":2,"innerComponents":[]}],"connectorGroups":[]},"boundary":{"vertices":[{"halfEdges":[0,1],"group":-1},{"halfEdges":[2,3],"group":-1}],"edges":[{"halfEdges":[[2],[0]]},{"halfEdges":[[1],[3]]}],"halfEdges":[{"forward":false,"edgeIndex":1,"vertexIndex":0,"vertex":0,"edge":0,"prev":3,"next":3,"face":0},{"forward":true,"edgeIndex":0,"vertexIndex":1,"vertex":0,"edge":1,"prev":2,"next":2,"face":1},{"forward":true,"edgeIndex":0,"vertexIndex":0,"vertex":1,"edge":0,"prev":1,"next":1,"face":1},{"forward":false,"edgeIndex":1,"vertexIndex":1,"vertex":1,"edge":1,"prev":0,"next":0,"face":0}],"faces":[{"outerComponent":0,"innerComponents":[]},{"outerComponent":1,"innerComponents":[]}],"connectorGroups":[]},"vertices":[{"interior":0,"boundary":0,"kind":"e","type":6},{"interior":1,"boundary":1,"kind":"e","type":6}],"edges":[{"interior":0,"type":6}],"faces":[{"interior":0,"boundary":0,"type":1,"turns":1,"wildcard":false},{"interior":1,"boundary":1,"type":0,"turns":0,"wildcard":false}],"volumes":[{"boundary":0,"type":null},{"boundary":1,"type":null}],"morphism":{"halfs":[0,2,3,1],"vertices":[1,0],"faces":[]}},{"interior":{"vertices":[{"halfEdges":[7,0],"group":-1},{"halfEdges":[1,2],"group":-1},{"halfEdges":[4,6],"group":-1},{"halfEdges":[3,5],"group":-1}],"edges":[{"halfEdges":[[6],[7]]},{"halfEdges":[[0],[2]]},{"halfEdges":[[3],[4]]}],"halfEdges":[{"forward":false,"edgeIndex":0,"vertexIndex":1,"vertex":0,"edge":1,"prev":6,"next":1,"face":1},{"forward":false,"edgeIndex":-1,"vertexIndex":0,"vertex":1,"edge":-1,"prev":0,"next":-1,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":1,"edge":1,"prev":-1,"next":7,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":3,"edge":2,"prev":-1,"next":6,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":2,"edge":2,"prev":7,"next":5,"face":0},{"forward":false,"edgeIndex":-1,"vertexIndex":1,"vertex":3,"edge":-1,"prev":4,"next":-1,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":1,"vertex":2,"edge":0,"prev":3,"next":0,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":0,"edge":0,"prev":2,"next":4,"face":0}],"faces":[{"outerComponent":2,"innerComponents":[]},{"outerComponent":3,"innerComponents":[]}],"connectorGroups":[]},"boundary":{"vertices":[{"halfEdges":[0,2],"group":-1},{"halfEdges":[1,3],"group":-1}],"edges":[{"halfEdges":[[1],[0]]},{"halfEdges":[[2],[3]]}],"halfEdges":[{"forward":false,"edgeIndex":1,"vertexIndex":0,"vertex":0,"edge":0,"prev":3,"next":3,"face":0},{"forward":true,"edgeIndex":0,"vertexIndex":0,"vertex":1,"edge":0,"prev":2,"next":2,"face":1},{"forward":true,"edgeIndex":0,"vertexIndex":1,"vertex":0,"edge":1,"prev":1,"next":1,"face":1},{"forward":false,"edgeIndex":1,"vertexIndex":1,"vertex":1,"edge":1,"prev":0,"next":0,"face":0}],"faces":[{"outerComponent":0,"innerComponents":[]},{"outerComponent":2,"innerComponents":[]}],"connectorGroups":[]},"vertices":[{"interior":0,"boundary":-1,"kind":"v","type":9},{"interior":1,"boundary":0,"kind":"e","type":6},{"interior":2,"boundary":-1,"kind":"v","type":10},{"interior":3,"boundary":1,"kind":"e","type":6}],"edges":[{"interior":0,"type":5},{"interior":1,"type":6},{"interior":2,"type":6}],"faces":[{"interior":0,"boundary":1,"type":0,"turns":0,"wildcard":false},{"interior":1,"boundary":0,"type":1,"turns":1,"wildcard":false}],"volumes":[{"boundary":0,"type":null},{"boundary":1,"type":null}],"morphism":{"halfs":[3,2,5,1],"vertices":[3,1],"faces":[]}},{"interior":{"vertices":[{"halfEdges":[7,0],"group":-1},{"halfEdges":[1,2],"group":-1},{"halfEdges":[4,6],"group":-1},{"halfEdges":[3,5],"group":-1}],"edges":[{"halfEdges":[[6],[7]]},{"halfEdges":[[0],[2]]},{"halfEdges":[[3],[4]]}],"halfEdges":[{"forward":false,"edgeIndex":0,"vertexIndex":1,"vertex":0,"edge":1,"prev":6,"next":1,"face":1},{"forward":false,"edgeIndex":-1,"vertexIndex":0,"vertex":1,"edge":-1,"prev":0,"next":-1,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":1,"edge":1,"prev":-1,"next":7,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":3,"edge":2,"prev":-1,"next":6,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":2,"edge":2,"prev":7,"next":5,"face":0},{"forward":false,"edgeIndex":-1,"vertexIndex":1,"vertex":3,"edge":-1,"prev":4,"next":-1,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":1,"vertex":2,"edge":0,"prev":3,"next":0,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":0,"edge":0,"prev":2,"next":4,"face":0}],"faces":[{"outerComponent":2,"innerComponents":[]},{"outerComponent":3,"innerComponents":[]}],"connectorGroups":[]},"boundary":{"vertices":[{"halfEdges":[0,2],"group":-1},{"halfEdges":[1,3],"group":-1}],"edges":[{"halfEdges":[[1],[0]]},{"halfEdges":[[2],[3]]}],"halfEdges":[{"forward":false,"edgeIndex":1,"vertexIndex":0,"vertex":0,"edge":0,"prev":3,"next":3,"face":0},{"forward":true,"edgeIndex":0,"vertexIndex":0,"vertex":1,"edge":0,"prev":2,"next":2,"face":1},{"forward":true,"edgeIndex":0,"vertexIndex":1,"vertex":0,"edge":1,"prev":1,"next":1,"face":1},{"forward":false,"edgeIndex":1,"vertexIndex":1,"vertex":1,"edge":1,"prev":0,"next":0,"face":0}],"faces":[{"outerComponent":0,"innerComponents":[]},{"outerComponent":2,"innerComponents":[]}],"connectorGroups":[]},"vertices":[{"interior":0,"boundary":-1,"kind":"v","type":15},{"interior":1,"boundary":0,"kind":"e","type":6},{"interior":2,"boundary":-1,"kind":"v","type":12},{"interior":3,"boundary":1,"kind":"e","type":6}],"edges":[{"interior":0,"type":7},{"interior":1,"type":6},{"interior":2,"type":6}],"faces":[{"interior":0,"boundary":1,"type":0,"turns":0,"wildcard":false},{"interior":1,"boundary":0,"type":1,"turns":1,"wildcard":false}],"volumes":[{"boundary":0,"type":null},{"boundary":1,"type":null}],"morphism":{"halfs":[3,2,5,1],"vertices":[3,1],"faces":[]}}],"ground":false},{"n":[{"interior":{"vertices":[{"halfEdges":[1,2],"group":-1},{"halfEdges":[0,3],"group":-1}],"edges":[{"halfEdges":[[0],[2]]}],"halfEdges":[{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":1,"edge":0,"prev":-1,"next":1,"face":0},{"forward":false,"edgeIndex":-1,"vertexIndex":0,"vertex":0,"edge":-1,"prev":0,"next":-1,"face":0},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":0,"edge":0,"prev":-1,"next":3,"face":1},{"forward":false,"edgeIndex":-1,"vertexIndex":1,"vertex":1,"edge":-1,"prev":2,"next":-1,"face":1}],"faces":[{"outerComponent":0,"innerComponents":[]},{"outerComponent":2,"innerComponents":[]}],"connectorGroups":[]},"boundary":{"vertices":[{"halfEdges":[0,1],"group":-1},{"halfEdges":[2,3],"group":-1}],"edges":[{"halfEdges":[[2],[0]]},{"halfEdges":[[1],[3]]}],"halfEdges":[{"forward":false,"edgeIndex":1,"vertexIndex":0,"vertex":0,"edge":0,"prev":3,"next":3,"face":0},{"forward":true,"edgeIndex":0,"vertexIndex":1,"vertex":0,"edge":1,"prev":2,"next":2,"face":1},{"forward":true,"edgeIndex":0,"vertexIndex":0,"vertex":1,"edge":0,"prev":1,"next":1,"face":1},{"forward":false,"edgeIndex":1,"vertexIndex":1,"vertex":1,"edge":1,"prev":0,"next":0,"face":0}],"faces":[{"outerComponent":0,"innerComponents":[]},{"outerComponent":1,"innerComponents":[]}],"connectorGroups":[]},"vertices":[{"interior":0,"boundary":0,"kind":"e","type":7},{"interior":1,"boundary":1,"kind":"e","type":7}],"edges":[{"interior":0,"type":7}],"faces":[{"interior":0,"boundary":0,"type":1,"turns":1,"wildcard":false},{"interior":1,"boundary":1,"type":0,"turns":0,"wildcard":false}],"volumes":[{"boundary":0,"type":null},{"boundary":1,"type":null}],"morphism":{"halfs":[0,2,3,1],"vertices":[1,0],"faces":[]}},{"interior":{"vertices":[{"halfEdges":[7,0],"group":-1},{"halfEdges":[1,2],"group":-1},{"halfEdges":[4,6],"group":-1},{"halfEdges":[3,5],"group":-1}],"edges":[{"halfEdges":[[6],[7]]},{"halfEdges":[[0],[2]]},{"halfEdges":[[3],[4]]}],"halfEdges":[{"forward":false,"edgeIndex":0,"vertexIndex":1,"vertex":0,"edge":1,"prev":6,"next":1,"face":1},{"forward":false,"edgeIndex":-1,"vertexIndex":0,"vertex":1,"edge":-1,"prev":0,"next":-1,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":1,"edge":1,"prev":-1,"next":7,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":3,"edge":2,"prev":-1,"next":6,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":2,"edge":2,"prev":7,"next":5,"face":0},{"forward":false,"edgeIndex":-1,"vertexIndex":1,"vertex":3,"edge":-1,"prev":4,"next":-1,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":1,"vertex":2,"edge":0,"prev":3,"next":0,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":0,"edge":0,"prev":2,"next":4,"face":0}],"faces":[{"outerComponent":2,"innerComponents":[]},{"outerComponent":3,"innerComponents":[]}],"connectorGroups":[]},"boundary":{"vertices":[{"halfEdges":[0,2],"group":-1},{"halfEdges":[1,3],"group":-1}],"edges":[{"halfEdges":[[1],[0]]},{"halfEdges":[[2],[3]]}],"halfEdges":[{"forward":false,"edgeIndex":1,"vertexIndex":0,"vertex":0,"edge":0,"prev":3,"next":3,"face":0},{"forward":true,"edgeIndex":0,"vertexIndex":0,"vertex":1,"edge":0,"prev":2,"next":2,"face":1},{"forward":true,"edgeIndex":0,"vertexIndex":1,"vertex":0,"edge":1,"prev":1,"next":1,"face":1},{"forward":false,"edgeIndex":1,"vertexIndex":1,"vertex":1,"edge":1,"prev":0,"next":0,"face":0}],"faces":[{"outerComponent":0,"innerComponents":[]},{"outerComponent":2,"innerComponents":[]}],"connectorGroups":[]},"vertices":[{"interior":0,"boundary":-1,"kind":"v","type":12},{"interior":1,"boundary":0,"kind":"e","type":7},{"interior":2,"boundary":-1,"kind":"v","type":15},{"interior":3,"boundary":1,"kind":"e","type":7}],"edges":[{"interior":0,"type":6},{"interior":1,"type":7},{"interior":2,"type":7}],"faces":[{"interior":0,"boundary":1,"type":0,"turns":0,"wildcard":false},{"interior":1,"boundary":0,"type":1,"turns":1,"wildcard":false}],"volumes":[{"boundary":0,"type":null},{"boundary":1,"type":null}],"morphism":{"halfs":[3,2,5,1],"vertices":[3,1],"faces":[]}},{"interior":{"vertices":[{"halfEdges":[7,0],"group":-1},{"halfEdges":[1,2],"group":-1},{"halfEdges":[4,6],"group":-1},{"halfEdges":[3,5],"group":-1}],"edges":[{"halfEdges":[[6],[7]]},{"halfEdges":[[0],[2]]},{"halfEdges":[[3],[4]]}],"halfEdges":[{"forward":false,"edgeIndex":0,"vertexIndex":1,"vertex":0,"edge":1,"prev":6,"next":1,"face":1},{"forward":false,"edgeIndex":-1,"vertexIndex":0,"vertex":1,"edge":-1,"prev":0,"next":-1,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":1,"edge":1,"prev":-1,"next":7,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":3,"edge":2,"prev":-1,"next":6,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":2,"edge":2,"prev":7,"next":5,"face":0},{"forward":false,"edgeIndex":-1,"vertexIndex":1,"vertex":3,"edge":-1,"prev":4,"next":-1,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":1,"vertex":2,"edge":0,"prev":3,"next":0,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":0,"edge":0,"prev":2,"next":4,"face":0}],"faces":[{"outerComponent":2,"innerComponents":[]},{"outerComponent":3,"innerComponents":[]}],"connectorGroups":[]},"boundary":{"vertices":[{"halfEdges":[0,2],"group":-1},{"halfEdges":[1,3],"group":-1}],"edges":[{"halfEdges":[[1],[0]]},{"halfEdges":[[2],[3]]}],"halfEdges":[{"forward":false,"edgeIndex":1,"vertexIndex":0,"vertex":0,"edge":0,"prev":3,"next":3,"face":0},{"forward":true,"edgeIndex":0,"vertexIndex":0,"vertex":1,"edge":0,"prev":2,"next":2,"face":1},{"forward":true,"edgeIndex":0,"vertexIndex":1,"vertex":0,"edge":1,"prev":1,"next":1,"face":1},{"forward":false,"edgeIndex":1,"vertexIndex":1,"vertex":1,"edge":1,"prev":0,"next":0,"face":0}],"faces":[{"outerComponent":0,"innerComponents":[]},{"outerComponent":2,"innerComponents":[]}],"connectorGroups":[]},"vertices":[{"interior":0,"boundary":-1,"kind":"v","type":14},{"interior":1,"boundary":0,"kind":"e","type":7},{"interior":2,"boundary":-1,"kind":"v","type":13},{"interior":3,"boundary":1,"kind":"e","type":7}],"edges":[{"interior":0,"type":1},{"interior":1,"type":7},{"interior":2,"type":7}],"faces":[{"interior":0,"boundary":1,"type":0,"turns":0,"wildcard":false},{"interior":1,"boundary":0,"type":1,"turns":1,"wildcard":false}],"volumes":[{"boundary":0,"type":null},{"boundary":1,"type":null}],"morphism":{"halfs":[3,2,5,1],"vertices":[3,1],"faces":[]}}],"ground":false}],"starterTransitions":[{"n":[{"interior":{"vertices":[],"edges":[],"halfEdges":[],"faces":[{"outerComponent":-1,"innerComponents":[]}],"connectorGroups":[]},"boundary":{"vertices":[],"edges":[{"halfEdges":[[0],[1]]}],"halfEdges":[{"forward":false,"edgeIndex":0,"vertexIndex":-1,"vertex":-1,"edge":0,"prev":0,"next":0,"face":0},{"forward":true,"edgeIndex":1,"vertexIndex":-1,"vertex":-1,"edge":0,"prev":1,"next":1,"face":-1}],"faces":[{"outerComponent":0,"innerComponents":[]}],"connectorGroups":[]},"vertices":[],"edges":[],"faces":[{"interior":0,"boundary":0,"type":0,"wildcard":false}],"volumes":[{"boundary":0,"type":null}],"morphism":{"halfs":[-1],"vertices":[],"faces":[]}},{"interior":{"vertices":[{"halfEdges":[14,13],"group":-1},{"halfEdges":[12,11],"group":-1},{"halfEdges":[9,10],"group":-1},{"halfEdges":[7,8],"group":-1},{"halfEdges":[5,6],"group":-1},{"halfEdges":[3,4],"group":-1},{"halfEdges":[1,2],"group":-1},{"halfEdges":[0,15],"group":-1}],"edges":[{"halfEdges":[[12],[13]]},{"halfEdges":[[10],[11]]},{"halfEdges":[[8],[9]]},{"halfEdges":[[6],[7]]},{"halfEdges":[[4],[5]]},{"halfEdges":[[2],[3]]},{"halfEdges":[[0],[1]]},{"halfEdges":[[14],[15]]}],"halfEdges":[{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":7,"edge":6,"prev":14,"next":2,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":6,"edge":6,"prev":3,"next":15,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":1,"vertex":6,"edge":5,"prev":0,"next":4,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":5,"edge":5,"prev":5,"next":1,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":1,"vertex":5,"edge":4,"prev":2,"next":6,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":4,"edge":4,"prev":7,"next":3,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":1,"vertex":4,"edge":3,"prev":4,"next":8,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":3,"edge":3,"prev":9,"next":5,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":1,"vertex":3,"edge":2,"prev":6,"next":10,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":2,"edge":2,"prev":11,"next":7,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":1,"vertex":2,"edge":1,"prev":8,"next":12,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":1,"edge":1,"prev":13,"next":9,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":1,"edge":0,"prev":10,"next":14,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":0,"edge":0,"prev":15,"next":11,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":0,"edge":7,"prev":12,"next":0,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":7,"edge":7,"prev":1,"next":13,"face":0}],"faces":[{"outerComponent":15,"innerComponents":[]},{"outerComponent":14,"innerComponents":[]}],"connectorGroups":[]},"boundary":{"vertices":[],"edges":[],"halfEdges":[],"faces":[],"connectorGroups":[]},"vertices":[{"interior":0,"boundary":-1,"kind":"v","type":7},{"interior":1,"boundary":-1,"kind":"v","type":6},{"interior":2,"boundary":-1,"kind":"v","type":11},{"interior":3,"boundary":-1,"kind":"v","type":10},{"interior":4,"boundary":-1,"kind":"v","type":15},{"interior":5,"boundary":-1,"kind":"v","type":14},{"interior":6,"boundary":-1,"kind":"v","type":1},{"interior":7,"boundary":-1,"kind":"v","type":0}],"edges":[{"interior":0,"type":3},{"interior":1,"type":4},{"interior":2,"type":5},{"interior":3,"type":6},{"interior":4,"type":7},{"interior":5,"type":1},{"interior":6,"type":0},{"interior":7,"type":2}],"faces":[{"interior":0,"boundary":-1,"type":0,"turns":0,"wildcard":false},{"interior":1,"boundary":-1,"type":1,"turns":1,"wildcard":false}],"volumes":[],"morphism":{"halfs":[],"vertices":[],"faces":[1]}},{"interior":{"vertices":[{"halfEdges":[13,14],"group":-1},{"halfEdges":[11,12],"group":-1},{"halfEdges":[9,10],"group":-1},{"halfEdges":[8,7],"group":-1},{"halfEdges":[6,5],"group":-1},{"halfEdges":[4,3],"group":-1},{"halfEdges":[2,1],"group":-1},{"halfEdges":[0,15],"group":-1}],"edges":[{"halfEdges":[[12],[13]]},{"halfEdges":[[10],[11]]},{"halfEdges":[[8],[9]]},{"halfEdges":[[6],[7]]},{"halfEdges":[[4],[5]]},{"halfEdges":[[2],[3]]},{"halfEdges":[[0],[1]]},{"halfEdges":[[14],[15]]}],"halfEdges":[{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":7,"edge":6,"prev":14,"next":2,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":6,"edge":6,"prev":3,"next":15,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":6,"edge":5,"prev":0,"next":4,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":5,"edge":5,"prev":5,"next":1,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":5,"edge":4,"prev":2,"next":6,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":4,"edge":4,"prev":7,"next":3,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":4,"edge":3,"prev":4,"next":8,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":3,"edge":3,"prev":9,"next":5,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":3,"edge":2,"prev":6,"next":10,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":2,"edge":2,"prev":11,"next":7,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":1,"vertex":2,"edge":1,"prev":8,"next":12,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":1,"edge":1,"prev":13,"next":9,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":1,"vertex":1,"edge":0,"prev":10,"next":14,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":0,"edge":0,"prev":15,"next":11,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":1,"vertex":0,"edge":7,"prev":12,"next":0,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":7,"edge":7,"prev":1,"next":13,"face":0}],"faces":[{"outerComponent":15,"innerComponents":[]},{"outerComponent":14,"innerComponents":[]}],"connectorGroups":[]},"boundary":{"vertices":[],"edges":[],"halfEdges":[],"faces":[],"connectorGroups":[]},"vertices":[{"interior":0,"boundary":-1,"kind":"v","type":13},{"interior":1,"boundary":-1,"kind":"v","type":12},{"interior":2,"boundary":-1,"kind":"v","type":9},{"interior":3,"boundary":-1,"kind":"v","type":8},{"interior":4,"boundary":-1,"kind":"v","type":5},{"interior":5,"boundary":-1,"kind":"v","type":4},{"interior":6,"boundary":-1,"kind":"v","type":3},{"interior":7,"boundary":-1,"kind":"v","type":2}],"edges":[{"interior":0,"type":7},{"interior":1,"type":6},{"interior":2,"type":5},{"interior":3,"type":4},{"interior":4,"type":3},{"interior":5,"type":2},{"interior":6,"type":0},{"interior":7,"type":1}],"faces":[{"interior":0,"boundary":-1,"type":0,"turns":2,"wildcard":false},{"interior":1,"boundary":-1,"type":1,"turns":-1,"wildcard":false}],"volumes":[],"morphism":{"halfs":[],"vertices":[],"faces":[]}}],"ground":false}],"groundTransitions":[],"grounded":false,"emptyNet":{"interior":{"vertices":[],"edges":[],"halfEdges":[],"faces":[{"outerComponent":-1,"innerComponents":[]}],"connectorGroups":[]},"boundary":{"vertices":[],"edges":[{"halfEdges":[[0],[1]]}],"halfEdges":[{"forward":false,"edgeIndex":0,"vertexIndex":-1,"vertex":-1,"edge":0,"prev":0,"next":0,"face":0},{"forward":true,"edgeIndex":1,"vertexIndex":-1,"vertex":-1,"edge":0,"prev":1,"next":1,"face":-1}],"faces":[{"outerComponent":0,"innerComponents":[]}],"connectorGroups":[]},"vertices":[],"edges":[],"faces":[{"interior":0,"boundary":0,"type":0,"wildcard":false}],"volumes":[{"boundary":0,"type":null}]}}}
+{
+  "emptyGraph": {
+    "edgeTypes": [],
+    "faceTypes": [
+      0
+    ],
+    "interior": {
+      "edges": [],
+      "faces": [
+        {
+          "outerComponent": -1
+        }
+      ],
+      "halfEdges": [],
+      "vertices": []
+    },
+    "vertexTypes": []
+  },
+  "groundRules": [],
+  "grounded": false,
+  "name": "Octagons",
+  "rules": [
+    {
+      "ground": false,
+      "n": [
+        {
+          "edgeTypes": [
+            2
+          ],
+          "faceTypes": [
+            1,
+            0
+          ],
+          "interior": {
+            "edges": [
+              {
+                "halfEdges": [
+                  [
+                    0
+                  ],
+                  [
+                    2
+                  ]
+                ]
+              }
+            ],
+            "faces": [
+              {
+                "outerComponent": 0
+              },
+              {
+                "outerComponent": 2
+              }
+            ],
+            "halfEdges": [
+              {
+                "edge": 0,
+                "edgeIndex": 0,
+                "face": 0,
+                "forward": false,
+                "next": 1,
+                "prev": -1,
+                "vertex": 1,
+                "vertexIndex": 0
+              },
+              {
+                "edge": -1,
+                "edgeIndex": -1,
+                "face": 0,
+                "forward": false,
+                "next": -1,
+                "prev": 0,
+                "vertex": 0,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 0,
+                "edgeIndex": 1,
+                "face": 1,
+                "forward": true,
+                "next": 3,
+                "prev": -1,
+                "vertex": 0,
+                "vertexIndex": 1
+              },
+              {
+                "edge": -1,
+                "edgeIndex": -1,
+                "face": 1,
+                "forward": false,
+                "next": -1,
+                "prev": 2,
+                "vertex": 1,
+                "vertexIndex": 1
+              }
+            ],
+            "vertices": [
+              {
+                "halfEdges": [
+                  1,
+                  2
+                ]
+              },
+              {
+                "halfEdges": [
+                  0,
+                  3
+                ]
+              }
+            ]
+          },
+          "morphism": {
+            "faces": [],
+            "halfs": [
+              0,
+              2,
+              3,
+              1
+            ],
+            "vertices": [
+              1,
+              0
+            ]
+          },
+          "vertexTypes": [
+            {
+              "kind": "e",
+              "type": 2
+            },
+            {
+              "kind": "e",
+              "type": 2
+            }
+          ]
+        },
+        {
+          "edgeTypes": [
+            2,
+            0,
+            2
+          ],
+          "faceTypes": [
+            0,
+            1
+          ],
+          "interior": {
+            "edges": [
+              {
+                "halfEdges": [
+                  [
+                    0
+                  ],
+                  [
+                    2
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    6
+                  ],
+                  [
+                    7
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    3
+                  ],
+                  [
+                    4
+                  ]
+                ]
+              }
+            ],
+            "faces": [
+              {
+                "outerComponent": 2
+              },
+              {
+                "outerComponent": 3
+              }
+            ],
+            "halfEdges": [
+              {
+                "edge": 0,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 1,
+                "prev": 6,
+                "vertex": 0,
+                "vertexIndex": 0
+              },
+              {
+                "edge": -1,
+                "edgeIndex": -1,
+                "face": 1,
+                "forward": false,
+                "next": -1,
+                "prev": 0,
+                "vertex": 1,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 0,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 7,
+                "prev": -1,
+                "vertex": 1,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 2,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 6,
+                "prev": -1,
+                "vertex": 3,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 2,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 5,
+                "prev": 7,
+                "vertex": 2,
+                "vertexIndex": 1
+              },
+              {
+                "edge": -1,
+                "edgeIndex": -1,
+                "face": 0,
+                "forward": false,
+                "next": -1,
+                "prev": 4,
+                "vertex": 3,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 1,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 0,
+                "prev": 3,
+                "vertex": 2,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 1,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 4,
+                "prev": 2,
+                "vertex": 0,
+                "vertexIndex": 1
+              }
+            ],
+            "vertices": [
+              {
+                "halfEdges": [
+                  0,
+                  7
+                ]
+              },
+              {
+                "halfEdges": [
+                  1,
+                  2
+                ]
+              },
+              {
+                "halfEdges": [
+                  6,
+                  4
+                ]
+              },
+              {
+                "halfEdges": [
+                  3,
+                  5
+                ]
+              }
+            ]
+          },
+          "morphism": {
+            "faces": [],
+            "halfs": [
+              3,
+              2,
+              5,
+              1
+            ],
+            "vertices": [
+              3,
+              1
+            ]
+          },
+          "vertexTypes": [
+            {
+              "kind": "v",
+              "type": 3
+            },
+            {
+              "kind": "e",
+              "type": 2
+            },
+            {
+              "kind": "v",
+              "type": 0
+            },
+            {
+              "kind": "e",
+              "type": 2
+            }
+          ]
+        },
+        {
+          "edgeTypes": [
+            2,
+            3,
+            2
+          ],
+          "faceTypes": [
+            0,
+            1
+          ],
+          "interior": {
+            "edges": [
+              {
+                "halfEdges": [
+                  [
+                    0
+                  ],
+                  [
+                    2
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    6
+                  ],
+                  [
+                    7
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    3
+                  ],
+                  [
+                    4
+                  ]
+                ]
+              }
+            ],
+            "faces": [
+              {
+                "outerComponent": 2
+              },
+              {
+                "outerComponent": 3
+              }
+            ],
+            "halfEdges": [
+              {
+                "edge": 0,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 1,
+                "prev": 6,
+                "vertex": 0,
+                "vertexIndex": 0
+              },
+              {
+                "edge": -1,
+                "edgeIndex": -1,
+                "face": 1,
+                "forward": false,
+                "next": -1,
+                "prev": 0,
+                "vertex": 1,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 0,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 7,
+                "prev": -1,
+                "vertex": 1,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 2,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 6,
+                "prev": -1,
+                "vertex": 3,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 2,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 5,
+                "prev": 7,
+                "vertex": 2,
+                "vertexIndex": 1
+              },
+              {
+                "edge": -1,
+                "edgeIndex": -1,
+                "face": 0,
+                "forward": false,
+                "next": -1,
+                "prev": 4,
+                "vertex": 3,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 1,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 0,
+                "prev": 3,
+                "vertex": 2,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 1,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 4,
+                "prev": 2,
+                "vertex": 0,
+                "vertexIndex": 1
+              }
+            ],
+            "vertices": [
+              {
+                "halfEdges": [
+                  0,
+                  7
+                ]
+              },
+              {
+                "halfEdges": [
+                  1,
+                  2
+                ]
+              },
+              {
+                "halfEdges": [
+                  6,
+                  4
+                ]
+              },
+              {
+                "halfEdges": [
+                  3,
+                  5
+                ]
+              }
+            ]
+          },
+          "morphism": {
+            "faces": [],
+            "halfs": [
+              3,
+              2,
+              5,
+              1
+            ],
+            "vertices": [
+              3,
+              1
+            ]
+          },
+          "vertexTypes": [
+            {
+              "kind": "v",
+              "type": 7
+            },
+            {
+              "kind": "e",
+              "type": 2
+            },
+            {
+              "kind": "v",
+              "type": 4
+            },
+            {
+              "kind": "e",
+              "type": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ground": false,
+      "n": [
+        {
+          "edgeTypes": [
+            0
+          ],
+          "faceTypes": [
+            1,
+            0
+          ],
+          "interior": {
+            "edges": [
+              {
+                "halfEdges": [
+                  [
+                    0
+                  ],
+                  [
+                    2
+                  ]
+                ]
+              }
+            ],
+            "faces": [
+              {
+                "outerComponent": 0
+              },
+              {
+                "outerComponent": 2
+              }
+            ],
+            "halfEdges": [
+              {
+                "edge": 0,
+                "edgeIndex": 0,
+                "face": 0,
+                "forward": false,
+                "next": 1,
+                "prev": -1,
+                "vertex": 1,
+                "vertexIndex": 0
+              },
+              {
+                "edge": -1,
+                "edgeIndex": -1,
+                "face": 0,
+                "forward": false,
+                "next": -1,
+                "prev": 0,
+                "vertex": 0,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 0,
+                "edgeIndex": 1,
+                "face": 1,
+                "forward": true,
+                "next": 3,
+                "prev": -1,
+                "vertex": 0,
+                "vertexIndex": 1
+              },
+              {
+                "edge": -1,
+                "edgeIndex": -1,
+                "face": 1,
+                "forward": false,
+                "next": -1,
+                "prev": 2,
+                "vertex": 1,
+                "vertexIndex": 1
+              }
+            ],
+            "vertices": [
+              {
+                "halfEdges": [
+                  1,
+                  2
+                ]
+              },
+              {
+                "halfEdges": [
+                  0,
+                  3
+                ]
+              }
+            ]
+          },
+          "morphism": {
+            "faces": [],
+            "halfs": [
+              0,
+              2,
+              3,
+              1
+            ],
+            "vertices": [
+              1,
+              0
+            ]
+          },
+          "vertexTypes": [
+            {
+              "kind": "e",
+              "type": 0
+            },
+            {
+              "kind": "e",
+              "type": 0
+            }
+          ]
+        },
+        {
+          "edgeTypes": [
+            0,
+            2,
+            0
+          ],
+          "faceTypes": [
+            0,
+            1
+          ],
+          "interior": {
+            "edges": [
+              {
+                "halfEdges": [
+                  [
+                    0
+                  ],
+                  [
+                    2
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    6
+                  ],
+                  [
+                    7
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    3
+                  ],
+                  [
+                    4
+                  ]
+                ]
+              }
+            ],
+            "faces": [
+              {
+                "outerComponent": 2
+              },
+              {
+                "outerComponent": 3
+              }
+            ],
+            "halfEdges": [
+              {
+                "edge": 0,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 1,
+                "prev": 6,
+                "vertex": 0,
+                "vertexIndex": 0
+              },
+              {
+                "edge": -1,
+                "edgeIndex": -1,
+                "face": 1,
+                "forward": false,
+                "next": -1,
+                "prev": 0,
+                "vertex": 1,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 0,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 7,
+                "prev": -1,
+                "vertex": 1,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 2,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 6,
+                "prev": -1,
+                "vertex": 3,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 2,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 5,
+                "prev": 7,
+                "vertex": 2,
+                "vertexIndex": 1
+              },
+              {
+                "edge": -1,
+                "edgeIndex": -1,
+                "face": 0,
+                "forward": false,
+                "next": -1,
+                "prev": 4,
+                "vertex": 3,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 1,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 0,
+                "prev": 3,
+                "vertex": 2,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 1,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 4,
+                "prev": 2,
+                "vertex": 0,
+                "vertexIndex": 1
+              }
+            ],
+            "vertices": [
+              {
+                "halfEdges": [
+                  0,
+                  7
+                ]
+              },
+              {
+                "halfEdges": [
+                  1,
+                  2
+                ]
+              },
+              {
+                "halfEdges": [
+                  6,
+                  4
+                ]
+              },
+              {
+                "halfEdges": [
+                  3,
+                  5
+                ]
+              }
+            ]
+          },
+          "morphism": {
+            "faces": [],
+            "halfs": [
+              3,
+              2,
+              5,
+              1
+            ],
+            "vertices": [
+              3,
+              1
+            ]
+          },
+          "vertexTypes": [
+            {
+              "kind": "v",
+              "type": 0
+            },
+            {
+              "kind": "e",
+              "type": 0
+            },
+            {
+              "kind": "v",
+              "type": 3
+            },
+            {
+              "kind": "e",
+              "type": 0
+            }
+          ]
+        },
+        {
+          "edgeTypes": [
+            0,
+            1,
+            0
+          ],
+          "faceTypes": [
+            0,
+            1
+          ],
+          "interior": {
+            "edges": [
+              {
+                "halfEdges": [
+                  [
+                    0
+                  ],
+                  [
+                    2
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    6
+                  ],
+                  [
+                    7
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    3
+                  ],
+                  [
+                    4
+                  ]
+                ]
+              }
+            ],
+            "faces": [
+              {
+                "outerComponent": 2
+              },
+              {
+                "outerComponent": 3
+              }
+            ],
+            "halfEdges": [
+              {
+                "edge": 0,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 1,
+                "prev": 6,
+                "vertex": 0,
+                "vertexIndex": 0
+              },
+              {
+                "edge": -1,
+                "edgeIndex": -1,
+                "face": 1,
+                "forward": false,
+                "next": -1,
+                "prev": 0,
+                "vertex": 1,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 0,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 7,
+                "prev": -1,
+                "vertex": 1,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 2,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 6,
+                "prev": -1,
+                "vertex": 3,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 2,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 5,
+                "prev": 7,
+                "vertex": 2,
+                "vertexIndex": 0
+              },
+              {
+                "edge": -1,
+                "edgeIndex": -1,
+                "face": 0,
+                "forward": false,
+                "next": -1,
+                "prev": 4,
+                "vertex": 3,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 1,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 0,
+                "prev": 3,
+                "vertex": 2,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 1,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 4,
+                "prev": 2,
+                "vertex": 0,
+                "vertexIndex": 1
+              }
+            ],
+            "vertices": [
+              {
+                "halfEdges": [
+                  0,
+                  7
+                ]
+              },
+              {
+                "halfEdges": [
+                  1,
+                  2
+                ]
+              },
+              {
+                "halfEdges": [
+                  4,
+                  6
+                ]
+              },
+              {
+                "halfEdges": [
+                  3,
+                  5
+                ]
+              }
+            ]
+          },
+          "morphism": {
+            "faces": [],
+            "halfs": [
+              3,
+              2,
+              5,
+              1
+            ],
+            "vertices": [
+              3,
+              1
+            ]
+          },
+          "vertexTypes": [
+            {
+              "kind": "v",
+              "type": 2
+            },
+            {
+              "kind": "e",
+              "type": 0
+            },
+            {
+              "kind": "v",
+              "type": 1
+            },
+            {
+              "kind": "e",
+              "type": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ground": false,
+      "n": [
+        {
+          "edgeTypes": [
+            1
+          ],
+          "faceTypes": [
+            1,
+            0
+          ],
+          "interior": {
+            "edges": [
+              {
+                "halfEdges": [
+                  [
+                    0
+                  ],
+                  [
+                    2
+                  ]
+                ]
+              }
+            ],
+            "faces": [
+              {
+                "outerComponent": 0
+              },
+              {
+                "outerComponent": 2
+              }
+            ],
+            "halfEdges": [
+              {
+                "edge": 0,
+                "edgeIndex": 0,
+                "face": 0,
+                "forward": false,
+                "next": 1,
+                "prev": -1,
+                "vertex": 1,
+                "vertexIndex": 0
+              },
+              {
+                "edge": -1,
+                "edgeIndex": -1,
+                "face": 0,
+                "forward": false,
+                "next": -1,
+                "prev": 0,
+                "vertex": 0,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 0,
+                "edgeIndex": 1,
+                "face": 1,
+                "forward": true,
+                "next": 3,
+                "prev": -1,
+                "vertex": 0,
+                "vertexIndex": 1
+              },
+              {
+                "edge": -1,
+                "edgeIndex": -1,
+                "face": 1,
+                "forward": false,
+                "next": -1,
+                "prev": 2,
+                "vertex": 1,
+                "vertexIndex": 1
+              }
+            ],
+            "vertices": [
+              {
+                "halfEdges": [
+                  1,
+                  2
+                ]
+              },
+              {
+                "halfEdges": [
+                  0,
+                  3
+                ]
+              }
+            ]
+          },
+          "morphism": {
+            "faces": [],
+            "halfs": [
+              0,
+              2,
+              3,
+              1
+            ],
+            "vertices": [
+              1,
+              0
+            ]
+          },
+          "vertexTypes": [
+            {
+              "kind": "e",
+              "type": 1
+            },
+            {
+              "kind": "e",
+              "type": 1
+            }
+          ]
+        },
+        {
+          "edgeTypes": [
+            0,
+            1,
+            1
+          ],
+          "faceTypes": [
+            0,
+            1
+          ],
+          "interior": {
+            "edges": [
+              {
+                "halfEdges": [
+                  [
+                    6
+                  ],
+                  [
+                    7
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    0
+                  ],
+                  [
+                    2
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    3
+                  ],
+                  [
+                    4
+                  ]
+                ]
+              }
+            ],
+            "faces": [
+              {
+                "outerComponent": 2
+              },
+              {
+                "outerComponent": 3
+              }
+            ],
+            "halfEdges": [
+              {
+                "edge": 1,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 1,
+                "prev": 6,
+                "vertex": 0,
+                "vertexIndex": 1
+              },
+              {
+                "edge": -1,
+                "edgeIndex": -1,
+                "face": 1,
+                "forward": false,
+                "next": -1,
+                "prev": 0,
+                "vertex": 1,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 1,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 7,
+                "prev": -1,
+                "vertex": 1,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 2,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 6,
+                "prev": -1,
+                "vertex": 3,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 2,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 5,
+                "prev": 7,
+                "vertex": 2,
+                "vertexIndex": 1
+              },
+              {
+                "edge": -1,
+                "edgeIndex": -1,
+                "face": 0,
+                "forward": false,
+                "next": -1,
+                "prev": 4,
+                "vertex": 3,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 0,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 0,
+                "prev": 3,
+                "vertex": 2,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 0,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 4,
+                "prev": 2,
+                "vertex": 0,
+                "vertexIndex": 0
+              }
+            ],
+            "vertices": [
+              {
+                "halfEdges": [
+                  7,
+                  0
+                ]
+              },
+              {
+                "halfEdges": [
+                  1,
+                  2
+                ]
+              },
+              {
+                "halfEdges": [
+                  6,
+                  4
+                ]
+              },
+              {
+                "halfEdges": [
+                  3,
+                  5
+                ]
+              }
+            ]
+          },
+          "morphism": {
+            "faces": [],
+            "halfs": [
+              3,
+              2,
+              5,
+              1
+            ],
+            "vertices": [
+              3,
+              1
+            ]
+          },
+          "vertexTypes": [
+            {
+              "kind": "v",
+              "type": 1
+            },
+            {
+              "kind": "e",
+              "type": 1
+            },
+            {
+              "kind": "v",
+              "type": 2
+            },
+            {
+              "kind": "e",
+              "type": 1
+            }
+          ]
+        },
+        {
+          "edgeTypes": [
+            7,
+            1,
+            1
+          ],
+          "faceTypes": [
+            0,
+            1
+          ],
+          "interior": {
+            "edges": [
+              {
+                "halfEdges": [
+                  [
+                    6
+                  ],
+                  [
+                    7
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    0
+                  ],
+                  [
+                    2
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    3
+                  ],
+                  [
+                    4
+                  ]
+                ]
+              }
+            ],
+            "faces": [
+              {
+                "outerComponent": 2
+              },
+              {
+                "outerComponent": 3
+              }
+            ],
+            "halfEdges": [
+              {
+                "edge": 1,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 1,
+                "prev": 6,
+                "vertex": 0,
+                "vertexIndex": 1
+              },
+              {
+                "edge": -1,
+                "edgeIndex": -1,
+                "face": 1,
+                "forward": false,
+                "next": -1,
+                "prev": 0,
+                "vertex": 1,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 1,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 7,
+                "prev": -1,
+                "vertex": 1,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 2,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 6,
+                "prev": -1,
+                "vertex": 3,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 2,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 5,
+                "prev": 7,
+                "vertex": 2,
+                "vertexIndex": 0
+              },
+              {
+                "edge": -1,
+                "edgeIndex": -1,
+                "face": 0,
+                "forward": false,
+                "next": -1,
+                "prev": 4,
+                "vertex": 3,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 0,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 0,
+                "prev": 3,
+                "vertex": 2,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 0,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 4,
+                "prev": 2,
+                "vertex": 0,
+                "vertexIndex": 0
+              }
+            ],
+            "vertices": [
+              {
+                "halfEdges": [
+                  7,
+                  0
+                ]
+              },
+              {
+                "halfEdges": [
+                  1,
+                  2
+                ]
+              },
+              {
+                "halfEdges": [
+                  4,
+                  6
+                ]
+              },
+              {
+                "halfEdges": [
+                  3,
+                  5
+                ]
+              }
+            ]
+          },
+          "morphism": {
+            "faces": [],
+            "halfs": [
+              3,
+              2,
+              5,
+              1
+            ],
+            "vertices": [
+              3,
+              1
+            ]
+          },
+          "vertexTypes": [
+            {
+              "kind": "v",
+              "type": 13
+            },
+            {
+              "kind": "e",
+              "type": 1
+            },
+            {
+              "kind": "v",
+              "type": 14
+            },
+            {
+              "kind": "e",
+              "type": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ground": false,
+      "n": [
+        {
+          "edgeTypes": [
+            3
+          ],
+          "faceTypes": [
+            1,
+            0
+          ],
+          "interior": {
+            "edges": [
+              {
+                "halfEdges": [
+                  [
+                    0
+                  ],
+                  [
+                    2
+                  ]
+                ]
+              }
+            ],
+            "faces": [
+              {
+                "outerComponent": 0
+              },
+              {
+                "outerComponent": 2
+              }
+            ],
+            "halfEdges": [
+              {
+                "edge": 0,
+                "edgeIndex": 0,
+                "face": 0,
+                "forward": false,
+                "next": 1,
+                "prev": -1,
+                "vertex": 1,
+                "vertexIndex": 0
+              },
+              {
+                "edge": -1,
+                "edgeIndex": -1,
+                "face": 0,
+                "forward": false,
+                "next": -1,
+                "prev": 0,
+                "vertex": 0,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 0,
+                "edgeIndex": 1,
+                "face": 1,
+                "forward": true,
+                "next": 3,
+                "prev": -1,
+                "vertex": 0,
+                "vertexIndex": 1
+              },
+              {
+                "edge": -1,
+                "edgeIndex": -1,
+                "face": 1,
+                "forward": false,
+                "next": -1,
+                "prev": 2,
+                "vertex": 1,
+                "vertexIndex": 1
+              }
+            ],
+            "vertices": [
+              {
+                "halfEdges": [
+                  1,
+                  2
+                ]
+              },
+              {
+                "halfEdges": [
+                  0,
+                  3
+                ]
+              }
+            ]
+          },
+          "morphism": {
+            "faces": [],
+            "halfs": [
+              0,
+              2,
+              3,
+              1
+            ],
+            "vertices": [
+              1,
+              0
+            ]
+          },
+          "vertexTypes": [
+            {
+              "kind": "e",
+              "type": 3
+            },
+            {
+              "kind": "e",
+              "type": 3
+            }
+          ]
+        },
+        {
+          "edgeTypes": [
+            3,
+            2,
+            3
+          ],
+          "faceTypes": [
+            0,
+            1
+          ],
+          "interior": {
+            "edges": [
+              {
+                "halfEdges": [
+                  [
+                    0
+                  ],
+                  [
+                    2
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    6
+                  ],
+                  [
+                    7
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    3
+                  ],
+                  [
+                    4
+                  ]
+                ]
+              }
+            ],
+            "faces": [
+              {
+                "outerComponent": 2
+              },
+              {
+                "outerComponent": 3
+              }
+            ],
+            "halfEdges": [
+              {
+                "edge": 0,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 1,
+                "prev": 6,
+                "vertex": 0,
+                "vertexIndex": 0
+              },
+              {
+                "edge": -1,
+                "edgeIndex": -1,
+                "face": 1,
+                "forward": false,
+                "next": -1,
+                "prev": 0,
+                "vertex": 1,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 0,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 7,
+                "prev": -1,
+                "vertex": 1,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 2,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 6,
+                "prev": -1,
+                "vertex": 3,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 2,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 5,
+                "prev": 7,
+                "vertex": 2,
+                "vertexIndex": 1
+              },
+              {
+                "edge": -1,
+                "edgeIndex": -1,
+                "face": 0,
+                "forward": false,
+                "next": -1,
+                "prev": 4,
+                "vertex": 3,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 1,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 0,
+                "prev": 3,
+                "vertex": 2,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 1,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 4,
+                "prev": 2,
+                "vertex": 0,
+                "vertexIndex": 1
+              }
+            ],
+            "vertices": [
+              {
+                "halfEdges": [
+                  0,
+                  7
+                ]
+              },
+              {
+                "halfEdges": [
+                  1,
+                  2
+                ]
+              },
+              {
+                "halfEdges": [
+                  6,
+                  4
+                ]
+              },
+              {
+                "halfEdges": [
+                  3,
+                  5
+                ]
+              }
+            ]
+          },
+          "morphism": {
+            "faces": [],
+            "halfs": [
+              3,
+              2,
+              5,
+              1
+            ],
+            "vertices": [
+              3,
+              1
+            ]
+          },
+          "vertexTypes": [
+            {
+              "kind": "v",
+              "type": 4
+            },
+            {
+              "kind": "e",
+              "type": 3
+            },
+            {
+              "kind": "v",
+              "type": 7
+            },
+            {
+              "kind": "e",
+              "type": 3
+            }
+          ]
+        },
+        {
+          "edgeTypes": [
+            3,
+            4,
+            3
+          ],
+          "faceTypes": [
+            0,
+            1
+          ],
+          "interior": {
+            "edges": [
+              {
+                "halfEdges": [
+                  [
+                    0
+                  ],
+                  [
+                    2
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    6
+                  ],
+                  [
+                    7
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    3
+                  ],
+                  [
+                    4
+                  ]
+                ]
+              }
+            ],
+            "faces": [
+              {
+                "outerComponent": 2
+              },
+              {
+                "outerComponent": 3
+              }
+            ],
+            "halfEdges": [
+              {
+                "edge": 0,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 1,
+                "prev": 6,
+                "vertex": 0,
+                "vertexIndex": 0
+              },
+              {
+                "edge": -1,
+                "edgeIndex": -1,
+                "face": 1,
+                "forward": false,
+                "next": -1,
+                "prev": 0,
+                "vertex": 1,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 0,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 7,
+                "prev": -1,
+                "vertex": 1,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 2,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 6,
+                "prev": -1,
+                "vertex": 3,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 2,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 5,
+                "prev": 7,
+                "vertex": 2,
+                "vertexIndex": 1
+              },
+              {
+                "edge": -1,
+                "edgeIndex": -1,
+                "face": 0,
+                "forward": false,
+                "next": -1,
+                "prev": 4,
+                "vertex": 3,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 1,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 0,
+                "prev": 3,
+                "vertex": 2,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 1,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 4,
+                "prev": 2,
+                "vertex": 0,
+                "vertexIndex": 1
+              }
+            ],
+            "vertices": [
+              {
+                "halfEdges": [
+                  0,
+                  7
+                ]
+              },
+              {
+                "halfEdges": [
+                  1,
+                  2
+                ]
+              },
+              {
+                "halfEdges": [
+                  6,
+                  4
+                ]
+              },
+              {
+                "halfEdges": [
+                  3,
+                  5
+                ]
+              }
+            ]
+          },
+          "morphism": {
+            "faces": [],
+            "halfs": [
+              3,
+              2,
+              5,
+              1
+            ],
+            "vertices": [
+              3,
+              1
+            ]
+          },
+          "vertexTypes": [
+            {
+              "kind": "v",
+              "type": 6
+            },
+            {
+              "kind": "e",
+              "type": 3
+            },
+            {
+              "kind": "v",
+              "type": 5
+            },
+            {
+              "kind": "e",
+              "type": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ground": false,
+      "n": [
+        {
+          "edgeTypes": [
+            4
+          ],
+          "faceTypes": [
+            1,
+            0
+          ],
+          "interior": {
+            "edges": [
+              {
+                "halfEdges": [
+                  [
+                    0
+                  ],
+                  [
+                    2
+                  ]
+                ]
+              }
+            ],
+            "faces": [
+              {
+                "outerComponent": 0
+              },
+              {
+                "outerComponent": 2
+              }
+            ],
+            "halfEdges": [
+              {
+                "edge": 0,
+                "edgeIndex": 0,
+                "face": 0,
+                "forward": false,
+                "next": 1,
+                "prev": -1,
+                "vertex": 1,
+                "vertexIndex": 0
+              },
+              {
+                "edge": -1,
+                "edgeIndex": -1,
+                "face": 0,
+                "forward": false,
+                "next": -1,
+                "prev": 0,
+                "vertex": 0,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 0,
+                "edgeIndex": 1,
+                "face": 1,
+                "forward": true,
+                "next": 3,
+                "prev": -1,
+                "vertex": 0,
+                "vertexIndex": 1
+              },
+              {
+                "edge": -1,
+                "edgeIndex": -1,
+                "face": 1,
+                "forward": false,
+                "next": -1,
+                "prev": 2,
+                "vertex": 1,
+                "vertexIndex": 1
+              }
+            ],
+            "vertices": [
+              {
+                "halfEdges": [
+                  1,
+                  2
+                ]
+              },
+              {
+                "halfEdges": [
+                  0,
+                  3
+                ]
+              }
+            ]
+          },
+          "morphism": {
+            "faces": [],
+            "halfs": [
+              0,
+              2,
+              3,
+              1
+            ],
+            "vertices": [
+              1,
+              0
+            ]
+          },
+          "vertexTypes": [
+            {
+              "kind": "e",
+              "type": 4
+            },
+            {
+              "kind": "e",
+              "type": 4
+            }
+          ]
+        },
+        {
+          "edgeTypes": [
+            4,
+            3,
+            4
+          ],
+          "faceTypes": [
+            0,
+            1
+          ],
+          "interior": {
+            "edges": [
+              {
+                "halfEdges": [
+                  [
+                    0
+                  ],
+                  [
+                    2
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    6
+                  ],
+                  [
+                    7
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    3
+                  ],
+                  [
+                    4
+                  ]
+                ]
+              }
+            ],
+            "faces": [
+              {
+                "outerComponent": 2
+              },
+              {
+                "outerComponent": 3
+              }
+            ],
+            "halfEdges": [
+              {
+                "edge": 0,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 1,
+                "prev": 6,
+                "vertex": 0,
+                "vertexIndex": 0
+              },
+              {
+                "edge": -1,
+                "edgeIndex": -1,
+                "face": 1,
+                "forward": false,
+                "next": -1,
+                "prev": 0,
+                "vertex": 1,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 0,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 7,
+                "prev": -1,
+                "vertex": 1,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 2,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 6,
+                "prev": -1,
+                "vertex": 3,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 2,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 5,
+                "prev": 7,
+                "vertex": 2,
+                "vertexIndex": 1
+              },
+              {
+                "edge": -1,
+                "edgeIndex": -1,
+                "face": 0,
+                "forward": false,
+                "next": -1,
+                "prev": 4,
+                "vertex": 3,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 1,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 0,
+                "prev": 3,
+                "vertex": 2,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 1,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 4,
+                "prev": 2,
+                "vertex": 0,
+                "vertexIndex": 1
+              }
+            ],
+            "vertices": [
+              {
+                "halfEdges": [
+                  0,
+                  7
+                ]
+              },
+              {
+                "halfEdges": [
+                  1,
+                  2
+                ]
+              },
+              {
+                "halfEdges": [
+                  6,
+                  4
+                ]
+              },
+              {
+                "halfEdges": [
+                  3,
+                  5
+                ]
+              }
+            ]
+          },
+          "morphism": {
+            "faces": [],
+            "halfs": [
+              3,
+              2,
+              5,
+              1
+            ],
+            "vertices": [
+              3,
+              1
+            ]
+          },
+          "vertexTypes": [
+            {
+              "kind": "v",
+              "type": 5
+            },
+            {
+              "kind": "e",
+              "type": 4
+            },
+            {
+              "kind": "v",
+              "type": 6
+            },
+            {
+              "kind": "e",
+              "type": 4
+            }
+          ]
+        },
+        {
+          "edgeTypes": [
+            5,
+            4,
+            4
+          ],
+          "faceTypes": [
+            0,
+            1
+          ],
+          "interior": {
+            "edges": [
+              {
+                "halfEdges": [
+                  [
+                    6
+                  ],
+                  [
+                    7
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    0
+                  ],
+                  [
+                    2
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    3
+                  ],
+                  [
+                    4
+                  ]
+                ]
+              }
+            ],
+            "faces": [
+              {
+                "outerComponent": 2
+              },
+              {
+                "outerComponent": 3
+              }
+            ],
+            "halfEdges": [
+              {
+                "edge": 1,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 1,
+                "prev": 6,
+                "vertex": 0,
+                "vertexIndex": 1
+              },
+              {
+                "edge": -1,
+                "edgeIndex": -1,
+                "face": 1,
+                "forward": false,
+                "next": -1,
+                "prev": 0,
+                "vertex": 1,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 1,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 7,
+                "prev": -1,
+                "vertex": 1,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 2,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 6,
+                "prev": -1,
+                "vertex": 3,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 2,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 5,
+                "prev": 7,
+                "vertex": 2,
+                "vertexIndex": 1
+              },
+              {
+                "edge": -1,
+                "edgeIndex": -1,
+                "face": 0,
+                "forward": false,
+                "next": -1,
+                "prev": 4,
+                "vertex": 3,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 0,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 0,
+                "prev": 3,
+                "vertex": 2,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 0,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 4,
+                "prev": 2,
+                "vertex": 0,
+                "vertexIndex": 0
+              }
+            ],
+            "vertices": [
+              {
+                "halfEdges": [
+                  7,
+                  0
+                ]
+              },
+              {
+                "halfEdges": [
+                  1,
+                  2
+                ]
+              },
+              {
+                "halfEdges": [
+                  6,
+                  4
+                ]
+              },
+              {
+                "halfEdges": [
+                  3,
+                  5
+                ]
+              }
+            ]
+          },
+          "morphism": {
+            "faces": [],
+            "halfs": [
+              3,
+              2,
+              5,
+              1
+            ],
+            "vertices": [
+              3,
+              1
+            ]
+          },
+          "vertexTypes": [
+            {
+              "kind": "v",
+              "type": 11
+            },
+            {
+              "kind": "e",
+              "type": 4
+            },
+            {
+              "kind": "v",
+              "type": 8
+            },
+            {
+              "kind": "e",
+              "type": 4
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ground": false,
+      "n": [
+        {
+          "edgeTypes": [
+            5
+          ],
+          "faceTypes": [
+            1,
+            0
+          ],
+          "interior": {
+            "edges": [
+              {
+                "halfEdges": [
+                  [
+                    0
+                  ],
+                  [
+                    2
+                  ]
+                ]
+              }
+            ],
+            "faces": [
+              {
+                "outerComponent": 0
+              },
+              {
+                "outerComponent": 2
+              }
+            ],
+            "halfEdges": [
+              {
+                "edge": 0,
+                "edgeIndex": 0,
+                "face": 0,
+                "forward": false,
+                "next": 1,
+                "prev": -1,
+                "vertex": 1,
+                "vertexIndex": 0
+              },
+              {
+                "edge": -1,
+                "edgeIndex": -1,
+                "face": 0,
+                "forward": false,
+                "next": -1,
+                "prev": 0,
+                "vertex": 0,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 0,
+                "edgeIndex": 1,
+                "face": 1,
+                "forward": true,
+                "next": 3,
+                "prev": -1,
+                "vertex": 0,
+                "vertexIndex": 1
+              },
+              {
+                "edge": -1,
+                "edgeIndex": -1,
+                "face": 1,
+                "forward": false,
+                "next": -1,
+                "prev": 2,
+                "vertex": 1,
+                "vertexIndex": 1
+              }
+            ],
+            "vertices": [
+              {
+                "halfEdges": [
+                  1,
+                  2
+                ]
+              },
+              {
+                "halfEdges": [
+                  0,
+                  3
+                ]
+              }
+            ]
+          },
+          "morphism": {
+            "faces": [],
+            "halfs": [
+              0,
+              2,
+              3,
+              1
+            ],
+            "vertices": [
+              1,
+              0
+            ]
+          },
+          "vertexTypes": [
+            {
+              "kind": "e",
+              "type": 5
+            },
+            {
+              "kind": "e",
+              "type": 5
+            }
+          ]
+        },
+        {
+          "edgeTypes": [
+            5,
+            4,
+            5
+          ],
+          "faceTypes": [
+            0,
+            1
+          ],
+          "interior": {
+            "edges": [
+              {
+                "halfEdges": [
+                  [
+                    0
+                  ],
+                  [
+                    2
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    6
+                  ],
+                  [
+                    7
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    3
+                  ],
+                  [
+                    4
+                  ]
+                ]
+              }
+            ],
+            "faces": [
+              {
+                "outerComponent": 2
+              },
+              {
+                "outerComponent": 3
+              }
+            ],
+            "halfEdges": [
+              {
+                "edge": 0,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 1,
+                "prev": 6,
+                "vertex": 0,
+                "vertexIndex": 0
+              },
+              {
+                "edge": -1,
+                "edgeIndex": -1,
+                "face": 1,
+                "forward": false,
+                "next": -1,
+                "prev": 0,
+                "vertex": 1,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 0,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 7,
+                "prev": -1,
+                "vertex": 1,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 2,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 6,
+                "prev": -1,
+                "vertex": 3,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 2,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 5,
+                "prev": 7,
+                "vertex": 2,
+                "vertexIndex": 0
+              },
+              {
+                "edge": -1,
+                "edgeIndex": -1,
+                "face": 0,
+                "forward": false,
+                "next": -1,
+                "prev": 4,
+                "vertex": 3,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 1,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 0,
+                "prev": 3,
+                "vertex": 2,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 1,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 4,
+                "prev": 2,
+                "vertex": 0,
+                "vertexIndex": 1
+              }
+            ],
+            "vertices": [
+              {
+                "halfEdges": [
+                  0,
+                  7
+                ]
+              },
+              {
+                "halfEdges": [
+                  1,
+                  2
+                ]
+              },
+              {
+                "halfEdges": [
+                  4,
+                  6
+                ]
+              },
+              {
+                "halfEdges": [
+                  3,
+                  5
+                ]
+              }
+            ]
+          },
+          "morphism": {
+            "faces": [],
+            "halfs": [
+              3,
+              2,
+              5,
+              1
+            ],
+            "vertices": [
+              3,
+              1
+            ]
+          },
+          "vertexTypes": [
+            {
+              "kind": "v",
+              "type": 8
+            },
+            {
+              "kind": "e",
+              "type": 5
+            },
+            {
+              "kind": "v",
+              "type": 11
+            },
+            {
+              "kind": "e",
+              "type": 5
+            }
+          ]
+        },
+        {
+          "edgeTypes": [
+            6,
+            5,
+            5
+          ],
+          "faceTypes": [
+            0,
+            1
+          ],
+          "interior": {
+            "edges": [
+              {
+                "halfEdges": [
+                  [
+                    6
+                  ],
+                  [
+                    7
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    0
+                  ],
+                  [
+                    2
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    3
+                  ],
+                  [
+                    4
+                  ]
+                ]
+              }
+            ],
+            "faces": [
+              {
+                "outerComponent": 2
+              },
+              {
+                "outerComponent": 3
+              }
+            ],
+            "halfEdges": [
+              {
+                "edge": 1,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 1,
+                "prev": 6,
+                "vertex": 0,
+                "vertexIndex": 1
+              },
+              {
+                "edge": -1,
+                "edgeIndex": -1,
+                "face": 1,
+                "forward": false,
+                "next": -1,
+                "prev": 0,
+                "vertex": 1,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 1,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 7,
+                "prev": -1,
+                "vertex": 1,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 2,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 6,
+                "prev": -1,
+                "vertex": 3,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 2,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 5,
+                "prev": 7,
+                "vertex": 2,
+                "vertexIndex": 0
+              },
+              {
+                "edge": -1,
+                "edgeIndex": -1,
+                "face": 0,
+                "forward": false,
+                "next": -1,
+                "prev": 4,
+                "vertex": 3,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 0,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 0,
+                "prev": 3,
+                "vertex": 2,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 0,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 4,
+                "prev": 2,
+                "vertex": 0,
+                "vertexIndex": 0
+              }
+            ],
+            "vertices": [
+              {
+                "halfEdges": [
+                  7,
+                  0
+                ]
+              },
+              {
+                "halfEdges": [
+                  1,
+                  2
+                ]
+              },
+              {
+                "halfEdges": [
+                  4,
+                  6
+                ]
+              },
+              {
+                "halfEdges": [
+                  3,
+                  5
+                ]
+              }
+            ]
+          },
+          "morphism": {
+            "faces": [],
+            "halfs": [
+              3,
+              2,
+              5,
+              1
+            ],
+            "vertices": [
+              3,
+              1
+            ]
+          },
+          "vertexTypes": [
+            {
+              "kind": "v",
+              "type": 10
+            },
+            {
+              "kind": "e",
+              "type": 5
+            },
+            {
+              "kind": "v",
+              "type": 9
+            },
+            {
+              "kind": "e",
+              "type": 5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ground": false,
+      "n": [
+        {
+          "edgeTypes": [
+            6
+          ],
+          "faceTypes": [
+            1,
+            0
+          ],
+          "interior": {
+            "edges": [
+              {
+                "halfEdges": [
+                  [
+                    0
+                  ],
+                  [
+                    2
+                  ]
+                ]
+              }
+            ],
+            "faces": [
+              {
+                "outerComponent": 0
+              },
+              {
+                "outerComponent": 2
+              }
+            ],
+            "halfEdges": [
+              {
+                "edge": 0,
+                "edgeIndex": 0,
+                "face": 0,
+                "forward": false,
+                "next": 1,
+                "prev": -1,
+                "vertex": 1,
+                "vertexIndex": 0
+              },
+              {
+                "edge": -1,
+                "edgeIndex": -1,
+                "face": 0,
+                "forward": false,
+                "next": -1,
+                "prev": 0,
+                "vertex": 0,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 0,
+                "edgeIndex": 1,
+                "face": 1,
+                "forward": true,
+                "next": 3,
+                "prev": -1,
+                "vertex": 0,
+                "vertexIndex": 1
+              },
+              {
+                "edge": -1,
+                "edgeIndex": -1,
+                "face": 1,
+                "forward": false,
+                "next": -1,
+                "prev": 2,
+                "vertex": 1,
+                "vertexIndex": 1
+              }
+            ],
+            "vertices": [
+              {
+                "halfEdges": [
+                  1,
+                  2
+                ]
+              },
+              {
+                "halfEdges": [
+                  0,
+                  3
+                ]
+              }
+            ]
+          },
+          "morphism": {
+            "faces": [],
+            "halfs": [
+              0,
+              2,
+              3,
+              1
+            ],
+            "vertices": [
+              1,
+              0
+            ]
+          },
+          "vertexTypes": [
+            {
+              "kind": "e",
+              "type": 6
+            },
+            {
+              "kind": "e",
+              "type": 6
+            }
+          ]
+        },
+        {
+          "edgeTypes": [
+            5,
+            6,
+            6
+          ],
+          "faceTypes": [
+            0,
+            1
+          ],
+          "interior": {
+            "edges": [
+              {
+                "halfEdges": [
+                  [
+                    6
+                  ],
+                  [
+                    7
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    0
+                  ],
+                  [
+                    2
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    3
+                  ],
+                  [
+                    4
+                  ]
+                ]
+              }
+            ],
+            "faces": [
+              {
+                "outerComponent": 2
+              },
+              {
+                "outerComponent": 3
+              }
+            ],
+            "halfEdges": [
+              {
+                "edge": 1,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 1,
+                "prev": 6,
+                "vertex": 0,
+                "vertexIndex": 1
+              },
+              {
+                "edge": -1,
+                "edgeIndex": -1,
+                "face": 1,
+                "forward": false,
+                "next": -1,
+                "prev": 0,
+                "vertex": 1,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 1,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 7,
+                "prev": -1,
+                "vertex": 1,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 2,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 6,
+                "prev": -1,
+                "vertex": 3,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 2,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 5,
+                "prev": 7,
+                "vertex": 2,
+                "vertexIndex": 0
+              },
+              {
+                "edge": -1,
+                "edgeIndex": -1,
+                "face": 0,
+                "forward": false,
+                "next": -1,
+                "prev": 4,
+                "vertex": 3,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 0,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 0,
+                "prev": 3,
+                "vertex": 2,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 0,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 4,
+                "prev": 2,
+                "vertex": 0,
+                "vertexIndex": 0
+              }
+            ],
+            "vertices": [
+              {
+                "halfEdges": [
+                  7,
+                  0
+                ]
+              },
+              {
+                "halfEdges": [
+                  1,
+                  2
+                ]
+              },
+              {
+                "halfEdges": [
+                  4,
+                  6
+                ]
+              },
+              {
+                "halfEdges": [
+                  3,
+                  5
+                ]
+              }
+            ]
+          },
+          "morphism": {
+            "faces": [],
+            "halfs": [
+              3,
+              2,
+              5,
+              1
+            ],
+            "vertices": [
+              3,
+              1
+            ]
+          },
+          "vertexTypes": [
+            {
+              "kind": "v",
+              "type": 9
+            },
+            {
+              "kind": "e",
+              "type": 6
+            },
+            {
+              "kind": "v",
+              "type": 10
+            },
+            {
+              "kind": "e",
+              "type": 6
+            }
+          ]
+        },
+        {
+          "edgeTypes": [
+            7,
+            6,
+            6
+          ],
+          "faceTypes": [
+            0,
+            1
+          ],
+          "interior": {
+            "edges": [
+              {
+                "halfEdges": [
+                  [
+                    6
+                  ],
+                  [
+                    7
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    0
+                  ],
+                  [
+                    2
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    3
+                  ],
+                  [
+                    4
+                  ]
+                ]
+              }
+            ],
+            "faces": [
+              {
+                "outerComponent": 2
+              },
+              {
+                "outerComponent": 3
+              }
+            ],
+            "halfEdges": [
+              {
+                "edge": 1,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 1,
+                "prev": 6,
+                "vertex": 0,
+                "vertexIndex": 1
+              },
+              {
+                "edge": -1,
+                "edgeIndex": -1,
+                "face": 1,
+                "forward": false,
+                "next": -1,
+                "prev": 0,
+                "vertex": 1,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 1,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 7,
+                "prev": -1,
+                "vertex": 1,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 2,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 6,
+                "prev": -1,
+                "vertex": 3,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 2,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 5,
+                "prev": 7,
+                "vertex": 2,
+                "vertexIndex": 0
+              },
+              {
+                "edge": -1,
+                "edgeIndex": -1,
+                "face": 0,
+                "forward": false,
+                "next": -1,
+                "prev": 4,
+                "vertex": 3,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 0,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 0,
+                "prev": 3,
+                "vertex": 2,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 0,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 4,
+                "prev": 2,
+                "vertex": 0,
+                "vertexIndex": 0
+              }
+            ],
+            "vertices": [
+              {
+                "halfEdges": [
+                  7,
+                  0
+                ]
+              },
+              {
+                "halfEdges": [
+                  1,
+                  2
+                ]
+              },
+              {
+                "halfEdges": [
+                  4,
+                  6
+                ]
+              },
+              {
+                "halfEdges": [
+                  3,
+                  5
+                ]
+              }
+            ]
+          },
+          "morphism": {
+            "faces": [],
+            "halfs": [
+              3,
+              2,
+              5,
+              1
+            ],
+            "vertices": [
+              3,
+              1
+            ]
+          },
+          "vertexTypes": [
+            {
+              "kind": "v",
+              "type": 15
+            },
+            {
+              "kind": "e",
+              "type": 6
+            },
+            {
+              "kind": "v",
+              "type": 12
+            },
+            {
+              "kind": "e",
+              "type": 6
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ground": false,
+      "n": [
+        {
+          "edgeTypes": [
+            7
+          ],
+          "faceTypes": [
+            1,
+            0
+          ],
+          "interior": {
+            "edges": [
+              {
+                "halfEdges": [
+                  [
+                    0
+                  ],
+                  [
+                    2
+                  ]
+                ]
+              }
+            ],
+            "faces": [
+              {
+                "outerComponent": 0
+              },
+              {
+                "outerComponent": 2
+              }
+            ],
+            "halfEdges": [
+              {
+                "edge": 0,
+                "edgeIndex": 0,
+                "face": 0,
+                "forward": false,
+                "next": 1,
+                "prev": -1,
+                "vertex": 1,
+                "vertexIndex": 0
+              },
+              {
+                "edge": -1,
+                "edgeIndex": -1,
+                "face": 0,
+                "forward": false,
+                "next": -1,
+                "prev": 0,
+                "vertex": 0,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 0,
+                "edgeIndex": 1,
+                "face": 1,
+                "forward": true,
+                "next": 3,
+                "prev": -1,
+                "vertex": 0,
+                "vertexIndex": 1
+              },
+              {
+                "edge": -1,
+                "edgeIndex": -1,
+                "face": 1,
+                "forward": false,
+                "next": -1,
+                "prev": 2,
+                "vertex": 1,
+                "vertexIndex": 1
+              }
+            ],
+            "vertices": [
+              {
+                "halfEdges": [
+                  1,
+                  2
+                ]
+              },
+              {
+                "halfEdges": [
+                  0,
+                  3
+                ]
+              }
+            ]
+          },
+          "morphism": {
+            "faces": [],
+            "halfs": [
+              0,
+              2,
+              3,
+              1
+            ],
+            "vertices": [
+              1,
+              0
+            ]
+          },
+          "vertexTypes": [
+            {
+              "kind": "e",
+              "type": 7
+            },
+            {
+              "kind": "e",
+              "type": 7
+            }
+          ]
+        },
+        {
+          "edgeTypes": [
+            6,
+            7,
+            7
+          ],
+          "faceTypes": [
+            0,
+            1
+          ],
+          "interior": {
+            "edges": [
+              {
+                "halfEdges": [
+                  [
+                    6
+                  ],
+                  [
+                    7
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    0
+                  ],
+                  [
+                    2
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    3
+                  ],
+                  [
+                    4
+                  ]
+                ]
+              }
+            ],
+            "faces": [
+              {
+                "outerComponent": 2
+              },
+              {
+                "outerComponent": 3
+              }
+            ],
+            "halfEdges": [
+              {
+                "edge": 1,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 1,
+                "prev": 6,
+                "vertex": 0,
+                "vertexIndex": 1
+              },
+              {
+                "edge": -1,
+                "edgeIndex": -1,
+                "face": 1,
+                "forward": false,
+                "next": -1,
+                "prev": 0,
+                "vertex": 1,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 1,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 7,
+                "prev": -1,
+                "vertex": 1,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 2,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 6,
+                "prev": -1,
+                "vertex": 3,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 2,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 5,
+                "prev": 7,
+                "vertex": 2,
+                "vertexIndex": 0
+              },
+              {
+                "edge": -1,
+                "edgeIndex": -1,
+                "face": 0,
+                "forward": false,
+                "next": -1,
+                "prev": 4,
+                "vertex": 3,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 0,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 0,
+                "prev": 3,
+                "vertex": 2,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 0,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 4,
+                "prev": 2,
+                "vertex": 0,
+                "vertexIndex": 0
+              }
+            ],
+            "vertices": [
+              {
+                "halfEdges": [
+                  7,
+                  0
+                ]
+              },
+              {
+                "halfEdges": [
+                  1,
+                  2
+                ]
+              },
+              {
+                "halfEdges": [
+                  4,
+                  6
+                ]
+              },
+              {
+                "halfEdges": [
+                  3,
+                  5
+                ]
+              }
+            ]
+          },
+          "morphism": {
+            "faces": [],
+            "halfs": [
+              3,
+              2,
+              5,
+              1
+            ],
+            "vertices": [
+              3,
+              1
+            ]
+          },
+          "vertexTypes": [
+            {
+              "kind": "v",
+              "type": 12
+            },
+            {
+              "kind": "e",
+              "type": 7
+            },
+            {
+              "kind": "v",
+              "type": 15
+            },
+            {
+              "kind": "e",
+              "type": 7
+            }
+          ]
+        },
+        {
+          "edgeTypes": [
+            1,
+            7,
+            7
+          ],
+          "faceTypes": [
+            0,
+            1
+          ],
+          "interior": {
+            "edges": [
+              {
+                "halfEdges": [
+                  [
+                    6
+                  ],
+                  [
+                    7
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    0
+                  ],
+                  [
+                    2
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    3
+                  ],
+                  [
+                    4
+                  ]
+                ]
+              }
+            ],
+            "faces": [
+              {
+                "outerComponent": 2
+              },
+              {
+                "outerComponent": 3
+              }
+            ],
+            "halfEdges": [
+              {
+                "edge": 1,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 1,
+                "prev": 6,
+                "vertex": 0,
+                "vertexIndex": 1
+              },
+              {
+                "edge": -1,
+                "edgeIndex": -1,
+                "face": 1,
+                "forward": false,
+                "next": -1,
+                "prev": 0,
+                "vertex": 1,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 1,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 7,
+                "prev": -1,
+                "vertex": 1,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 2,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 6,
+                "prev": -1,
+                "vertex": 3,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 2,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 5,
+                "prev": 7,
+                "vertex": 2,
+                "vertexIndex": 0
+              },
+              {
+                "edge": -1,
+                "edgeIndex": -1,
+                "face": 0,
+                "forward": false,
+                "next": -1,
+                "prev": 4,
+                "vertex": 3,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 0,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 0,
+                "prev": 3,
+                "vertex": 2,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 0,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 4,
+                "prev": 2,
+                "vertex": 0,
+                "vertexIndex": 0
+              }
+            ],
+            "vertices": [
+              {
+                "halfEdges": [
+                  7,
+                  0
+                ]
+              },
+              {
+                "halfEdges": [
+                  1,
+                  2
+                ]
+              },
+              {
+                "halfEdges": [
+                  4,
+                  6
+                ]
+              },
+              {
+                "halfEdges": [
+                  3,
+                  5
+                ]
+              }
+            ]
+          },
+          "morphism": {
+            "faces": [],
+            "halfs": [
+              3,
+              2,
+              5,
+              1
+            ],
+            "vertices": [
+              3,
+              1
+            ]
+          },
+          "vertexTypes": [
+            {
+              "kind": "v",
+              "type": 14
+            },
+            {
+              "kind": "e",
+              "type": 7
+            },
+            {
+              "kind": "v",
+              "type": 13
+            },
+            {
+              "kind": "e",
+              "type": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "starterRules": [
+    {
+      "ground": false,
+      "n": [
+        {
+          "edgeTypes": [],
+          "faceTypes": [
+            0
+          ],
+          "interior": {
+            "edges": [],
+            "faces": [
+              {
+                "outerComponent": -1
+              }
+            ],
+            "halfEdges": [],
+            "vertices": []
+          },
+          "morphism": {
+            "faces": [],
+            "halfs": [
+              -1
+            ],
+            "vertices": []
+          },
+          "vertexTypes": []
+        },
+        {
+          "edgeTypes": [
+            3,
+            4,
+            5,
+            6,
+            7,
+            1,
+            0,
+            2
+          ],
+          "faceTypes": [
+            0,
+            1
+          ],
+          "interior": {
+            "edges": [
+              {
+                "halfEdges": [
+                  [
+                    12
+                  ],
+                  [
+                    13
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    10
+                  ],
+                  [
+                    11
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    8
+                  ],
+                  [
+                    9
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    6
+                  ],
+                  [
+                    7
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    4
+                  ],
+                  [
+                    5
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    2
+                  ],
+                  [
+                    3
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    0
+                  ],
+                  [
+                    1
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    14
+                  ],
+                  [
+                    15
+                  ]
+                ]
+              }
+            ],
+            "faces": [
+              {
+                "outerComponent": 15
+              },
+              {
+                "outerComponent": 14
+              }
+            ],
+            "halfEdges": [
+              {
+                "edge": 6,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 2,
+                "prev": 14,
+                "vertex": 7,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 6,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 15,
+                "prev": 3,
+                "vertex": 6,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 5,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 4,
+                "prev": 0,
+                "vertex": 6,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 5,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 1,
+                "prev": 5,
+                "vertex": 5,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 4,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 6,
+                "prev": 2,
+                "vertex": 5,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 4,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 3,
+                "prev": 7,
+                "vertex": 4,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 3,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 8,
+                "prev": 4,
+                "vertex": 4,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 3,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 5,
+                "prev": 9,
+                "vertex": 3,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 2,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 10,
+                "prev": 6,
+                "vertex": 3,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 2,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 7,
+                "prev": 11,
+                "vertex": 2,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 1,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 12,
+                "prev": 8,
+                "vertex": 2,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 1,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 9,
+                "prev": 13,
+                "vertex": 1,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 0,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 14,
+                "prev": 10,
+                "vertex": 1,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 0,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 11,
+                "prev": 15,
+                "vertex": 0,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 7,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 0,
+                "prev": 12,
+                "vertex": 0,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 7,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 13,
+                "prev": 1,
+                "vertex": 7,
+                "vertexIndex": 1
+              }
+            ],
+            "vertices": [
+              {
+                "halfEdges": [
+                  14,
+                  13
+                ]
+              },
+              {
+                "halfEdges": [
+                  12,
+                  11
+                ]
+              },
+              {
+                "halfEdges": [
+                  9,
+                  10
+                ]
+              },
+              {
+                "halfEdges": [
+                  7,
+                  8
+                ]
+              },
+              {
+                "halfEdges": [
+                  5,
+                  6
+                ]
+              },
+              {
+                "halfEdges": [
+                  3,
+                  4
+                ]
+              },
+              {
+                "halfEdges": [
+                  1,
+                  2
+                ]
+              },
+              {
+                "halfEdges": [
+                  0,
+                  15
+                ]
+              }
+            ]
+          },
+          "morphism": {
+            "faces": [
+              1
+            ],
+            "halfs": [],
+            "vertices": []
+          },
+          "vertexTypes": [
+            {
+              "kind": "v",
+              "type": 7
+            },
+            {
+              "kind": "v",
+              "type": 6
+            },
+            {
+              "kind": "v",
+              "type": 11
+            },
+            {
+              "kind": "v",
+              "type": 10
+            },
+            {
+              "kind": "v",
+              "type": 15
+            },
+            {
+              "kind": "v",
+              "type": 14
+            },
+            {
+              "kind": "v",
+              "type": 1
+            },
+            {
+              "kind": "v",
+              "type": 0
+            }
+          ]
+        },
+        {
+          "edgeTypes": [
+            7,
+            6,
+            5,
+            4,
+            3,
+            2,
+            0,
+            1
+          ],
+          "faceTypes": [
+            0,
+            1
+          ],
+          "interior": {
+            "edges": [
+              {
+                "halfEdges": [
+                  [
+                    12
+                  ],
+                  [
+                    13
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    10
+                  ],
+                  [
+                    11
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    8
+                  ],
+                  [
+                    9
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    6
+                  ],
+                  [
+                    7
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    4
+                  ],
+                  [
+                    5
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    2
+                  ],
+                  [
+                    3
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    0
+                  ],
+                  [
+                    1
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    14
+                  ],
+                  [
+                    15
+                  ]
+                ]
+              }
+            ],
+            "faces": [
+              {
+                "outerComponent": 15
+              },
+              {
+                "outerComponent": 14
+              }
+            ],
+            "halfEdges": [
+              {
+                "edge": 6,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 2,
+                "prev": 14,
+                "vertex": 7,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 6,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 15,
+                "prev": 3,
+                "vertex": 6,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 5,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 4,
+                "prev": 0,
+                "vertex": 6,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 5,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 1,
+                "prev": 5,
+                "vertex": 5,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 4,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 6,
+                "prev": 2,
+                "vertex": 5,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 4,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 3,
+                "prev": 7,
+                "vertex": 4,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 3,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 8,
+                "prev": 4,
+                "vertex": 4,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 3,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 5,
+                "prev": 9,
+                "vertex": 3,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 2,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 10,
+                "prev": 6,
+                "vertex": 3,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 2,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 7,
+                "prev": 11,
+                "vertex": 2,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 1,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 12,
+                "prev": 8,
+                "vertex": 2,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 1,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 9,
+                "prev": 13,
+                "vertex": 1,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 0,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 14,
+                "prev": 10,
+                "vertex": 1,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 0,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 11,
+                "prev": 15,
+                "vertex": 0,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 7,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 0,
+                "prev": 12,
+                "vertex": 0,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 7,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 13,
+                "prev": 1,
+                "vertex": 7,
+                "vertexIndex": 1
+              }
+            ],
+            "vertices": [
+              {
+                "halfEdges": [
+                  13,
+                  14
+                ]
+              },
+              {
+                "halfEdges": [
+                  11,
+                  12
+                ]
+              },
+              {
+                "halfEdges": [
+                  9,
+                  10
+                ]
+              },
+              {
+                "halfEdges": [
+                  8,
+                  7
+                ]
+              },
+              {
+                "halfEdges": [
+                  6,
+                  5
+                ]
+              },
+              {
+                "halfEdges": [
+                  4,
+                  3
+                ]
+              },
+              {
+                "halfEdges": [
+                  2,
+                  1
+                ]
+              },
+              {
+                "halfEdges": [
+                  0,
+                  15
+                ]
+              }
+            ]
+          },
+          "morphism": {
+            "faces": [],
+            "halfs": [],
+            "vertices": []
+          },
+          "vertexTypes": [
+            {
+              "kind": "v",
+              "type": 13
+            },
+            {
+              "kind": "v",
+              "type": 12
+            },
+            {
+              "kind": "v",
+              "type": 9
+            },
+            {
+              "kind": "v",
+              "type": 8
+            },
+            {
+              "kind": "v",
+              "type": 5
+            },
+            {
+              "kind": "v",
+              "type": 4
+            },
+            {
+              "kind": "v",
+              "type": 3
+            },
+            {
+              "kind": "v",
+              "type": 2
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "types": {
+    "dims": 2,
+    "edgeTypes": [
+      {
+        "dir": {
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475,
+          "z": 0
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 1
+          },
+          {
+            "onRight": false,
+            "type": 0
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 1,
+          "y": 2.220446049250313e-16,
+          "z": 0
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 1
+          },
+          {
+            "onRight": false,
+            "type": 0
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": -1.6081226496766364e-16,
+          "y": 1,
+          "z": 0
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 1
+          },
+          {
+            "onRight": false,
+            "type": 0
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": -0.7071067811865477,
+          "y": 0.7071067811865475,
+          "z": 0
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 1
+          },
+          {
+            "onRight": false,
+            "type": 0
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": -1,
+          "y": -1.2246467991473532e-16,
+          "z": 0
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 1
+          },
+          {
+            "onRight": false,
+            "type": 0
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": -0.7071067811865475,
+          "y": -0.7071067811865476,
+          "z": 0
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 1
+          },
+          {
+            "onRight": false,
+            "type": 0
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 2.83276944882399e-16,
+          "y": -1,
+          "z": 0
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 1
+          },
+          {
+            "onRight": false,
+            "type": 0
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0.7071067811865477,
+          "y": -0.7071067811865474,
+          "z": 0
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 1
+          },
+          {
+            "onRight": false,
+            "type": 0
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      }
+    ],
+    "faceTypes": [
+      {
+        "color": null,
+        "normal": {
+          "x": 0,
+          "y": 0,
+          "z": 1
+        }
+      },
+      {
+        "color": null,
+        "normal": {
+          "x": 0,
+          "y": 0,
+          "z": 1
+        }
+      }
+    ],
+    "vertexTypes": [
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": -0.7071067811865476,
+              "y": -0.7071067811865475,
+              "z": 0
+            },
+            "edge": 0,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": -1.6081226496766364e-16,
+              "y": 1,
+              "z": 0
+            },
+            "edge": 2,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 0.7071067811865476,
+              "y": 0.7071067811865475,
+              "z": 0
+            },
+            "edge": 0,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": -1,
+              "y": -2.220446049250313e-16,
+              "z": 0
+            },
+            "edge": 1,
+            "isAtStart": false
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": -0.7071067811865476,
+              "y": -0.7071067811865475,
+              "z": 0
+            },
+            "edge": 0,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 1,
+              "y": 2.220446049250313e-16,
+              "z": 0
+            },
+            "edge": 1,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 1.6081226496766364e-16,
+              "y": -1,
+              "z": 0
+            },
+            "edge": 2,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 0.7071067811865476,
+              "y": 0.7071067811865475,
+              "z": 0
+            },
+            "edge": 0,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 0.7071067811865477,
+              "y": -0.7071067811865475,
+              "z": 0
+            },
+            "edge": 3,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": -1.6081226496766364e-16,
+              "y": 1,
+              "z": 0
+            },
+            "edge": 2,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 1,
+              "y": 1.2246467991473532e-16,
+              "z": 0
+            },
+            "edge": 4,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": -0.7071067811865477,
+              "y": 0.7071067811865475,
+              "z": 0
+            },
+            "edge": 3,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 0.7071067811865477,
+              "y": -0.7071067811865475,
+              "z": 0
+            },
+            "edge": 3,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": -1,
+              "y": -1.2246467991473532e-16,
+              "z": 0
+            },
+            "edge": 4,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 1.6081226496766364e-16,
+              "y": -1,
+              "z": 0
+            },
+            "edge": 2,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": -0.7071067811865477,
+              "y": 0.7071067811865475,
+              "z": 0
+            },
+            "edge": 3,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 0.7071067811865475,
+              "y": 0.7071067811865476,
+              "z": 0
+            },
+            "edge": 5,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": -1,
+              "y": -1.2246467991473532e-16,
+              "z": 0
+            },
+            "edge": 4,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": -0.7071067811865475,
+              "y": -0.7071067811865476,
+              "z": 0
+            },
+            "edge": 5,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": -2.83276944882399e-16,
+              "y": 1,
+              "z": 0
+            },
+            "edge": 6,
+            "isAtStart": false
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 2.83276944882399e-16,
+              "y": -1,
+              "z": 0
+            },
+            "edge": 6,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": 0.7071067811865475,
+              "y": 0.7071067811865476,
+              "z": 0
+            },
+            "edge": 5,
+            "isAtStart": false
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": -0.7071067811865475,
+              "y": -0.7071067811865476,
+              "z": 0
+            },
+            "edge": 5,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": 1,
+              "y": 1.2246467991473532e-16,
+              "z": 0
+            },
+            "edge": 4,
+            "isAtStart": false
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 2.83276944882399e-16,
+              "y": -1,
+              "z": 0
+            },
+            "edge": 6,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": -0.7071067811865477,
+              "y": 0.7071067811865474,
+              "z": 0
+            },
+            "edge": 7,
+            "isAtStart": false
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 0.7071067811865477,
+              "y": -0.7071067811865474,
+              "z": 0
+            },
+            "edge": 7,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": -1,
+              "y": -2.220446049250313e-16,
+              "z": 0
+            },
+            "edge": 1,
+            "isAtStart": false
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 1,
+              "y": 2.220446049250313e-16,
+              "z": 0
+            },
+            "edge": 1,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": -0.7071067811865477,
+              "y": 0.7071067811865474,
+              "z": 0
+            },
+            "edge": 7,
+            "isAtStart": false
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 0.7071067811865477,
+              "y": -0.7071067811865474,
+              "z": 0
+            },
+            "edge": 7,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": -2.83276944882399e-16,
+              "y": 1,
+              "z": 0
+            },
+            "edge": 6,
+            "isAtStart": false
+          }
+        ],
+        "spliced": false
+      }
+    ]
+  },
+  "version": 1
+}

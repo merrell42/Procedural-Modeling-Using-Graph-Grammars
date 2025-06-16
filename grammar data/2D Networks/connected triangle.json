@@ -1,1 +1,625 @@
-{"category":"2D Networks","name":"Connected Triangle","settings":{"Extents":[25,15,10],"Bend Lines":false,"Careful Bending":true,"Import Scale":1,"Bend Multiplier":1,"Mutator Effort Limit":10,"Vertices to Free":1,"Prefer Ground":0.9,"Beta":1,"Desired Lines":200,"Desired Lines Cost":10000,"Desired Vertex Weight":100,"Generations":20,"Winding Enabled":true,"Use Chain Map":true,"Monotonic":true,"Grounded":true,"Winding Penalty":1,"Winding Penalty New":10,"Seed":4},"solution":{"useNetworks":true,"types":{"vertexTypes":[{"connections":[{"adjustedAngle":-1.1036987177940905,"angle":-1.1071487177940904,"dir":{"x":0.4472135954999579,"y":-0.8944271909999159,"z":0},"directedId":345,"edge":3,"faceIds":[1,0],"isAtStart":false},{"adjustedAngle":-0.6401211087932843,"angle":-0.6435011087932844,"dir":{"x":0.8,"y":-0.6,"z":0},"directedId":338,"edge":0,"faceIds":[1,2],"isAtStart":true},{"adjustedAngle":0.0034600000000000004,"angle":0,"dir":{"x":1,"y":0,"z":0},"directedId":346,"edge":4,"faceIds":[2,0],"isAtStart":true}],"decoration":null,"spliced":false},{"connections":[{"adjustedAngle":-1.5673063267948966,"angle":-1.5707963267948966,"dir":{"x":1.6081226496766364e-16,"y":-1,"z":0},"directedId":349,"edge":5,"faceIds":[1,0],"isAtStart":false},{"adjustedAngle":0.6469011087932843,"angle":0.6435011087932844,"dir":{"x":0.8,"y":0.6,"z":0},"directedId":340,"edge":1,"faceIds":[1,2],"isAtStart":true},{"adjustedAngle":2.501481544796509,"angle":2.498091544796509,"dir":{"x":-0.8,"y":0.6,"z":0},"directedId":339,"edge":0,"faceIds":[0,2],"isAtStart":false}],"decoration":null,"spliced":false},{"connections":[{"adjustedAngle":-2.4946815447965087,"angle":-2.498091544796509,"dir":{"x":-0.8,"y":-0.6,"z":0},"directedId":341,"edge":1,"faceIds":[1,0],"isAtStart":false},{"adjustedAngle":-2.031013935795703,"angle":-2.0344439357957027,"dir":{"x":-0.4472135954999578,"y":-0.894427190999916,"z":0},"directedId":343,"edge":2,"faceIds":[2,1],"isAtStart":false},{"adjustedAngle":3.145062653589793,"angle":3.141592653589793,"dir":{"x":-1,"y":0,"z":0},"directedId":347,"edge":4,"faceIds":[0,2],"isAtStart":false}],"decoration":null,"spliced":false},{"connections":[{"adjustedAngle":1.1105687177940906,"angle":1.1071487177940906,"dir":{"x":0.4472135954999578,"y":0.894427190999916,"z":0},"directedId":342,"edge":2,"faceIds":[0,1],"isAtStart":true},{"adjustedAngle":1.5742763267948967,"angle":1.5707963267948968,"dir":{"x":-1.6081226496766364e-16,"y":1,"z":0},"directedId":348,"edge":5,"faceIds":[1,2],"isAtStart":true},{"adjustedAngle":2.0378839357957026,"angle":2.0344439357957027,"dir":{"x":-0.4472135954999579,"y":0.8944271909999159,"z":0},"directedId":344,"edge":3,"faceIds":[2,0],"isAtStart":true}],"decoration":null,"spliced":false}],"edgeTypes":[{"faceData":[{"type":0,"onRight":true},{"type":0,"onRight":false}],"brush":{"Image":"","color":"","Tiled":true,"Tile Length":1,"Width":0.05,"Thickness":0.05,"Min Length":0.1,"Max Length":4,"Bend":10,"Strict Length":false,"Power":-1,"Power Law":false,"Offset":0,"Rigid":false,"Rigid Tiled":false,"Flip":false,"Classified by angle":true,"Bidirectional Edges":true,"Synthetic":true,"Grounded":false,"Boundary":false,"Fully Connected":false,"Loopy":true,"Sinusoid":false,"Bend Low-Pass":5,"Bend Length":0.1,"Bend Period":1,"Bend Harmonics Levels":1,"borderColor":"","Visible":true},"dir":{"x":0.8,"y":-0.6,"z":0},"isRigid":false,"isRigidTiled":false,"edgeLength":null,"angle":-0.6435011087932844,"offset":null,"spliced":false},{"faceData":[{"type":0,"onRight":true},{"type":0,"onRight":false}],"brush":{"Image":"","color":"","Tiled":true,"Tile Length":1,"Width":0.05,"Thickness":0.05,"Min Length":0.1,"Max Length":4,"Bend":10,"Strict Length":false,"Power":-1,"Power Law":false,"Offset":0,"Rigid":false,"Rigid Tiled":false,"Flip":false,"Classified by angle":true,"Bidirectional Edges":true,"Synthetic":true,"Grounded":false,"Boundary":false,"Fully Connected":false,"Loopy":true,"Sinusoid":false,"Bend Low-Pass":5,"Bend Length":0.1,"Bend Period":1,"Bend Harmonics Levels":1,"borderColor":"","Visible":true},"dir":{"x":0.8,"y":0.6,"z":0},"isRigid":false,"isRigidTiled":false,"edgeLength":null,"angle":0.6435011087932844,"offset":null,"spliced":false},{"faceData":[{"type":0,"onRight":true},{"type":0,"onRight":false}],"brush":{"Image":"","color":"","Tiled":true,"Tile Length":1,"Width":0.05,"Thickness":0.05,"Min Length":0.1,"Max Length":4,"Bend":10,"Strict Length":false,"Power":-1,"Power Law":false,"Offset":0,"Rigid":false,"Rigid Tiled":false,"Flip":false,"Classified by angle":true,"Bidirectional Edges":true,"Synthetic":true,"Grounded":false,"Boundary":false,"Fully Connected":false,"Loopy":true,"Sinusoid":false,"Bend Low-Pass":5,"Bend Length":0.1,"Bend Period":1,"Bend Harmonics Levels":1,"borderColor":"","Visible":true},"dir":{"x":0.4472135954999578,"y":0.894427190999916,"z":0},"isRigid":false,"isRigidTiled":false,"edgeLength":null,"angle":1.1071487177940906,"offset":null,"spliced":false},{"faceData":[{"type":0,"onRight":true},{"type":0,"onRight":false}],"brush":{"Image":"","color":"","Tiled":true,"Tile Length":1,"Width":0.05,"Thickness":0.05,"Min Length":0.1,"Max Length":4,"Bend":10,"Strict Length":false,"Power":-1,"Power Law":false,"Offset":0,"Rigid":false,"Rigid Tiled":false,"Flip":false,"Classified by angle":true,"Bidirectional Edges":true,"Synthetic":true,"Grounded":false,"Boundary":false,"Fully Connected":false,"Loopy":true,"Sinusoid":false,"Bend Low-Pass":5,"Bend Length":0.1,"Bend Period":1,"Bend Harmonics Levels":1,"borderColor":"","Visible":true},"dir":{"x":-0.4472135954999579,"y":0.8944271909999159,"z":0},"isRigid":false,"isRigidTiled":false,"edgeLength":null,"angle":2.0344439357957027,"offset":null,"spliced":false},{"faceData":[{"type":0,"onRight":true},{"type":0,"onRight":false}],"brush":{"Image":"","color":"","Tiled":true,"Tile Length":1,"Width":0.05,"Thickness":0.05,"Min Length":0.1,"Max Length":4,"Bend":10,"Strict Length":false,"Power":-1,"Power Law":false,"Offset":0,"Rigid":false,"Rigid Tiled":false,"Flip":false,"Classified by angle":true,"Bidirectional Edges":true,"Synthetic":true,"Grounded":false,"Boundary":false,"Fully Connected":false,"Loopy":true,"Sinusoid":false,"Bend Low-Pass":5,"Bend Length":0.1,"Bend Period":1,"Bend Harmonics Levels":1,"borderColor":"","Visible":true},"dir":{"x":1,"y":0,"z":0},"isRigid":false,"isRigidTiled":false,"edgeLength":null,"angle":0,"offset":null,"spliced":false},{"faceData":[{"type":0,"onRight":true},{"type":0,"onRight":false}],"brush":{"Image":"","color":"","Tiled":true,"Tile Length":1,"Width":0.05,"Thickness":0.05,"Min Length":0.1,"Max Length":4,"Bend":10,"Strict Length":false,"Power":-1,"Power Law":false,"Offset":0,"Rigid":false,"Rigid Tiled":false,"Flip":false,"Classified by angle":true,"Bidirectional Edges":true,"Synthetic":true,"Grounded":false,"Boundary":false,"Fully Connected":false,"Loopy":true,"Sinusoid":false,"Bend Low-Pass":5,"Bend Length":0.1,"Bend Period":1,"Bend Harmonics Levels":1,"borderColor":"","Visible":true},"dir":{"x":-1.6081226496766364e-16,"y":1,"z":0},"isRigid":false,"isRigidTiled":false,"edgeLength":null,"angle":1.5707963267948968,"offset":null,"spliced":false}],"faceTypes":[{"color":null,"material":null,"normal":{"x":0,"y":0,"z":1}}],"xml":"","dims":2},"transitions":[],"starterTransitions":[{"n":[{"interior":{"vertices":[],"edges":[],"halfEdges":[],"faces":[{"outerComponent":-1,"innerComponents":[]}],"connectorGroups":[]},"boundary":{"vertices":[],"edges":[{"halfEdges":[[0],[1]]}],"halfEdges":[{"forward":false,"edgeIndex":0,"vertexIndex":-1,"vertex":-1,"edge":0,"prev":0,"next":0,"face":0},{"forward":true,"edgeIndex":1,"vertexIndex":-1,"vertex":-1,"edge":0,"prev":1,"next":1,"face":-1}],"faces":[{"outerComponent":0,"innerComponents":[]}],"connectorGroups":[]},"vertices":[],"edges":[],"faces":[{"interior":0,"boundary":0,"type":0,"wildcard":false}],"volumes":[{"boundary":0,"type":null}],"morphism":{"halfs":[-1],"vertices":[],"faces":[]}},{"interior":{"vertices":[{"halfEdges":[5,11,7],"group":-1},{"halfEdges":[6,1,9],"group":-1},{"halfEdges":[10,3,0],"group":-1},{"halfEdges":[2,4,8],"group":-1}],"edges":[{"halfEdges":[[4],[5]]},{"halfEdges":[[10],[11]]},{"halfEdges":[[6],[7]]},{"halfEdges":[[0],[1]]},{"halfEdges":[[8],[9]]},{"halfEdges":[[2],[3]]}],"halfEdges":[{"forward":false,"edgeIndex":0,"vertexIndex":2,"vertex":2,"edge":3,"prev":11,"next":6,"face":2},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":1,"edge":3,"prev":8,"next":3,"face":1},{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":3,"edge":5,"prev":5,"next":10,"face":0},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":2,"edge":5,"prev":1,"next":8,"face":1},{"forward":false,"edgeIndex":0,"vertexIndex":1,"vertex":3,"edge":0,"prev":9,"next":7,"face":3},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":0,"edge":0,"prev":10,"next":2,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":1,"edge":2,"prev":0,"next":11,"face":2},{"forward":true,"edgeIndex":1,"vertexIndex":2,"vertex":0,"edge":2,"prev":4,"next":9,"face":3},{"forward":false,"edgeIndex":0,"vertexIndex":2,"vertex":3,"edge":4,"prev":3,"next":1,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":2,"vertex":1,"edge":4,"prev":7,"next":4,"face":3},{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":2,"edge":1,"prev":2,"next":5,"face":0},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":0,"edge":1,"prev":6,"next":0,"face":2}],"faces":[{"outerComponent":10,"innerComponents":[]},{"outerComponent":8,"innerComponents":[]},{"outerComponent":11,"innerComponents":[]},{"outerComponent":9,"innerComponents":[]}],"connectorGroups":[]},"boundary":{"vertices":[],"edges":[],"halfEdges":[],"faces":[],"connectorGroups":[]},"vertices":[{"interior":0,"boundary":-1,"kind":"v","type":3},{"interior":1,"boundary":-1,"kind":"v","type":0},{"interior":2,"boundary":-1,"kind":"v","type":1},{"interior":3,"boundary":-1,"kind":"v","type":2}],"edges":[{"interior":0,"type":2},{"interior":1,"type":5},{"interior":2,"type":3},{"interior":3,"type":0},{"interior":4,"type":4},{"interior":5,"type":1}],"faces":[{"interior":0,"boundary":-1,"type":0,"turns":-1,"wildcard":false},{"interior":1,"boundary":-1,"type":0,"turns":-1,"wildcard":false},{"interior":2,"boundary":-1,"type":0,"turns":0,"wildcard":false},{"interior":3,"boundary":-1,"type":0,"turns":2,"wildcard":false}],"volumes":[],"morphism":{"halfs":[],"vertices":[],"faces":[]}}],"ground":false}],"groundTransitions":[],"grounded":false,"emptyNet":{"interior":{"vertices":[],"edges":[],"halfEdges":[],"faces":[{"outerComponent":-1,"innerComponents":[]}],"connectorGroups":[]},"boundary":{"vertices":[],"edges":[{"halfEdges":[[0],[1]]}],"halfEdges":[{"forward":false,"edgeIndex":0,"vertexIndex":-1,"vertex":-1,"edge":0,"prev":0,"next":0,"face":0},{"forward":true,"edgeIndex":1,"vertexIndex":-1,"vertex":-1,"edge":0,"prev":1,"next":1,"face":-1}],"faces":[{"outerComponent":0,"innerComponents":[]}],"connectorGroups":[]},"vertices":[],"edges":[],"faces":[{"interior":0,"boundary":0,"type":0,"wildcard":false}],"volumes":[{"boundary":0,"type":null}]}}}
+{
+  "emptyGraph": {
+    "edgeTypes": [],
+    "faceTypes": [
+      0
+    ],
+    "interior": {
+      "edges": [],
+      "faces": [
+        {
+          "outerComponent": -1
+        }
+      ],
+      "halfEdges": [],
+      "vertices": []
+    },
+    "vertexTypes": []
+  },
+  "groundRules": [],
+  "grounded": false,
+  "name": "Connected Triangle",
+  "rules": [],
+  "starterRules": [
+    {
+      "ground": false,
+      "n": [
+        {
+          "edgeTypes": [],
+          "faceTypes": [
+            0
+          ],
+          "interior": {
+            "edges": [],
+            "faces": [
+              {
+                "outerComponent": -1
+              }
+            ],
+            "halfEdges": [],
+            "vertices": []
+          },
+          "morphism": {
+            "faces": [],
+            "halfs": [
+              -1
+            ],
+            "vertices": []
+          },
+          "vertexTypes": []
+        },
+        {
+          "edgeTypes": [
+            2,
+            5,
+            3,
+            0,
+            4,
+            1
+          ],
+          "faceTypes": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "interior": {
+            "edges": [
+              {
+                "halfEdges": [
+                  [
+                    4
+                  ],
+                  [
+                    5
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    10
+                  ],
+                  [
+                    11
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    6
+                  ],
+                  [
+                    7
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    0
+                  ],
+                  [
+                    1
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    8
+                  ],
+                  [
+                    9
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    2
+                  ],
+                  [
+                    3
+                  ]
+                ]
+              }
+            ],
+            "faces": [
+              {
+                "outerComponent": 10
+              },
+              {
+                "outerComponent": 8
+              },
+              {
+                "outerComponent": 11
+              },
+              {
+                "outerComponent": 9
+              }
+            ],
+            "halfEdges": [
+              {
+                "edge": 3,
+                "edgeIndex": 0,
+                "face": 2,
+                "forward": false,
+                "next": 6,
+                "prev": 11,
+                "vertex": 2,
+                "vertexIndex": 2
+              },
+              {
+                "edge": 3,
+                "edgeIndex": 1,
+                "face": 1,
+                "forward": true,
+                "next": 3,
+                "prev": 8,
+                "vertex": 1,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 5,
+                "edgeIndex": 0,
+                "face": 0,
+                "forward": false,
+                "next": 10,
+                "prev": 5,
+                "vertex": 3,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 5,
+                "edgeIndex": 1,
+                "face": 1,
+                "forward": true,
+                "next": 8,
+                "prev": 1,
+                "vertex": 2,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 0,
+                "edgeIndex": 0,
+                "face": 3,
+                "forward": false,
+                "next": 7,
+                "prev": 9,
+                "vertex": 3,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 0,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 2,
+                "prev": 10,
+                "vertex": 0,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 2,
+                "edgeIndex": 0,
+                "face": 2,
+                "forward": false,
+                "next": 11,
+                "prev": 0,
+                "vertex": 1,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 2,
+                "edgeIndex": 1,
+                "face": 3,
+                "forward": true,
+                "next": 9,
+                "prev": 4,
+                "vertex": 0,
+                "vertexIndex": 2
+              },
+              {
+                "edge": 4,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 1,
+                "prev": 3,
+                "vertex": 3,
+                "vertexIndex": 2
+              },
+              {
+                "edge": 4,
+                "edgeIndex": 1,
+                "face": 3,
+                "forward": true,
+                "next": 4,
+                "prev": 7,
+                "vertex": 1,
+                "vertexIndex": 2
+              },
+              {
+                "edge": 1,
+                "edgeIndex": 0,
+                "face": 0,
+                "forward": false,
+                "next": 5,
+                "prev": 2,
+                "vertex": 2,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 1,
+                "edgeIndex": 1,
+                "face": 2,
+                "forward": true,
+                "next": 0,
+                "prev": 6,
+                "vertex": 0,
+                "vertexIndex": 1
+              }
+            ],
+            "vertices": [
+              {
+                "halfEdges": [
+                  5,
+                  11,
+                  7
+                ]
+              },
+              {
+                "halfEdges": [
+                  6,
+                  1,
+                  9
+                ]
+              },
+              {
+                "halfEdges": [
+                  10,
+                  3,
+                  0
+                ]
+              },
+              {
+                "halfEdges": [
+                  2,
+                  4,
+                  8
+                ]
+              }
+            ]
+          },
+          "morphism": {
+            "faces": [],
+            "halfs": [],
+            "vertices": []
+          },
+          "vertexTypes": [
+            {
+              "kind": "v",
+              "type": 3
+            },
+            {
+              "kind": "v",
+              "type": 0
+            },
+            {
+              "kind": "v",
+              "type": 1
+            },
+            {
+              "kind": "v",
+              "type": 2
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "types": {
+    "dims": 2,
+    "edgeTypes": [
+      {
+        "dir": {
+          "x": 0.8,
+          "y": -0.6,
+          "z": 0
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 0
+          },
+          {
+            "onRight": false,
+            "type": 0
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0.8,
+          "y": 0.6,
+          "z": 0
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 0
+          },
+          {
+            "onRight": false,
+            "type": 0
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0.4472135954999578,
+          "y": 0.894427190999916,
+          "z": 0
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 0
+          },
+          {
+            "onRight": false,
+            "type": 0
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": -0.4472135954999579,
+          "y": 0.8944271909999159,
+          "z": 0
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 0
+          },
+          {
+            "onRight": false,
+            "type": 0
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 1,
+          "y": 0,
+          "z": 0
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 0
+          },
+          {
+            "onRight": false,
+            "type": 0
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": -1.6081226496766364e-16,
+          "y": 1,
+          "z": 0
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 0
+          },
+          {
+            "onRight": false,
+            "type": 0
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      }
+    ],
+    "faceTypes": [
+      {
+        "color": null,
+        "normal": {
+          "x": 0,
+          "y": 0,
+          "z": 1
+        }
+      }
+    ],
+    "vertexTypes": [
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 0.4472135954999579,
+              "y": -0.8944271909999159,
+              "z": 0
+            },
+            "edge": 3,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 0.8,
+              "y": -0.6,
+              "z": 0
+            },
+            "edge": 0,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": 1,
+              "y": 0,
+              "z": 0
+            },
+            "edge": 4,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 1.6081226496766364e-16,
+              "y": -1,
+              "z": 0
+            },
+            "edge": 5,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 0.8,
+              "y": 0.6,
+              "z": 0
+            },
+            "edge": 1,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": -0.8,
+              "y": 0.6,
+              "z": 0
+            },
+            "edge": 0,
+            "isAtStart": false
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": -0.8,
+              "y": -0.6,
+              "z": 0
+            },
+            "edge": 1,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": -0.4472135954999578,
+              "y": -0.894427190999916,
+              "z": 0
+            },
+            "edge": 2,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": -1,
+              "y": 0,
+              "z": 0
+            },
+            "edge": 4,
+            "isAtStart": false
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 0.4472135954999578,
+              "y": 0.894427190999916,
+              "z": 0
+            },
+            "edge": 2,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": -1.6081226496766364e-16,
+              "y": 1,
+              "z": 0
+            },
+            "edge": 5,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": -0.4472135954999579,
+              "y": 0.8944271909999159,
+              "z": 0
+            },
+            "edge": 3,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      }
+    ]
+  },
+  "version": 1
+}

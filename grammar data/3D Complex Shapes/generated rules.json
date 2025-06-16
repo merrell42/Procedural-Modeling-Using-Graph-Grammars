@@ -1,1 +1,4263 @@
-{"category":"3D Shapes","name":"Generated Rules","settings":{"Generations":5,"Grounded":true},"solution":{"useNetworks":true,"types":{"vertexTypes":[{"connections":[{"dir":{"x":0,"y":0,"z":1},"edge":0,"faceIds":[0,1],"isAtStart":true},{"dir":{"x":1,"y":0,"z":0},"edge":1,"faceIds":[1,2],"isAtStart":true},{"dir":{"x":0,"y":-1,"z":0},"edge":2,"faceIds":[0,2],"isAtStart":false}],"decoration":{"Image":"","Width":0.5,"Height":0.5,"Fix Aspect Ratio":true,"Desirability":0,"Center X":0,"Center Y":0,"Anchor X":0,"Anchor Y":0},"spliced":false},{"connections":[{"dir":{"x":0,"y":0,"z":1},"edge":3,"faceIds":[0,1],"isAtStart":true},{"dir":{"x":0,"y":1,"z":0},"edge":2,"faceIds":[1,2],"isAtStart":true},{"dir":{"x":1,"y":0,"z":0},"edge":4,"faceIds":[0,2],"isAtStart":false}],"decoration":{"Image":"","Width":0.5,"Height":0.5,"Fix Aspect Ratio":true,"Desirability":0,"Center X":0,"Center Y":0,"Anchor X":0,"Anchor Y":0},"spliced":false},{"connections":[{"dir":{"x":0,"y":0,"z":1},"edge":5,"faceIds":[0,1],"isAtStart":true},{"dir":{"x":-1,"y":0,"z":0},"edge":4,"faceIds":[1,2],"isAtStart":true},{"dir":{"x":0,"y":1,"z":0},"edge":6,"faceIds":[0,2],"isAtStart":false}],"decoration":{"Image":"","Width":0.5,"Height":0.5,"Fix Aspect Ratio":true,"Desirability":0,"Center X":0,"Center Y":0,"Anchor X":0,"Anchor Y":0},"spliced":false},{"connections":[{"dir":{"x":0,"y":0,"z":1},"edge":7,"faceIds":[0,1],"isAtStart":true},{"dir":{"x":0,"y":-1,"z":0},"edge":6,"faceIds":[1,2],"isAtStart":true},{"dir":{"x":-1,"y":0,"z":0},"edge":1,"faceIds":[0,2],"isAtStart":false}],"decoration":{"Image":"","Width":0.5,"Height":0.5,"Fix Aspect Ratio":true,"Desirability":0,"Center X":0,"Center Y":0,"Anchor X":0,"Anchor Y":0},"spliced":false},{"connections":[{"dir":{"x":1,"y":0,"z":0},"edge":8,"faceIds":[0,1],"isAtStart":true},{"dir":{"x":0,"y":0,"z":-1},"edge":0,"faceIds":[2,1],"isAtStart":false},{"dir":{"x":0,"y":-1,"z":0},"edge":9,"faceIds":[3,2],"isAtStart":false},{"dir":{"x":0.5773502691896257,"y":-0.5773502691896257,"z":0.5773502691896257},"edge":10,"faceIds":[3,0],"isAtStart":true}],"decoration":{"Image":"","Width":0.5,"Height":0.5,"Fix Aspect Ratio":true,"Desirability":0,"Center X":0,"Center Y":0,"Anchor X":0,"Anchor Y":0},"spliced":false},{"connections":[{"dir":{"x":0,"y":1,"z":0},"edge":9,"faceIds":[0,1],"isAtStart":true},{"dir":{"x":0,"y":0,"z":-1},"edge":3,"faceIds":[2,1],"isAtStart":false},{"dir":{"x":1,"y":0,"z":0},"edge":11,"faceIds":[3,2],"isAtStart":false},{"dir":{"x":0.5773503089260543,"y":0.5773502493214105,"z":0.5773502493214105},"edge":12,"faceIds":[3,0],"isAtStart":true}],"decoration":{"Image":"","Width":0.5,"Height":0.5,"Fix Aspect Ratio":true,"Desirability":0,"Center X":0,"Center Y":0,"Anchor X":0,"Anchor Y":0},"spliced":false},{"connections":[{"dir":{"x":-1,"y":0,"z":0},"edge":11,"faceIds":[0,1],"isAtStart":true},{"dir":{"x":0,"y":0,"z":-1},"edge":5,"faceIds":[2,1],"isAtStart":false},{"dir":{"x":0,"y":1,"z":0},"edge":13,"faceIds":[3,2],"isAtStart":false},{"dir":{"x":-0.5773503287942695,"y":0.5773502095849778,"z":0.5773502691896237},"edge":14,"faceIds":[3,0],"isAtStart":true}],"decoration":{"Image":"","Width":0.5,"Height":0.5,"Fix Aspect Ratio":true,"Desirability":0,"Center X":0,"Center Y":0,"Anchor X":0,"Anchor Y":0},"spliced":false},{"connections":[{"dir":{"x":0,"y":-1,"z":0},"edge":13,"faceIds":[0,1],"isAtStart":true},{"dir":{"x":0,"y":0,"z":-1},"edge":7,"faceIds":[2,1],"isAtStart":false},{"dir":{"x":-1,"y":0,"z":0},"edge":8,"faceIds":[3,2],"isAtStart":false},{"dir":{"x":-0.5773502691896257,"y":-0.5773502691896257,"z":0.5773502691896257},"edge":15,"faceIds":[3,0],"isAtStart":true}],"decoration":{"Image":"","Width":0.5,"Height":0.5,"Fix Aspect Ratio":true,"Desirability":0,"Center X":0,"Center Y":0,"Anchor X":0,"Anchor Y":0},"spliced":false},{"connections":[{"dir":{"x":1,"y":0,"z":0},"edge":16,"faceIds":[0,1],"isAtStart":true},{"dir":{"x":-0.5773502691896257,"y":0.5773502691896257,"z":-0.5773502691896257},"edge":10,"faceIds":[2,1],"isAtStart":false},{"dir":{"x":-0.5773503089260543,"y":-0.5773502493214105,"z":-0.5773502493214105},"edge":12,"faceIds":[0,2],"isAtStart":false}],"decoration":{"Image":"","Width":0.5,"Height":0.5,"Fix Aspect Ratio":true,"Desirability":0,"Center X":0,"Center Y":0,"Anchor X":0,"Anchor Y":0},"spliced":false},{"connections":[{"dir":{"x":-1,"y":0,"z":0},"edge":16,"faceIds":[1,0],"isAtStart":false},{"dir":{"x":0.5773503287942695,"y":-0.5773502095849778,"z":-0.5773502691896237},"edge":14,"faceIds":[2,1],"isAtStart":false},{"dir":{"x":0.5773502691896257,"y":0.5773502691896257,"z":-0.5773502691896257},"edge":15,"faceIds":[0,2],"isAtStart":false}],"decoration":{"Image":"","Width":0.5,"Height":0.5,"Fix Aspect Ratio":true,"Desirability":0,"Center X":0,"Center Y":0,"Anchor X":0,"Anchor Y":0},"spliced":false},{"connections":[{"dir":{"x":0,"y":1,"z":0},"edge":17,"faceIds":[0,1],"isAtStart":true},{"dir":{"x":-0.5773503089260543,"y":-0.5773502493214105,"z":-0.5773502493214105},"edge":12,"faceIds":[2,1],"isAtStart":false},{"dir":{"x":0.5773503287942695,"y":-0.5773502095849778,"z":-0.5773502691896237},"edge":14,"faceIds":[0,2],"isAtStart":false}],"decoration":{"Image":"","Width":0.5,"Height":0.5,"Fix Aspect Ratio":true,"Desirability":0,"Center X":0,"Center Y":0,"Anchor X":0,"Anchor Y":0},"spliced":false},{"connections":[{"dir":{"x":0,"y":-1,"z":0},"edge":17,"faceIds":[1,0],"isAtStart":false},{"dir":{"x":0.5773502691896257,"y":0.5773502691896257,"z":-0.5773502691896257},"edge":15,"faceIds":[2,1],"isAtStart":false},{"dir":{"x":-0.5773502691896257,"y":0.5773502691896257,"z":-0.5773502691896257},"edge":10,"faceIds":[0,2],"isAtStart":false}],"decoration":{"Image":"","Width":0.5,"Height":0.5,"Fix Aspect Ratio":true,"Desirability":0,"Center X":0,"Center Y":0,"Anchor X":0,"Anchor Y":0},"spliced":false},{"connections":[{"adjustedAngle":0.00011,"angle":0,"dir":{"x":1,"y":0,"z":0},"directedId":11,"edge":18,"faceIds":[0],"isAtStart":false},{"adjustedAngle":1.5708763267948966,"angle":1.5707963267948966,"dir":{"x":0,"y":1,"z":0},"directedId":8,"edge":19,"faceIds":[0],"isAtStart":true}],"decoration":{"Image":"","Width":0.5,"Height":0.5,"Fix Aspect Ratio":true,"Desirability":0,"Center X":0,"Center Y":0,"Anchor X":0,"Anchor Y":0},"spliced":false},{"connections":[{"adjustedAngle":-1.5707063267948966,"angle":-1.5707963267948966,"dir":{"x":0,"y":-1,"z":0},"directedId":9,"edge":19,"faceIds":[0],"isAtStart":false},{"adjustedAngle":0.00006000000000000001,"angle":0,"dir":{"x":1,"y":0,"z":0},"directedId":6,"edge":20,"faceIds":[0],"isAtStart":true}],"decoration":{"Image":"","Width":0.5,"Height":0.5,"Fix Aspect Ratio":true,"Desirability":0,"Center X":0,"Center Y":0,"Anchor X":0,"Anchor Y":0},"spliced":false},{"connections":[{"adjustedAngle":1.5708463267948967,"angle":1.5707963267948966,"dir":{"x":0,"y":1,"z":0},"directedId":5,"edge":21,"faceIds":[0],"isAtStart":false},{"adjustedAngle":3.1416926535897933,"angle":3.141592653589793,"dir":{"x":-1,"y":0,"z":0},"directedId":10,"edge":18,"faceIds":[0],"isAtStart":true}],"decoration":{"Image":"","Width":0.5,"Height":0.5,"Fix Aspect Ratio":true,"Desirability":0,"Center X":0,"Center Y":0,"Anchor X":0,"Anchor Y":0},"spliced":false},{"connections":[{"adjustedAngle":-1.5707563267948965,"angle":-1.5707963267948966,"dir":{"x":0,"y":-1,"z":0},"directedId":4,"edge":21,"faceIds":[0],"isAtStart":true},{"adjustedAngle":3.141662653589793,"angle":3.141592653589793,"dir":{"x":-1,"y":0,"z":0},"directedId":7,"edge":20,"faceIds":[0],"isAtStart":false}],"decoration":{"Image":"","Width":0.5,"Height":0.5,"Fix Aspect Ratio":true,"Desirability":0,"Center X":0,"Center Y":0,"Anchor X":0,"Anchor Y":0},"spliced":false}],"edgeTypes":[{"faceData":[{"type":2,"onRight":true},{"type":5,"onRight":false}],"brush":{"Image":"","color":"#000","Tiled":true,"Tile Length":1,"Width":0.05,"Thickness":0.05,"Min Length":0.2,"Max Length":4,"Bend":10,"Strict Length":false,"Power":-1,"Power Law":false,"Offset":0,"Rigid":false,"Rigid Tiled":false,"Flip":false,"Classified by angle":true,"Bidirectional Edges":true,"Synthetic":true,"Grounded":false,"Boundary":false,"Fully Connected":false,"Loopy":true,"Sinusoid":false,"Bend Low-Pass":5,"Bend Length":0.1,"Bend Period":1,"Bend Harmonics Levels":1,"borderColor":"#000","Visible":true},"dir":{"x":0,"y":0,"z":1},"isRigid":false,"isRigidTiled":false,"edgeLength":null,"angle":0,"offset":null,"spliced":false},{"faceData":[{"type":5,"onRight":true},{"type":0,"onRight":false}],"brush":{"Image":"","color":"#000","Tiled":true,"Tile Length":1,"Width":0.05,"Thickness":0.05,"Min Length":0.2,"Max Length":4,"Bend":10,"Strict Length":false,"Power":-1,"Power Law":false,"Offset":0,"Rigid":false,"Rigid Tiled":false,"Flip":false,"Classified by angle":true,"Bidirectional Edges":true,"Synthetic":true,"Grounded":false,"Boundary":false,"Fully Connected":false,"Loopy":true,"Sinusoid":false,"Bend Low-Pass":5,"Bend Length":0.1,"Bend Period":1,"Bend Harmonics Levels":1,"borderColor":"#000","Visible":true},"dir":{"x":1,"y":0,"z":0},"isRigid":false,"isRigidTiled":false,"edgeLength":null,"angle":0,"offset":null,"spliced":false},{"faceData":[{"type":2,"onRight":true},{"type":0,"onRight":false}],"brush":{"Image":"","color":"#000","Tiled":true,"Tile Length":1,"Width":0.05,"Thickness":0.05,"Min Length":0.2,"Max Length":4,"Bend":10,"Strict Length":false,"Power":-1,"Power Law":false,"Offset":0,"Rigid":false,"Rigid Tiled":false,"Flip":false,"Classified by angle":true,"Bidirectional Edges":true,"Synthetic":true,"Grounded":false,"Boundary":false,"Fully Connected":false,"Loopy":true,"Sinusoid":false,"Bend Low-Pass":5,"Bend Length":0.1,"Bend Period":1,"Bend Harmonics Levels":1,"borderColor":"#000","Visible":true},"dir":{"x":0,"y":1,"z":0},"isRigid":false,"isRigidTiled":false,"edgeLength":null,"angle":1.5707963267948966,"offset":null,"spliced":false},{"faceData":[{"type":3,"onRight":true},{"type":2,"onRight":false}],"brush":{"Image":"","color":"#000","Tiled":true,"Tile Length":1,"Width":0.05,"Thickness":0.05,"Min Length":0.2,"Max Length":4,"Bend":10,"Strict Length":false,"Power":-1,"Power Law":false,"Offset":0,"Rigid":false,"Rigid Tiled":false,"Flip":false,"Classified by angle":true,"Bidirectional Edges":true,"Synthetic":true,"Grounded":false,"Boundary":false,"Fully Connected":false,"Loopy":true,"Sinusoid":false,"Bend Low-Pass":5,"Bend Length":0.1,"Bend Period":1,"Bend Harmonics Levels":1,"borderColor":"#000","Visible":true},"dir":{"x":0,"y":0,"z":1},"isRigid":false,"isRigidTiled":false,"edgeLength":null,"angle":0,"offset":null,"spliced":false},{"faceData":[{"type":3,"onRight":true},{"type":0,"onRight":false}],"brush":{"Image":"","color":"#000","Tiled":true,"Tile Length":1,"Width":0.05,"Thickness":0.05,"Min Length":0.2,"Max Length":4,"Bend":10,"Strict Length":false,"Power":-1,"Power Law":false,"Offset":0,"Rigid":false,"Rigid Tiled":false,"Flip":false,"Classified by angle":true,"Bidirectional Edges":true,"Synthetic":true,"Grounded":false,"Boundary":false,"Fully Connected":false,"Loopy":true,"Sinusoid":false,"Bend Low-Pass":5,"Bend Length":0.1,"Bend Period":1,"Bend Harmonics Levels":1,"borderColor":"#000","Visible":true},"dir":{"x":-1,"y":0,"z":0},"isRigid":false,"isRigidTiled":false,"edgeLength":null,"angle":3.141592653589793,"offset":null,"spliced":false},{"faceData":[{"type":4,"onRight":true},{"type":3,"onRight":false}],"brush":{"Image":"","color":"#000","Tiled":true,"Tile Length":1,"Width":0.05,"Thickness":0.05,"Min Length":0.2,"Max Length":4,"Bend":10,"Strict Length":false,"Power":-1,"Power Law":false,"Offset":0,"Rigid":false,"Rigid Tiled":false,"Flip":false,"Classified by angle":true,"Bidirectional Edges":true,"Synthetic":true,"Grounded":false,"Boundary":false,"Fully Connected":false,"Loopy":true,"Sinusoid":false,"Bend Low-Pass":5,"Bend Length":0.1,"Bend Period":1,"Bend Harmonics Levels":1,"borderColor":"#000","Visible":true},"dir":{"x":0,"y":0,"z":1},"isRigid":false,"isRigidTiled":false,"edgeLength":null,"angle":0,"offset":null,"spliced":false},{"faceData":[{"type":4,"onRight":true},{"type":0,"onRight":false}],"brush":{"Image":"","color":"#000","Tiled":true,"Tile Length":1,"Width":0.05,"Thickness":0.05,"Min Length":0.2,"Max Length":4,"Bend":10,"Strict Length":false,"Power":-1,"Power Law":false,"Offset":0,"Rigid":false,"Rigid Tiled":false,"Flip":false,"Classified by angle":true,"Bidirectional Edges":true,"Synthetic":true,"Grounded":false,"Boundary":false,"Fully Connected":false,"Loopy":true,"Sinusoid":false,"Bend Low-Pass":5,"Bend Length":0.1,"Bend Period":1,"Bend Harmonics Levels":1,"borderColor":"#000","Visible":true},"dir":{"x":0,"y":-1,"z":0},"isRigid":false,"isRigidTiled":false,"edgeLength":null,"angle":-1.5707963267948966,"offset":null,"spliced":false},{"faceData":[{"type":5,"onRight":true},{"type":4,"onRight":false}],"brush":{"Image":"","color":"#000","Tiled":true,"Tile Length":1,"Width":0.05,"Thickness":0.05,"Min Length":0.2,"Max Length":4,"Bend":10,"Strict Length":false,"Power":-1,"Power Law":false,"Offset":0,"Rigid":false,"Rigid Tiled":false,"Flip":false,"Classified by angle":true,"Bidirectional Edges":true,"Synthetic":true,"Grounded":false,"Boundary":false,"Fully Connected":false,"Loopy":true,"Sinusoid":false,"Bend Low-Pass":5,"Bend Length":0.1,"Bend Period":1,"Bend Harmonics Levels":1,"borderColor":"#000","Visible":true},"dir":{"x":0,"y":0,"z":1},"isRigid":false,"isRigidTiled":false,"edgeLength":null,"angle":0,"offset":null,"spliced":false},{"faceData":[{"type":1,"onRight":true},{"type":5,"onRight":false}],"brush":{"Image":"","color":"#000","Tiled":true,"Tile Length":1,"Width":0.05,"Thickness":0.05,"Min Length":0.2,"Max Length":4,"Bend":10,"Strict Length":false,"Power":-1,"Power Law":false,"Offset":0,"Rigid":false,"Rigid Tiled":false,"Flip":false,"Classified by angle":true,"Bidirectional Edges":true,"Synthetic":true,"Grounded":false,"Boundary":false,"Fully Connected":false,"Loopy":true,"Sinusoid":false,"Bend Low-Pass":5,"Bend Length":0.1,"Bend Period":1,"Bend Harmonics Levels":1,"borderColor":"#000","Visible":true},"dir":{"x":1,"y":0,"z":0},"isRigid":false,"isRigidTiled":false,"edgeLength":null,"angle":0,"offset":null,"spliced":false},{"faceData":[{"type":7,"onRight":true},{"type":2,"onRight":false}],"brush":{"Image":"","color":"#000","Tiled":true,"Tile Length":1,"Width":0.05,"Thickness":0.05,"Min Length":0.2,"Max Length":4,"Bend":10,"Strict Length":false,"Power":-1,"Power Law":false,"Offset":0,"Rigid":false,"Rigid Tiled":false,"Flip":false,"Classified by angle":true,"Bidirectional Edges":true,"Synthetic":true,"Grounded":false,"Boundary":false,"Fully Connected":false,"Loopy":true,"Sinusoid":false,"Bend Low-Pass":5,"Bend Length":0.1,"Bend Period":1,"Bend Harmonics Levels":1,"borderColor":"#000","Visible":true},"dir":{"x":0,"y":1,"z":0},"isRigid":false,"isRigidTiled":false,"edgeLength":null,"angle":1.5707963267948966,"offset":null,"spliced":false},{"faceData":[{"type":7,"onRight":true},{"type":1,"onRight":false}],"brush":{"Image":"","color":"#000","Tiled":true,"Tile Length":1,"Width":0.05,"Thickness":0.05,"Min Length":0.2,"Max Length":4,"Bend":10,"Strict Length":false,"Power":-1,"Power Law":false,"Offset":0,"Rigid":false,"Rigid Tiled":false,"Flip":false,"Classified by angle":true,"Bidirectional Edges":true,"Synthetic":true,"Grounded":false,"Boundary":false,"Fully Connected":false,"Loopy":true,"Sinusoid":false,"Bend Low-Pass":5,"Bend Length":0.1,"Bend Period":1,"Bend Harmonics Levels":1,"borderColor":"#000","Visible":true},"dir":{"x":0.5773502691896257,"y":-0.5773502691896257,"z":0.5773502691896257},"isRigid":false,"isRigidTiled":false,"edgeLength":null,"angle":-0.7853981633974483,"offset":null,"spliced":false},{"faceData":[{"type":6,"onRight":true},{"type":3,"onRight":false}],"brush":{"Image":"","color":"#000","Tiled":true,"Tile Length":1,"Width":0.05,"Thickness":0.05,"Min Length":0.2,"Max Length":4,"Bend":10,"Strict Length":false,"Power":-1,"Power Law":false,"Offset":0,"Rigid":false,"Rigid Tiled":false,"Flip":false,"Classified by angle":true,"Bidirectional Edges":true,"Synthetic":true,"Grounded":false,"Boundary":false,"Fully Connected":false,"Loopy":true,"Sinusoid":false,"Bend Low-Pass":5,"Bend Length":0.1,"Bend Period":1,"Bend Harmonics Levels":1,"borderColor":"#000","Visible":true},"dir":{"x":-1,"y":0,"z":0},"isRigid":false,"isRigidTiled":false,"edgeLength":null,"angle":3.141592653589793,"offset":null,"spliced":false},{"faceData":[{"type":6,"onRight":true},{"type":7,"onRight":false}],"brush":{"Image":"","color":"#000","Tiled":true,"Tile Length":1,"Width":0.05,"Thickness":0.05,"Min Length":0.2,"Max Length":4,"Bend":10,"Strict Length":false,"Power":-1,"Power Law":false,"Offset":0,"Rigid":false,"Rigid Tiled":false,"Flip":false,"Classified by angle":true,"Bidirectional Edges":true,"Synthetic":true,"Grounded":false,"Boundary":false,"Fully Connected":false,"Loopy":true,"Sinusoid":false,"Bend Low-Pass":5,"Bend Length":0.1,"Bend Period":1,"Bend Harmonics Levels":1,"borderColor":"#000","Visible":true},"dir":{"x":0.5773503089260543,"y":0.5773502493214105,"z":0.5773502493214105},"isRigid":false,"isRigidTiled":false,"edgeLength":null,"angle":0.7853981117783135,"offset":null,"spliced":false},{"faceData":[{"type":8,"onRight":true},{"type":4,"onRight":false}],"brush":{"Image":"","color":"#000","Tiled":true,"Tile Length":1,"Width":0.05,"Thickness":0.05,"Min Length":0.2,"Max Length":4,"Bend":10,"Strict Length":false,"Power":-1,"Power Law":false,"Offset":0,"Rigid":false,"Rigid Tiled":false,"Flip":false,"Classified by angle":true,"Bidirectional Edges":true,"Synthetic":true,"Grounded":false,"Boundary":false,"Fully Connected":false,"Loopy":true,"Sinusoid":false,"Bend Low-Pass":5,"Bend Length":0.1,"Bend Period":1,"Bend Harmonics Levels":1,"borderColor":"#000","Visible":true},"dir":{"x":0,"y":-1,"z":0},"isRigid":false,"isRigidTiled":false,"edgeLength":null,"angle":-1.5707963267948966,"offset":null,"spliced":false},{"faceData":[{"type":8,"onRight":true},{"type":6,"onRight":false}],"brush":{"Image":"","color":"#000","Tiled":true,"Tile Length":1,"Width":0.05,"Thickness":0.05,"Min Length":0.2,"Max Length":4,"Bend":10,"Strict Length":false,"Power":-1,"Power Law":false,"Offset":0,"Rigid":false,"Rigid Tiled":false,"Flip":false,"Classified by angle":true,"Bidirectional Edges":true,"Synthetic":true,"Grounded":false,"Boundary":false,"Fully Connected":false,"Loopy":true,"Sinusoid":false,"Bend Low-Pass":5,"Bend Length":0.1,"Bend Period":1,"Bend Harmonics Levels":1,"borderColor":"#000","Visible":true},"dir":{"x":-0.5773503287942695,"y":0.5773502095849778,"z":0.5773502691896237},"isRigid":false,"isRigidTiled":false,"edgeLength":null,"angle":2.3561945934306197,"offset":null,"spliced":false},{"faceData":[{"type":1,"onRight":true},{"type":8,"onRight":false}],"brush":{"Image":"","color":"#000","Tiled":true,"Tile Length":1,"Width":0.05,"Thickness":0.05,"Min Length":0.2,"Max Length":4,"Bend":10,"Strict Length":false,"Power":-1,"Power Law":false,"Offset":0,"Rigid":false,"Rigid Tiled":false,"Flip":false,"Classified by angle":true,"Bidirectional Edges":true,"Synthetic":true,"Grounded":false,"Boundary":false,"Fully Connected":false,"Loopy":true,"Sinusoid":false,"Bend Low-Pass":5,"Bend Length":0.1,"Bend Period":1,"Bend Harmonics Levels":1,"borderColor":"#000","Visible":true},"dir":{"x":-0.5773502691896257,"y":-0.5773502691896257,"z":0.5773502691896257},"isRigid":false,"isRigidTiled":false,"edgeLength":null,"angle":-2.356194490192345,"offset":null,"spliced":false},{"faceData":[{"type":6,"onRight":true},{"type":1,"onRight":false}],"brush":{"Image":"","color":"#000","Tiled":true,"Tile Length":1,"Width":0.05,"Thickness":0.05,"Min Length":0.2,"Max Length":4,"Bend":10,"Strict Length":false,"Power":-1,"Power Law":false,"Offset":0,"Rigid":false,"Rigid Tiled":false,"Flip":false,"Classified by angle":true,"Bidirectional Edges":true,"Synthetic":true,"Grounded":false,"Boundary":false,"Fully Connected":false,"Loopy":true,"Sinusoid":false,"Bend Low-Pass":5,"Bend Length":0.1,"Bend Period":1,"Bend Harmonics Levels":1,"borderColor":"#000","Visible":true},"dir":{"x":1,"y":0,"z":0},"isRigid":false,"isRigidTiled":false,"edgeLength":null,"angle":0,"offset":null,"spliced":false},{"faceData":[{"type":8,"onRight":true},{"type":7,"onRight":false}],"brush":{"Image":"","color":"#000","Tiled":true,"Tile Length":1,"Width":0.05,"Thickness":0.05,"Min Length":0.2,"Max Length":4,"Bend":10,"Strict Length":false,"Power":-1,"Power Law":false,"Offset":0,"Rigid":false,"Rigid Tiled":false,"Flip":false,"Classified by angle":true,"Bidirectional Edges":true,"Synthetic":true,"Grounded":false,"Boundary":false,"Fully Connected":false,"Loopy":true,"Sinusoid":false,"Bend Low-Pass":5,"Bend Length":0.1,"Bend Period":1,"Bend Harmonics Levels":1,"borderColor":"#000","Visible":true},"dir":{"x":0,"y":1,"z":0},"isRigid":false,"isRigidTiled":false,"edgeLength":null,"angle":1.5707963267948966,"offset":null,"spliced":false},{"faceData":[{"type":0,"onRight":true}],"brush":{"Image":"","color":"#000","Tiled":true,"Tile Length":1,"Width":0.05,"Thickness":0.05,"Min Length":0.2,"Max Length":4,"Bend":10,"Strict Length":false,"Power":-1,"Power Law":false,"Offset":0,"Rigid":false,"Rigid Tiled":false,"Flip":false,"Classified by angle":true,"Bidirectional Edges":true,"Synthetic":true,"Grounded":false,"Boundary":false,"Fully Connected":false,"Loopy":true,"Sinusoid":false,"Bend Low-Pass":5,"Bend Length":0.1,"Bend Period":1,"Bend Harmonics Levels":1,"borderColor":"#000","Visible":true},"dir":{"x":-1,"y":0,"z":0},"isRigid":false,"isRigidTiled":false,"edgeLength":null,"angle":3.141592653589793,"offset":null,"spliced":false},{"faceData":[{"type":0,"onRight":true}],"brush":{"Image":"","color":"#000","Tiled":true,"Tile Length":1,"Width":0.05,"Thickness":0.05,"Min Length":0.2,"Max Length":4,"Bend":10,"Strict Length":false,"Power":-1,"Power Law":false,"Offset":0,"Rigid":false,"Rigid Tiled":false,"Flip":false,"Classified by angle":true,"Bidirectional Edges":true,"Synthetic":true,"Grounded":false,"Boundary":false,"Fully Connected":false,"Loopy":true,"Sinusoid":false,"Bend Low-Pass":5,"Bend Length":0.1,"Bend Period":1,"Bend Harmonics Levels":1,"borderColor":"#000","Visible":true},"dir":{"x":0,"y":1,"z":0},"isRigid":false,"isRigidTiled":false,"edgeLength":null,"angle":1.5707963267948966,"offset":null,"spliced":false},{"faceData":[{"type":0,"onRight":true}],"brush":{"Image":"","color":"#000","Tiled":true,"Tile Length":1,"Width":0.05,"Thickness":0.05,"Min Length":0.2,"Max Length":4,"Bend":10,"Strict Length":false,"Power":-1,"Power Law":false,"Offset":0,"Rigid":false,"Rigid Tiled":false,"Flip":false,"Classified by angle":true,"Bidirectional Edges":true,"Synthetic":true,"Grounded":false,"Boundary":false,"Fully Connected":false,"Loopy":true,"Sinusoid":false,"Bend Low-Pass":5,"Bend Length":0.1,"Bend Period":1,"Bend Harmonics Levels":1,"borderColor":"#000","Visible":true},"dir":{"x":1,"y":0,"z":0},"isRigid":false,"isRigidTiled":false,"edgeLength":null,"angle":0,"offset":null,"spliced":false},{"faceData":[{"type":0,"onRight":true}],"brush":{"Image":"","color":"#000","Tiled":true,"Tile Length":1,"Width":0.05,"Thickness":0.05,"Min Length":0.2,"Max Length":4,"Bend":10,"Strict Length":false,"Power":-1,"Power Law":false,"Offset":0,"Rigid":false,"Rigid Tiled":false,"Flip":false,"Classified by angle":true,"Bidirectional Edges":true,"Synthetic":true,"Grounded":false,"Boundary":false,"Fully Connected":false,"Loopy":true,"Sinusoid":false,"Bend Low-Pass":5,"Bend Length":0.1,"Bend Period":1,"Bend Harmonics Levels":1,"borderColor":"#000","Visible":true},"dir":{"x":0,"y":-1,"z":0},"isRigid":false,"isRigidTiled":false,"edgeLength":null,"angle":-1.5707963267948966,"offset":null,"spliced":false}],"faceTypes":[{"color":null,"material":null,"normal":{"x":0,"y":0,"z":1}},{"color":null,"material":null,"normal":{"x":0,"y":0.7071067811865476,"z":0.7071067811865476}},{"color":null,"material":null,"normal":{"x":-1,"y":0,"z":0}},{"color":null,"material":null,"normal":{"x":0,"y":-1,"z":0}},{"color":null,"material":null,"normal":{"x":1,"y":0,"z":0}},{"color":null,"material":null,"normal":{"x":0,"y":1,"z":0}},{"color":null,"material":null,"normal":{"x":0,"y":-0.7071067811865476,"z":0.7071067811865476}},{"color":null,"material":null,"normal":{"x":-0.7071067513842227,"y":0,"z":0.7071068109888711}},{"color":null,"material":null,"normal":{"x":0.7071067513842227,"y":0,"z":0.7071068109888711}}],"xml":""},"transitions":[],"starterTransitions":[{"n":[{"interior":{"vertices":[],"edges":[],"halfEdges":[],"faces":[{"outerComponent":-1,"innerComponents":[]}],"connectorGroups":[]},"boundary":{"vertices":[],"edges":[{"halfEdges":[[0],[1]]}],"halfEdges":[{"forward":false,"edgeIndex":0,"vertexIndex":-1,"vertex":-1,"edge":0,"prev":0,"next":0,"face":0},{"forward":true,"edgeIndex":1,"vertexIndex":-1,"vertex":-1,"edge":0,"prev":1,"next":1,"face":-1}],"faces":[{"outerComponent":0,"innerComponents":[]}],"connectorGroups":[]},"vertices":[],"edges":[],"faces":[{"interior":0,"boundary":0,"type":0,"wildcard":false}],"volumes":[{"boundary":0,"type":null}],"morphism":{"halfs":[-1],"vertices":[],"faces":[0]}},{"interior":{"vertices":[{"halfEdges":[15,7,0],"group":-1},{"halfEdges":[17,1,2],"group":-1},{"halfEdges":[19,3,4],"group":-1},{"halfEdges":[21,5,6],"group":-1},{"halfEdges":[33,14,8,23],"group":-1},{"halfEdges":[9,16,10,25],"group":-1},{"halfEdges":[11,18,12,27],"group":-1},{"halfEdges":[13,20,32,29],"group":-1},{"halfEdges":[31,22,24],"group":-1},{"halfEdges":[30,26,28],"group":-1}],"edges":[{"halfEdges":[[14],[15]]},{"halfEdges":[[6],[7]]},{"halfEdges":[[0],[1]]},{"halfEdges":[[16],[17]]},{"halfEdges":[[2],[3]]},{"halfEdges":[[18],[19]]},{"halfEdges":[[4],[5]]},{"halfEdges":[[20],[21]]},{"halfEdges":[[32],[33]]},{"halfEdges":[[8],[9]]},{"halfEdges":[[22],[23]]},{"halfEdges":[[10],[11]]},{"halfEdges":[[24],[25]]},{"halfEdges":[[12],[13]]},{"halfEdges":[[26],[27]]},{"halfEdges":[[28],[29]]},{"halfEdges":[[30],[31]]}],"halfEdges":[{"forward":false,"edgeIndex":0,"vertexIndex":2,"vertex":0,"edge":2,"prev":14,"next":17,"face":2},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":1,"edge":2,"prev":3,"next":7,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":2,"vertex":1,"edge":4,"prev":16,"next":19,"face":3},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":2,"edge":4,"prev":5,"next":1,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":2,"vertex":2,"edge":6,"prev":18,"next":21,"face":4},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":3,"edge":6,"prev":7,"next":3,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":2,"vertex":3,"edge":1,"prev":20,"next":15,"face":5},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":0,"edge":1,"prev":1,"next":5,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":2,"vertex":4,"edge":9,"prev":22,"next":25,"face":7},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":5,"edge":9,"prev":17,"next":14,"face":2},{"forward":false,"edgeIndex":0,"vertexIndex":2,"vertex":5,"edge":11,"prev":24,"next":27,"face":6},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":6,"edge":11,"prev":19,"next":16,"face":3},{"forward":false,"edgeIndex":0,"vertexIndex":2,"vertex":6,"edge":13,"prev":26,"next":29,"face":8},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":7,"edge":13,"prev":21,"next":18,"face":4},{"forward":false,"edgeIndex":0,"vertexIndex":1,"vertex":4,"edge":0,"prev":9,"next":0,"face":2},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":0,"edge":0,"prev":6,"next":33,"face":5},{"forward":false,"edgeIndex":0,"vertexIndex":1,"vertex":5,"edge":3,"prev":11,"next":2,"face":3},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":1,"edge":3,"prev":0,"next":9,"face":2},{"forward":false,"edgeIndex":0,"vertexIndex":1,"vertex":6,"edge":5,"prev":13,"next":4,"face":4},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":2,"edge":5,"prev":2,"next":11,"face":3},{"forward":false,"edgeIndex":0,"vertexIndex":1,"vertex":7,"edge":7,"prev":33,"next":6,"face":5},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":3,"edge":7,"prev":4,"next":13,"face":4},{"forward":false,"edgeIndex":0,"vertexIndex":1,"vertex":8,"edge":10,"prev":25,"next":8,"face":7},{"forward":true,"edgeIndex":1,"vertexIndex":3,"vertex":4,"edge":10,"prev":32,"next":31,"face":1},{"forward":false,"edgeIndex":0,"vertexIndex":2,"vertex":8,"edge":12,"prev":30,"next":10,"face":6},{"forward":true,"edgeIndex":1,"vertexIndex":3,"vertex":5,"edge":12,"prev":8,"next":22,"face":7},{"forward":false,"edgeIndex":0,"vertexIndex":1,"vertex":9,"edge":14,"prev":29,"next":12,"face":8},{"forward":true,"edgeIndex":1,"vertexIndex":3,"vertex":6,"edge":14,"prev":10,"next":30,"face":6},{"forward":false,"edgeIndex":0,"vertexIndex":2,"vertex":9,"edge":15,"prev":31,"next":32,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":3,"vertex":7,"edge":15,"prev":12,"next":26,"face":8},{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":9,"edge":16,"prev":27,"next":24,"face":6},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":8,"edge":16,"prev":23,"next":28,"face":1},{"forward":false,"edgeIndex":0,"vertexIndex":2,"vertex":7,"edge":8,"prev":28,"next":23,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":4,"edge":8,"prev":15,"next":20,"face":5}],"faces":[{"outerComponent":7,"innerComponents":[]},{"outerComponent":32,"innerComponents":[]},{"outerComponent":17,"innerComponents":[]},{"outerComponent":19,"innerComponents":[]},{"outerComponent":21,"innerComponents":[]},{"outerComponent":33,"innerComponents":[]},{"outerComponent":30,"innerComponents":[]},{"outerComponent":25,"innerComponents":[]},{"outerComponent":29,"innerComponents":[]}],"connectorGroups":[]},"boundary":{"vertices":[],"edges":[],"halfEdges":[],"faces":[],"connectorGroups":[]},"vertices":[{"interior":0,"boundary":-1,"kind":"v","type":0},{"interior":1,"boundary":-1,"kind":"v","type":1},{"interior":2,"boundary":-1,"kind":"v","type":2},{"interior":3,"boundary":-1,"kind":"v","type":3},{"interior":4,"boundary":-1,"kind":"v","type":4},{"interior":5,"boundary":-1,"kind":"v","type":5},{"interior":6,"boundary":-1,"kind":"v","type":6},{"interior":7,"boundary":-1,"kind":"v","type":7},{"interior":8,"boundary":-1,"kind":"v","type":8},{"interior":9,"boundary":-1,"kind":"v","type":9}],"edges":[{"interior":0,"type":0},{"interior":1,"type":1},{"interior":2,"type":2},{"interior":3,"type":3},{"interior":4,"type":4},{"interior":5,"type":5},{"interior":6,"type":6},{"interior":7,"type":7},{"interior":8,"type":8},{"interior":9,"type":9},{"interior":10,"type":10},{"interior":11,"type":11},{"interior":12,"type":12},{"interior":13,"type":13},{"interior":14,"type":14},{"interior":15,"type":15},{"interior":16,"type":16}],"faces":[{"interior":0,"boundary":-1,"type":0,"turns":1,"wildcard":false},{"interior":1,"boundary":-1,"type":1,"turns":-1,"wildcard":false},{"interior":2,"boundary":-1,"type":2,"turns":-1,"wildcard":false},{"interior":3,"boundary":-1,"type":3,"turns":-1,"wildcard":false},{"interior":4,"boundary":-1,"type":4,"turns":-1,"wildcard":false},{"interior":5,"boundary":-1,"type":5,"turns":-1,"wildcard":false},{"interior":6,"boundary":-1,"type":6,"turns":-1,"wildcard":false},{"interior":7,"boundary":-1,"type":7,"turns":-1,"wildcard":false},{"interior":8,"boundary":-1,"type":8,"turns":-1,"wildcard":false}],"volumes":[],"morphism":{"halfs":[],"vertices":[],"faces":[0]}}],"ground":false},{"n":[{"interior":{"vertices":[],"edges":[],"halfEdges":[],"faces":[{"outerComponent":-1,"innerComponents":[]}],"connectorGroups":[]},"boundary":{"vertices":[],"edges":[{"halfEdges":[[0],[1]]}],"halfEdges":[{"forward":false,"edgeIndex":0,"vertexIndex":-1,"vertex":-1,"edge":0,"prev":0,"next":0,"face":0},{"forward":true,"edgeIndex":1,"vertexIndex":-1,"vertex":-1,"edge":0,"prev":1,"next":1,"face":-1}],"faces":[{"outerComponent":0,"innerComponents":[]}],"connectorGroups":[]},"vertices":[],"edges":[],"faces":[{"interior":0,"boundary":0,"type":0,"wildcard":false}],"volumes":[{"boundary":0,"type":null}],"morphism":{"halfs":[-1],"vertices":[],"faces":[0]}},{"interior":{"vertices":[{"halfEdges":[15,7,0],"group":-1},{"halfEdges":[17,1,2],"group":-1},{"halfEdges":[19,3,4],"group":-1},{"halfEdges":[21,5,6],"group":-1},{"halfEdges":[33,14,8,23],"group":-1},{"halfEdges":[9,16,10,25],"group":-1},{"halfEdges":[11,18,12,27],"group":-1},{"halfEdges":[13,20,32,29],"group":-1},{"halfEdges":[31,22,24],"group":-1},{"halfEdges":[30,26,28],"group":-1}],"edges":[{"halfEdges":[[14],[15]]},{"halfEdges":[[6],[7]]},{"halfEdges":[[0],[1]]},{"halfEdges":[[16],[17]]},{"halfEdges":[[2],[3]]},{"halfEdges":[[18],[19]]},{"halfEdges":[[4],[5]]},{"halfEdges":[[20],[21]]},{"halfEdges":[[32],[33]]},{"halfEdges":[[8],[9]]},{"halfEdges":[[22],[23]]},{"halfEdges":[[10],[11]]},{"halfEdges":[[24],[25]]},{"halfEdges":[[12],[13]]},{"halfEdges":[[26],[27]]},{"halfEdges":[[28],[29]]},{"halfEdges":[[30],[31]]}],"halfEdges":[{"forward":false,"edgeIndex":0,"vertexIndex":2,"vertex":0,"edge":2,"prev":14,"next":17,"face":2},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":1,"edge":2,"prev":3,"next":7,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":2,"vertex":1,"edge":4,"prev":16,"next":19,"face":3},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":2,"edge":4,"prev":5,"next":1,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":2,"vertex":2,"edge":6,"prev":18,"next":21,"face":4},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":3,"edge":6,"prev":7,"next":3,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":2,"vertex":3,"edge":1,"prev":20,"next":15,"face":5},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":0,"edge":1,"prev":1,"next":5,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":2,"vertex":4,"edge":9,"prev":22,"next":25,"face":7},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":5,"edge":9,"prev":17,"next":14,"face":2},{"forward":false,"edgeIndex":0,"vertexIndex":2,"vertex":5,"edge":11,"prev":24,"next":27,"face":6},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":6,"edge":11,"prev":19,"next":16,"face":3},{"forward":false,"edgeIndex":0,"vertexIndex":2,"vertex":6,"edge":13,"prev":26,"next":29,"face":8},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":7,"edge":13,"prev":21,"next":18,"face":4},{"forward":false,"edgeIndex":0,"vertexIndex":1,"vertex":4,"edge":0,"prev":9,"next":0,"face":2},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":0,"edge":0,"prev":6,"next":33,"face":5},{"forward":false,"edgeIndex":0,"vertexIndex":1,"vertex":5,"edge":3,"prev":11,"next":2,"face":3},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":1,"edge":3,"prev":0,"next":9,"face":2},{"forward":false,"edgeIndex":0,"vertexIndex":1,"vertex":6,"edge":5,"prev":13,"next":4,"face":4},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":2,"edge":5,"prev":2,"next":11,"face":3},{"forward":false,"edgeIndex":0,"vertexIndex":1,"vertex":7,"edge":7,"prev":33,"next":6,"face":5},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":3,"edge":7,"prev":4,"next":13,"face":4},{"forward":false,"edgeIndex":0,"vertexIndex":1,"vertex":8,"edge":10,"prev":25,"next":8,"face":7},{"forward":true,"edgeIndex":1,"vertexIndex":3,"vertex":4,"edge":10,"prev":32,"next":31,"face":1},{"forward":false,"edgeIndex":0,"vertexIndex":2,"vertex":8,"edge":12,"prev":30,"next":10,"face":6},{"forward":true,"edgeIndex":1,"vertexIndex":3,"vertex":5,"edge":12,"prev":8,"next":22,"face":7},{"forward":false,"edgeIndex":0,"vertexIndex":1,"vertex":9,"edge":14,"prev":29,"next":12,"face":8},{"forward":true,"edgeIndex":1,"vertexIndex":3,"vertex":6,"edge":14,"prev":10,"next":30,"face":6},{"forward":false,"edgeIndex":0,"vertexIndex":2,"vertex":9,"edge":15,"prev":31,"next":32,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":3,"vertex":7,"edge":15,"prev":12,"next":26,"face":8},{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":9,"edge":16,"prev":27,"next":24,"face":6},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":8,"edge":16,"prev":23,"next":28,"face":1},{"forward":false,"edgeIndex":0,"vertexIndex":2,"vertex":7,"edge":8,"prev":28,"next":23,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":4,"edge":8,"prev":15,"next":20,"face":5}],"faces":[{"outerComponent":7,"innerComponents":[]},{"outerComponent":32,"innerComponents":[]},{"outerComponent":17,"innerComponents":[]},{"outerComponent":19,"innerComponents":[]},{"outerComponent":21,"innerComponents":[]},{"outerComponent":33,"innerComponents":[]},{"outerComponent":30,"innerComponents":[]},{"outerComponent":25,"innerComponents":[]},{"outerComponent":29,"innerComponents":[]}],"connectorGroups":[]},"boundary":{"vertices":[],"edges":[],"halfEdges":[],"faces":[],"connectorGroups":[]},"vertices":[{"interior":0,"boundary":-1,"kind":"v","type":1},{"interior":1,"boundary":-1,"kind":"v","type":2},{"interior":2,"boundary":-1,"kind":"v","type":3},{"interior":3,"boundary":-1,"kind":"v","type":0},{"interior":4,"boundary":-1,"kind":"v","type":5},{"interior":5,"boundary":-1,"kind":"v","type":6},{"interior":6,"boundary":-1,"kind":"v","type":7},{"interior":7,"boundary":-1,"kind":"v","type":4},{"interior":8,"boundary":-1,"kind":"v","type":10},{"interior":9,"boundary":-1,"kind":"v","type":11}],"edges":[{"interior":0,"type":3},{"interior":1,"type":2},{"interior":2,"type":4},{"interior":3,"type":5},{"interior":4,"type":6},{"interior":5,"type":7},{"interior":6,"type":1},{"interior":7,"type":0},{"interior":8,"type":9},{"interior":9,"type":11},{"interior":10,"type":12},{"interior":11,"type":13},{"interior":12,"type":14},{"interior":13,"type":8},{"interior":14,"type":15},{"interior":15,"type":10},{"interior":16,"type":17}],"faces":[{"interior":0,"boundary":-1,"type":0,"turns":1,"wildcard":false},{"interior":1,"boundary":-1,"type":7,"turns":-1,"wildcard":false},{"interior":2,"boundary":-1,"type":3,"turns":-1,"wildcard":false},{"interior":3,"boundary":-1,"type":4,"turns":-1,"wildcard":false},{"interior":4,"boundary":-1,"type":5,"turns":-1,"wildcard":false},{"interior":5,"boundary":-1,"type":2,"turns":-1,"wildcard":false},{"interior":6,"boundary":-1,"type":8,"turns":-1,"wildcard":false},{"interior":7,"boundary":-1,"type":6,"turns":-1,"wildcard":false},{"interior":8,"boundary":-1,"type":1,"turns":-1,"wildcard":false}],"volumes":[],"morphism":{"halfs":[],"vertices":[],"faces":[0]}}],"ground":false},{"n":[{"interior":{"vertices":[],"edges":[],"halfEdges":[],"faces":[{"outerComponent":-1,"innerComponents":[]}],"connectorGroups":[]},"boundary":{"vertices":[],"edges":[{"halfEdges":[[0],[1]]}],"halfEdges":[{"forward":false,"edgeIndex":0,"vertexIndex":-1,"vertex":-1,"edge":0,"prev":0,"next":0,"face":0},{"forward":true,"edgeIndex":1,"vertexIndex":-1,"vertex":-1,"edge":0,"prev":1,"next":1,"face":-1}],"faces":[{"outerComponent":0,"innerComponents":[]}],"connectorGroups":[]},"vertices":[],"edges":[],"faces":[{"interior":0,"boundary":0,"type":0,"wildcard":false}],"volumes":[{"boundary":0,"type":null}],"morphism":{"halfs":[-1],"vertices":[],"faces":[0]}},{"interior":{"vertices":[{"halfEdges":[15,7,0],"group":-1},{"halfEdges":[17,1,2],"group":-1},{"halfEdges":[19,3,4],"group":-1},{"halfEdges":[21,5,6],"group":-1},{"halfEdges":[33,14,8,23],"group":-1},{"halfEdges":[9,16,10,25],"group":-1},{"halfEdges":[11,18,12,27],"group":-1},{"halfEdges":[13,20,32,29],"group":-1},{"halfEdges":[30,22,24],"group":-1},{"halfEdges":[31,26,28],"group":-1}],"edges":[{"halfEdges":[[14],[15]]},{"halfEdges":[[6],[7]]},{"halfEdges":[[0],[1]]},{"halfEdges":[[16],[17]]},{"halfEdges":[[2],[3]]},{"halfEdges":[[18],[19]]},{"halfEdges":[[4],[5]]},{"halfEdges":[[20],[21]]},{"halfEdges":[[32],[33]]},{"halfEdges":[[8],[9]]},{"halfEdges":[[22],[23]]},{"halfEdges":[[10],[11]]},{"halfEdges":[[24],[25]]},{"halfEdges":[[12],[13]]},{"halfEdges":[[26],[27]]},{"halfEdges":[[28],[29]]},{"halfEdges":[[30],[31]]}],"halfEdges":[{"forward":false,"edgeIndex":0,"vertexIndex":2,"vertex":0,"edge":2,"prev":14,"next":17,"face":2},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":1,"edge":2,"prev":3,"next":7,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":2,"vertex":1,"edge":4,"prev":16,"next":19,"face":3},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":2,"edge":4,"prev":5,"next":1,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":2,"vertex":2,"edge":6,"prev":18,"next":21,"face":4},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":3,"edge":6,"prev":7,"next":3,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":2,"vertex":3,"edge":1,"prev":20,"next":15,"face":5},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":0,"edge":1,"prev":1,"next":5,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":2,"vertex":4,"edge":9,"prev":22,"next":25,"face":7},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":5,"edge":9,"prev":17,"next":14,"face":2},{"forward":false,"edgeIndex":0,"vertexIndex":2,"vertex":5,"edge":11,"prev":24,"next":27,"face":6},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":6,"edge":11,"prev":19,"next":16,"face":3},{"forward":false,"edgeIndex":0,"vertexIndex":2,"vertex":6,"edge":13,"prev":26,"next":29,"face":8},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":7,"edge":13,"prev":21,"next":18,"face":4},{"forward":false,"edgeIndex":0,"vertexIndex":1,"vertex":4,"edge":0,"prev":9,"next":0,"face":2},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":0,"edge":0,"prev":6,"next":33,"face":5},{"forward":false,"edgeIndex":0,"vertexIndex":1,"vertex":5,"edge":3,"prev":11,"next":2,"face":3},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":1,"edge":3,"prev":0,"next":9,"face":2},{"forward":false,"edgeIndex":0,"vertexIndex":1,"vertex":6,"edge":5,"prev":13,"next":4,"face":4},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":2,"edge":5,"prev":2,"next":11,"face":3},{"forward":false,"edgeIndex":0,"vertexIndex":1,"vertex":7,"edge":7,"prev":33,"next":6,"face":5},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":3,"edge":7,"prev":4,"next":13,"face":4},{"forward":false,"edgeIndex":0,"vertexIndex":1,"vertex":8,"edge":10,"prev":25,"next":8,"face":7},{"forward":true,"edgeIndex":1,"vertexIndex":3,"vertex":4,"edge":10,"prev":32,"next":30,"face":1},{"forward":false,"edgeIndex":0,"vertexIndex":2,"vertex":8,"edge":12,"prev":31,"next":10,"face":6},{"forward":true,"edgeIndex":1,"vertexIndex":3,"vertex":5,"edge":12,"prev":8,"next":22,"face":7},{"forward":false,"edgeIndex":0,"vertexIndex":1,"vertex":9,"edge":14,"prev":29,"next":12,"face":8},{"forward":true,"edgeIndex":1,"vertexIndex":3,"vertex":6,"edge":14,"prev":10,"next":31,"face":6},{"forward":false,"edgeIndex":0,"vertexIndex":2,"vertex":9,"edge":15,"prev":30,"next":32,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":3,"vertex":7,"edge":15,"prev":12,"next":26,"face":8},{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":8,"edge":16,"prev":23,"next":28,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":9,"edge":16,"prev":27,"next":24,"face":6},{"forward":false,"edgeIndex":0,"vertexIndex":2,"vertex":7,"edge":8,"prev":28,"next":23,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":4,"edge":8,"prev":15,"next":20,"face":5}],"faces":[{"outerComponent":7,"innerComponents":[]},{"outerComponent":32,"innerComponents":[]},{"outerComponent":17,"innerComponents":[]},{"outerComponent":19,"innerComponents":[]},{"outerComponent":21,"innerComponents":[]},{"outerComponent":33,"innerComponents":[]},{"outerComponent":31,"innerComponents":[]},{"outerComponent":25,"innerComponents":[]},{"outerComponent":29,"innerComponents":[]}],"connectorGroups":[]},"boundary":{"vertices":[],"edges":[],"halfEdges":[],"faces":[],"connectorGroups":[]},"vertices":[{"interior":0,"boundary":-1,"kind":"v","type":2},{"interior":1,"boundary":-1,"kind":"v","type":3},{"interior":2,"boundary":-1,"kind":"v","type":0},{"interior":3,"boundary":-1,"kind":"v","type":1},{"interior":4,"boundary":-1,"kind":"v","type":6},{"interior":5,"boundary":-1,"kind":"v","type":7},{"interior":6,"boundary":-1,"kind":"v","type":4},{"interior":7,"boundary":-1,"kind":"v","type":5},{"interior":8,"boundary":-1,"kind":"v","type":9},{"interior":9,"boundary":-1,"kind":"v","type":8}],"edges":[{"interior":0,"type":5},{"interior":1,"type":4},{"interior":2,"type":6},{"interior":3,"type":7},{"interior":4,"type":1},{"interior":5,"type":0},{"interior":6,"type":2},{"interior":7,"type":3},{"interior":8,"type":11},{"interior":9,"type":13},{"interior":10,"type":14},{"interior":11,"type":8},{"interior":12,"type":15},{"interior":13,"type":9},{"interior":14,"type":10},{"interior":15,"type":12},{"interior":16,"type":16}],"faces":[{"interior":0,"boundary":-1,"type":0,"turns":1,"wildcard":false},{"interior":1,"boundary":-1,"type":6,"turns":-1,"wildcard":false},{"interior":2,"boundary":-1,"type":4,"turns":-1,"wildcard":false},{"interior":3,"boundary":-1,"type":5,"turns":-1,"wildcard":false},{"interior":4,"boundary":-1,"type":2,"turns":-1,"wildcard":false},{"interior":5,"boundary":-1,"type":3,"turns":-1,"wildcard":false},{"interior":6,"boundary":-1,"type":1,"turns":-1,"wildcard":false},{"interior":7,"boundary":-1,"type":8,"turns":-1,"wildcard":false},{"interior":8,"boundary":-1,"type":7,"turns":-1,"wildcard":false}],"volumes":[],"morphism":{"halfs":[],"vertices":[],"faces":[0]}}],"ground":false},{"n":[{"interior":{"vertices":[],"edges":[],"halfEdges":[],"faces":[{"outerComponent":-1,"innerComponents":[]}],"connectorGroups":[]},"boundary":{"vertices":[],"edges":[{"halfEdges":[[0],[1]]}],"halfEdges":[{"forward":false,"edgeIndex":0,"vertexIndex":-1,"vertex":-1,"edge":0,"prev":0,"next":0,"face":0},{"forward":true,"edgeIndex":1,"vertexIndex":-1,"vertex":-1,"edge":0,"prev":1,"next":1,"face":-1}],"faces":[{"outerComponent":0,"innerComponents":[]}],"connectorGroups":[]},"vertices":[],"edges":[],"faces":[{"interior":0,"boundary":0,"type":0,"wildcard":false}],"volumes":[{"boundary":0,"type":null}],"morphism":{"halfs":[-1],"vertices":[],"faces":[0]}},{"interior":{"vertices":[{"halfEdges":[15,7,0],"group":-1},{"halfEdges":[17,1,2],"group":-1},{"halfEdges":[19,3,4],"group":-1},{"halfEdges":[21,5,6],"group":-1},{"halfEdges":[33,14,8,23],"group":-1},{"halfEdges":[9,16,10,25],"group":-1},{"halfEdges":[11,18,12,27],"group":-1},{"halfEdges":[13,20,32,29],"group":-1},{"halfEdges":[30,22,24],"group":-1},{"halfEdges":[31,26,28],"group":-1}],"edges":[{"halfEdges":[[14],[15]]},{"halfEdges":[[6],[7]]},{"halfEdges":[[0],[1]]},{"halfEdges":[[16],[17]]},{"halfEdges":[[2],[3]]},{"halfEdges":[[18],[19]]},{"halfEdges":[[4],[5]]},{"halfEdges":[[20],[21]]},{"halfEdges":[[32],[33]]},{"halfEdges":[[8],[9]]},{"halfEdges":[[22],[23]]},{"halfEdges":[[10],[11]]},{"halfEdges":[[24],[25]]},{"halfEdges":[[12],[13]]},{"halfEdges":[[26],[27]]},{"halfEdges":[[28],[29]]},{"halfEdges":[[30],[31]]}],"halfEdges":[{"forward":false,"edgeIndex":0,"vertexIndex":2,"vertex":0,"edge":2,"prev":14,"next":17,"face":2},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":1,"edge":2,"prev":3,"next":7,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":2,"vertex":1,"edge":4,"prev":16,"next":19,"face":3},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":2,"edge":4,"prev":5,"next":1,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":2,"vertex":2,"edge":6,"prev":18,"next":21,"face":4},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":3,"edge":6,"prev":7,"next":3,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":2,"vertex":3,"edge":1,"prev":20,"next":15,"face":5},{"forward":true,"edgeIndex":1,"vertexIndex":1,"vertex":0,"edge":1,"prev":1,"next":5,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":2,"vertex":4,"edge":9,"prev":22,"next":25,"face":7},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":5,"edge":9,"prev":17,"next":14,"face":2},{"forward":false,"edgeIndex":0,"vertexIndex":2,"vertex":5,"edge":11,"prev":24,"next":27,"face":6},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":6,"edge":11,"prev":19,"next":16,"face":3},{"forward":false,"edgeIndex":0,"vertexIndex":2,"vertex":6,"edge":13,"prev":26,"next":29,"face":8},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":7,"edge":13,"prev":21,"next":18,"face":4},{"forward":false,"edgeIndex":0,"vertexIndex":1,"vertex":4,"edge":0,"prev":9,"next":0,"face":2},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":0,"edge":0,"prev":6,"next":33,"face":5},{"forward":false,"edgeIndex":0,"vertexIndex":1,"vertex":5,"edge":3,"prev":11,"next":2,"face":3},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":1,"edge":3,"prev":0,"next":9,"face":2},{"forward":false,"edgeIndex":0,"vertexIndex":1,"vertex":6,"edge":5,"prev":13,"next":4,"face":4},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":2,"edge":5,"prev":2,"next":11,"face":3},{"forward":false,"edgeIndex":0,"vertexIndex":1,"vertex":7,"edge":7,"prev":33,"next":6,"face":5},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":3,"edge":7,"prev":4,"next":13,"face":4},{"forward":false,"edgeIndex":0,"vertexIndex":1,"vertex":8,"edge":10,"prev":25,"next":8,"face":7},{"forward":true,"edgeIndex":1,"vertexIndex":3,"vertex":4,"edge":10,"prev":32,"next":30,"face":1},{"forward":false,"edgeIndex":0,"vertexIndex":2,"vertex":8,"edge":12,"prev":31,"next":10,"face":6},{"forward":true,"edgeIndex":1,"vertexIndex":3,"vertex":5,"edge":12,"prev":8,"next":22,"face":7},{"forward":false,"edgeIndex":0,"vertexIndex":1,"vertex":9,"edge":14,"prev":29,"next":12,"face":8},{"forward":true,"edgeIndex":1,"vertexIndex":3,"vertex":6,"edge":14,"prev":10,"next":31,"face":6},{"forward":false,"edgeIndex":0,"vertexIndex":2,"vertex":9,"edge":15,"prev":30,"next":32,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":3,"vertex":7,"edge":15,"prev":12,"next":26,"face":8},{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":8,"edge":16,"prev":23,"next":28,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":9,"edge":16,"prev":27,"next":24,"face":6},{"forward":false,"edgeIndex":0,"vertexIndex":2,"vertex":7,"edge":8,"prev":28,"next":23,"face":1},{"forward":true,"edgeIndex":1,"vertexIndex":0,"vertex":4,"edge":8,"prev":15,"next":20,"face":5}],"faces":[{"outerComponent":7,"innerComponents":[]},{"outerComponent":32,"innerComponents":[]},{"outerComponent":17,"innerComponents":[]},{"outerComponent":19,"innerComponents":[]},{"outerComponent":21,"innerComponents":[]},{"outerComponent":33,"innerComponents":[]},{"outerComponent":31,"innerComponents":[]},{"outerComponent":25,"innerComponents":[]},{"outerComponent":29,"innerComponents":[]}],"connectorGroups":[]},"boundary":{"vertices":[],"edges":[],"halfEdges":[],"faces":[],"connectorGroups":[]},"vertices":[{"interior":0,"boundary":-1,"kind":"v","type":3},{"interior":1,"boundary":-1,"kind":"v","type":0},{"interior":2,"boundary":-1,"kind":"v","type":1},{"interior":3,"boundary":-1,"kind":"v","type":2},{"interior":4,"boundary":-1,"kind":"v","type":7},{"interior":5,"boundary":-1,"kind":"v","type":4},{"interior":6,"boundary":-1,"kind":"v","type":5},{"interior":7,"boundary":-1,"kind":"v","type":6},{"interior":8,"boundary":-1,"kind":"v","type":11},{"interior":9,"boundary":-1,"kind":"v","type":10}],"edges":[{"interior":0,"type":7},{"interior":1,"type":6},{"interior":2,"type":1},{"interior":3,"type":0},{"interior":4,"type":2},{"interior":5,"type":3},{"interior":6,"type":4},{"interior":7,"type":5},{"interior":8,"type":13},{"interior":9,"type":8},{"interior":10,"type":15},{"interior":11,"type":9},{"interior":12,"type":10},{"interior":13,"type":11},{"interior":14,"type":12},{"interior":15,"type":14},{"interior":16,"type":17}],"faces":[{"interior":0,"boundary":-1,"type":0,"turns":1,"wildcard":false},{"interior":1,"boundary":-1,"type":8,"turns":-1,"wildcard":false},{"interior":2,"boundary":-1,"type":5,"turns":-1,"wildcard":false},{"interior":3,"boundary":-1,"type":2,"turns":-1,"wildcard":false},{"interior":4,"boundary":-1,"type":3,"turns":-1,"wildcard":false},{"interior":5,"boundary":-1,"type":4,"turns":-1,"wildcard":false},{"interior":6,"boundary":-1,"type":7,"turns":-1,"wildcard":false},{"interior":7,"boundary":-1,"type":1,"turns":-1,"wildcard":false},{"interior":8,"boundary":-1,"type":6,"turns":-1,"wildcard":false}],"volumes":[],"morphism":{"halfs":[],"vertices":[],"faces":[0]}}],"ground":false}],"groundTransitions":[{"n":[{"interior":{"vertices":[],"edges":[],"halfEdges":[],"faces":[],"connectorGroups":[]},"boundary":{"vertices":[],"edges":[],"halfEdges":[],"faces":[],"connectorGroups":[]},"vertices":[],"edges":[],"faces":[],"volumes":[],"morphism":{"halfs":[],"vertices":[],"faces":[]}},{"interior":{"vertices":[{"halfEdges":[3],"group":-1},{"halfEdges":[2],"group":-1},{"halfEdges":[0],"group":-1},{"halfEdges":[1],"group":-1}],"edges":[{"halfEdges":[[3]]},{"halfEdges":[[2]]},{"halfEdges":[[1]]},{"halfEdges":[[0]]}],"halfEdges":[{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":2,"edge":3,"prev":3,"next":1,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":3,"edge":2,"prev":0,"next":2,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":1,"edge":1,"prev":1,"next":3,"face":0},{"forward":false,"edgeIndex":0,"vertexIndex":0,"vertex":0,"edge":0,"prev":2,"next":0,"face":0}],"faces":[{"outerComponent":3,"innerComponents":[]}],"connectorGroups":[]},"boundary":{"vertices":[],"edges":[],"halfEdges":[],"faces":[],"connectorGroups":[]},"vertices":[{"interior":0,"boundary":-1,"kind":"v","type":12},{"interior":1,"boundary":-1,"kind":"v","type":13},{"interior":2,"boundary":-1,"kind":"v","type":14},{"interior":3,"boundary":-1,"kind":"v","type":15}],"edges":[{"interior":0,"type":18},{"interior":1,"type":19},{"interior":2,"type":20},{"interior":3,"type":21}],"faces":[{"interior":0,"boundary":-1,"type":0,"turns":-1,"wildcard":false}],"volumes":[],"morphism":{"halfs":[],"vertices":[],"faces":[]}}],"ground":true}],"grounded":true,"emptyNet":{"interior":{"vertices":[],"edges":[],"halfEdges":[],"faces":[{"outerComponent":-1,"innerComponents":[]}],"connectorGroups":[]},"boundary":{"vertices":[],"edges":[{"halfEdges":[[0],[1]]}],"halfEdges":[{"forward":false,"edgeIndex":0,"vertexIndex":-1,"vertex":-1,"edge":0,"prev":0,"next":0,"face":0},{"forward":true,"edgeIndex":1,"vertexIndex":-1,"vertex":-1,"edge":0,"prev":1,"next":1,"face":-1}],"faces":[{"outerComponent":0,"innerComponents":[]}],"connectorGroups":[]},"vertices":[],"edges":[],"faces":[{"interior":0,"boundary":0,"type":0,"wildcard":false}],"volumes":[{"boundary":0,"type":null}]}}}
+{
+  "emptyGraph": {
+    "edgeTypes": [],
+    "faceTypes": [
+      0
+    ],
+    "interior": {
+      "edges": [],
+      "faces": [
+        {
+          "outerComponent": -1
+        }
+      ],
+      "halfEdges": [],
+      "vertices": []
+    },
+    "vertexTypes": []
+  },
+  "groundRules": [
+    {
+      "ground": true,
+      "n": [
+        {
+          "edgeTypes": [],
+          "faceTypes": [],
+          "interior": {
+            "edges": [],
+            "faces": [],
+            "halfEdges": [],
+            "vertices": []
+          },
+          "morphism": {
+            "faces": [],
+            "halfs": [],
+            "vertices": []
+          },
+          "vertexTypes": []
+        },
+        {
+          "edgeTypes": [
+            18,
+            19,
+            20,
+            21
+          ],
+          "faceTypes": [
+            0
+          ],
+          "interior": {
+            "edges": [
+              {
+                "halfEdges": [
+                  [
+                    3
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    2
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    1
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    0
+                  ]
+                ]
+              }
+            ],
+            "faces": [
+              {
+                "outerComponent": 3
+              }
+            ],
+            "halfEdges": [
+              {
+                "edge": 3,
+                "edgeIndex": 0,
+                "face": 0,
+                "forward": false,
+                "next": 1,
+                "prev": 3,
+                "vertex": 2,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 2,
+                "edgeIndex": 0,
+                "face": 0,
+                "forward": false,
+                "next": 2,
+                "prev": 0,
+                "vertex": 3,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 1,
+                "edgeIndex": 0,
+                "face": 0,
+                "forward": false,
+                "next": 3,
+                "prev": 1,
+                "vertex": 1,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 0,
+                "edgeIndex": 0,
+                "face": 0,
+                "forward": false,
+                "next": 0,
+                "prev": 2,
+                "vertex": 0,
+                "vertexIndex": 0
+              }
+            ],
+            "vertices": [
+              {
+                "halfEdges": [
+                  3
+                ]
+              },
+              {
+                "halfEdges": [
+                  2
+                ]
+              },
+              {
+                "halfEdges": [
+                  0
+                ]
+              },
+              {
+                "halfEdges": [
+                  1
+                ]
+              }
+            ]
+          },
+          "morphism": {
+            "faces": [],
+            "halfs": [],
+            "vertices": []
+          },
+          "vertexTypes": [
+            {
+              "kind": "v",
+              "type": 12
+            },
+            {
+              "kind": "v",
+              "type": 13
+            },
+            {
+              "kind": "v",
+              "type": 14
+            },
+            {
+              "kind": "v",
+              "type": 15
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "grounded": true,
+  "name": "Generated Rules",
+  "rules": [],
+  "starterRules": [
+    {
+      "ground": false,
+      "n": [
+        {
+          "edgeTypes": [],
+          "faceTypes": [
+            0
+          ],
+          "interior": {
+            "edges": [],
+            "faces": [
+              {
+                "outerComponent": -1
+              }
+            ],
+            "halfEdges": [],
+            "vertices": []
+          },
+          "morphism": {
+            "faces": [
+              0
+            ],
+            "halfs": [
+              -1
+            ],
+            "vertices": []
+          },
+          "vertexTypes": []
+        },
+        {
+          "edgeTypes": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16
+          ],
+          "faceTypes": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "interior": {
+            "edges": [
+              {
+                "halfEdges": [
+                  [
+                    14
+                  ],
+                  [
+                    15
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    6
+                  ],
+                  [
+                    7
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    0
+                  ],
+                  [
+                    1
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    16
+                  ],
+                  [
+                    17
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    2
+                  ],
+                  [
+                    3
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    18
+                  ],
+                  [
+                    19
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    4
+                  ],
+                  [
+                    5
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    20
+                  ],
+                  [
+                    21
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    32
+                  ],
+                  [
+                    33
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    8
+                  ],
+                  [
+                    9
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    22
+                  ],
+                  [
+                    23
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    10
+                  ],
+                  [
+                    11
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    24
+                  ],
+                  [
+                    25
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    12
+                  ],
+                  [
+                    13
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    26
+                  ],
+                  [
+                    27
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    28
+                  ],
+                  [
+                    29
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    30
+                  ],
+                  [
+                    31
+                  ]
+                ]
+              }
+            ],
+            "faces": [
+              {
+                "outerComponent": 7
+              },
+              {
+                "outerComponent": 32
+              },
+              {
+                "outerComponent": 17
+              },
+              {
+                "outerComponent": 19
+              },
+              {
+                "outerComponent": 21
+              },
+              {
+                "outerComponent": 33
+              },
+              {
+                "outerComponent": 30
+              },
+              {
+                "outerComponent": 25
+              },
+              {
+                "outerComponent": 29
+              }
+            ],
+            "halfEdges": [
+              {
+                "edge": 2,
+                "edgeIndex": 0,
+                "face": 2,
+                "forward": false,
+                "next": 17,
+                "prev": 14,
+                "vertex": 0,
+                "vertexIndex": 2
+              },
+              {
+                "edge": 2,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 7,
+                "prev": 3,
+                "vertex": 1,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 4,
+                "edgeIndex": 0,
+                "face": 3,
+                "forward": false,
+                "next": 19,
+                "prev": 16,
+                "vertex": 1,
+                "vertexIndex": 2
+              },
+              {
+                "edge": 4,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 1,
+                "prev": 5,
+                "vertex": 2,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 6,
+                "edgeIndex": 0,
+                "face": 4,
+                "forward": false,
+                "next": 21,
+                "prev": 18,
+                "vertex": 2,
+                "vertexIndex": 2
+              },
+              {
+                "edge": 6,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 3,
+                "prev": 7,
+                "vertex": 3,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 1,
+                "edgeIndex": 0,
+                "face": 5,
+                "forward": false,
+                "next": 15,
+                "prev": 20,
+                "vertex": 3,
+                "vertexIndex": 2
+              },
+              {
+                "edge": 1,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 5,
+                "prev": 1,
+                "vertex": 0,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 9,
+                "edgeIndex": 0,
+                "face": 7,
+                "forward": false,
+                "next": 25,
+                "prev": 22,
+                "vertex": 4,
+                "vertexIndex": 2
+              },
+              {
+                "edge": 9,
+                "edgeIndex": 1,
+                "face": 2,
+                "forward": true,
+                "next": 14,
+                "prev": 17,
+                "vertex": 5,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 11,
+                "edgeIndex": 0,
+                "face": 6,
+                "forward": false,
+                "next": 27,
+                "prev": 24,
+                "vertex": 5,
+                "vertexIndex": 2
+              },
+              {
+                "edge": 11,
+                "edgeIndex": 1,
+                "face": 3,
+                "forward": true,
+                "next": 16,
+                "prev": 19,
+                "vertex": 6,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 13,
+                "edgeIndex": 0,
+                "face": 8,
+                "forward": false,
+                "next": 29,
+                "prev": 26,
+                "vertex": 6,
+                "vertexIndex": 2
+              },
+              {
+                "edge": 13,
+                "edgeIndex": 1,
+                "face": 4,
+                "forward": true,
+                "next": 18,
+                "prev": 21,
+                "vertex": 7,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 0,
+                "edgeIndex": 0,
+                "face": 2,
+                "forward": false,
+                "next": 0,
+                "prev": 9,
+                "vertex": 4,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 0,
+                "edgeIndex": 1,
+                "face": 5,
+                "forward": true,
+                "next": 33,
+                "prev": 6,
+                "vertex": 0,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 3,
+                "edgeIndex": 0,
+                "face": 3,
+                "forward": false,
+                "next": 2,
+                "prev": 11,
+                "vertex": 5,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 3,
+                "edgeIndex": 1,
+                "face": 2,
+                "forward": true,
+                "next": 9,
+                "prev": 0,
+                "vertex": 1,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 5,
+                "edgeIndex": 0,
+                "face": 4,
+                "forward": false,
+                "next": 4,
+                "prev": 13,
+                "vertex": 6,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 5,
+                "edgeIndex": 1,
+                "face": 3,
+                "forward": true,
+                "next": 11,
+                "prev": 2,
+                "vertex": 2,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 7,
+                "edgeIndex": 0,
+                "face": 5,
+                "forward": false,
+                "next": 6,
+                "prev": 33,
+                "vertex": 7,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 7,
+                "edgeIndex": 1,
+                "face": 4,
+                "forward": true,
+                "next": 13,
+                "prev": 4,
+                "vertex": 3,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 10,
+                "edgeIndex": 0,
+                "face": 7,
+                "forward": false,
+                "next": 8,
+                "prev": 25,
+                "vertex": 8,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 10,
+                "edgeIndex": 1,
+                "face": 1,
+                "forward": true,
+                "next": 31,
+                "prev": 32,
+                "vertex": 4,
+                "vertexIndex": 3
+              },
+              {
+                "edge": 12,
+                "edgeIndex": 0,
+                "face": 6,
+                "forward": false,
+                "next": 10,
+                "prev": 30,
+                "vertex": 8,
+                "vertexIndex": 2
+              },
+              {
+                "edge": 12,
+                "edgeIndex": 1,
+                "face": 7,
+                "forward": true,
+                "next": 22,
+                "prev": 8,
+                "vertex": 5,
+                "vertexIndex": 3
+              },
+              {
+                "edge": 14,
+                "edgeIndex": 0,
+                "face": 8,
+                "forward": false,
+                "next": 12,
+                "prev": 29,
+                "vertex": 9,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 14,
+                "edgeIndex": 1,
+                "face": 6,
+                "forward": true,
+                "next": 30,
+                "prev": 10,
+                "vertex": 6,
+                "vertexIndex": 3
+              },
+              {
+                "edge": 15,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 32,
+                "prev": 31,
+                "vertex": 9,
+                "vertexIndex": 2
+              },
+              {
+                "edge": 15,
+                "edgeIndex": 1,
+                "face": 8,
+                "forward": true,
+                "next": 26,
+                "prev": 12,
+                "vertex": 7,
+                "vertexIndex": 3
+              },
+              {
+                "edge": 16,
+                "edgeIndex": 0,
+                "face": 6,
+                "forward": false,
+                "next": 24,
+                "prev": 27,
+                "vertex": 9,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 16,
+                "edgeIndex": 1,
+                "face": 1,
+                "forward": true,
+                "next": 28,
+                "prev": 23,
+                "vertex": 8,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 8,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 23,
+                "prev": 28,
+                "vertex": 7,
+                "vertexIndex": 2
+              },
+              {
+                "edge": 8,
+                "edgeIndex": 1,
+                "face": 5,
+                "forward": true,
+                "next": 20,
+                "prev": 15,
+                "vertex": 4,
+                "vertexIndex": 0
+              }
+            ],
+            "vertices": [
+              {
+                "halfEdges": [
+                  15,
+                  7,
+                  0
+                ]
+              },
+              {
+                "halfEdges": [
+                  17,
+                  1,
+                  2
+                ]
+              },
+              {
+                "halfEdges": [
+                  19,
+                  3,
+                  4
+                ]
+              },
+              {
+                "halfEdges": [
+                  21,
+                  5,
+                  6
+                ]
+              },
+              {
+                "halfEdges": [
+                  33,
+                  14,
+                  8,
+                  23
+                ]
+              },
+              {
+                "halfEdges": [
+                  9,
+                  16,
+                  10,
+                  25
+                ]
+              },
+              {
+                "halfEdges": [
+                  11,
+                  18,
+                  12,
+                  27
+                ]
+              },
+              {
+                "halfEdges": [
+                  13,
+                  20,
+                  32,
+                  29
+                ]
+              },
+              {
+                "halfEdges": [
+                  31,
+                  22,
+                  24
+                ]
+              },
+              {
+                "halfEdges": [
+                  30,
+                  26,
+                  28
+                ]
+              }
+            ]
+          },
+          "morphism": {
+            "faces": [
+              0
+            ],
+            "halfs": [],
+            "vertices": []
+          },
+          "vertexTypes": [
+            {
+              "kind": "v",
+              "type": 0
+            },
+            {
+              "kind": "v",
+              "type": 1
+            },
+            {
+              "kind": "v",
+              "type": 2
+            },
+            {
+              "kind": "v",
+              "type": 3
+            },
+            {
+              "kind": "v",
+              "type": 4
+            },
+            {
+              "kind": "v",
+              "type": 5
+            },
+            {
+              "kind": "v",
+              "type": 6
+            },
+            {
+              "kind": "v",
+              "type": 7
+            },
+            {
+              "kind": "v",
+              "type": 8
+            },
+            {
+              "kind": "v",
+              "type": 9
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ground": false,
+      "n": [
+        {
+          "edgeTypes": [],
+          "faceTypes": [
+            0
+          ],
+          "interior": {
+            "edges": [],
+            "faces": [
+              {
+                "outerComponent": -1
+              }
+            ],
+            "halfEdges": [],
+            "vertices": []
+          },
+          "morphism": {
+            "faces": [
+              0
+            ],
+            "halfs": [
+              -1
+            ],
+            "vertices": []
+          },
+          "vertexTypes": []
+        },
+        {
+          "edgeTypes": [
+            3,
+            2,
+            4,
+            5,
+            6,
+            7,
+            1,
+            0,
+            9,
+            11,
+            12,
+            13,
+            14,
+            8,
+            15,
+            10,
+            17
+          ],
+          "faceTypes": [
+            0,
+            7,
+            3,
+            4,
+            5,
+            2,
+            8,
+            6,
+            1
+          ],
+          "interior": {
+            "edges": [
+              {
+                "halfEdges": [
+                  [
+                    14
+                  ],
+                  [
+                    15
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    6
+                  ],
+                  [
+                    7
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    0
+                  ],
+                  [
+                    1
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    16
+                  ],
+                  [
+                    17
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    2
+                  ],
+                  [
+                    3
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    18
+                  ],
+                  [
+                    19
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    4
+                  ],
+                  [
+                    5
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    20
+                  ],
+                  [
+                    21
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    32
+                  ],
+                  [
+                    33
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    8
+                  ],
+                  [
+                    9
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    22
+                  ],
+                  [
+                    23
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    10
+                  ],
+                  [
+                    11
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    24
+                  ],
+                  [
+                    25
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    12
+                  ],
+                  [
+                    13
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    26
+                  ],
+                  [
+                    27
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    28
+                  ],
+                  [
+                    29
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    30
+                  ],
+                  [
+                    31
+                  ]
+                ]
+              }
+            ],
+            "faces": [
+              {
+                "outerComponent": 7
+              },
+              {
+                "outerComponent": 32
+              },
+              {
+                "outerComponent": 17
+              },
+              {
+                "outerComponent": 19
+              },
+              {
+                "outerComponent": 21
+              },
+              {
+                "outerComponent": 33
+              },
+              {
+                "outerComponent": 30
+              },
+              {
+                "outerComponent": 25
+              },
+              {
+                "outerComponent": 29
+              }
+            ],
+            "halfEdges": [
+              {
+                "edge": 2,
+                "edgeIndex": 0,
+                "face": 2,
+                "forward": false,
+                "next": 17,
+                "prev": 14,
+                "vertex": 0,
+                "vertexIndex": 2
+              },
+              {
+                "edge": 2,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 7,
+                "prev": 3,
+                "vertex": 1,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 4,
+                "edgeIndex": 0,
+                "face": 3,
+                "forward": false,
+                "next": 19,
+                "prev": 16,
+                "vertex": 1,
+                "vertexIndex": 2
+              },
+              {
+                "edge": 4,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 1,
+                "prev": 5,
+                "vertex": 2,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 6,
+                "edgeIndex": 0,
+                "face": 4,
+                "forward": false,
+                "next": 21,
+                "prev": 18,
+                "vertex": 2,
+                "vertexIndex": 2
+              },
+              {
+                "edge": 6,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 3,
+                "prev": 7,
+                "vertex": 3,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 1,
+                "edgeIndex": 0,
+                "face": 5,
+                "forward": false,
+                "next": 15,
+                "prev": 20,
+                "vertex": 3,
+                "vertexIndex": 2
+              },
+              {
+                "edge": 1,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 5,
+                "prev": 1,
+                "vertex": 0,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 9,
+                "edgeIndex": 0,
+                "face": 7,
+                "forward": false,
+                "next": 25,
+                "prev": 22,
+                "vertex": 4,
+                "vertexIndex": 2
+              },
+              {
+                "edge": 9,
+                "edgeIndex": 1,
+                "face": 2,
+                "forward": true,
+                "next": 14,
+                "prev": 17,
+                "vertex": 5,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 11,
+                "edgeIndex": 0,
+                "face": 6,
+                "forward": false,
+                "next": 27,
+                "prev": 24,
+                "vertex": 5,
+                "vertexIndex": 2
+              },
+              {
+                "edge": 11,
+                "edgeIndex": 1,
+                "face": 3,
+                "forward": true,
+                "next": 16,
+                "prev": 19,
+                "vertex": 6,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 13,
+                "edgeIndex": 0,
+                "face": 8,
+                "forward": false,
+                "next": 29,
+                "prev": 26,
+                "vertex": 6,
+                "vertexIndex": 2
+              },
+              {
+                "edge": 13,
+                "edgeIndex": 1,
+                "face": 4,
+                "forward": true,
+                "next": 18,
+                "prev": 21,
+                "vertex": 7,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 0,
+                "edgeIndex": 0,
+                "face": 2,
+                "forward": false,
+                "next": 0,
+                "prev": 9,
+                "vertex": 4,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 0,
+                "edgeIndex": 1,
+                "face": 5,
+                "forward": true,
+                "next": 33,
+                "prev": 6,
+                "vertex": 0,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 3,
+                "edgeIndex": 0,
+                "face": 3,
+                "forward": false,
+                "next": 2,
+                "prev": 11,
+                "vertex": 5,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 3,
+                "edgeIndex": 1,
+                "face": 2,
+                "forward": true,
+                "next": 9,
+                "prev": 0,
+                "vertex": 1,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 5,
+                "edgeIndex": 0,
+                "face": 4,
+                "forward": false,
+                "next": 4,
+                "prev": 13,
+                "vertex": 6,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 5,
+                "edgeIndex": 1,
+                "face": 3,
+                "forward": true,
+                "next": 11,
+                "prev": 2,
+                "vertex": 2,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 7,
+                "edgeIndex": 0,
+                "face": 5,
+                "forward": false,
+                "next": 6,
+                "prev": 33,
+                "vertex": 7,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 7,
+                "edgeIndex": 1,
+                "face": 4,
+                "forward": true,
+                "next": 13,
+                "prev": 4,
+                "vertex": 3,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 10,
+                "edgeIndex": 0,
+                "face": 7,
+                "forward": false,
+                "next": 8,
+                "prev": 25,
+                "vertex": 8,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 10,
+                "edgeIndex": 1,
+                "face": 1,
+                "forward": true,
+                "next": 31,
+                "prev": 32,
+                "vertex": 4,
+                "vertexIndex": 3
+              },
+              {
+                "edge": 12,
+                "edgeIndex": 0,
+                "face": 6,
+                "forward": false,
+                "next": 10,
+                "prev": 30,
+                "vertex": 8,
+                "vertexIndex": 2
+              },
+              {
+                "edge": 12,
+                "edgeIndex": 1,
+                "face": 7,
+                "forward": true,
+                "next": 22,
+                "prev": 8,
+                "vertex": 5,
+                "vertexIndex": 3
+              },
+              {
+                "edge": 14,
+                "edgeIndex": 0,
+                "face": 8,
+                "forward": false,
+                "next": 12,
+                "prev": 29,
+                "vertex": 9,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 14,
+                "edgeIndex": 1,
+                "face": 6,
+                "forward": true,
+                "next": 30,
+                "prev": 10,
+                "vertex": 6,
+                "vertexIndex": 3
+              },
+              {
+                "edge": 15,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 32,
+                "prev": 31,
+                "vertex": 9,
+                "vertexIndex": 2
+              },
+              {
+                "edge": 15,
+                "edgeIndex": 1,
+                "face": 8,
+                "forward": true,
+                "next": 26,
+                "prev": 12,
+                "vertex": 7,
+                "vertexIndex": 3
+              },
+              {
+                "edge": 16,
+                "edgeIndex": 0,
+                "face": 6,
+                "forward": false,
+                "next": 24,
+                "prev": 27,
+                "vertex": 9,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 16,
+                "edgeIndex": 1,
+                "face": 1,
+                "forward": true,
+                "next": 28,
+                "prev": 23,
+                "vertex": 8,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 8,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 23,
+                "prev": 28,
+                "vertex": 7,
+                "vertexIndex": 2
+              },
+              {
+                "edge": 8,
+                "edgeIndex": 1,
+                "face": 5,
+                "forward": true,
+                "next": 20,
+                "prev": 15,
+                "vertex": 4,
+                "vertexIndex": 0
+              }
+            ],
+            "vertices": [
+              {
+                "halfEdges": [
+                  15,
+                  7,
+                  0
+                ]
+              },
+              {
+                "halfEdges": [
+                  17,
+                  1,
+                  2
+                ]
+              },
+              {
+                "halfEdges": [
+                  19,
+                  3,
+                  4
+                ]
+              },
+              {
+                "halfEdges": [
+                  21,
+                  5,
+                  6
+                ]
+              },
+              {
+                "halfEdges": [
+                  33,
+                  14,
+                  8,
+                  23
+                ]
+              },
+              {
+                "halfEdges": [
+                  9,
+                  16,
+                  10,
+                  25
+                ]
+              },
+              {
+                "halfEdges": [
+                  11,
+                  18,
+                  12,
+                  27
+                ]
+              },
+              {
+                "halfEdges": [
+                  13,
+                  20,
+                  32,
+                  29
+                ]
+              },
+              {
+                "halfEdges": [
+                  31,
+                  22,
+                  24
+                ]
+              },
+              {
+                "halfEdges": [
+                  30,
+                  26,
+                  28
+                ]
+              }
+            ]
+          },
+          "morphism": {
+            "faces": [
+              0
+            ],
+            "halfs": [],
+            "vertices": []
+          },
+          "vertexTypes": [
+            {
+              "kind": "v",
+              "type": 1
+            },
+            {
+              "kind": "v",
+              "type": 2
+            },
+            {
+              "kind": "v",
+              "type": 3
+            },
+            {
+              "kind": "v",
+              "type": 0
+            },
+            {
+              "kind": "v",
+              "type": 5
+            },
+            {
+              "kind": "v",
+              "type": 6
+            },
+            {
+              "kind": "v",
+              "type": 7
+            },
+            {
+              "kind": "v",
+              "type": 4
+            },
+            {
+              "kind": "v",
+              "type": 10
+            },
+            {
+              "kind": "v",
+              "type": 11
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ground": false,
+      "n": [
+        {
+          "edgeTypes": [],
+          "faceTypes": [
+            0
+          ],
+          "interior": {
+            "edges": [],
+            "faces": [
+              {
+                "outerComponent": -1
+              }
+            ],
+            "halfEdges": [],
+            "vertices": []
+          },
+          "morphism": {
+            "faces": [
+              0
+            ],
+            "halfs": [
+              -1
+            ],
+            "vertices": []
+          },
+          "vertexTypes": []
+        },
+        {
+          "edgeTypes": [
+            5,
+            4,
+            6,
+            7,
+            1,
+            0,
+            2,
+            3,
+            11,
+            13,
+            14,
+            8,
+            15,
+            9,
+            10,
+            12,
+            16
+          ],
+          "faceTypes": [
+            0,
+            6,
+            4,
+            5,
+            2,
+            3,
+            1,
+            8,
+            7
+          ],
+          "interior": {
+            "edges": [
+              {
+                "halfEdges": [
+                  [
+                    14
+                  ],
+                  [
+                    15
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    6
+                  ],
+                  [
+                    7
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    0
+                  ],
+                  [
+                    1
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    16
+                  ],
+                  [
+                    17
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    2
+                  ],
+                  [
+                    3
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    18
+                  ],
+                  [
+                    19
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    4
+                  ],
+                  [
+                    5
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    20
+                  ],
+                  [
+                    21
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    32
+                  ],
+                  [
+                    33
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    8
+                  ],
+                  [
+                    9
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    22
+                  ],
+                  [
+                    23
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    10
+                  ],
+                  [
+                    11
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    24
+                  ],
+                  [
+                    25
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    12
+                  ],
+                  [
+                    13
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    26
+                  ],
+                  [
+                    27
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    28
+                  ],
+                  [
+                    29
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    30
+                  ],
+                  [
+                    31
+                  ]
+                ]
+              }
+            ],
+            "faces": [
+              {
+                "outerComponent": 7
+              },
+              {
+                "outerComponent": 32
+              },
+              {
+                "outerComponent": 17
+              },
+              {
+                "outerComponent": 19
+              },
+              {
+                "outerComponent": 21
+              },
+              {
+                "outerComponent": 33
+              },
+              {
+                "outerComponent": 31
+              },
+              {
+                "outerComponent": 25
+              },
+              {
+                "outerComponent": 29
+              }
+            ],
+            "halfEdges": [
+              {
+                "edge": 2,
+                "edgeIndex": 0,
+                "face": 2,
+                "forward": false,
+                "next": 17,
+                "prev": 14,
+                "vertex": 0,
+                "vertexIndex": 2
+              },
+              {
+                "edge": 2,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 7,
+                "prev": 3,
+                "vertex": 1,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 4,
+                "edgeIndex": 0,
+                "face": 3,
+                "forward": false,
+                "next": 19,
+                "prev": 16,
+                "vertex": 1,
+                "vertexIndex": 2
+              },
+              {
+                "edge": 4,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 1,
+                "prev": 5,
+                "vertex": 2,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 6,
+                "edgeIndex": 0,
+                "face": 4,
+                "forward": false,
+                "next": 21,
+                "prev": 18,
+                "vertex": 2,
+                "vertexIndex": 2
+              },
+              {
+                "edge": 6,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 3,
+                "prev": 7,
+                "vertex": 3,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 1,
+                "edgeIndex": 0,
+                "face": 5,
+                "forward": false,
+                "next": 15,
+                "prev": 20,
+                "vertex": 3,
+                "vertexIndex": 2
+              },
+              {
+                "edge": 1,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 5,
+                "prev": 1,
+                "vertex": 0,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 9,
+                "edgeIndex": 0,
+                "face": 7,
+                "forward": false,
+                "next": 25,
+                "prev": 22,
+                "vertex": 4,
+                "vertexIndex": 2
+              },
+              {
+                "edge": 9,
+                "edgeIndex": 1,
+                "face": 2,
+                "forward": true,
+                "next": 14,
+                "prev": 17,
+                "vertex": 5,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 11,
+                "edgeIndex": 0,
+                "face": 6,
+                "forward": false,
+                "next": 27,
+                "prev": 24,
+                "vertex": 5,
+                "vertexIndex": 2
+              },
+              {
+                "edge": 11,
+                "edgeIndex": 1,
+                "face": 3,
+                "forward": true,
+                "next": 16,
+                "prev": 19,
+                "vertex": 6,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 13,
+                "edgeIndex": 0,
+                "face": 8,
+                "forward": false,
+                "next": 29,
+                "prev": 26,
+                "vertex": 6,
+                "vertexIndex": 2
+              },
+              {
+                "edge": 13,
+                "edgeIndex": 1,
+                "face": 4,
+                "forward": true,
+                "next": 18,
+                "prev": 21,
+                "vertex": 7,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 0,
+                "edgeIndex": 0,
+                "face": 2,
+                "forward": false,
+                "next": 0,
+                "prev": 9,
+                "vertex": 4,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 0,
+                "edgeIndex": 1,
+                "face": 5,
+                "forward": true,
+                "next": 33,
+                "prev": 6,
+                "vertex": 0,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 3,
+                "edgeIndex": 0,
+                "face": 3,
+                "forward": false,
+                "next": 2,
+                "prev": 11,
+                "vertex": 5,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 3,
+                "edgeIndex": 1,
+                "face": 2,
+                "forward": true,
+                "next": 9,
+                "prev": 0,
+                "vertex": 1,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 5,
+                "edgeIndex": 0,
+                "face": 4,
+                "forward": false,
+                "next": 4,
+                "prev": 13,
+                "vertex": 6,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 5,
+                "edgeIndex": 1,
+                "face": 3,
+                "forward": true,
+                "next": 11,
+                "prev": 2,
+                "vertex": 2,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 7,
+                "edgeIndex": 0,
+                "face": 5,
+                "forward": false,
+                "next": 6,
+                "prev": 33,
+                "vertex": 7,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 7,
+                "edgeIndex": 1,
+                "face": 4,
+                "forward": true,
+                "next": 13,
+                "prev": 4,
+                "vertex": 3,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 10,
+                "edgeIndex": 0,
+                "face": 7,
+                "forward": false,
+                "next": 8,
+                "prev": 25,
+                "vertex": 8,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 10,
+                "edgeIndex": 1,
+                "face": 1,
+                "forward": true,
+                "next": 30,
+                "prev": 32,
+                "vertex": 4,
+                "vertexIndex": 3
+              },
+              {
+                "edge": 12,
+                "edgeIndex": 0,
+                "face": 6,
+                "forward": false,
+                "next": 10,
+                "prev": 31,
+                "vertex": 8,
+                "vertexIndex": 2
+              },
+              {
+                "edge": 12,
+                "edgeIndex": 1,
+                "face": 7,
+                "forward": true,
+                "next": 22,
+                "prev": 8,
+                "vertex": 5,
+                "vertexIndex": 3
+              },
+              {
+                "edge": 14,
+                "edgeIndex": 0,
+                "face": 8,
+                "forward": false,
+                "next": 12,
+                "prev": 29,
+                "vertex": 9,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 14,
+                "edgeIndex": 1,
+                "face": 6,
+                "forward": true,
+                "next": 31,
+                "prev": 10,
+                "vertex": 6,
+                "vertexIndex": 3
+              },
+              {
+                "edge": 15,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 32,
+                "prev": 30,
+                "vertex": 9,
+                "vertexIndex": 2
+              },
+              {
+                "edge": 15,
+                "edgeIndex": 1,
+                "face": 8,
+                "forward": true,
+                "next": 26,
+                "prev": 12,
+                "vertex": 7,
+                "vertexIndex": 3
+              },
+              {
+                "edge": 16,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 28,
+                "prev": 23,
+                "vertex": 8,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 16,
+                "edgeIndex": 1,
+                "face": 6,
+                "forward": true,
+                "next": 24,
+                "prev": 27,
+                "vertex": 9,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 8,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 23,
+                "prev": 28,
+                "vertex": 7,
+                "vertexIndex": 2
+              },
+              {
+                "edge": 8,
+                "edgeIndex": 1,
+                "face": 5,
+                "forward": true,
+                "next": 20,
+                "prev": 15,
+                "vertex": 4,
+                "vertexIndex": 0
+              }
+            ],
+            "vertices": [
+              {
+                "halfEdges": [
+                  15,
+                  7,
+                  0
+                ]
+              },
+              {
+                "halfEdges": [
+                  17,
+                  1,
+                  2
+                ]
+              },
+              {
+                "halfEdges": [
+                  19,
+                  3,
+                  4
+                ]
+              },
+              {
+                "halfEdges": [
+                  21,
+                  5,
+                  6
+                ]
+              },
+              {
+                "halfEdges": [
+                  33,
+                  14,
+                  8,
+                  23
+                ]
+              },
+              {
+                "halfEdges": [
+                  9,
+                  16,
+                  10,
+                  25
+                ]
+              },
+              {
+                "halfEdges": [
+                  11,
+                  18,
+                  12,
+                  27
+                ]
+              },
+              {
+                "halfEdges": [
+                  13,
+                  20,
+                  32,
+                  29
+                ]
+              },
+              {
+                "halfEdges": [
+                  30,
+                  22,
+                  24
+                ]
+              },
+              {
+                "halfEdges": [
+                  31,
+                  26,
+                  28
+                ]
+              }
+            ]
+          },
+          "morphism": {
+            "faces": [
+              0
+            ],
+            "halfs": [],
+            "vertices": []
+          },
+          "vertexTypes": [
+            {
+              "kind": "v",
+              "type": 2
+            },
+            {
+              "kind": "v",
+              "type": 3
+            },
+            {
+              "kind": "v",
+              "type": 0
+            },
+            {
+              "kind": "v",
+              "type": 1
+            },
+            {
+              "kind": "v",
+              "type": 6
+            },
+            {
+              "kind": "v",
+              "type": 7
+            },
+            {
+              "kind": "v",
+              "type": 4
+            },
+            {
+              "kind": "v",
+              "type": 5
+            },
+            {
+              "kind": "v",
+              "type": 9
+            },
+            {
+              "kind": "v",
+              "type": 8
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ground": false,
+      "n": [
+        {
+          "edgeTypes": [],
+          "faceTypes": [
+            0
+          ],
+          "interior": {
+            "edges": [],
+            "faces": [
+              {
+                "outerComponent": -1
+              }
+            ],
+            "halfEdges": [],
+            "vertices": []
+          },
+          "morphism": {
+            "faces": [
+              0
+            ],
+            "halfs": [
+              -1
+            ],
+            "vertices": []
+          },
+          "vertexTypes": []
+        },
+        {
+          "edgeTypes": [
+            7,
+            6,
+            1,
+            0,
+            2,
+            3,
+            4,
+            5,
+            13,
+            8,
+            15,
+            9,
+            10,
+            11,
+            12,
+            14,
+            17
+          ],
+          "faceTypes": [
+            0,
+            8,
+            5,
+            2,
+            3,
+            4,
+            7,
+            1,
+            6
+          ],
+          "interior": {
+            "edges": [
+              {
+                "halfEdges": [
+                  [
+                    14
+                  ],
+                  [
+                    15
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    6
+                  ],
+                  [
+                    7
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    0
+                  ],
+                  [
+                    1
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    16
+                  ],
+                  [
+                    17
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    2
+                  ],
+                  [
+                    3
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    18
+                  ],
+                  [
+                    19
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    4
+                  ],
+                  [
+                    5
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    20
+                  ],
+                  [
+                    21
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    32
+                  ],
+                  [
+                    33
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    8
+                  ],
+                  [
+                    9
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    22
+                  ],
+                  [
+                    23
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    10
+                  ],
+                  [
+                    11
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    24
+                  ],
+                  [
+                    25
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    12
+                  ],
+                  [
+                    13
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    26
+                  ],
+                  [
+                    27
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    28
+                  ],
+                  [
+                    29
+                  ]
+                ]
+              },
+              {
+                "halfEdges": [
+                  [
+                    30
+                  ],
+                  [
+                    31
+                  ]
+                ]
+              }
+            ],
+            "faces": [
+              {
+                "outerComponent": 7
+              },
+              {
+                "outerComponent": 32
+              },
+              {
+                "outerComponent": 17
+              },
+              {
+                "outerComponent": 19
+              },
+              {
+                "outerComponent": 21
+              },
+              {
+                "outerComponent": 33
+              },
+              {
+                "outerComponent": 31
+              },
+              {
+                "outerComponent": 25
+              },
+              {
+                "outerComponent": 29
+              }
+            ],
+            "halfEdges": [
+              {
+                "edge": 2,
+                "edgeIndex": 0,
+                "face": 2,
+                "forward": false,
+                "next": 17,
+                "prev": 14,
+                "vertex": 0,
+                "vertexIndex": 2
+              },
+              {
+                "edge": 2,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 7,
+                "prev": 3,
+                "vertex": 1,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 4,
+                "edgeIndex": 0,
+                "face": 3,
+                "forward": false,
+                "next": 19,
+                "prev": 16,
+                "vertex": 1,
+                "vertexIndex": 2
+              },
+              {
+                "edge": 4,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 1,
+                "prev": 5,
+                "vertex": 2,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 6,
+                "edgeIndex": 0,
+                "face": 4,
+                "forward": false,
+                "next": 21,
+                "prev": 18,
+                "vertex": 2,
+                "vertexIndex": 2
+              },
+              {
+                "edge": 6,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 3,
+                "prev": 7,
+                "vertex": 3,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 1,
+                "edgeIndex": 0,
+                "face": 5,
+                "forward": false,
+                "next": 15,
+                "prev": 20,
+                "vertex": 3,
+                "vertexIndex": 2
+              },
+              {
+                "edge": 1,
+                "edgeIndex": 1,
+                "face": 0,
+                "forward": true,
+                "next": 5,
+                "prev": 1,
+                "vertex": 0,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 9,
+                "edgeIndex": 0,
+                "face": 7,
+                "forward": false,
+                "next": 25,
+                "prev": 22,
+                "vertex": 4,
+                "vertexIndex": 2
+              },
+              {
+                "edge": 9,
+                "edgeIndex": 1,
+                "face": 2,
+                "forward": true,
+                "next": 14,
+                "prev": 17,
+                "vertex": 5,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 11,
+                "edgeIndex": 0,
+                "face": 6,
+                "forward": false,
+                "next": 27,
+                "prev": 24,
+                "vertex": 5,
+                "vertexIndex": 2
+              },
+              {
+                "edge": 11,
+                "edgeIndex": 1,
+                "face": 3,
+                "forward": true,
+                "next": 16,
+                "prev": 19,
+                "vertex": 6,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 13,
+                "edgeIndex": 0,
+                "face": 8,
+                "forward": false,
+                "next": 29,
+                "prev": 26,
+                "vertex": 6,
+                "vertexIndex": 2
+              },
+              {
+                "edge": 13,
+                "edgeIndex": 1,
+                "face": 4,
+                "forward": true,
+                "next": 18,
+                "prev": 21,
+                "vertex": 7,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 0,
+                "edgeIndex": 0,
+                "face": 2,
+                "forward": false,
+                "next": 0,
+                "prev": 9,
+                "vertex": 4,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 0,
+                "edgeIndex": 1,
+                "face": 5,
+                "forward": true,
+                "next": 33,
+                "prev": 6,
+                "vertex": 0,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 3,
+                "edgeIndex": 0,
+                "face": 3,
+                "forward": false,
+                "next": 2,
+                "prev": 11,
+                "vertex": 5,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 3,
+                "edgeIndex": 1,
+                "face": 2,
+                "forward": true,
+                "next": 9,
+                "prev": 0,
+                "vertex": 1,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 5,
+                "edgeIndex": 0,
+                "face": 4,
+                "forward": false,
+                "next": 4,
+                "prev": 13,
+                "vertex": 6,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 5,
+                "edgeIndex": 1,
+                "face": 3,
+                "forward": true,
+                "next": 11,
+                "prev": 2,
+                "vertex": 2,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 7,
+                "edgeIndex": 0,
+                "face": 5,
+                "forward": false,
+                "next": 6,
+                "prev": 33,
+                "vertex": 7,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 7,
+                "edgeIndex": 1,
+                "face": 4,
+                "forward": true,
+                "next": 13,
+                "prev": 4,
+                "vertex": 3,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 10,
+                "edgeIndex": 0,
+                "face": 7,
+                "forward": false,
+                "next": 8,
+                "prev": 25,
+                "vertex": 8,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 10,
+                "edgeIndex": 1,
+                "face": 1,
+                "forward": true,
+                "next": 30,
+                "prev": 32,
+                "vertex": 4,
+                "vertexIndex": 3
+              },
+              {
+                "edge": 12,
+                "edgeIndex": 0,
+                "face": 6,
+                "forward": false,
+                "next": 10,
+                "prev": 31,
+                "vertex": 8,
+                "vertexIndex": 2
+              },
+              {
+                "edge": 12,
+                "edgeIndex": 1,
+                "face": 7,
+                "forward": true,
+                "next": 22,
+                "prev": 8,
+                "vertex": 5,
+                "vertexIndex": 3
+              },
+              {
+                "edge": 14,
+                "edgeIndex": 0,
+                "face": 8,
+                "forward": false,
+                "next": 12,
+                "prev": 29,
+                "vertex": 9,
+                "vertexIndex": 1
+              },
+              {
+                "edge": 14,
+                "edgeIndex": 1,
+                "face": 6,
+                "forward": true,
+                "next": 31,
+                "prev": 10,
+                "vertex": 6,
+                "vertexIndex": 3
+              },
+              {
+                "edge": 15,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 32,
+                "prev": 30,
+                "vertex": 9,
+                "vertexIndex": 2
+              },
+              {
+                "edge": 15,
+                "edgeIndex": 1,
+                "face": 8,
+                "forward": true,
+                "next": 26,
+                "prev": 12,
+                "vertex": 7,
+                "vertexIndex": 3
+              },
+              {
+                "edge": 16,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 28,
+                "prev": 23,
+                "vertex": 8,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 16,
+                "edgeIndex": 1,
+                "face": 6,
+                "forward": true,
+                "next": 24,
+                "prev": 27,
+                "vertex": 9,
+                "vertexIndex": 0
+              },
+              {
+                "edge": 8,
+                "edgeIndex": 0,
+                "face": 1,
+                "forward": false,
+                "next": 23,
+                "prev": 28,
+                "vertex": 7,
+                "vertexIndex": 2
+              },
+              {
+                "edge": 8,
+                "edgeIndex": 1,
+                "face": 5,
+                "forward": true,
+                "next": 20,
+                "prev": 15,
+                "vertex": 4,
+                "vertexIndex": 0
+              }
+            ],
+            "vertices": [
+              {
+                "halfEdges": [
+                  15,
+                  7,
+                  0
+                ]
+              },
+              {
+                "halfEdges": [
+                  17,
+                  1,
+                  2
+                ]
+              },
+              {
+                "halfEdges": [
+                  19,
+                  3,
+                  4
+                ]
+              },
+              {
+                "halfEdges": [
+                  21,
+                  5,
+                  6
+                ]
+              },
+              {
+                "halfEdges": [
+                  33,
+                  14,
+                  8,
+                  23
+                ]
+              },
+              {
+                "halfEdges": [
+                  9,
+                  16,
+                  10,
+                  25
+                ]
+              },
+              {
+                "halfEdges": [
+                  11,
+                  18,
+                  12,
+                  27
+                ]
+              },
+              {
+                "halfEdges": [
+                  13,
+                  20,
+                  32,
+                  29
+                ]
+              },
+              {
+                "halfEdges": [
+                  30,
+                  22,
+                  24
+                ]
+              },
+              {
+                "halfEdges": [
+                  31,
+                  26,
+                  28
+                ]
+              }
+            ]
+          },
+          "morphism": {
+            "faces": [
+              0
+            ],
+            "halfs": [],
+            "vertices": []
+          },
+          "vertexTypes": [
+            {
+              "kind": "v",
+              "type": 3
+            },
+            {
+              "kind": "v",
+              "type": 0
+            },
+            {
+              "kind": "v",
+              "type": 1
+            },
+            {
+              "kind": "v",
+              "type": 2
+            },
+            {
+              "kind": "v",
+              "type": 7
+            },
+            {
+              "kind": "v",
+              "type": 4
+            },
+            {
+              "kind": "v",
+              "type": 5
+            },
+            {
+              "kind": "v",
+              "type": 6
+            },
+            {
+              "kind": "v",
+              "type": 11
+            },
+            {
+              "kind": "v",
+              "type": 10
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "types": {
+    "edgeTypes": [
+      {
+        "dir": {
+          "x": 0,
+          "y": 0,
+          "z": 1
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.2,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 2
+          },
+          {
+            "onRight": false,
+            "type": 5
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 1,
+          "y": 0,
+          "z": 0
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.2,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 5
+          },
+          {
+            "onRight": false,
+            "type": 0
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.2,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 2
+          },
+          {
+            "onRight": false,
+            "type": 0
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0,
+          "y": 0,
+          "z": 1
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.2,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 3
+          },
+          {
+            "onRight": false,
+            "type": 2
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": -1,
+          "y": 0,
+          "z": 0
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.2,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 3
+          },
+          {
+            "onRight": false,
+            "type": 0
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0,
+          "y": 0,
+          "z": 1
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.2,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 4
+          },
+          {
+            "onRight": false,
+            "type": 3
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0,
+          "y": -1,
+          "z": 0
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.2,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 4
+          },
+          {
+            "onRight": false,
+            "type": 0
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0,
+          "y": 0,
+          "z": 1
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.2,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 5
+          },
+          {
+            "onRight": false,
+            "type": 4
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 1,
+          "y": 0,
+          "z": 0
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.2,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 1
+          },
+          {
+            "onRight": false,
+            "type": 5
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.2,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 7
+          },
+          {
+            "onRight": false,
+            "type": 2
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0.5773502691896257,
+          "y": -0.5773502691896257,
+          "z": 0.5773502691896257
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.2,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 7
+          },
+          {
+            "onRight": false,
+            "type": 1
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": -1,
+          "y": 0,
+          "z": 0
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.2,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 6
+          },
+          {
+            "onRight": false,
+            "type": 3
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0.5773503089260543,
+          "y": 0.5773502493214105,
+          "z": 0.5773502493214105
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.2,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 6
+          },
+          {
+            "onRight": false,
+            "type": 7
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0,
+          "y": -1,
+          "z": 0
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.2,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 8
+          },
+          {
+            "onRight": false,
+            "type": 4
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": -0.5773503287942695,
+          "y": 0.5773502095849778,
+          "z": 0.5773502691896237
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.2,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 8
+          },
+          {
+            "onRight": false,
+            "type": 6
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": -0.5773502691896257,
+          "y": -0.5773502691896257,
+          "z": 0.5773502691896257
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.2,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 1
+          },
+          {
+            "onRight": false,
+            "type": 8
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 1,
+          "y": 0,
+          "z": 0
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.2,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 6
+          },
+          {
+            "onRight": false,
+            "type": 1
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.2,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 8
+          },
+          {
+            "onRight": false,
+            "type": 7
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": -1,
+          "y": 0,
+          "z": 0
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.2,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 0
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.2,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 0
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 1,
+          "y": 0,
+          "z": 0
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.2,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 0
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0,
+          "y": -1,
+          "z": 0
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.2,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 0
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      }
+    ],
+    "faceTypes": [
+      {
+        "color": null,
+        "normal": {
+          "x": 0,
+          "y": 0,
+          "z": 1
+        }
+      },
+      {
+        "color": null,
+        "normal": {
+          "x": 0,
+          "y": 0.7071067811865476,
+          "z": 0.7071067811865476
+        }
+      },
+      {
+        "color": null,
+        "normal": {
+          "x": -1,
+          "y": 0,
+          "z": 0
+        }
+      },
+      {
+        "color": null,
+        "normal": {
+          "x": 0,
+          "y": -1,
+          "z": 0
+        }
+      },
+      {
+        "color": null,
+        "normal": {
+          "x": 1,
+          "y": 0,
+          "z": 0
+        }
+      },
+      {
+        "color": null,
+        "normal": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        }
+      },
+      {
+        "color": null,
+        "normal": {
+          "x": 0,
+          "y": -0.7071067811865476,
+          "z": 0.7071067811865476
+        }
+      },
+      {
+        "color": null,
+        "normal": {
+          "x": -0.7071067513842227,
+          "y": 0,
+          "z": 0.7071068109888711
+        }
+      },
+      {
+        "color": null,
+        "normal": {
+          "x": 0.7071067513842227,
+          "y": 0,
+          "z": 0.7071068109888711
+        }
+      }
+    ],
+    "vertexTypes": [
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 0,
+              "y": 0,
+              "z": 1
+            },
+            "edge": 0,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": 1,
+              "y": 0,
+              "z": 0
+            },
+            "edge": 1,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": 0,
+              "y": -1,
+              "z": 0
+            },
+            "edge": 2,
+            "isAtStart": false
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 0,
+              "y": 0,
+              "z": 1
+            },
+            "edge": 3,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "edge": 2,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": 1,
+              "y": 0,
+              "z": 0
+            },
+            "edge": 4,
+            "isAtStart": false
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 0,
+              "y": 0,
+              "z": 1
+            },
+            "edge": 5,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": -1,
+              "y": 0,
+              "z": 0
+            },
+            "edge": 4,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "edge": 6,
+            "isAtStart": false
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 0,
+              "y": 0,
+              "z": 1
+            },
+            "edge": 7,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": 0,
+              "y": -1,
+              "z": 0
+            },
+            "edge": 6,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": -1,
+              "y": 0,
+              "z": 0
+            },
+            "edge": 1,
+            "isAtStart": false
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 1,
+              "y": 0,
+              "z": 0
+            },
+            "edge": 8,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": 0,
+              "y": 0,
+              "z": -1
+            },
+            "edge": 0,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 0,
+              "y": -1,
+              "z": 0
+            },
+            "edge": 9,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 0.5773502691896257,
+              "y": -0.5773502691896257,
+              "z": 0.5773502691896257
+            },
+            "edge": 10,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "edge": 9,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": 0,
+              "y": 0,
+              "z": -1
+            },
+            "edge": 3,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 1,
+              "y": 0,
+              "z": 0
+            },
+            "edge": 11,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 0.5773503089260543,
+              "y": 0.5773502493214105,
+              "z": 0.5773502493214105
+            },
+            "edge": 12,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": -1,
+              "y": 0,
+              "z": 0
+            },
+            "edge": 11,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": 0,
+              "y": 0,
+              "z": -1
+            },
+            "edge": 5,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "edge": 13,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": -0.5773503287942695,
+              "y": 0.5773502095849778,
+              "z": 0.5773502691896237
+            },
+            "edge": 14,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 0,
+              "y": -1,
+              "z": 0
+            },
+            "edge": 13,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": 0,
+              "y": 0,
+              "z": -1
+            },
+            "edge": 7,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": -1,
+              "y": 0,
+              "z": 0
+            },
+            "edge": 8,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": -0.5773502691896257,
+              "y": -0.5773502691896257,
+              "z": 0.5773502691896257
+            },
+            "edge": 15,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 1,
+              "y": 0,
+              "z": 0
+            },
+            "edge": 16,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": -0.5773502691896257,
+              "y": 0.5773502691896257,
+              "z": -0.5773502691896257
+            },
+            "edge": 10,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": -0.5773503089260543,
+              "y": -0.5773502493214105,
+              "z": -0.5773502493214105
+            },
+            "edge": 12,
+            "isAtStart": false
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": -1,
+              "y": 0,
+              "z": 0
+            },
+            "edge": 16,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 0.5773503287942695,
+              "y": -0.5773502095849778,
+              "z": -0.5773502691896237
+            },
+            "edge": 14,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 0.5773502691896257,
+              "y": 0.5773502691896257,
+              "z": -0.5773502691896257
+            },
+            "edge": 15,
+            "isAtStart": false
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "edge": 17,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": -0.5773503089260543,
+              "y": -0.5773502493214105,
+              "z": -0.5773502493214105
+            },
+            "edge": 12,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 0.5773503287942695,
+              "y": -0.5773502095849778,
+              "z": -0.5773502691896237
+            },
+            "edge": 14,
+            "isAtStart": false
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 0,
+              "y": -1,
+              "z": 0
+            },
+            "edge": 17,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 0.5773502691896257,
+              "y": 0.5773502691896257,
+              "z": -0.5773502691896257
+            },
+            "edge": 15,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": -0.5773502691896257,
+              "y": 0.5773502691896257,
+              "z": -0.5773502691896257
+            },
+            "edge": 10,
+            "isAtStart": false
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 1,
+              "y": 0,
+              "z": 0
+            },
+            "edge": 18,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "edge": 19,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 0,
+              "y": -1,
+              "z": 0
+            },
+            "edge": 19,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 1,
+              "y": 0,
+              "z": 0
+            },
+            "edge": 20,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "edge": 21,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": -1,
+              "y": 0,
+              "z": 0
+            },
+            "edge": 18,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 0,
+              "y": -1,
+              "z": 0
+            },
+            "edge": 21,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": -1,
+              "y": 0,
+              "z": 0
+            },
+            "edge": 20,
+            "isAtStart": false
+          }
+        ],
+        "spliced": false
+      }
+    ]
+  },
+  "version": 1
+}
