@@ -85,19 +85,19 @@ GraphGrammar* GraphGrammar::import(const Json& json) {
         return ProductionRule::import(transJson, hierarchy->shape);
     };
     
-    for (const auto& transJson : json["transitions"]) {
+    for (const auto& transJson : json["rules"]) {
         hierarchy->rules.push_back(importRule(transJson));
     }
-    for (const auto& transJson : json["starterTransitions"]) {
+    for (const auto& transJson : json["starterRules"]) {
         hierarchy->starterRules.push_back(importRule(transJson));
     }
-    for (const auto& transJson : json["groundTransitions"]) {
+    for (const auto& transJson : json["groundRules"]) {
         hierarchy->groundRules.push_back(importRule(transJson));
     }
     
     hierarchy->grounded = json["grounded"];
-    hierarchy->emptyGraph = Graph::import(json["emptyNet"], hierarchy->shape);
-    
+    hierarchy->emptyGraph = Graph::import(json["emptyGraph"], hierarchy->shape);
+
     return hierarchy;
 }
 

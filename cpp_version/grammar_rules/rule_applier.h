@@ -28,9 +28,8 @@ struct EditGraph {
 
 // Helper struct for edge data
 struct EdgeData {
-    Vec2 v;
     Edge* edge = nullptr;
-    double length = 0;
+    // double length = 0;
 };
 
 struct Limits {
@@ -56,7 +55,7 @@ public:
     bool solve();
     void setup();
     void create(const Production& production, Model* model, int dims);
-    void addEdge(Edge* edge, bool includeLength, bool addToGraph);
+    void addEdge(Edge* edge, bool addToGraph);
     EditGraph* createGraph();
     void reject();
     void freeVertex();

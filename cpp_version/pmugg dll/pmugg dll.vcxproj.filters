@@ -156,6 +156,9 @@
     <ClInclude Include="..\json versioning\jsonVersionManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\json versioning\jsonMigrations.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -294,6 +297,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\json versioning\jsonMigrations.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\json versioning\jsonVersionManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

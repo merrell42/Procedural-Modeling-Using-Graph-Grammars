@@ -36,20 +36,20 @@ void Vertex::createHalfEdges() {
 	}
 }
 
-HalfEdge* Vertex::createHalfEdge(const HalfEdgeType& halfEdgetype, int faceIndex) {
-	Vec3 dir = halfEdgetype.dir.copy();
+HalfEdge* Vertex::createHalfEdge(const HalfEdgeType& halfEdgeType, int faceIndex) {
+	Vec3 dir = halfEdgeType.dir.copy();
 
 	// Create the halfEdge.
 	const int halfEdgeId = model->newId();
 	const int vertexId = id;
 	const int edgeId = model->newId();
-	auto halfEdge = new HalfEdge(model, halfEdgeId, halfEdgetype.isAtStart, halfEdgetype.edge, dir, vertexId, -1, edgeId, true, faceIndex);
+	auto halfEdge = new HalfEdge(model, halfEdgeId, halfEdgeType.isAtStart, halfEdgeType.edge, dir, vertexId, -1, edgeId, true, faceIndex);
 
 	// Create the edge.
 	vector<int> edgeHalfEdgeIds(2, -1);
 	edgeHalfEdgeIds[faceIndex] = halfEdgeId;
 	vector<int> bspNodeIds;
-	auto edge = new Edge(model, edgeId, halfEdgetype.edge, edgeHalfEdgeIds, bspNodeIds);
+	auto edge = new Edge(model, edgeId, halfEdgeType.edge, edgeHalfEdgeIds, bspNodeIds);
 
 	// Add the halfEdge to the vertex.
 	halfEdgeIds.push_back(halfEdgeId);

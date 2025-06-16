@@ -44,7 +44,7 @@ void Graph::removeFace(GraphFace* face) {
     faces.erase(remove(faces.begin(), faces.end(), face), faces.end());
 }
 
-Graph* Graph::import(const Json & json, Primitives* shape) {
+Graph* Graph::import(const Json& json, Primitives* shape) {
     auto interior = json["interior"];
 
     auto result = new Graph();
@@ -77,21 +77,21 @@ Graph* Graph::import(const Json & json, Primitives* shape) {
 
     // Get the types.
     auto edgeVertex = new VertexType();
-    for (size_t index = 0; index < json["vertices"].size(); ++index) {
-        auto vertexData = json["vertices"][index];
+    for (size_t index = 0; index < json["vertexTypes"].size(); ++index) {
+        auto vertexData = json["vertexTypes"][index];
         int type = vertexData["type"].get<int>();
         auto kind = vertexData["kind"].get<string>();
         result->getVertices()[index]->kind = kind;
         auto vertexType = (kind == "v") ? shape->vertexTypes[type] : edgeVertex;
         result->getVertices()[index]->setType(vertexType);
     }
-    for (size_t index = 0; index < json["edges"].size(); ++index) {
-        auto edgeData = json["edges"][index];
+    for (size_t index = 0; index < json["edgeTypes"].size(); ++index) {
+        auto edgeData = json["edgeTypes"][index];
         int type = edgeData["type"].get<int>();
         result->getEdges()[index]->setType(shape->edgeTypes[type]);
     }
-    for (size_t index = 0; index < json["faces"].size(); ++index) {
-        auto faceData = json["faces"][index];
+    for (size_t index = 0; index < json["faceTypes"].size(); ++index) {
+        auto faceData = json["faceTypes"][index];
         int type = faceData["type"].get<int>();
         result->getFaces()[index]->setType(shape->faceTypes[type]);
     }

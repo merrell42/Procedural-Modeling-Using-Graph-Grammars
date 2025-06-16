@@ -11,12 +11,8 @@ EdgeType::EdgeType(const vector<FaceData>& fData, const Vec3& direction,
     : faceData(fData)
     , dir(direction)
     , edgeSettings(nullptr)
-    , angle(atan2(dir.getY(), dir.getX()))
-    , edgeLength(INFINITY)
-    , offset(nullptr)
     , isRigid(options.count("isRigid") ? options.at("isRigid") : false)
     , isRigidTiled(options.count("isRigidTiled") ? options.at("isRigidTiled") : false)
-    , monotonic(false)
     , spliced(false)
     , id(nextId++) {}
 
@@ -57,9 +53,6 @@ EdgeType* EdgeType::import(const Json& json, Primitives* shape) {
     /*result->angle = json.contains("angle") ?
         json["angle"].get<double>() :
         Vec2::angle(Vec2::ORIGIN, result->dir);*/
-    if (json["offset"] != nullptr) {
-        result->offset = new Vec3(Vec3::import(json["offset"]));
-    }
     result->setSpliced(json["spliced"]);
     
     return result;
@@ -77,20 +70,12 @@ EdgeSettings* EdgeType::getEdgeSettings() const {
     return edgeSettings;
 }
 
-double EdgeType::getEdgeLength() const {
-    return edgeLength;
-}
-
 bool EdgeType::getIsRigid() const {
     return isRigid;
 }
 
 bool EdgeType::getSpliced() const {
     return spliced;
-}
-
-double EdgeType::getAngle() const {
-    return angle;
 }
 
 int EdgeType::getId() const {

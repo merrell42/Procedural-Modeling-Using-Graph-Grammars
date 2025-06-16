@@ -26,8 +26,6 @@ public:
     const vector<FaceData>& getFaceData() const;
     const Vec3& getDir() const;
     EdgeSettings* getEdgeSettings() const;
-    double getAngle() const;
-    double getEdgeLength() const;
     bool getIsRigid() const;
     bool getSpliced() const;
     int getId() const;
@@ -42,12 +40,8 @@ public:
 private:
     Vec3 dir;
     EdgeSettings* edgeSettings;
-    double angle;
-    double edgeLength;
-    Vec3* offset;
     bool isRigid;
     bool isRigidTiled;
-    bool monotonic;
     bool spliced;
     int id;
 

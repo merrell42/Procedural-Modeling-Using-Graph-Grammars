@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "readJsonFile.h"
 #include "jsonVersionManager.h"
 #include "jsonMigrations.h"
@@ -19,7 +20,11 @@ Json readJsonFile(string filePath, bool writeNewVersion) {
 	JsonVersionManager::updateToLatest(parsed);
 
 	if (writeNewVersion) {
-		ofstream newFile(filePath + ".new");
+		size_t lastDot = filePath.find_last_of('.');
+		string basePath = (lastDot != string::npos) ? filePath.substr(0, lastDot) : filePath;
+		string extension = (lastDot != string::npos) ? filePath.substr(lastDot) : "";
+
+		ofstream newFile(basePath + "_v" + to_string(parsed["version"].get<int>()) + extension);
 		newFile << parsed.dump(2, ' ', true);
 		newFile.close();
 	}

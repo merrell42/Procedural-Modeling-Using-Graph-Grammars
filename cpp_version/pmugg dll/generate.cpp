@@ -24,7 +24,7 @@ void initialize(const char* filePath, char* result, int len, int seed) {
 
 	try {
 		Json parsed = readJsonFile(filePath);
-		auto hierarchy = GraphGrammar::import(parsed["solution"]);
+		auto hierarchy = GraphGrammar::import(parsed);
 		model = new Model();
 		mutator = new Mutator(model, new GraphMutator(hierarchy, model));
 		strcpy_s(result, len, "Success");

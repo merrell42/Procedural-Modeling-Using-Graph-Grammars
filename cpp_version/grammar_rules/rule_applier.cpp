@@ -51,22 +51,15 @@ void RuleApplier::create(const Production& production, Model* model_, int dims_)
     }
 
     for (auto* edge : graph->edges) {
-        addEdge(edge, false, false);
+        addEdge(edge, false);
     }
 }
 
-void RuleApplier::addEdge(Edge* edge, bool includeLength, bool addToGraph) {
-    double angle = edge->getEdgeType()->getAngle();
-    
+void RuleApplier::addEdge(Edge* edge, bool addToGraph) {
     EdgeData datum;
-    datum.v = Vec2::unitVec(angle);
     datum.edge = edge;
     
     auto edgeHalfEdges = edge->getHalfEdges();
-    if (includeLength) {
-        Vec3 v = edgeHalfEdges[1]->getPosition() - edgeHalfEdges[0]->getPosition();
-        datum.length = v.length();
-    }
     
     edgeData.push_back(datum);
     edges.push_back(edge);
@@ -777,7 +770,7 @@ void RuleApplier::freeOneVertex(Vertex* vertex) {
         auto hasEdge = [edge](const EdgeData& data) { return data.edge == edge; };
         
         if (find_if(edgeData.begin(), edgeData.end(), hasEdge) == edgeData.end()) {
-            addEdge(edge, true, true);
+            addEdge(edge, true);
         }
     }
 

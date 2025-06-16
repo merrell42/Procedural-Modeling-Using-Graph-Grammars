@@ -23,35 +23,18 @@ bool VertexType::getSpliced() const {
     return spliced;
 }
 
-void VertexType::addEdge(EdgeType* edge, bool isAtStart, double angle) {
-    // Angle becomes the angle going out from the vertex through the edge.
+void VertexType::addEdge(EdgeType* edge, bool isAtStart) {
     auto dir = edge->getDir();
     if (!isAtStart) {
-        angle += (double)M_PI;
         dir = dir * -1.0f;
     }
-    angle = Util::fixAngle(angle);
-    
-    int directedId = 2 * edge->getId() + (isAtStart ? 0 : 1);
-    double adjustedAngle = getAdjustedAngle(angle, edge, isAtStart);
-
-    // Find insertion point to maintain sorted order.
-    auto it = lower_bound(halfEdgeTypes.begin(), halfEdgeTypes.end(),
-        HalfEdgeType{},
-        [adjustedAngle, directedId](const HalfEdgeType& a, const HalfEdgeType& b) {
-            return (a.adjustedAngle < adjustedAngle) ||
-                   (a.adjustedAngle == adjustedAngle && a.directedId < directedId);
-        });
 
     HalfEdgeType halfEdgeType;
-    halfEdgeType.adjustedAngle = adjustedAngle;
-    halfEdgeType.angle = angle;
     halfEdgeType.dir = dir;
-    halfEdgeType.directedId = directedId;
     halfEdgeType.edge = edge;
     halfEdgeType.isAtStart = isAtStart;
 
-    halfEdgeTypes.insert(it, halfEdgeType);
+    halfEdgeTypes.push_back(halfEdgeType);
 }
 
 void VertexType::setSpliced(bool spliced) {
@@ -81,16 +64,7 @@ VertexType* VertexType::import(const Json& json, Primitives* shape) {
     return result;
 }
 
-double VertexType::getAdjustedAngle(double angle, EdgeType* edge, bool isAtStart) {
-    int directedId = 2 * edge->getId() + (isAtStart ? 0 : 1);
-    return angle + 1e-5f * directedId;
-}
-
-HalfEdgeType::HalfEdgeType(EdgeType* newEdge, bool newIsAtStart, double newAngle,
-                const vector<int>& faceIds)
-    : adjustedAngle(0)
-    , angle(newAngle)
-    , dir()
-    , directedId(0)
+HalfEdgeType::HalfEdgeType(EdgeType* newEdge, bool newIsAtStart, const vector<int>& faceIds)
+    : dir()
     , edge(newEdge)
     , isAtStart(newIsAtStart) {}

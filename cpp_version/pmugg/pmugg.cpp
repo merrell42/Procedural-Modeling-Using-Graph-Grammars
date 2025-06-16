@@ -23,8 +23,8 @@ int main() {
 
 	try {
 		Json parsed = readJsonFile(filePath, true);
-		cout << parsed["category"] << " " << parsed["name"] << endl;
-		auto hierarchy = GraphGrammar::import(parsed["solution"]);
+		cout << parsed["name"] << endl;
+		auto hierarchy = GraphGrammar::import(parsed);
 		auto model = new Model();
 		auto mutator = new Mutator(model, new GraphMutator(hierarchy, model));
 		mutator->iterate(100);

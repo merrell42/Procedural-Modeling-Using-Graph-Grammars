@@ -7,7 +7,7 @@
 using namespace std;
 using Json = nlohmann::json;
 
-// Type definition for version update functions
+// Type definition for version update functions.
 using VersionUpdateFunction = function<void(Json&)>;
 
 class JsonVersionManager {
@@ -25,13 +25,12 @@ public:
         return initialized;
     }
 
-    // Update JSON from its current version to the lastest version.
+    // Update JSON from its current version to the latest version.
     static void updateToLatest(Json& json) {
         int currentVersion = json.contains("version") ? json["version"].get<int>() : 0;
         
         // Apply each update function in sequence until we reach the latest version.
         while (currentVersion < versionUpdates.size()) {
-            // Apply the update function
             versionUpdates[currentVersion](json);
             currentVersion++;
             json["version"] = currentVersion;
@@ -39,7 +38,7 @@ public:
     }
     
 private:
-    // Vector of version update functions, where index i updates from version i to i+1.
+    // List of functions that update the JSON to the next version.
     static vector<VersionUpdateFunction> versionUpdates;
     static bool initialized;
 };

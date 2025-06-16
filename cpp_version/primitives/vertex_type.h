@@ -12,13 +12,9 @@ class EdgeType;
 class Primitives;
 
 struct HalfEdgeType {
-    HalfEdgeType(EdgeType* newEdge = nullptr, bool newIsAtStart = false, double newAngle = 0.0f,
-            const vector<int>& faceIds = {});
-        
-    double adjustedAngle;
-    double angle;
+    HalfEdgeType(EdgeType* newEdge = nullptr, bool newIsAtStart = false, const vector<int>& faceIds = {});
+
     Vec3 dir;
-    int directedId;
     EdgeType* edge;
     bool isAtStart;
 };
@@ -32,7 +28,7 @@ public:
     const vector<HalfEdgeType>& getHalfEdgeTypes() const;
     bool getSpliced() const;
 
-    void addEdge(EdgeType* edge, bool isAtStart, double angle);
+    void addEdge(EdgeType* edge, bool isAtStart);
     void setSpliced(bool spliced);
 
 private:
@@ -41,8 +37,5 @@ private:
     int id;
 
     static int nextId;
-    static constexpr double ANGLE_EPSILON = 1e-5f;
-
-    static double getAdjustedAngle(double angle, EdgeType* edge, bool isAtStart);
 };
 
