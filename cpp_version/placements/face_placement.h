@@ -2,6 +2,7 @@
 #include <vector>
 #include "../geometry/vec3.h"
 #include "../util/range.h"
+#include "../memory_counter.h"
 
 class Face;
 class FacePlacement;
@@ -21,6 +22,7 @@ struct FixedFace {
 class FacePlacement {
 public:
     FacePlacement(const Vec3& normal, int id, RuleApplierSettings* settings, Face* face);
+    ~FacePlacement();
 
     Face* getFace() const;
     double getD() const;

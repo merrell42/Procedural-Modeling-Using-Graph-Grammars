@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include "../third_party/json.h"
+#include "../memory_counter.h"
 
 using Json = nlohmann::json;
 using namespace std;
@@ -12,7 +13,9 @@ class Vec2;
 class Vec3 {
 public:
     Vec3(double x = 0, double y = 0, double z = 0);
-    ~Vec3() = default;
+    ~Vec3() {
+        MemoryCounter::destruction("Vec3");
+    }
 
     double getX() const { return x; }
     double getY() const { return y; }

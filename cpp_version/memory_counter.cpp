@@ -1,25 +1,31 @@
 #include "pch.h"
 #include "memory_counter.h"
 
-// Initialize static variables
-int MemoryCounter::vertexCreated = 0;
-int MemoryCounter::vertexDestroyed = 0;
-int MemoryCounter::edgeCreated = 0;
-int MemoryCounter::edgeDestroyed = 0;
-int MemoryCounter::halfEdgeCreated = 0;
-int MemoryCounter::halfEdgeDestroyed = 0;
-int MemoryCounter::faceCreated = 0;
-int MemoryCounter::faceDestroyed = 0;
+// Initialize static map
+std::map<std::string, int> MemoryCounter::creationCounters = {};
+std::map<std::string, int> MemoryCounter::destructionCounters = {};
+
+void MemoryCounter::creation(const std::string& key) {
+    if (creationCounters.find(key) == creationCounters.end()) {
+        creationCounters[key] = 0;
+    }
+    creationCounters[key]++;
+}
+
+void MemoryCounter::destruction(const std::string& key) {
+    if (destructionCounters.find(key) == destructionCounters.end()) {
+        destructionCounters[key] = 0;
+    }
+    destructionCounters[key]++;
+}
 
 void MemoryCounter::printStatistics() {
     std::cout << "\n=== Memory Leak Detection Statistics ===" << std::endl;
-    std::cout << "Vertices:  Created=" << vertexCreated << ", Destroyed=" << vertexDestroyed 
-              << ", Leaked=" << (vertexCreated - vertexDestroyed) << std::endl;
-    std::cout << "Edges:     Created=" << edgeCreated << ", Destroyed=" << edgeDestroyed 
-              << ", Leaked=" << (edgeCreated - edgeDestroyed) << std::endl;
-    std::cout << "HalfEdges: Created=" << halfEdgeCreated << ", Destroyed=" << halfEdgeDestroyed 
-              << ", Leaked=" << (halfEdgeCreated - halfEdgeDestroyed) << std::endl;
-    std::cout << "Faces:     Created=" << faceCreated << ", Destroyed=" << faceDestroyed 
-              << ", Leaked=" << (faceCreated - faceDestroyed) << std::endl;
+    for (const auto& [key, value] : creationCounters) {
+        int creationCount = value;
+        int destructionCount = destructionCounters[key];
+        int leakedCount = creationCount - destructionCount;
+        std::cout << key << " Created: " << creationCount << ", Destroyed: " << destructionCount << ", Leaked: " << leakedCount << std::endl;
+    }
     std::cout << "=========================================" << std::endl;
 } 

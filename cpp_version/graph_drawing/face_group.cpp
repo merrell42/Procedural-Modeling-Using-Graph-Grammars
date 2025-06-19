@@ -2,11 +2,17 @@
 #include "face_group.h"
 
 FaceGroup::FaceGroup(Model* model, int id) : model(model), id(id), faceIds() {
+    MemoryCounter::creation("faceGroup");
     model->getCurrent()->addFaceGroup(id, this);
 }
 
 FaceGroup::FaceGroup(Model* model, int id, vector<int> faceIds) : model(model), id(id), faceIds(faceIds) {
+    MemoryCounter::creation("faceGroup");
     model->getCurrent()->addFaceGroup(id, this);
+}
+
+FaceGroup::~FaceGroup() {
+    MemoryCounter::destruction("faceGroup");
 }
 
 FaceGroup* FaceGroup::copy() {

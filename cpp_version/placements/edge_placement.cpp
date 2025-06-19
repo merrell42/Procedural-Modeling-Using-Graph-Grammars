@@ -7,11 +7,13 @@
 #include "../graph/edge_settings.h"
 #include "../grammar_rules/rule_applier_settings.h"
 #include "face_placement.h"
+#include "../memory_counter.h"
 
 EdgePlacement::EdgePlacement(Edge* edge, int id, RuleApplierSettings* settings)
     : edge(edge)
     , id(id)
     , settings(settings) {
+    MemoryCounter::creation("EdgePlacement");
     
     // Get vertex IDs from halfEdges
     auto halfEdges = edge->getHalfEdges();

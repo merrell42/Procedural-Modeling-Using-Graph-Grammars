@@ -17,7 +17,7 @@ Face::Face(Model* model, int id, FaceType* faceType, vector<int> halfEdgeIds, bo
     , bspNodeIds(bspNodeIds)
     , groupId(groupId)
     , hole(hole) {
-    MemoryCounter::faceCreated++;
+    MemoryCounter::creation("face");
     model->getCurrent()->addFace(id, this);
 }
 
@@ -30,12 +30,12 @@ Face::Face(Model* model, int id, FaceType* faceType, vector<int> halfEdgeIds, ve
     , looped(false)
     , groupId(-1)
     , hole(false) {
-    MemoryCounter::faceCreated++;
+    MemoryCounter::creation("face");
     model->getCurrent()->addFace(id, this);
 }
 
 Face::~Face() {
-    MemoryCounter::faceDestroyed++;
+    MemoryCounter::destruction("face");
 }
 
 Face* Face::copy() {

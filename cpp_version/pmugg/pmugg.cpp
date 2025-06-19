@@ -29,7 +29,7 @@ int main() {
 		auto hierarchy = GraphGrammar::import(parsed);
 		auto model = new Model();
 		auto mutator = new Mutator(model, new GraphMutator(hierarchy, model));
-		mutator->iterate(101);
+		mutator->iterate(100);
 		model->reset();
 	} catch (const exception& e) {
 	 	cout << "Error: " << e.what() << endl;

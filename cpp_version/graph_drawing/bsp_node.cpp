@@ -1,5 +1,9 @@
 #include "pch.h"
 #include "bsp_node.h"
+#include <set>
+
+static set<int> createdBspNodeIds;
+static set<int> destroyedBspNodeIds;
 
 BspNode::BspNode(Model* model, int id) :
     model(model),
@@ -10,7 +14,9 @@ BspNode::BspNode(Model* model, int id) :
     faceIds(),
     edgeIds(),
     plane(nullptr) {
+    MemoryCounter::creation("bspNode");
     model->getCurrent()->addBspNode(id, this);
+    createdBspNodeIds.insert(id);
 }
 
 BspNode::BspNode(Model* model, int id, int parentId, int aboveId, int belowId, Plane* plane, vector<int> faceIds, vector<int> edgeIds) :
@@ -22,10 +28,14 @@ BspNode::BspNode(Model* model, int id, int parentId, int aboveId, int belowId, P
     faceIds(faceIds),
     edgeIds(edgeIds),
     plane(plane) {
+    MemoryCounter::creation("bspNode");
     model->getCurrent()->addBspNode(id, this);
+    createdBspNodeIds.insert(id);
 }
 
 BspNode::~BspNode() {
+    MemoryCounter::destruction("bspNode");
+    destroyedBspNodeIds.insert(id);
     delete plane;
 }
 
@@ -147,6 +157,7 @@ void BspNode::deleteIfEmpty() {
             parent->belowId = -1;
         }
         parent->deleteIfEmpty();
+        delete this;
     } else if (aboveId == -1 || belowId == -1) {
         // If one child is present, delete this node and promote the child to be a
         // child of the grandparent.

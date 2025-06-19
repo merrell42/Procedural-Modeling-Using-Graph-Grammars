@@ -12,7 +12,9 @@ const Vec3 Vec3::Y_AXIS(0, 1, 0);
 const Vec3 Vec3::Z_AXIS(0, 0, 1);
 
 Vec3::Vec3(double x_, double y_, double z_)
-    : x(x_), y(y_), z(z_) {}
+    : x(x_), y(y_), z(z_) {
+    MemoryCounter::creation("Vec3");
+}
 
 double Vec3::getValue(int dim) const {
     switch (dim) {

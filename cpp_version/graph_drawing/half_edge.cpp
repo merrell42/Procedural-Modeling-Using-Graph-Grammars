@@ -11,7 +11,7 @@ HalfEdge::HalfEdge(Model* model, int id, bool isAtStart, EdgeType* edgeType, Vec
     , faceIndex(faceIndex)
 	, faceId(faceId_)
 	, edgeId(edgeId) {
-    MemoryCounter::halfEdgeCreated++;
+    MemoryCounter::creation("halfEdge");
     model->getCurrent()->addHalfEdge(id, this);
 
     faceTypeCached = nullptr;
@@ -27,7 +27,7 @@ HalfEdge::HalfEdge(Model* model, int id, bool isAtStart, EdgeType* edgeType, Vec
 }
 
 HalfEdge::~HalfEdge() {
-	MemoryCounter::halfEdgeDestroyed++;
+	MemoryCounter::destruction("halfEdge");
 }
 
 FaceType* HalfEdge::getFaceType() {

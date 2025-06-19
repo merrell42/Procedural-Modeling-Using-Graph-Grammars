@@ -8,7 +8,9 @@
 const Vec2 Vec2::ORIGIN(0, 0);
 
 Vec2::Vec2(double x_, double y_)
-    : x(x_), y(y_) {}
+    : x(x_), y(y_) {
+    MemoryCounter::creation("Vec2");
+}
 
 double Vec2::dot(const Vec2& v) const {
     return x * v.x + y * v.y;

@@ -5,6 +5,7 @@
 #include "face_placement.h"
 #include "../grammar_rules/rule_applier_settings.h"
 #include "../util/matrix.h"
+#include "../memory_counter.h"
 
 class HalfEdge;
 class Vertex;
@@ -19,8 +20,12 @@ struct ChangeVecMB {
 
 class VertexPlacement {
 public:
-    VertexPlacement(Vertex* vertex, int id, RuleApplierSettings* settings) : vertex(vertex), id(id), settings(settings), M(nullptr) {}
-    ~VertexPlacement() = default;
+    VertexPlacement(Vertex* vertex, int id, RuleApplierSettings* settings) : vertex(vertex), id(id), settings(settings), M(nullptr) {
+        MemoryCounter::creation("VertexPlacement");
+    }
+    ~VertexPlacement() {
+        MemoryCounter::destruction("VertexPlacement");
+    }
 
     void initialize();
     void addFixedNeighbor(const FixedFace& fixedFace);

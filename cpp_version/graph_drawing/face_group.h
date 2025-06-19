@@ -3,6 +3,7 @@
 #include <vector>
 #include "face.h"
 #include "model.h"
+#include "../memory_counter.h"
 
 class Model;
 class Face;
@@ -13,6 +14,7 @@ class FaceGroup {
 public:
     FaceGroup(Model* model, int id);
     FaceGroup(Model* model, int id, vector<int> faceIds);
+    ~FaceGroup();
     FaceGroup* copy();
 
     int getId() const { return id; };

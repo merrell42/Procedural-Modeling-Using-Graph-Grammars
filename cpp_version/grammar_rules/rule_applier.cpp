@@ -819,6 +819,7 @@ bool RuleApplier::placeVertexPositions(const vector<double>& positions) {
         /*if (!model->inBounds(position.x, position.y, position.z)) {
             return false;
         }*/
+
     }
     if (dims == 2) {
         for (int i = 0; i < (int)edges.size(); i++) {

@@ -1,16 +1,14 @@
 #pragma once
 #include <iostream>
+#include <map>
+#include <string>
 
 class MemoryCounter {
 public:
-    static int vertexCreated;
-    static int vertexDestroyed;
-    static int edgeCreated;
-    static int edgeDestroyed;
-    static int halfEdgeCreated;
-    static int halfEdgeDestroyed;
-    static int faceCreated;
-    static int faceDestroyed;
+    static std::map<std::string, int> creationCounters;
+    static std::map<std::string, int> destructionCounters;
 
+    static void creation(const std::string& type);
+    static void destruction(const std::string& type);
     static void printStatistics();
-}; 
+};

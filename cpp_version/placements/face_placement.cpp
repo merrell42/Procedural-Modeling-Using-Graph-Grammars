@@ -11,7 +11,13 @@ FacePlacement::FacePlacement(const Vec3& normal, int id, RuleApplierSettings* se
     : normal(normal)
     , face(face)
     , id(id)
-    , settings(settings) {}
+    , settings(settings) {
+    MemoryCounter::creation("FacePlacement");
+}
+
+FacePlacement::~FacePlacement() {
+    MemoryCounter::destruction("FacePlacement");
+}
 
 Face* FacePlacement::getFace() const {
     return face;
