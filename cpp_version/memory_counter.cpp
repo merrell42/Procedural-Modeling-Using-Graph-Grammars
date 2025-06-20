@@ -1,11 +1,16 @@
 #include "pch.h"
 #include "memory_counter.h"
 
+bool MemoryCounterEnabled = false;
+
 std::map<std::string, int> MemoryCounter::creationCounters = {};
 std::map<std::string, int> MemoryCounter::destructionCounters = {};
 int finished = false;
 
 void MemoryCounter::creation(const std::string& key) {
+    if (!MemoryCounterEnabled) {
+        return;
+    }
     if (creationCounters.find(key) == creationCounters.end()) {
         creationCounters[key] = 0;
     }
@@ -13,7 +18,7 @@ void MemoryCounter::creation(const std::string& key) {
 }
 
 void MemoryCounter::destruction(const std::string& key) {
-    if (finished) {
+    if (!MemoryCounterEnabled || finished) {
         return;
     }
     if (destructionCounters.find(key) == destructionCounters.end()) {
@@ -23,6 +28,9 @@ void MemoryCounter::destruction(const std::string& key) {
 }
 
 void MemoryCounter::printStatistics() {
+    if (!MemoryCounterEnabled) {
+        return;
+    }
     std::cout << "\n=== Memory Leak Detection Statistics ===" << std::endl;
     for (const auto& [key, value] : creationCounters) {
         int creationCount = value;
