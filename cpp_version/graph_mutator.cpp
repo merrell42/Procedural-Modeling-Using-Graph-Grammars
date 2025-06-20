@@ -47,10 +47,10 @@ bool GraphMutator::applyProduction(Production production) {
     timer->start("Build Normally");
 
     int dims = hierarchy->getDims();
-    auto transistor = RuleApplier::buildNormally(production, model, dims);
+    auto ruleApplier = RuleApplier::buildNormally(production, model, dims);
     timer->stop("Build Normally");
 
-    if (!transistor) {
+    if (!ruleApplier) {
         delete morphism;
         return false;
     }
@@ -60,9 +60,9 @@ bool GraphMutator::applyProduction(Production production) {
     int verticesToFree = globalSettings["Vertices to Free"].get<int>();
 
     while (effort < effortLimit) {
-        timer->start("Transistor Solve");
-        bool success = transistor->solve();
-        timer->stop("Transistor Solve");
+        timer->start("RuleApplier Solve");
+        bool success = ruleApplier->solve();
+        timer->stop("RuleApplier Solve");
 
         if (success) {
             delete morphism;
@@ -70,12 +70,12 @@ bool GraphMutator::applyProduction(Production production) {
         }
 
         for (int i = 0; i < verticesToFree; i++) {
-            transistor->freeVertex();
+            ruleApplier->freeVertex();
         }
         effort++;
     }
 
-    transistor->reject();
+    ruleApplier->reject();
     delete morphism;
     return false;
 }
