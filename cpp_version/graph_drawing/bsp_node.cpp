@@ -204,7 +204,7 @@ void BspNode::connectEdge(Edge* edge) {
     edge->addBspNodeId(id);
     if (!plane) {
         auto edge = model->getCurrent()->getEdge(edgeIds[0]);
-        auto normal = edge->getDirection()->cross(Vec3(0, 0, 1));
+        auto normal = edge->getDirection().cross(Vec3(0, 0, 1));
         auto d = edge->getHalfEdge(0)->getPosition().dot(normal);
         plane = new Plane(normal, d);
     }

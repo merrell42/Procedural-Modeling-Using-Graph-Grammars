@@ -33,3 +33,25 @@ Mesh createMesh(
     mesh.numFaces = (int)faceIndices.size();
     return mesh;
 }
+
+void freeMeshMemory(Mesh& mesh) {
+    if (mesh.positions) {
+        free(mesh.positions);
+        mesh.positions = nullptr;
+    }
+    if (mesh.normals) {
+        free(mesh.normals);
+        mesh.normals = nullptr;
+    }
+    if (mesh.triangles) {
+        free(mesh.triangles);
+        mesh.triangles = nullptr;
+    }
+    if (mesh.faceIndices) {
+        free(mesh.faceIndices);
+        mesh.faceIndices = nullptr;
+    }
+    mesh.numVertices = 0;
+    mesh.numTriangles = 0;
+    mesh.numFaces = 0;
+}

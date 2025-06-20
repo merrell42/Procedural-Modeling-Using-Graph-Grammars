@@ -33,7 +33,7 @@ public:
 	void setId(int newId);
 	Model* getModel() const;
 	EdgeType* getEdgeType() const;
-	Vec3* getDirection() const;
+	Vec3 getDirection() const;
 
 	// BSP functions.
 	const vector<int>& getBspNodeIds() const;

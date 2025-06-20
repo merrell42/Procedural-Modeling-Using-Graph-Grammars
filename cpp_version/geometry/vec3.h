@@ -6,13 +6,12 @@
 using Json = nlohmann::json;
 using namespace std;
 
-
-
 class Vec2;
 
 class Vec3 {
 public:
-    Vec3(double x = 0, double y = 0, double z = 0);
+    Vec3(const Vec3& newVec3);
+    Vec3(double x = 0, double y = 0, double z = 0, bool track = true);
     ~Vec3() {
         MemoryCounter::destruction("Vec3");
     }

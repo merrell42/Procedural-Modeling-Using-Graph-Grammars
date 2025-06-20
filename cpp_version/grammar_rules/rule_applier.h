@@ -69,7 +69,6 @@ private:
     vector<Vertex*> freeVertices;
     vector<Edge*> freeEdges;
     vector<FixedFace> fixedFaces;
-    Vec3* initialPosition = nullptr;
     vector<int> propagationOrder;
     vector<Edge*> basisEdges;
     vector<int> fixedVertexIds;

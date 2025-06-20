@@ -6,14 +6,21 @@
 #include <iomanip>
 #include <iostream>
 
-const Vec3 Vec3::ORIGIN(0, 0, 0);
-const Vec3 Vec3::X_AXIS(1, 0, 0);
-const Vec3 Vec3::Y_AXIS(0, 1, 0);
-const Vec3 Vec3::Z_AXIS(0, 0, 1);
+const Vec3 Vec3::ORIGIN(0, 0, 0, false);
+const Vec3 Vec3::X_AXIS(1, 0, 0, false);
+const Vec3 Vec3::Y_AXIS(0, 1, 0, false);
+const Vec3 Vec3::Z_AXIS(0, 0, 1, false);
 
-Vec3::Vec3(double x_, double y_, double z_)
-    : x(x_), y(y_), z(z_) {
+Vec3::Vec3(const Vec3& newVec3)
+    : x(newVec3.x), y(newVec3.y), z(newVec3.z) {
     MemoryCounter::creation("Vec3");
+}
+
+Vec3::Vec3(double x_, double y_, double z_, bool track)
+    : x(x_), y(y_), z(z_) {
+    if (track) {
+        MemoryCounter::creation("Vec3");
+    }
 }
 
 double Vec3::getValue(int dim) const {

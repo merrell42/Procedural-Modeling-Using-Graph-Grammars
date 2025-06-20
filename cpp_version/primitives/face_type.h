@@ -23,7 +23,7 @@ public:
 private:
     string material;
     Vec3 normal;
-    Vec3* color;
+    Vec3 color;
     int maxDim;
 
     static int nextId;

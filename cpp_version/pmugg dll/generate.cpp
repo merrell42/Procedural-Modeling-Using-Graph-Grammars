@@ -61,3 +61,7 @@ void setSize(float x, float y, float z) {
 	std::vector<double> extents = {x, y, z};
 	globalSettings["Extents"] = extents;
 }
+
+void destroyMesh(Mesh& mesh) {
+	freeMeshMemory(mesh);
+}

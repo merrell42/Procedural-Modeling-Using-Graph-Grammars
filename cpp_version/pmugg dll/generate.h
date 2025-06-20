@@ -15,4 +15,5 @@ extern "C" {
     GENERATE_API int getNumFaces();
     GENERATE_API Mesh getMesh();
     GENERATE_API void setSize(float x, float y, float z);
+    GENERATE_API void destroyMesh(Mesh& mesh);
 }

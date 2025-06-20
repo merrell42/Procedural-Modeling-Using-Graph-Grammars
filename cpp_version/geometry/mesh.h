@@ -24,3 +24,5 @@ Mesh createMesh(
     vector<int> triangles,
     vector<int> faceIndices
 );
+
+void freeMeshMemory(Mesh& mesh);

@@ -1,9 +1,9 @@
 #include "pch.h"
 #include "memory_counter.h"
 
-// Initialize static map
 std::map<std::string, int> MemoryCounter::creationCounters = {};
 std::map<std::string, int> MemoryCounter::destructionCounters = {};
+int finished = false;
 
 void MemoryCounter::creation(const std::string& key) {
     if (creationCounters.find(key) == creationCounters.end()) {
@@ -13,6 +13,9 @@ void MemoryCounter::creation(const std::string& key) {
 }
 
 void MemoryCounter::destruction(const std::string& key) {
+    if (finished) {
+        return;
+    }
     if (destructionCounters.find(key) == destructionCounters.end()) {
         destructionCounters[key] = 0;
     }
@@ -28,4 +31,5 @@ void MemoryCounter::printStatistics() {
         std::cout << key << " Created: " << creationCount << ", Destroyed: " << destructionCount << ", Leaked: " << leakedCount << std::endl;
     }
     std::cout << "=========================================" << std::endl;
+    finished = true;
 } 

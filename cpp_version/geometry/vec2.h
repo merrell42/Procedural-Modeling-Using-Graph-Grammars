@@ -10,7 +10,8 @@ class Vec3;
 
 class Vec2 {
 public:
-    Vec2(double x = 0, double y = 0);
+    Vec2(const Vec2& newVec2);
+    Vec2(double x = 0, double y = 0, bool track = true);
     ~Vec2() {
         MemoryCounter::destruction("Vec2");
     }

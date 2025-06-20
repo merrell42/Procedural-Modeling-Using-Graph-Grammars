@@ -190,10 +190,10 @@ bool Edge::intersects(Edge* edgeB) {
     return result.has_value();
 }
 
-Vec3* Edge::getDirection() const {
+Vec3 Edge::getDirection() const {
 	Vec3 v1(getHalfEdge(1)->getPosition());
-	auto normal = new Vec3(v1.minus(getHalfEdge(0)->getPosition()));
-	normal->normalize();
+	auto normal(v1.minus(getHalfEdge(0)->getPosition()));
+	normal.normalize();
 	return normal;
 }
 

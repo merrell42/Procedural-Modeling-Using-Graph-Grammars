@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,6 +44,9 @@ namespace Grammar {
 
         [DllImport(pmuggDll, CallingConvention = CallingConvention.Cdecl)]
         private static extern MeshDLL getMesh();
+
+        [DllImport(pmuggDll, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void destroyMesh(ref MeshDLL mesh);
 
         [DllImport(pmuggDll, CallingConvention = CallingConvention.Cdecl)]
         private static extern void initialize(string filePath, StringBuilder result, int len, int seed);
@@ -112,6 +115,8 @@ namespace Grammar {
         }
 
         private void UpdateMesh() {
+            long memoryBefore = GC.GetTotalMemory(false);
+            
             MeshDLL inputMesh = getMesh();
             Mesh outputMesh = new Mesh();
 
@@ -142,6 +147,9 @@ namespace Grammar {
             Marshal.Copy(inputMesh.triangles, triangles, 0, 3 * numTriangles);
             outputMesh.triangles = triangles;
 
+            // Free the C++ memory after copying all data
+            destroyMesh(ref inputMesh);
+
             // outputMesh.RecalculateNormals(); 
             // outputMesh.RecalculateBounds();
 
@@ -156,8 +164,19 @@ namespace Grammar {
                 meshRenderer.material = material;
             }
             
+            // Clean up the old mesh before assigning the new one
+            MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>();
+            if (meshFilter.mesh != null) {
+                // Destroy the old mesh to free memory
+                if (Application.isPlaying) {
+                    Destroy(meshFilter.mesh);
+                } else {
+                    DestroyImmediate(meshFilter.mesh);
+                }
+            }
+            
             // Update the mesh
-            gameObject.GetComponent<MeshFilter>().mesh = outputMesh;
+            meshFilter.mesh = outputMesh;
             Selection.activeGameObject = gameObject;
             
             var creator = FindObjectOfType<GrammarCreator>();
@@ -165,12 +184,21 @@ namespace Grammar {
                 gameObject.transform.parent = creator.transform;
             }
             
-            int[] faceIndices = new int[inputMesh.numFaces];
+            int[] faceIndices = new int[numFaces];
             for (int i = 0; i < numFaces; i++) {
                 faceIndices[i] = inputFaces[i];
             }
             // Call the function to draw lines
             DrawEdgeLines(vertices, faceIndices);
+            
+            long memoryAfter = GC.GetTotalMemory(false);
+            long memoryDelta = memoryAfter - memoryBefore;
+            
+            // Log memory usage if it's significant
+            if (Math.Abs(memoryDelta) > 1024 * 1024) { // More than 1MB change
+                Debug.Log($"UpdateMesh Memory Delta: {memoryDelta / 1024 / 1024} MB (Before: {memoryBefore / 1024 / 1024} MB, After: {memoryAfter / 1024 / 1024} MB)");
+            }
+            Debug.Log($"Memory Usage: {memoryAfter / 1024 / 1024} MB");
         }
         
         private void DrawEdgeLines(Vector3[] vertices, int[] faceIndices) {
@@ -295,6 +323,24 @@ namespace Grammar {
             string stepText = maxIteration > 0 ? $"Step: {iterationCount} / {maxIteration}" : $"Step: {iterationCount}";
             EditorGUILayout.LabelField($"{grammarName}    -     {stepText}");
 
+            // Memory monitoring section
+            EditorGUILayout.Space();
+            EditorGUILayout.LabelField("Memory Monitoring", EditorStyles.boldLabel);
+            
+            // Unity memory info
+            long totalMemory = GC.GetTotalMemory(false);
+            EditorGUILayout.LabelField($"Unity Total Memory: {totalMemory / 1024 / 1024} MB");
+            
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("Force GC")) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                GC.Collect();
+            }
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.Space();
+
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("Seed", GUILayout.Width(50));
             seed = EditorGUILayout.IntField(seed);
@@ -308,7 +354,7 @@ namespace Grammar {
             }
             EditorGUILayout.EndHorizontal();
 
-            if (GUILayout.Button("Load Grammar")) {
+            if (GUILayout.Button("Load Grammar 3")) {
                 string path = EditorUtility.OpenFilePanel("Load Grammar", "", "");
                 if (!string.IsNullOrEmpty(path)) {
                     maxIteration = 0;

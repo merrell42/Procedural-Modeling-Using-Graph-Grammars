@@ -5,11 +5,18 @@
 #include <sstream>
 #include <iomanip>
 
-const Vec2 Vec2::ORIGIN(0, 0);
+const Vec2 Vec2::ORIGIN(0, 0, false);
 
-Vec2::Vec2(double x_, double y_)
-    : x(x_), y(y_) {
+Vec2::Vec2(const Vec2& newVec2)
+    : x(newVec2.x), y(newVec2.y) {
     MemoryCounter::creation("Vec2");
+}
+
+Vec2::Vec2(double x_, double y_, bool track)
+    : x(x_), y(y_) {
+    if (track) {
+        MemoryCounter::creation("Vec2");
+    }
 }
 
 double Vec2::dot(const Vec2& v) const {

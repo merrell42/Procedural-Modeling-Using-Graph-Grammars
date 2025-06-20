@@ -44,7 +44,7 @@ FaceType* FaceType::import(const Json& json) {
     auto* result = new FaceType(material, normal);
     
     if (json["color"] != nullptr) {
-        result->color = new Vec3(Vec3::import(json["color"]));
+        result->color = Vec3::import(json["color"]);
     }
     
     return result;

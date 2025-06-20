@@ -901,7 +901,6 @@ void RuleApplier::reject() {
     propagationOrder.clear();
     basisEdges.clear();
 
-    initialPosition = nullptr;
     effort = numeric_limits<double>::infinity();
 }
 
