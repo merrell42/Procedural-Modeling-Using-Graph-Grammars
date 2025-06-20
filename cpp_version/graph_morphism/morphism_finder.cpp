@@ -50,20 +50,22 @@ Morphism* MorphismFinder::findMorphism(Graph* graphB) {
         return nullptr;
     }
 
-    vector<int> vertexIds;
-    vertexIds.reserve(vertexMap.size());
-    for (const auto& [id, vertex] : vertexMap) {
-        vertexIds.push_back(id);
-    }
-
     int attempts = min(N, vertexAttempts);
     int startIndex = Util::randomInt(N);
 
-    size_t count = 0;
-    int currentIndex = startIndex;
+    vector<int> vertexIds;
+    vertexIds.reserve(attempts);
+    auto it = next(vertexMap.begin(), startIndex);
+    for (int i = 0; i < attempts; i++) {
+        vertexIds.push_back(it->first);
+        ++it;
+        if (it == vertexMap.end()) {
+            it = vertexMap.begin();
+        }
+    }
 
-    while (count < attempts) {
-        int vertexId = vertexIds[currentIndex];
+    for (int i = 0; i < attempts; i++) {
+        int vertexId = vertexIds[i];
         auto* vertexA = model->getCurrent()->getVertex(vertexId);
         
         if (isConnector || vertexA->getType() == vertexType) {
@@ -84,9 +86,6 @@ Morphism* MorphismFinder::findMorphism(Graph* graphB) {
             delete state;
             delete info;
         }
-
-        count++;
-        currentIndex = (currentIndex + 1) % vertexIds.size();
     }
     return nullptr;
 }

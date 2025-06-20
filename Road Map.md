@@ -11,6 +11,8 @@ These are roughly in priority order weighing cost vs benefits.
 * Implement on Unreal Engine, Houdini, and Godot.
 * Display the grammars and example models.
 * Add tests.
+* Add license.
+* Cut holes so they appear in Unity.
 
 ## Long-Term Goals
 
