@@ -60,6 +60,8 @@ namespace Grammar {
         [DllImport(pmuggDll, CallingConvention = CallingConvention.Cdecl)]
         private static extern void setSize(float x, float y, float z);
 
+        private static Material sharedLineMaterial = null;
+
         private void OnEnable() {
             titleContent = new GUIContent("Graph Grammar Generator");
         }
@@ -72,6 +74,14 @@ namespace Grammar {
         private int seed = 0;
         private Vector3 size = new Vector3(30, 20, 10);
         private Vector3 previousSize;
+
+        // Reusable arrays to prevent garbage collection pressure
+        private float[] positionsArray;
+        private float[] normalsArray;
+        private int[] trianglesArray;
+        private int[] faceIndicesArray;
+        private Vector3[] verticesArray;
+        private Vector3[] normalsVectorArray;
 
         private void HandleSizeChange() {
             setSize(size.x, size.y, size.z);
@@ -104,7 +114,6 @@ namespace Grammar {
                     return;
                 }
             }
-
             iterate(1);
             UpdateMesh();
             SceneView.RepaintAll();
@@ -115,8 +124,6 @@ namespace Grammar {
         }
 
         private void UpdateMesh() {
-            long memoryBefore = GC.GetTotalMemory(false);
-            
             MeshDLL inputMesh = getMesh();
             Mesh outputMesh = new Mesh();
 
@@ -125,27 +132,53 @@ namespace Grammar {
             int numFaces = inputMesh.numFaces;
 
             // Marshal the positions array
-            float[] positions = new float[numVertices * 3];
-            Marshal.Copy(inputMesh.positions, positions, 0, numVertices * 3);
-            float[] inputNormals = new float[numVertices * 3];
-            Marshal.Copy(inputMesh.normals, inputNormals, 0, numVertices * 3);
-            int[] inputFaces = new int[numFaces];
-            Marshal.Copy(inputMesh.faceIndices, inputFaces, 0, numFaces);
+            if (positionsArray == null || positionsArray.Length < numVertices * 3) {
+                positionsArray = new float[numVertices * 3];
+            } else {
+                Array.Clear(positionsArray, 0, positionsArray.Length);
+            }
+            Marshal.Copy(inputMesh.positions, positionsArray, 0, numVertices * 3);
+            
+            if (normalsArray == null || normalsArray.Length < numVertices * 3) {
+                normalsArray = new float[numVertices * 3];
+            } else {
+                Array.Clear(normalsArray, 0, normalsArray.Length);
+            }
+            Marshal.Copy(inputMesh.normals, normalsArray, 0, numVertices * 3);
+            
+            if (faceIndicesArray == null || faceIndicesArray.Length < numFaces) {
+                faceIndicesArray = new int[numFaces];
+            } else {
+                Array.Clear(faceIndicesArray, 0, faceIndicesArray.Length);
+            }
+            Marshal.Copy(inputMesh.faceIndices, faceIndicesArray, 0, numFaces);
 
-            Vector3[] vertices = new Vector3[numVertices];
-            Vector3[] normals = new Vector3[numVertices];
+            if (verticesArray == null || verticesArray.Length < numVertices) {
+                verticesArray = new Vector3[numVertices];
+            } else {
+                Array.Clear(verticesArray, 0, verticesArray.Length);
+            }
+            if (normalsVectorArray == null || normalsVectorArray.Length < numVertices) {
+                normalsVectorArray = new Vector3[numVertices];
+            } else {
+                Array.Clear(normalsVectorArray, 0, normalsVectorArray.Length);
+            }
             for (int i = 0; i < numVertices; i++) {
                 // Switch the y and z coordinates.
-                vertices[i] = new Vector3(positions[3 * i], positions[3 * i + 2], positions[3 * i + 1]);
-                normals[i] = new Vector3(inputNormals[3 * i], inputNormals[3 * i + 2], inputNormals[3 * i + 1]);
+                verticesArray[i] = new Vector3(positionsArray[3 * i], positionsArray[3 * i + 2], positionsArray[3 * i + 1]);
+                normalsVectorArray[i] = new Vector3(normalsArray[3 * i], normalsArray[3 * i + 2], normalsArray[3 * i + 1]);
             }
-            outputMesh.vertices = vertices;
-            outputMesh.normals = normals;
+            outputMesh.vertices = verticesArray;
+            outputMesh.normals = normalsVectorArray;
 
             // Marshal the triangles array
-            int[] triangles = new int[3 * numTriangles];
-            Marshal.Copy(inputMesh.triangles, triangles, 0, 3 * numTriangles);
-            outputMesh.triangles = triangles;
+            if (trianglesArray == null || trianglesArray.Length < 3 * numTriangles) {
+                trianglesArray = new int[3 * numTriangles];
+            } else {
+                Array.Clear(trianglesArray, 0, trianglesArray.Length);
+            }
+            Marshal.Copy(inputMesh.triangles, trianglesArray, 0, 3 * numTriangles);
+            outputMesh.triangles = trianglesArray;
 
             // Free the C++ memory after copying all data
             destroyMesh(ref inputMesh);
@@ -165,18 +198,18 @@ namespace Grammar {
             }
             
             // Clean up the old mesh before assigning the new one
-            MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>();
-            if (meshFilter.mesh != null) {
+            MeshFilter existingMeshFilter = gameObject.GetComponent<MeshFilter>();
+            if (existingMeshFilter.sharedMesh != null) {
                 // Destroy the old mesh to free memory
                 if (Application.isPlaying) {
-                    Destroy(meshFilter.mesh);
+                    Destroy(existingMeshFilter.sharedMesh);
                 } else {
-                    DestroyImmediate(meshFilter.mesh);
+                    DestroyImmediate(existingMeshFilter.sharedMesh);
                 }
             }
             
             // Update the mesh
-            meshFilter.mesh = outputMesh;
+            existingMeshFilter.sharedMesh = outputMesh;
             Selection.activeGameObject = gameObject;
             
             var creator = FindObjectOfType<GrammarCreator>();
@@ -186,19 +219,17 @@ namespace Grammar {
             
             int[] faceIndices = new int[numFaces];
             for (int i = 0; i < numFaces; i++) {
-                faceIndices[i] = inputFaces[i];
+                faceIndices[i] = faceIndicesArray[i];
             }
             // Call the function to draw lines
-            DrawEdgeLines(vertices, faceIndices);
+            DrawEdgeLines(verticesArray, faceIndices);
             
-            long memoryAfter = GC.GetTotalMemory(false);
-            long memoryDelta = memoryAfter - memoryBefore;
-            
-            // Log memory usage if it's significant
-            if (Math.Abs(memoryDelta) > 1024 * 1024) { // More than 1MB change
-                Debug.Log($"UpdateMesh Memory Delta: {memoryDelta / 1024 / 1024} MB (Before: {memoryBefore / 1024 / 1024} MB, After: {memoryAfter / 1024 / 1024} MB)");
+            // Force Garbage Collection every 20 iterations to prevent memory buildup.
+            // Not sure how helpful this is.
+            if (iterationCount % 20 == 0) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
             }
-            Debug.Log($"Memory Usage: {memoryAfter / 1024 / 1024} MB");
         }
         
         private void DrawEdgeLines(Vector3[] vertices, int[] faceIndices) {
@@ -238,7 +269,12 @@ namespace Grammar {
             lineObj.transform.parent = parent.transform;
             
             LineRenderer line = lineObj.AddComponent<LineRenderer>();
-            line.material = new Material(Shader.Find("Sprites/Default"));
+            
+            // Use a shared material to prevent memory leaks
+            if (sharedLineMaterial == null) {
+                sharedLineMaterial = new Material(Shader.Find("Sprites/Default"));
+            }
+            line.material = sharedLineMaterial;
             line.startColor = color;
             line.endColor = color;
             line.startWidth = width;
@@ -323,24 +359,6 @@ namespace Grammar {
             string stepText = maxIteration > 0 ? $"Step: {iterationCount} / {maxIteration}" : $"Step: {iterationCount}";
             EditorGUILayout.LabelField($"{grammarName}    -     {stepText}");
 
-            // Memory monitoring section
-            EditorGUILayout.Space();
-            EditorGUILayout.LabelField("Memory Monitoring", EditorStyles.boldLabel);
-            
-            // Unity memory info
-            long totalMemory = GC.GetTotalMemory(false);
-            EditorGUILayout.LabelField($"Unity Total Memory: {totalMemory / 1024 / 1024} MB");
-            
-            EditorGUILayout.BeginHorizontal();
-            if (GUILayout.Button("Force GC")) {
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
-                GC.Collect();
-            }
-            EditorGUILayout.EndHorizontal();
-
-            EditorGUILayout.Space();
-
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("Seed", GUILayout.Width(50));
             seed = EditorGUILayout.IntField(seed);
@@ -354,7 +372,7 @@ namespace Grammar {
             }
             EditorGUILayout.EndHorizontal();
 
-            if (GUILayout.Button("Load Grammar 3")) {
+            if (GUILayout.Button("Load Grammar")) {
                 string path = EditorUtility.OpenFilePanel("Load Grammar", "", "");
                 if (!string.IsNullOrEmpty(path)) {
                     maxIteration = 0;
