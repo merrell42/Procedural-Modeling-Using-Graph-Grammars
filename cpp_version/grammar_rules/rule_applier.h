@@ -33,7 +33,8 @@ struct Limits {
 
 class RuleApplier {
 public:
-    RuleApplier() = default;
+    RuleApplier();
+    ~RuleApplier();
 
     // Constants
     static constexpr double MAX_ANGLE_DIFFERENCE = (double)(45.0f / 180.0f * M_PI);

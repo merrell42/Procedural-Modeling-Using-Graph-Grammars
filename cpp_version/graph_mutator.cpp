@@ -51,6 +51,7 @@ bool GraphMutator::applyProduction(Production production) {
     timer->stop("Build Normally");
 
     if (!transistor) {
+        delete morphism;
         return false;
     }
 
@@ -64,6 +65,7 @@ bool GraphMutator::applyProduction(Production production) {
         timer->stop("Transistor Solve");
 
         if (success) {
+            delete morphism;
             return true;
         }
 
@@ -74,6 +76,7 @@ bool GraphMutator::applyProduction(Production production) {
     }
 
     transistor->reject();
+    delete morphism;
     return false;
 }
 

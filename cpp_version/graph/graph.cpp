@@ -10,7 +10,13 @@
 
 int Graph::nextId = 0;
 
-Graph::Graph() : id(nextId++) {}
+Graph::Graph() : id(nextId++) {
+    MemoryCounter::creation("Graph");
+}
+
+Graph::~Graph() {
+    MemoryCounter::destruction("Graph");
+}
 
 void Graph::addVertex(GraphVertex* vertex) {
     vertices.push_back(vertex);

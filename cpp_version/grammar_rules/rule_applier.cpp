@@ -11,6 +11,18 @@
 #include <set>
 #include <utility>
 
+RuleApplier::RuleApplier() {
+    MemoryCounter::creation("RuleApplier");
+}
+
+RuleApplier::~RuleApplier() {
+    MemoryCounter::destruction("RuleApplier");
+    for (auto* openPath : openPaths) {
+        delete openPath;
+    }
+    openPaths.clear();
+}
+
 unique_ptr<RuleApplier> RuleApplier::buildNormally(
     const Production& production, Model* model, int dims) {
     
@@ -786,10 +798,12 @@ void RuleApplier::freeOneVertex(Vertex* vertex) {
             if (*path0 == *path1) {
                 // Same path
                 (*path0)->halfEdges.clear();
+                delete* path0;
                 Util::remove(openPaths, *path0);
             } else {
                 // Different paths
                 (*path1)->merge(*path0);
+                delete* path0;
                 Util::remove(openPaths, *path0);
             }
         } else if (path0 != openPaths.end()) {

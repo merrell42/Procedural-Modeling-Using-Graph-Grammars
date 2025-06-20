@@ -8,7 +8,12 @@
 #include "../util/util.h"
 
 MorphismState::MorphismState(MorphismInfo* info) : info(info) {
+    MemoryCounter::creation("MorphismState");
     morphism = Morphism::create(*info);
+}
+
+MorphismState::~MorphismState() {
+    MemoryCounter::destruction("MorphismState");
 }
 
 void MorphismState::setQueue(const vector<HalfEdgeData>& newQueue) {

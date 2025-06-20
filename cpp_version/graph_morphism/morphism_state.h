@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <memory>
+#include "../memory_counter.h"
 
 using namespace std;
 
@@ -20,7 +21,7 @@ struct HalfEdgeData {
 class MorphismState {
 public:
     explicit MorphismState(MorphismInfo* info);
-    ~MorphismState() = default;
+    ~MorphismState();
 
     MorphismInfo* getInfo() const;
     Morphism* getMorphism();

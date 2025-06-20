@@ -1,13 +1,15 @@
 #pragma once
 #include <vector>
 #include <memory>
+#include "../memory_counter.h"
 
 using namespace std;
 
 class Matrix {
 public:
+    Matrix(const Matrix& newMatrix);
     Matrix(const vector<vector<double>>& data);
-    ~Matrix() = default;
+    ~Matrix();
     static Matrix* zeros(int size0, int size1);
 
     const vector<vector<double>>& valueOf() const { return data; }

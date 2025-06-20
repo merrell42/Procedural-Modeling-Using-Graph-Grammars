@@ -21,7 +21,7 @@ struct DrawOptions;
 class Graph {
 public:
     Graph();
-    ~Graph() = default;
+    ~Graph();
     // Import a graph from a JSON object.
     static Graph* import(const Json& json, Primitives* shape = nullptr);
 

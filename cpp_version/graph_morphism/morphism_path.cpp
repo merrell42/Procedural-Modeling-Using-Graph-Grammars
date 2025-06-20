@@ -32,6 +32,11 @@ MorphismPath::MorphismPath(const vector<IndexInfo>& indices,
     , edges(edges)
     , extendable{true, true}
     , id(count++) {
+    MemoryCounter::creation("MorphismPath");
+}
+
+MorphismPath::~MorphismPath() {
+    MemoryCounter::destruction("MorphismPath");
 }
 
 void MorphismPath::setHalfEdges(const vector<HalfEdge*>& halfEdges) {

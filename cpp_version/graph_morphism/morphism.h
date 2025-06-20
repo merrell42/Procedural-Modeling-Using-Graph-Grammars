@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <memory>
+#include "../memory_counter.h"
 #include "morphism_info.h"
 
 class Graph;
@@ -9,7 +10,7 @@ class Edge;
 class Morphism {
 public:
     Morphism();
-    ~Morphism() = default;
+    ~Morphism();
     static Morphism* create(const MorphismInfo& info);
 
     const vector<Vertex*>& getVertexBtoA() const;

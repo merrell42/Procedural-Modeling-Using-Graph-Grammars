@@ -4,7 +4,13 @@
 #include "../util/util.h"
 #include "morphism_info.h"
 
-Morphism::Morphism() {}
+Morphism::Morphism() {
+    MemoryCounter::creation("Morphism");
+}
+
+Morphism::~Morphism() {
+    MemoryCounter::destruction("Morphism");
+}
 
 Morphism* Morphism::create(const MorphismInfo& info) {
     auto morphism = new Morphism();

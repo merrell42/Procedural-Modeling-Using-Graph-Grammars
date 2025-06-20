@@ -24,6 +24,7 @@ public:
         MemoryCounter::creation("VertexPlacement");
     }
     ~VertexPlacement() {
+        delete M;
         MemoryCounter::destruction("VertexPlacement");
     }
 

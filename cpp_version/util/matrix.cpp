@@ -3,15 +3,24 @@
 #include <stdexcept>
 #include <cmath>
 
+Matrix::Matrix(const Matrix& newMatrix)
+    : data(newMatrix.data), size(newMatrix.size) {
+    MemoryCounter::creation("Matrix");
+}
+
 Matrix::Matrix(const vector<vector<double>>& d)
     : data(d) {
+    MemoryCounter::creation("Matrix");
     size = {static_cast<int>(data.size()),
             static_cast<int>(data.empty() ? 0 : data[0].size())};
 }
 
+Matrix::~Matrix() {
+    MemoryCounter::destruction("Matrix");
+}
+
 Matrix* Matrix::zeros(int size0, int size1) {
-    return new Matrix(vector<vector<double>>(size0,
-                                                 vector<double>(size1, 0.0)));
+    return new Matrix(vector<vector<double>>(size0, vector<double>(size1, 0.0)));
 }
 
 Matrix* Matrix::multiply(const Matrix* A, const Matrix* B) {

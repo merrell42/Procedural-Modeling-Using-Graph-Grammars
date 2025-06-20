@@ -18,9 +18,9 @@ using namespace std;
 using Json = nlohmann::json;
 
 int main() {
-	string filePath = "../../grammar data/2D Basic Shapes/square filled.json";
+	// string filePath = "../../grammar data/2D Basic Shapes/square filled.json";
 	// string filePath = "../../grammar data/3D Shapes/box-grounded.json";
-	// string filePath = "../../grammar data/2D Branches/A.json";
+	string filePath = "../../grammar data/2D Branches/A.json";
 	resetRandom(2);
 
 	try {
@@ -29,7 +29,7 @@ int main() {
 		auto hierarchy = GraphGrammar::import(parsed);
 		auto model = new Model();
 		auto mutator = new Mutator(model, new GraphMutator(hierarchy, model));
-		mutator->iterate(1000);
+		mutator->iterate(100);
 		model->reset();
 	} catch (const exception& e) {
 	 	cout << "Error: " << e.what() << endl;
