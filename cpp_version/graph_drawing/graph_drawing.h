@@ -21,7 +21,8 @@ class BspNode;
 class GraphDrawing {
 	public:
 		GraphDrawing() { bspRootId = -1; }
-		void copy();
+		~GraphDrawing();
+		void copyToCurrent();
 
 		// Get various objects from an ID.
 		HalfEdge* getHalfEdge(int id) { return halfEdgeMap[id]; }
@@ -64,7 +65,9 @@ class GraphDrawing {
 		void bspRemoveEdge(Edge* edge);
 		bool bspAddFace(Face* face);
 		void bspRemoveFace(Face* face);
-		void setBspRootId(int id) { bspRootId = id; }
+		void setBspRootId(int id) {
+			bspRootId = id;
+		}
 		int getBspRootId() { return bspRootId; }
 
 	private:

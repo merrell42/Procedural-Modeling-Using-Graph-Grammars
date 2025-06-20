@@ -3,6 +3,7 @@
 #include "../geometry/plane.h"
 #include "../primitives/face_type.h"
 #include "../util/range.h"
+#include "../memory_counter.h"
 
 class Model;
 class HalfEdge;

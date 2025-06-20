@@ -9,8 +9,8 @@ Model::Model() {
 }
 
 void Model::reset() {
-	delete current;
 	delete prev;
+	delete current;
 	current = new GraphDrawing();
 	prev = new GraphDrawing();
 	numSteps = 0;
@@ -18,16 +18,20 @@ void Model::reset() {
 }
 
 void Model::accept() {
+	GraphDrawing* temp = prev;
 	prev = current;
-	current = new GraphDrawing();
-	// The values are copied into current through the constructor of each item.
-	prev->copy();
-	current->setBspRootId(prev->getBspRootId());
+	copyToCurrent();
+	delete temp;
 }
 
 void Model::reject() {
+	delete current;
+	copyToCurrent();
+}
+
+void Model::copyToCurrent() {
 	current = new GraphDrawing();
-	prev->copy();
+	prev->copyToCurrent();
 	current->setBspRootId(prev->getBspRootId());
 }
 

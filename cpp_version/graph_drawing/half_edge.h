@@ -1,5 +1,6 @@
 #pragma once
 #include "model.h"
+#include "../memory_counter.h"
 #include "vertex.h"
 #include "face.h"
 #include "edge.h"
@@ -16,6 +17,7 @@ class HalfEdge {
 public:
 	HalfEdge(Model* model, int id, bool isAtStart, EdgeType*, Vec3 dir, int vertexId, int faceId, int edgeId, bool createFace, int faceIndex);
 	HalfEdge* copy();
+	~HalfEdge();
 
 	bool getIsAtStart() const;
 	int getId() const;

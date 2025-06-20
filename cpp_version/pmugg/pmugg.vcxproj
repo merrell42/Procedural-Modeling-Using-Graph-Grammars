@@ -163,6 +163,7 @@
     <ClCompile Include="..\json versioning\json_migrations.cpp" />
     <ClCompile Include="..\json versioning\json_version_manager.cpp" />
     <ClCompile Include="..\json versioning\read_json_file.cpp" />
+    <ClCompile Include="..\memory_counter.cpp" />
     <ClCompile Include="..\mutator.cpp" />
     <ClCompile Include="..\placements\edge_placement.cpp" />
     <ClCompile Include="..\placements\face_placement.cpp" />
@@ -212,6 +213,7 @@
     <ClInclude Include="..\json versioning\json_migrations.h" />
     <ClInclude Include="..\json versioning\json_version_manager.h" />
     <ClInclude Include="..\json versioning\read_json_file.h" />
+    <ClInclude Include="..\memory_counter.h" />
     <ClInclude Include="..\mutator.h" />
     <ClInclude Include="..\placements\edge_placement.h" />
     <ClInclude Include="..\placements\face_placement.h" />

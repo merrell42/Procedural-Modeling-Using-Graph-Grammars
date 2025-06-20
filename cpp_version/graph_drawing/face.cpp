@@ -17,6 +17,7 @@ Face::Face(Model* model, int id, FaceType* faceType, vector<int> halfEdgeIds, bo
     , bspNodeIds(bspNodeIds)
     , groupId(groupId)
     , hole(hole) {
+    MemoryCounter::faceCreated++;
     model->getCurrent()->addFace(id, this);
 }
 
@@ -29,16 +30,12 @@ Face::Face(Model* model, int id, FaceType* faceType, vector<int> halfEdgeIds, ve
     , looped(false)
     , groupId(-1)
     , hole(false) {
+    MemoryCounter::faceCreated++;
     model->getCurrent()->addFace(id, this);
 }
 
 Face::~Face() {
-    auto group = getGroup();
-    if (group) {
-        group->removeFace(this);
-        group->destroyIfEmpty();
-    }
-    removeFromBsp();
+    MemoryCounter::faceDestroyed++;
 }
 
 Face* Face::copy() {
@@ -48,6 +45,12 @@ Face* Face::copy() {
 
 void Face::destroy() {
 	model->getCurrent()->removeFace(this);
+    auto group = getGroup();
+    if (group) {
+        group->removeFace(this);
+        group->destroyIfEmpty();
+    }
+    removeFromBsp();
 	delete this;
 };
 
@@ -92,7 +95,7 @@ void Face::append(Face* faceB) {
     }
     // Destroy faceB.
     model->getCurrent()->removeFace(faceB);
-    delete faceB;
+    faceB->destroy();
 }
 
 vector<Vec3> Face::getPositions() const {

@@ -7,6 +7,7 @@ Vertex::Vertex(Model* model, int id, Vec3 position, VertexType* type, vector<int
 	, halfEdgeIds(halfEdgeIds)
 	, position(position)
 	, type(type) {
+	MemoryCounter::vertexCreated++;
 	model->getCurrent()->addVertex(id, this);
 }
 
@@ -15,7 +16,12 @@ Vertex::Vertex(Model* model, Vec3 position, VertexType* type)
 	, id(model->newId())
 	, position(position)
 	, type(type) {
+	MemoryCounter::vertexCreated++;
 	model->getCurrent()->addVertex(id, this);
+}
+
+Vertex::~Vertex() {
+	MemoryCounter::vertexDestroyed++;
 }
 
 void Vertex::createHalfEdges() {

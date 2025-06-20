@@ -11,6 +11,7 @@ HalfEdge::HalfEdge(Model* model, int id, bool isAtStart, EdgeType* edgeType, Vec
     , faceIndex(faceIndex)
 	, faceId(faceId_)
 	, edgeId(edgeId) {
+    MemoryCounter::halfEdgeCreated++;
     model->getCurrent()->addHalfEdge(id, this);
 
     faceTypeCached = nullptr;
@@ -23,6 +24,10 @@ HalfEdge::HalfEdge(Model* model, int id, bool isAtStart, EdgeType* edgeType, Vec
         auto face = new Face(model, faceId, faceType, halfEdgeIds, bspNodeIds);
         face->createGroup();
     }
+}
+
+HalfEdge::~HalfEdge() {
+	MemoryCounter::halfEdgeDestroyed++;
 }
 
 FaceType* HalfEdge::getFaceType() {

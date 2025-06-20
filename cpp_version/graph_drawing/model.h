@@ -25,4 +25,6 @@ class Model {
 		GraphDrawing* current;
 		GraphDrawing* prev;
 		int idCounter;
+
+		void copyToCurrent();
 };

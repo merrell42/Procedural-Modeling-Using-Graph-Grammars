@@ -161,10 +161,14 @@ void BspNode::deleteIfEmpty() {
             current->setBspRootId(childId);
         } else {
             auto parent = current->getBspNode(parentId);
-            if (parent->aboveId == id) {
-                parent->aboveId = childId;
-            } else if (parent->belowId == id) {
-                parent->belowId = childId;
+
+            if (parent) {
+                if (parent->aboveId == id) {
+                    parent->aboveId = childId;
+                }
+                else if (parent->belowId == id) {
+                    parent->belowId = childId;
+                }
             }
         }
         delete this;

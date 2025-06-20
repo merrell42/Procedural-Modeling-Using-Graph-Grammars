@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include <vector>
 #include "model.h"
+#include "../memory_counter.h"
 #include "half_edge.h"
 #include "../primitives/vertex_type.h"
 #include "../primitives/edge_type.h"

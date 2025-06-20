@@ -1,5 +1,6 @@
 #pragma once
 #include "model.h"
+#include "../memory_counter.h"
 #include "../geometry/vec3.h"
 #include "../primitives/vertex_type.h"
 #include "half_edge.h"
@@ -12,6 +13,7 @@ class Vertex {
 	public:
 		Vertex(Model* model, int id, Vec3 position, VertexType* type, vector<int> halfEdgeIds);
 		Vertex(Model* model, Vec3 position, VertexType* type);
+		~Vertex();
 		vector<HalfEdge*> getHalfEdges() const;
 		int getId() const;
 		HalfEdge* getHalfEdge(int index) const;

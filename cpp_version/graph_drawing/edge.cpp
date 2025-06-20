@@ -16,11 +16,12 @@ Edge::Edge(Model* model, int id, EdgeType* type, vector<int> halfEdgeIds, vector
 	, id(id)
 	, halfEdgeIds(halfEdgeIds)
 	, bspNodeIds(bspNodeIds) {
+	MemoryCounter::edgeCreated++;
 	model->getCurrent()->addEdge(id, this);
 }
 
 Edge::~Edge() {
-	removeFromBsp();
+	MemoryCounter::edgeDestroyed++;
 }
 
 // A static list of vertex types that are created when splitting an edge.
@@ -59,6 +60,7 @@ void Edge::setHalfEdgeIds(const vector<int>& ids) {
 
 void Edge::destroy() {
 	model->getCurrent()->removeEdge(this);
+	removeFromBsp();
 	delete this;
 }
 

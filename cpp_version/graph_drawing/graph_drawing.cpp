@@ -4,7 +4,7 @@
 
 // This copies each item into the current model.
 // Each item is copied in the constructor of each item.
-void GraphDrawing::copy() {
+void GraphDrawing::copyToCurrent() {
 	for (const auto& [id, ptr] : halfEdgeMap) {
 		ptr && ptr->copy();
 	}
@@ -22,6 +22,27 @@ void GraphDrawing::copy() {
 	}
 	for (const auto& [id, ptr] : faceGroupMap) {
 		ptr && ptr->copy();
+	}
+}
+
+GraphDrawing::~GraphDrawing() {
+	for (const auto& [id, ptr] : halfEdgeMap) {
+		delete ptr;
+	}
+	for (const auto& [id, ptr] : faceMap) {
+		delete ptr;
+	}
+	for (const auto& [id, ptr] : edgeMap) {
+		delete ptr;
+	}
+	for (const auto& [id, ptr] : vertexMap) {
+		delete ptr;
+	}
+	for (const auto& [id, ptr] : bspNodeMap) {
+		delete ptr;
+	}
+	for (const auto& [id, ptr] : faceGroupMap) {
+		delete ptr;
 	}
 }
 
