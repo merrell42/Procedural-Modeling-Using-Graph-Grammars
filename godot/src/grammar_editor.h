@@ -15,6 +15,7 @@
 #include <godot_cpp/classes/dir_access.hpp>
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
+#include <godot_cpp/classes/timer.hpp>
 
 // Include the DLL header directly
 #include "../cpp_version/pmugg dll/generate.h"
@@ -29,10 +30,16 @@ private:
 	
 	// UI elements
 	Button* load_grammar_button;
-	Button* step_button_ref;
+	Button* reset_button;
+	Button* step_button;
+	Button* play_button;
 	Label* selected_file_label;
 	FileDialog* file_dialog;
 	String selected_file_path;
+	
+	// Animation state
+	bool is_playing;
+	Timer* animation_timer;
 
 protected:
 	static void _bind_methods();
@@ -51,7 +58,10 @@ public:
 	// Event handlers
 	void on_load_grammar_pressed();
 	void on_file_selected(String path);
+	void on_reset_pressed();
 	void on_step_pressed();
+	void on_play_pressed();
+	void on_animation_timer_timeout();
 
 	void update_mesh();
 	MeshInstance3D* find_generated_mesh();

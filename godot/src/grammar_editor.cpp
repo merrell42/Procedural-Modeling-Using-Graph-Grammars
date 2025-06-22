@@ -14,16 +14,22 @@ void GrammarEditor::_bind_methods() {
     ClassDB::bind_method(D_METHOD("on_load_grammar_pressed"), &GrammarEditor::on_load_grammar_pressed);
     ClassDB::bind_method(D_METHOD("on_file_selected"), &GrammarEditor::on_file_selected);
     ClassDB::bind_method(D_METHOD("on_step_pressed"), &GrammarEditor::on_step_pressed);
+    ClassDB::bind_method(D_METHOD("on_reset_pressed"), &GrammarEditor::on_reset_pressed);
+    ClassDB::bind_method(D_METHOD("on_play_pressed"), &GrammarEditor::on_play_pressed);
+    ClassDB::bind_method(D_METHOD("on_animation_timer_timeout"), &GrammarEditor::on_animation_timer_timeout);
 }
 
 GrammarEditor::GrammarEditor() {
     mesh_instance = nullptr;
 
     load_grammar_button = nullptr;
-    step_button_ref = nullptr;
+    step_button = nullptr;
     selected_file_label = nullptr;
     file_dialog = nullptr;
     selected_file_path = "";
+    
+    is_playing = false;
+    animation_timer = nullptr;
 }
 
 GrammarEditor::~GrammarEditor() {}
@@ -43,8 +49,6 @@ void GrammarEditor::_enter_tree() {
 }
 
 void GrammarEditor::_exit_tree() {
-    UtilityFunctions::print("Grammar Editor Plugin deactivated!");
-    
     // Clean up mesh instance if it exists
     if (mesh_instance && mesh_instance->is_inside_tree()) {
         mesh_instance->queue_free();
@@ -122,14 +126,29 @@ void GrammarEditor::setup_ui(Control* parent) {
 	gen_section->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	vbox->add_child(gen_section);
 	
+	// Play button
+	play_button = memnew(Button);
+	play_button->set_text("Play");
+	play_button->set_disabled(true);
+	play_button->connect("pressed", Callable(this, "on_play_pressed"));
+	play_button->set_h_size_flags(Control::SIZE_EXPAND_FILL);
+	gen_section->add_child(play_button);
+	
+	// Reset button
+	reset_button = memnew(Button);
+	reset_button->set_text("Reset");
+	reset_button->set_disabled(true);
+	reset_button->connect("pressed", Callable(this, "on_reset_pressed"));
+	reset_button->set_h_size_flags(Control::SIZE_EXPAND_FILL);
+	gen_section->add_child(reset_button);
+	
 	// Step button
-	Button* step_button = memnew(Button);
+	step_button = memnew(Button);
 	step_button->set_text("Step");
 	step_button->set_disabled(true);
 	step_button->connect("pressed", Callable(this, "on_step_pressed"));
 	step_button->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	gen_section->add_child(step_button);
-	step_button_ref = step_button;
 }
 
 void GrammarEditor::setup_file_dialog(Control* parent) {
@@ -153,12 +172,11 @@ void GrammarEditor::setup_file_dialog(Control* parent) {
 }
 
 void GrammarEditor::on_load_grammar_pressed() {
-	UtilityFunctions::print("Opening file browser...");
 	file_dialog->popup_centered(Vector2i(800, 600));
 }
 
 void GrammarEditor::on_file_selected(String path) {
-	UtilityFunctions::print("Selected grammar file: ", path);
+	UtilityFunctions::print("Loading file: ", path);
 	
 	// Update UI
 	selected_file_label->set_text(path.get_file());
@@ -173,8 +191,11 @@ void GrammarEditor::on_file_selected(String path) {
 		char result[1024];
 		initialize(path_cstr, result, sizeof(result), 0);
 		UtilityFunctions::print(result);
+
         // Enable the buttons.
-	    step_button_ref->set_disabled(false);
+	    step_button->set_disabled(false);
+	    reset_button->set_disabled(false);
+	    play_button->set_disabled(false);
 	} else {
 		UtilityFunctions::print("No editor interface available");
 	}
@@ -189,19 +210,62 @@ void GrammarEditor::on_step_pressed() {
 	update_mesh();
 }
 
-void GrammarEditor::update_mesh() {
-	UtilityFunctions::print("Updating mesh...");
+void GrammarEditor::on_reset_pressed() {
+	if (selected_file_path.is_empty()) {
+		UtilityFunctions::print("No file selected!");
+		return;
+	}
+	reset(0);
+	update_mesh();
+}
+
+void GrammarEditor::on_play_pressed() {
+	if (selected_file_path.is_empty()) {
+		UtilityFunctions::print("No file selected!");
+		return;
+	}
 	
-	// Get current mesh info
+	if (!is_playing) {
+		// Start playing
+		is_playing = true;
+		play_button->set_text("Stop");
+		
+		// Create timer if it doesn't exist
+		if (!animation_timer) {
+			animation_timer = memnew(Timer);
+			animation_timer->set_wait_time(0.001); // Run as fast as possible
+			animation_timer->connect("timeout", Callable(this, "on_animation_timer_timeout"));
+			add_child(animation_timer);
+		}
+		
+		animation_timer->start();
+	} else {
+		// Stop playing
+		is_playing = false;
+		play_button->set_text("Play");
+		
+		if (animation_timer) {
+			animation_timer->stop();
+		}
+	}
+}
+
+void GrammarEditor::on_animation_timer_timeout() {
+	if (is_playing) {
+		iterate(1);
+		update_mesh();
+	}
+}
+
+void GrammarEditor::update_mesh() {
 	MeshCpp mesh = getMesh();
 	
-	// Get current scene
+	// Get current scene.
 	EditorInterface* editor_interface = EditorInterface::get_singleton();
 	if (!editor_interface) {
 		UtilityFunctions::print("No editor interface available");
 		return;
 	}
-	
 	Node* current_scene = editor_interface->get_edited_scene_root();
 	if (!current_scene) {
 		UtilityFunctions::print("No active scene - mesh updated but not added to scene tree");
@@ -217,7 +281,7 @@ void GrammarEditor::update_mesh() {
 		return;
 	}
 	
-	// Find existing mesh instance or create new one.
+	// Find existing mesh instance or create a new one.
 	MeshInstance3D* mesh_instance = find_generated_mesh();
 	if (!mesh_instance) {
 		mesh_instance = memnew(MeshInstance3D);
@@ -225,49 +289,39 @@ void GrammarEditor::update_mesh() {
 		current_scene->add_child(mesh_instance);
 		mesh_instance->set_owner(current_scene);
 	}
-	
-	// Create ArrayMesh with current PMUGG data
-	Ref<ArrayMesh> array_mesh = memnew(ArrayMesh);
-	Array arrays;
-	arrays.resize(Mesh::ARRAY_MAX);
-	
-	// Use real PMUGG mesh data
+
 	PackedVector3Array vertices;
 	PackedInt32Array indices;
 	PackedVector3Array normals;
-	
-	// Convert PMUGG positions to Godot vertices (switch Y and Z like Unity does)
+
+	// Switch Y and Z coordinates.
 	vertices.resize(mesh.numVertices);
 	for (int i = 0; i < mesh.numVertices; i++) {
-		// Switch Y and Z coordinates like Unity does
 		vertices[i] = Vector3(mesh.positions[i * 3], mesh.positions[i * 3 + 2], mesh.positions[i * 3 + 1]);
 	}
-	
-	// Convert PMUGG normals to Godot normals (switch Y and Z like Unity does)
 	normals.resize(mesh.numVertices);
 	for (int i = 0; i < mesh.numVertices; i++) {
-		// Switch Y and Z coordinates like Unity does
 		normals[i] = Vector3(mesh.normals[i * 3], mesh.normals[i * 3 + 2], mesh.normals[i * 3 + 1]);
 	}
-	
-	// Convert PMUGG triangles to Godot indices
+
 	indices.resize(mesh.numTriangles * 3);
 	for (int i = 0; i < mesh.numTriangles; i++) {
-		// Reverse winding order for each triangle (swap indices 1 and 2)
-		indices[i * 3] = mesh.triangles[i * 3];     // Keep first vertex
-		indices[i * 3 + 1] = mesh.triangles[i * 3 + 2]; // Swap second and third
-		indices[i * 3 + 2] = mesh.triangles[i * 3 + 1]; // Swap second and third
+		// Reverse the orientation for each triangle.
+		indices[i * 3] = mesh.triangles[i * 3];
+		indices[i * 3 + 1] = mesh.triangles[i * 3 + 2];
+		indices[i * 3 + 2] = mesh.triangles[i * 3 + 1];
 	}
 	
+	// Create the mesh surface.
+	Array arrays;
+	arrays.resize(Mesh::ARRAY_MAX);
 	arrays[Mesh::ARRAY_VERTEX] = vertices;
 	arrays[Mesh::ARRAY_INDEX] = indices;
 	arrays[Mesh::ARRAY_NORMAL] = normals;
-	
-	// Create the mesh surface
+
+	Ref<ArrayMesh> array_mesh = memnew(ArrayMesh);
 	array_mesh->add_surface_from_arrays(Mesh::PRIMITIVE_TRIANGLES, arrays);
 	mesh_instance->set_mesh(array_mesh);
-	
-	UtilityFunctions::print("Mesh updated successfully!");
 }
 
 MeshInstance3D* GrammarEditor::find_generated_mesh() {
@@ -275,7 +329,6 @@ MeshInstance3D* GrammarEditor::find_generated_mesh() {
 	if (!current_scene) {
 		return nullptr;
 	}
-
 	for (int i = 0; i < current_scene->get_child_count(); i++) {
 		Node* child = current_scene->get_child(i);
 		if (child->get_class() == "MeshInstance3D" && child->get_name().begins_with("Generated Mesh")) {
