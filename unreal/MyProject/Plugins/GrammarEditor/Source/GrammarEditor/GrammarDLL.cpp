@@ -101,7 +101,18 @@ void FGrammarDLL::Step() {
         return;
     }
     Iterate(1);
-    UpdateMeshProcedural();
+    UpdateMesh();
+}
+
+void FGrammarDLL::Reset(int Seed) {
+    if (!bIsLoaded || ResetFunction == nullptr) {
+        UE_LOG(LogTemp, Error, TEXT("DLL is not loaded or reset function not found!"));
+        return;
+    }
+    
+    UE_LOG(LogTemp, Log, TEXT("Resetting grammar with seed: %d"), Seed);
+    ResetFunction(Seed);
+    UpdateMesh();
 }
 
 void FGrammarDLL::UpdateMesh() {
@@ -125,146 +136,11 @@ void FGrammarDLL::UpdateMesh() {
         return;
     }
     
-    // Find and destroy existing mesh actor
-    int32 FoundActors = 0;
-    for (TActorIterator<AStaticMeshActor> ActorItr(World); ActorItr; ++ActorItr) {
-        if (ActorItr->GetActorLabel() == TEXT("GeneratedMesh")) {
-            World->DestroyActor(*ActorItr);
-            FoundActors++;
-        }
-    }
-    
-    // Create new mesh actor
-    AStaticMeshActor* MeshActor = World->SpawnActor<AStaticMeshActor>();
-    MeshActor->SetActorLabel(TEXT("GeneratedMesh"));
-    
-    // Create static mesh
-    UStaticMesh* StaticMesh = NewObject<UStaticMesh>();
-    StaticMesh->SetFlags(RF_Public | RF_Standalone);
-    
-    // Create mesh description
-    FStaticMeshSourceModel& SourceModel = StaticMesh->AddSourceModel();
-    FMeshDescription* MeshDescription = StaticMesh->CreateMeshDescription(0);
-    
-    // Build mesh data
-    FStaticMeshAttributes Attributes(*MeshDescription);
-    Attributes.Register();
-    
-    TVertexAttributesRef<FVector3f> VertexPositions = Attributes.GetVertexPositions();
-    TVertexInstanceAttributesRef<FVector2f> VertexInstanceUVs = Attributes.GetVertexInstanceUVs();
-    
-    // Create polygon group for the mesh
-    FPolygonGroupID PolygonGroupID = MeshDescription->CreatePolygonGroup();
-    
-    // Add vertices (convert Y and Z coordinates like Unity/Godot)
-    TArray<FVertexID> VertexIDs;
-    VertexIDs.Reserve(meshData.numVertices);
-    
-    for (int32 i = 0; i < meshData.numVertices; i++) {
-        FVertexID VertexID = MeshDescription->CreateVertex();
-        VertexIDs.Add(VertexID);
-        
-        FVector3f Position(
-            meshData.positions[i * 3] * 100.0f,
-            meshData.positions[i * 3 + 1] * 100.0f,
-            meshData.positions[i * 3 + 2] * 100.0f + 100.0f
-        );
-        VertexPositions[VertexID] = Position;
-    }
-    
-    // Add triangles
-    for (int32 i = 0; i < meshData.numTriangles; i++) {
-        // Reverse the orientation of the triangles.
-        int32 i0 = meshData.triangles[i * 3];
-        int32 i1 = meshData.triangles[i * 3 + 2];
-        int32 i2 = meshData.triangles[i * 3 + 1];
-        
-        // Validate indices
-        if (i0 >= meshData.numVertices || i1 >= meshData.numVertices || i2 >= meshData.numVertices) {
-            continue;
-        }
-        
-        // Create vertex instances for this triangle
-        TArray<FVertexInstanceID> VertexInstanceIDs;
-        VertexInstanceIDs.Reserve(3);
-        
-        // Create vertex instances (reverse winding order for Unreal)
-        FVertexInstanceID Instance0 = MeshDescription->CreateVertexInstance(VertexIDs[i0]);
-        FVertexInstanceID Instance1 = MeshDescription->CreateVertexInstance(VertexIDs[i2]);
-        FVertexInstanceID Instance2 = MeshDescription->CreateVertexInstance(VertexIDs[i1]);
-        
-        VertexInstanceIDs.Add(Instance0);
-        VertexInstanceIDs.Add(Instance1);
-        VertexInstanceIDs.Add(Instance2);
-        
-        // Set UV coordinates for vertex instances
-        VertexInstanceUVs[Instance0] = FVector2f(0.0f, 0.0f);
-        VertexInstanceUVs[Instance1] = FVector2f(1.0f, 0.0f);
-        VertexInstanceUVs[Instance2] = FVector2f(0.0f, 1.0f);
-        
-        // Create polygon using vertex instances (let Unreal calculate normals)
-        MeshDescription->CreatePolygon(PolygonGroupID, VertexInstanceIDs);
-    }
-    
-    // Commit mesh description
-    StaticMesh->CommitMeshDescription(0);
-    
-    // Build the static mesh
-    StaticMesh->Build(false);
-    
-    // Set the mesh on the actor
-    if (UStaticMeshComponent* MeshComponent = MeshActor->GetStaticMeshComponent()) {
-        MeshComponent->SetStaticMesh(StaticMesh);
-        
-        // Set a basic material
-        UMaterial* DefaultMaterial = LoadObject<UMaterial>(nullptr, TEXT("/Engine/BasicShapes/BasicShapeMaterial"));
-        if (DefaultMaterial) {
-            MeshComponent->SetMaterial(0, DefaultMaterial);
-        }
-    }
-    
-    // Clean up DLL memory
-    DestroyMesh(meshData);
-}
-
-void FGrammarDLL::Reset(int Seed) {
-    if (!bIsLoaded || ResetFunction == nullptr) {
-        UE_LOG(LogTemp, Error, TEXT("DLL is not loaded or reset function not found!"));
-        return;
-    }
-    
-    UE_LOG(LogTemp, Log, TEXT("Resetting grammar with seed: %d"), Seed);
-    ResetFunction(Seed);
-    UpdateMeshProcedural();
-}
-
-void FGrammarDLL::UpdateMeshProcedural() {
-    if (!bIsLoaded || GetMesh == nullptr || DestroyMesh == nullptr) {
-        UE_LOG(LogTemp, Error, TEXT("DLL is not loaded or mesh functions not found!"));
-        return;
-    }
-    
-    // Get mesh data from DLL
-    MeshCpp meshData = GetMesh();
-    
-    // Get the current world
-    UWorld* World = nullptr;
-    if (GEngine && GEngine->GetWorldContexts().Num() > 0) {
-        World = GEngine->GetWorldContexts()[0].World();
-    }
-    
-    if (!World) {
-        UE_LOG(LogTemp, Error, TEXT("No world found for mesh creation"));
-        DestroyMesh(meshData);
-        return;
-    }
-    
-    // Find and destroy existing mesh actor
-    int32 FoundActors = 0;
+    // Find and destroy existing mesh actor.
     for (TActorIterator<AActor> ActorItr(World); ActorItr; ++ActorItr) {
         if (ActorItr->GetActorLabel() == TEXT("GeneratedMesh")) {
             World->DestroyActor(*ActorItr);
-            FoundActors++;
+            break;
         }
     }
     

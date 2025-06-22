@@ -27,7 +27,6 @@ public:
 	static void LoadGrammarFile(const FString& FilePath);
 	static void Step();
 	static void UpdateMesh();
-	static void UpdateMeshProcedural();
 	static void Reset(int Seed = 0);
 
 private:
