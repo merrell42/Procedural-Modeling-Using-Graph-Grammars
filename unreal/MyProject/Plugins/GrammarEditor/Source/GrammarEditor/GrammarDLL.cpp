@@ -108,9 +108,6 @@ void FGrammarDLL::UpdateMesh() {
     // Get mesh data from DLL
     MeshCpp meshData = GetMesh();
     
-    UE_LOG(LogTemp, Log, TEXT("Received mesh: %d vertices, %d triangles, %d faces"), 
-           meshData.numVertices, meshData.numTriangles, meshData.numFaces);
-    
     // Get the current world
     UWorld* World = nullptr;
     if (GEngine && GEngine->GetWorldContexts().Num() > 0) {
@@ -124,17 +121,17 @@ void FGrammarDLL::UpdateMesh() {
     }
     
     // Find and destroy existing mesh actor
+    int32 FoundActors = 0;
     for (TActorIterator<AStaticMeshActor> ActorItr(World); ActorItr; ++ActorItr) {
-        if (ActorItr->GetName() == TEXT("GeneratedMesh")) {
-            ActorItr->Destroy();
-            break;
+        if (ActorItr->GetActorLabel() == TEXT("GeneratedMesh")) {
+            World->DestroyActor(*ActorItr);
+            FoundActors++;
         }
     }
     
     // Create new mesh actor
     AStaticMeshActor* MeshActor = World->SpawnActor<AStaticMeshActor>();
     MeshActor->SetActorLabel(TEXT("GeneratedMesh"));
-    UE_LOG(LogTemp, Log, TEXT("Created new mesh actor"));
     
     // Create static mesh
     UStaticMesh* StaticMesh = NewObject<UStaticMesh>();
@@ -149,7 +146,7 @@ void FGrammarDLL::UpdateMesh() {
     Attributes.Register();
     
     TVertexAttributesRef<FVector3f> VertexPositions = Attributes.GetVertexPositions();
-    TVertexInstanceAttributesRef<FVector3f> VertexInstanceNormals = Attributes.GetVertexInstanceNormals();
+    TVertexInstanceAttributesRef<FVector2f> VertexInstanceUVs = Attributes.GetVertexInstanceUVs();
     
     // Create polygon group for the mesh
     FPolygonGroupID PolygonGroupID = MeshDescription->CreatePolygonGroup();
@@ -161,7 +158,7 @@ void FGrammarDLL::UpdateMesh() {
     for (int32 i = 0; i < meshData.numVertices; i++) {
         FVertexID VertexID = MeshDescription->CreateVertex();
         VertexIDs.Add(VertexID);
-
+        
         FVector3f Position(
             meshData.positions[i * 3] * 100.0f,
             meshData.positions[i * 3 + 1] * 100.0f,
@@ -195,28 +192,12 @@ void FGrammarDLL::UpdateMesh() {
         VertexInstanceIDs.Add(Instance1);
         VertexInstanceIDs.Add(Instance2);
         
-        // Set normals for vertex instances
-        FVector3f Normal0(
-            meshData.normals[i0 * 3],     // X
-            meshData.normals[i0 * 3 + 2], // Z -> Y  
-            meshData.normals[i0 * 3 + 1]  // Y -> Z
-        );
-        FVector3f Normal1(
-            meshData.normals[i2 * 3],     // X
-            meshData.normals[i2 * 3 + 2], // Z -> Y  
-            meshData.normals[i2 * 3 + 1]  // Y -> Z
-        );
-        FVector3f Normal2(
-            meshData.normals[i1 * 3],     // X
-            meshData.normals[i1 * 3 + 2], // Z -> Y  
-            meshData.normals[i1 * 3 + 1]  // Y -> Z
-        );
+        // Set UV coordinates for vertex instances
+        VertexInstanceUVs[Instance0] = FVector2f(0.0f, 0.0f);
+        VertexInstanceUVs[Instance1] = FVector2f(1.0f, 0.0f);
+        VertexInstanceUVs[Instance2] = FVector2f(0.0f, 1.0f);
         
-        VertexInstanceNormals[Instance0] = Normal0;
-        VertexInstanceNormals[Instance1] = Normal1;
-        VertexInstanceNormals[Instance2] = Normal2;
-        
-        // Create polygon using vertex instances
+        // Create polygon using vertex instances (let Unreal calculate normals)
         MeshDescription->CreatePolygon(PolygonGroupID, VertexInstanceIDs);
     }
     
@@ -239,6 +220,4 @@ void FGrammarDLL::UpdateMesh() {
     
     // Clean up DLL memory
     DestroyMesh(meshData);
-    
-    UE_LOG(LogTemp, Log, TEXT("Mesh updated successfully in scene!"));
 } 
