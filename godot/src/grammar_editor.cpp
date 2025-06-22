@@ -68,14 +68,14 @@ void GrammarEditor::_exit_tree() {
 void GrammarEditor::initialize_pmugg_editor(String file_path, int seed) {
     const char* path_cstr = file_path.utf8().get_data();
     char result[1024];
-    PMUGGWrapper::initialize_grammar(path_cstr, result, sizeof(result), seed);
+    initialize(path_cstr, result, sizeof(result), seed);
     pmugg_initialized = true;
     UtilityFunctions::print("PMUGG initialized with: ", file_path);
 }
 
 void GrammarEditor::reset_pmugg_editor(int seed) {
     if (pmugg_initialized) {
-        PMUGGWrapper::reset_grammar(seed);
+        reset(seed);
         generate_mesh_in_editor(); // Automatically regenerate mesh
         UtilityFunctions::print("PMUGG reset with seed: ", seed);
     }
@@ -83,7 +83,7 @@ void GrammarEditor::reset_pmugg_editor(int seed) {
 
 void GrammarEditor::iterate_pmugg_editor(int steps) {
     if (pmugg_initialized) {
-        PMUGGWrapper::iterate_grammar(steps);
+        iterate(steps);
         generate_mesh_in_editor(); // Automatically regenerate mesh
         UtilityFunctions::print("PMUGG iterated ", steps, " steps. Face count: ", get_face_count_editor());
     }
@@ -91,14 +91,14 @@ void GrammarEditor::iterate_pmugg_editor(int steps) {
 
 int GrammarEditor::get_face_count_editor() {
     if (pmugg_initialized) {
-        return PMUGGWrapper::get_num_faces();
+        return getNumFaces();
     }
     return 0;
 }
 
 void GrammarEditor::set_pmugg_size_editor(float x, float y, float z) {
     if (pmugg_initialized) {
-        PMUGGWrapper::set_size(x, y, z);
+        setSize(x, y, z);
         generate_mesh_in_editor(); // Automatically regenerate mesh
         UtilityFunctions::print("PMUGG size set to: (", x, ", ", y, ", ", z, ")");
     }
@@ -127,7 +127,7 @@ void GrammarEditor::generate_mesh_in_editor() {
     }
 
     // Get the mesh from PMUGG
-    MeshCpp mesh = PMUGGWrapper::get_mesh();
+    MeshCpp mesh = getMesh();
     
     // Print mesh information
     UtilityFunctions::print("PMUGG mesh - Vertices: ", mesh.numVertices, ", Faces: ", mesh.numFaces);

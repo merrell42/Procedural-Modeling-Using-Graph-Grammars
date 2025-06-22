@@ -143,7 +143,7 @@ void GrammarDock::on_file_selected(String path) {
 		// Call the DLL initialize function
 		const char* path_cstr = path.utf8().get_data();
 		char result[1024];
-		PMUGGWrapper::initialize_grammar(path_cstr, result, sizeof(result), 0);
+		initialize(path_cstr, result, sizeof(result), 0);
 		
 		UtilityFunctions::print("PMUGG initialization result: ", result);
 		status_label->set_text("Grammar loaded - ready to generate");
@@ -167,12 +167,12 @@ void GrammarDock::on_generate_pressed() {
 	
 	// Call PMUGG functions to generate the mesh
 	UtilityFunctions::print("Resetting PMUGG with random seed...");
-	PMUGGWrapper::reset_grammar((int)UtilityFunctions::randi());
+	reset((int)UtilityFunctions::randi());
 	
 	UtilityFunctions::print("Iterating PMUGG 5 steps...");
-	PMUGGWrapper::iterate_grammar(5);
+	iterate(5);
 	
-	int face_count = PMUGGWrapper::get_num_faces();
+	int face_count = getNumFaces();
 	UtilityFunctions::print("Generated ", face_count, " faces");
 	
 	// Create the mesh in the scene
@@ -246,7 +246,7 @@ void GrammarDock::update_mesh() {
 	UtilityFunctions::print("Updating mesh...");
 	
 	// Get current mesh info
-	MeshCpp mesh = PMUGGWrapper::get_mesh();
+	MeshCpp mesh = getMesh();
 	UtilityFunctions::print("Vertices: ", mesh.numVertices, ", Faces: ", mesh.numFaces);
 	
 	// Get current scene
@@ -336,7 +336,7 @@ void GrammarDock::on_step_pressed() {
 	}
 	
 	// Iterate PMUGG once
-	PMUGGWrapper::iterate_grammar(1);
+	iterate(1);
 	
 	// Update the mesh in the scene
 	update_mesh();

@@ -14,7 +14,9 @@
 #include <godot_cpp/classes/h_box_container.hpp>
 #include <godot_cpp/classes/label.hpp>
 #include <godot_cpp/classes/file_dialog.hpp>
-#include "pmugg_wrapper.h"
+
+// Include the DLL header directly
+#include "../cpp_version/pmugg dll/generate.h"
 
 namespace godot {
 
