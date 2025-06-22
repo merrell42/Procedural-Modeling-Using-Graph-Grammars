@@ -167,8 +167,7 @@ void FGrammarDLL::UpdateMesh() {
     UVs.Reserve(meshData.numVertices);
     VertexColors.Reserve(meshData.numVertices);
     Tangents.Reserve(meshData.numVertices);
-    
-    // Add vertices (convert Y and Z coordinates)
+
     for (int32 i = 0; i < meshData.numVertices; i++) {
         FVector Position(
             meshData.positions[i * 3] * 100.0f,
@@ -177,8 +176,15 @@ void FGrammarDLL::UpdateMesh() {
         );
         Vertices.Add(Position);
         
-        // Add default values for other attributes
-        Normals.Add(FVector(0, 0, 1));
+        // Use normals from DLL data (convert Y and Z coordinates like positions)
+        FVector Normal(
+            meshData.normals[i * 3],
+            meshData.normals[i * 3 + 1],
+            meshData.normals[i * 3 + 2]
+        );
+        Normal.Normalize(); // Ensure it's normalized
+        Normals.Add(Normal);
+        
         UVs.Add(FVector2D(0, 0));
         VertexColors.Add(FColor::White);
         Tangents.Add(FProcMeshTangent(FVector(1, 0, 0), false));
