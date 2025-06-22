@@ -78,9 +78,25 @@ TSharedRef<SDockTab> FGrammarEditorModule::OnSpawnPluginTab(const FSpawnTabArgs&
 			.AutoHeight()
 			.Padding(3)
 			[
+				SAssignNew(FileNameText, STextBlock)
+				.Text(LOCTEXT("NoFileLoadedText", "No file selected."))
+			]
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			.Padding(3)
+			[
 				SNew(SButton)
 				.Text(LOCTEXT("LoadGrammarButtonText", "Load Grammar"))
 				.OnClicked(FOnClicked::CreateRaw(this, &FGrammarEditorModule::OnLoadGrammarClicked))
+			]
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			.Padding(3)
+			[
+				SAssignNew(ResetButton, SButton)
+				.Text(LOCTEXT("ResetButtonText", "Reset"))
+				.OnClicked(FOnClicked::CreateRaw(this, &FGrammarEditorModule::OnResetClicked))
+				.IsEnabled(false)
 			]
 			+ SVerticalBox::Slot()
 			.AutoHeight()
@@ -93,8 +109,6 @@ TSharedRef<SDockTab> FGrammarEditorModule::OnSpawnPluginTab(const FSpawnTabArgs&
 			]
 		];
 }
-
-
 
 FReply FGrammarEditorModule::OnLoadGrammarClicked() {
 	if (!FGrammarDLL::IsDLLLoaded()) {
@@ -122,12 +136,21 @@ FReply FGrammarEditorModule::OnLoadGrammarClicked() {
 			FString SelectedFile = OutFileNames[0];
 			UE_LOG(LogTemp, Log, TEXT("Loading grammar file: %s"), *SelectedFile);
 			
+			// Store the file name and update the display
+			CurrentGrammarFile = FPaths::GetBaseFilename(SelectedFile);
+			if (FileNameText.IsValid()) {
+				FileNameText->SetText(FText::FromString(FString::Printf(TEXT("Loaded: %s"), *CurrentGrammarFile)));
+			}
+			
 			// Load the grammar file using the DLL
 			FGrammarDLL::LoadGrammarFile(SelectedFile);
 			
 			// Enable the Step button now that a grammar is loaded
 			if (StepButton.IsValid()) {
 				StepButton->SetEnabled(true);
+			}
+			if (ResetButton.IsValid()) {
+				ResetButton->SetEnabled(true);
 			}
 		}
 	}
@@ -141,6 +164,15 @@ FReply FGrammarEditorModule::OnStepClicked() {
 		return FReply::Handled();
 	}
 	FGrammarDLL::Step();	
+	return FReply::Handled();
+}
+
+FReply FGrammarEditorModule::OnResetClicked() {
+	if (!FGrammarDLL::IsDLLLoaded()) {
+		UE_LOG(LogTemp, Error, TEXT("DLL is not loaded!"));
+		return FReply::Handled();
+	}
+	FGrammarDLL::Reset();
 	return FReply::Handled();
 }
 

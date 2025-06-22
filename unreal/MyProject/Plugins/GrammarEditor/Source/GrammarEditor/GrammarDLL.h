@@ -11,6 +11,7 @@ public:
 	static void LoadGrammarFile(const FString& FilePath);
 	static void Step();
 	static void UpdateMesh();
+	static void Reset(int Seed = 0);
 
 private:
     static void* DLLHandle;
@@ -32,8 +33,10 @@ private:
     typedef void (*IterateFunc)(int);
     typedef MeshCpp (*GetMeshFunc)();
     typedef void (*DestroyMeshFunc)(MeshCpp&);
+    typedef void (*ResetFunc)(int);
     static InitializeFunc Initialize;
     static IterateFunc Iterate;
     static GetMeshFunc GetMesh;
     static DestroyMeshFunc DestroyMesh;
+    static ResetFunc ResetFunction;
 }; 

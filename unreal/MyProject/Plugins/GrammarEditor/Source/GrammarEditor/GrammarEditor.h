@@ -18,7 +18,11 @@ private:
 	void OpenGrammarEditor();
 	FReply OnLoadGrammarClicked();
 	FReply OnStepClicked();
+	FReply OnResetClicked();
 
 private:
 	TSharedPtr<SButton> StepButton;
+	TSharedPtr<SButton> ResetButton;
+	TSharedPtr<STextBlock> FileNameText;
+	FString CurrentGrammarFile;
 }; 

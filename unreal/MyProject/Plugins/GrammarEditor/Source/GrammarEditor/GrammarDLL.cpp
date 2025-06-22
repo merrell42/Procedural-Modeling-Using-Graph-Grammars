@@ -22,6 +22,7 @@ FGrammarDLL::InitializeFunc FGrammarDLL::Initialize = nullptr;
 FGrammarDLL::IterateFunc FGrammarDLL::Iterate = nullptr;
 FGrammarDLL::GetMeshFunc FGrammarDLL::GetMesh = nullptr;
 FGrammarDLL::DestroyMeshFunc FGrammarDLL::DestroyMesh = nullptr;
+FGrammarDLL::ResetFunc FGrammarDLL::ResetFunction = nullptr;
 
 bool FGrammarDLL::LoadDLL() {
     if (bIsLoaded) {
@@ -44,8 +45,9 @@ bool FGrammarDLL::LoadDLL() {
     Iterate = (IterateFunc)FPlatformProcess::GetDllExport(DLLHandle, TEXT("iterate"));
     GetMesh = (GetMeshFunc)FPlatformProcess::GetDllExport(DLLHandle, TEXT("getMesh"));
     DestroyMesh = (DestroyMeshFunc)FPlatformProcess::GetDllExport(DLLHandle, TEXT("destroyMesh"));
+    ResetFunction = (ResetFunc)FPlatformProcess::GetDllExport(DLLHandle, TEXT("reset"));
     
-    if (Initialize == nullptr || Iterate == nullptr || GetMesh == nullptr || DestroyMesh == nullptr) {
+    if (Initialize == nullptr || Iterate == nullptr || GetMesh == nullptr || DestroyMesh == nullptr || ResetFunction == nullptr) {
         UE_LOG(LogTemp, Error, TEXT("Failed to get required functions from Grammar DLL"));
         UnloadDLL();
         return false;
@@ -67,6 +69,7 @@ void FGrammarDLL::UnloadDLL() {
     Iterate = nullptr;
     GetMesh = nullptr;
     DestroyMesh = nullptr;
+    ResetFunction = nullptr;
     
     UE_LOG(LogTemp, Log, TEXT("Grammar DLL unloaded"));
 }
@@ -88,6 +91,7 @@ void FGrammarDLL::LoadGrammarFile(const FString& FilePath) {
     Initialize(AnsiPath.Get(), result, 1000, 0);
     
     UE_LOG(LogTemp, Log, TEXT("Loading: %s"), ANSI_TO_TCHAR(result));
+    Reset(0);
 }
 
 void FGrammarDLL::Step() {
@@ -220,4 +224,15 @@ void FGrammarDLL::UpdateMesh() {
     
     // Clean up DLL memory
     DestroyMesh(meshData);
+}
+
+void FGrammarDLL::Reset(int Seed) {
+    if (!bIsLoaded || ResetFunction == nullptr) {
+        UE_LOG(LogTemp, Error, TEXT("DLL is not loaded or reset function not found!"));
+        return;
+    }
+    
+    UE_LOG(LogTemp, Log, TEXT("Resetting grammar with seed: %d"), Seed);
+    ResetFunction(Seed);
+    UpdateMesh();
 } 
