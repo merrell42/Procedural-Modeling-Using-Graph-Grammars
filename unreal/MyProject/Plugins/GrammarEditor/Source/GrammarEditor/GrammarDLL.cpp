@@ -15,6 +15,7 @@
 #include "UObject/ConstructorHelpers.h"
 #include "EngineUtils.h"
 #include "ProceduralMeshComponent.h"
+#include "Components/LineBatchComponent.h"
 
 // Static member initialization
 void* FGrammarDLL::DLLHandle = nullptr;
@@ -153,6 +154,10 @@ void FGrammarDLL::UpdateMesh() {
     MeshActor->SetRootComponent(ProcMeshComponent);
     ProcMeshComponent->RegisterComponent();
     
+    // Add line batch component for drawing edges
+    ULineBatchComponent* LineBatchComponent = NewObject<ULineBatchComponent>(MeshActor);
+    LineBatchComponent->RegisterComponent();
+    
     // Prepare mesh data for procedural component
     TArray<FVector> Vertices;
     TArray<int32> Triangles;
@@ -205,13 +210,37 @@ void FGrammarDLL::UpdateMesh() {
         Triangles.Add(i2);
     }
     
-    // Create the procedural mesh section
+    // Create the procedural mesh section for faces
     ProcMeshComponent->CreateMeshSection(0, Vertices, Triangles, Normals, UVs, VertexColors, Tangents, true);
     
-    // Set a basic material
+    // Set a basic material for faces
     UMaterial* DefaultMaterial = LoadObject<UMaterial>(nullptr, TEXT("/Engine/BasicShapes/BasicShapeMaterial"));
     if (DefaultMaterial) {
         ProcMeshComponent->SetMaterial(0, DefaultMaterial);
+    }
+    
+    // Generate edges from face indices and draw them using LineBatchComponent
+    int32 startIndex = 0;
+    for (int32 i = 0; i < meshData.numFaces; i++) {
+        int32 endIndex = meshData.faceIndices[i];
+        
+        // Create edges for each face
+        for (int32 j = startIndex; j < endIndex - 1; j++) {
+            FVector v1 = Vertices[j];
+            FVector v2 = Vertices[j + 1];
+            
+            // Draw line for this edge using LineBatchComponent
+            LineBatchComponent->DrawLine(v1, v2, FLinearColor::Red, SDPG_World, 4.0f, 0.0f);
+        }
+        
+        // Connect last vertex to first vertex to close the face
+        FVector v1 = Vertices[endIndex - 1];
+        FVector v2 = Vertices[startIndex];
+        
+        // Draw line to close the face
+        LineBatchComponent->DrawLine(v1, v2, FLinearColor::Red, SDPG_World, 4.0f, 0.0f);
+        
+        startIndex = endIndex;
     }
     
     // Clean up DLL memory

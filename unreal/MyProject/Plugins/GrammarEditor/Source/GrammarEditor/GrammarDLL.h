@@ -17,6 +17,8 @@
 #include "HAL/PlatformProcess.h"
 #include "Misc/Paths.h"
 #include "Misc/FileHelper.h"
+#include "DrawDebugHelpers.h"
+#include "Components/LineBatchComponent.h"
 
 class GRAMMAREDITOR_API FGrammarDLL {
 public:
