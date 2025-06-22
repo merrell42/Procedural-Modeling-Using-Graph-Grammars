@@ -31,7 +31,8 @@ public class GrammarEditor : ModuleRules
 				"RenderCore",
 				"RHI",
 				"AssetRegistry",
-				"Projects"
+				"Projects",
+				"ProceduralMeshComponent"
 			}
 			);
 	}

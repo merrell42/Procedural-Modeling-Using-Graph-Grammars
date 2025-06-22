@@ -14,6 +14,7 @@
 #include "Materials/Material.h"
 #include "UObject/ConstructorHelpers.h"
 #include "EngineUtils.h"
+#include "ProceduralMeshComponent.h"
 
 // Static member initialization
 void* FGrammarDLL::DLLHandle = nullptr;
@@ -100,7 +101,7 @@ void FGrammarDLL::Step() {
         return;
     }
     Iterate(1);
-    UpdateMesh();
+    UpdateMeshProcedural();
 }
 
 void FGrammarDLL::UpdateMesh() {
@@ -234,5 +235,103 @@ void FGrammarDLL::Reset(int Seed) {
     
     UE_LOG(LogTemp, Log, TEXT("Resetting grammar with seed: %d"), Seed);
     ResetFunction(Seed);
-    UpdateMesh();
+    UpdateMeshProcedural();
+}
+
+void FGrammarDLL::UpdateMeshProcedural() {
+    if (!bIsLoaded || GetMesh == nullptr || DestroyMesh == nullptr) {
+        UE_LOG(LogTemp, Error, TEXT("DLL is not loaded or mesh functions not found!"));
+        return;
+    }
+    
+    // Get mesh data from DLL
+    MeshCpp meshData = GetMesh();
+    
+    // Get the current world
+    UWorld* World = nullptr;
+    if (GEngine && GEngine->GetWorldContexts().Num() > 0) {
+        World = GEngine->GetWorldContexts()[0].World();
+    }
+    
+    if (!World) {
+        UE_LOG(LogTemp, Error, TEXT("No world found for mesh creation"));
+        DestroyMesh(meshData);
+        return;
+    }
+    
+    // Find and destroy existing mesh actor
+    int32 FoundActors = 0;
+    for (TActorIterator<AActor> ActorItr(World); ActorItr; ++ActorItr) {
+        if (ActorItr->GetActorLabel() == TEXT("GeneratedMesh")) {
+            World->DestroyActor(*ActorItr);
+            FoundActors++;
+        }
+    }
+    
+    // Create new actor with procedural mesh component
+    AActor* MeshActor = World->SpawnActor<AActor>();
+    MeshActor->SetActorLabel(TEXT("GeneratedMesh"));
+    
+    // Add procedural mesh component
+    UProceduralMeshComponent* ProcMeshComponent = NewObject<UProceduralMeshComponent>(MeshActor);
+    MeshActor->SetRootComponent(ProcMeshComponent);
+    ProcMeshComponent->RegisterComponent();
+    
+    // Prepare mesh data for procedural component
+    TArray<FVector> Vertices;
+    TArray<int32> Triangles;
+    TArray<FVector> Normals;
+    TArray<FVector2D> UVs;
+    TArray<FColor> VertexColors;
+    TArray<FProcMeshTangent> Tangents;
+    
+    Vertices.Reserve(meshData.numVertices);
+    Triangles.Reserve(meshData.numTriangles * 3);
+    Normals.Reserve(meshData.numVertices);
+    UVs.Reserve(meshData.numVertices);
+    VertexColors.Reserve(meshData.numVertices);
+    Tangents.Reserve(meshData.numVertices);
+    
+    // Add vertices (convert Y and Z coordinates)
+    for (int32 i = 0; i < meshData.numVertices; i++) {
+        FVector Position(
+            meshData.positions[i * 3] * 100.0f,
+            meshData.positions[i * 3 + 1] * 100.0f,
+            meshData.positions[i * 3 + 2] * 100.0f + 100.0f
+        );
+        Vertices.Add(Position);
+        
+        // Add default values for other attributes
+        Normals.Add(FVector(0, 0, 1));
+        UVs.Add(FVector2D(0, 0));
+        VertexColors.Add(FColor::White);
+        Tangents.Add(FProcMeshTangent(FVector(1, 0, 0), false));
+    }
+    
+    for (int32 i = 0; i < meshData.numTriangles; i++) {
+        int32 i0 = meshData.triangles[i * 3];
+        int32 i1 = meshData.triangles[i * 3 + 1];
+        int32 i2 = meshData.triangles[i * 3 + 2];
+        
+        // Validate indices
+        if (i0 >= meshData.numVertices || i1 >= meshData.numVertices || i2 >= meshData.numVertices) {
+            continue;
+        }
+        
+        Triangles.Add(i0);
+        Triangles.Add(i1);
+        Triangles.Add(i2);
+    }
+    
+    // Create the procedural mesh section
+    ProcMeshComponent->CreateMeshSection(0, Vertices, Triangles, Normals, UVs, VertexColors, Tangents, true);
+    
+    // Set a basic material
+    UMaterial* DefaultMaterial = LoadObject<UMaterial>(nullptr, TEXT("/Engine/BasicShapes/BasicShapeMaterial"));
+    if (DefaultMaterial) {
+        ProcMeshComponent->SetMaterial(0, DefaultMaterial);
+    }
+    
+    // Clean up DLL memory
+    DestroyMesh(meshData);
 } 

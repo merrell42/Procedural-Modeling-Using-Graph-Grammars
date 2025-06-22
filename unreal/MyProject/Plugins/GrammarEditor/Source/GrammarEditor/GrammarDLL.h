@@ -1,6 +1,22 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Engine/StaticMeshActor.h"
+#include "ProceduralMeshComponent.h"
+#include "Components/StaticMeshComponent.h"
+#include "Engine/Engine.h"
+#include "Engine/World.h"
+#include "EngineUtils.h"
+#include "Materials/Material.h"
+#include "Materials/MaterialInterface.h"
+#include "Engine/StaticMesh.h"
+#include "StaticMeshAttributes.h"
+#include "StaticMeshOperations.h"
+#include "MeshDescription.h"
+#include "AssetRegistry/AssetRegistryModule.h"
+#include "HAL/PlatformProcess.h"
+#include "Misc/Paths.h"
+#include "Misc/FileHelper.h"
 
 class GRAMMAREDITOR_API FGrammarDLL {
 public:
@@ -11,6 +27,7 @@ public:
 	static void LoadGrammarFile(const FString& FilePath);
 	static void Step();
 	static void UpdateMesh();
+	static void UpdateMeshProcedural();
 	static void Reset(int Seed = 0);
 
 private:

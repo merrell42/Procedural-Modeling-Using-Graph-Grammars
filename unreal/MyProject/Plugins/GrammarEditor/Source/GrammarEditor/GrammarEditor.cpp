@@ -17,6 +17,8 @@
 
 static const FName GrammarEditorTabName("GrammarEditor");
 
+static const float AnimationInterval = 0.2f;
+
 void FGrammarEditorModule::StartupModule() {
 	UE_LOG(LogTemp, Log, TEXT("Hello World! Grammar Editor Plugin Loaded Successfully!"));
 	
@@ -151,7 +153,7 @@ FReply FGrammarEditorModule::OnLoadGrammarClicked() {
 			// Store the file name and update the display
 			CurrentGrammarFile = FPaths::GetBaseFilename(SelectedFile);
 			if (FileNameText.IsValid()) {
-				FileNameText->SetText(FText::FromString(FString::Printf(TEXT("Loaded: %s"), *CurrentGrammarFile)));
+				FileNameText->SetText(FText::FromString(FString::Printf(TEXT("%s"), *CurrentGrammarFile)));
 			}
 			
 			// Load the grammar file using the DLL
@@ -206,7 +208,7 @@ FReply FGrammarEditorModule::OnPlayClicked() {
 			PlayButtonText->SetText(LOCTEXT("StopButtonText", "Stop"));
 		}
 		
-		// Start timer to call step every 0.5 seconds
+		// Start timer to call step every AnimationInterval seconds
 		if (GEngine && GEngine->GetWorldContexts().Num() > 0) {
 			UWorld* World = GEngine->GetWorldContexts()[0].World();
 			if (World) {
@@ -214,7 +216,7 @@ FReply FGrammarEditorModule::OnPlayClicked() {
 					if (bIsPlaying && FGrammarDLL::IsDLLLoaded()) {
 						FGrammarDLL::Step();
 					}
-				}, 0.5f, true);
+				}, AnimationInterval, true);
 			}
 		}
 		
