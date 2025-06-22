@@ -11,7 +11,6 @@ using namespace godot;
 void initialize_example_module(ModuleInitializationLevel p_level) {
 	// Register the editor plugin at editor level
 	if (p_level == MODULE_INITIALIZATION_LEVEL_EDITOR) {
-		ClassDB::register_class<GrammarDock>();
 		ClassDB::register_class<GrammarEditor>();
 	}
 }

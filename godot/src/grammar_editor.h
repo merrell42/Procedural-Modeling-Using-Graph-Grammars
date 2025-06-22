@@ -8,16 +8,16 @@
 #include <godot_cpp/classes/standard_material3d.hpp>
 #include <godot_cpp/classes/control.hpp>
 #include <godot_cpp/classes/button.hpp>
-#include <godot_cpp/classes/spin_box.hpp>
-#include <godot_cpp/classes/line_edit.hpp>
-#include <godot_cpp/classes/v_box_container.hpp>
-#include <godot_cpp/classes/h_box_container.hpp>
 #include <godot_cpp/classes/label.hpp>
 #include <godot_cpp/classes/file_dialog.hpp>
+#include <godot_cpp/classes/v_box_container.hpp>
+#include <godot_cpp/classes/project_settings.hpp>
+#include <godot_cpp/classes/dir_access.hpp>
+#include <godot_cpp/core/class_db.hpp>
+#include <godot_cpp/variant/utility_functions.hpp>
 
 // Include the DLL header directly
 #include "../cpp_version/pmugg dll/generate.h"
-#include "grammar_dock.h"
 
 namespace godot {
 
@@ -27,7 +27,13 @@ class GrammarEditor : public EditorPlugin {
 private:
 	bool pmugg_initialized;
 	MeshInstance3D* mesh_instance;
-	GrammarDock* dock;
+	
+	// UI elements
+	Button* load_grammar_button;
+	Button* step_button_ref;
+	Label* selected_file_label;
+	FileDialog* file_dialog;
+	String selected_file_path;
 
 protected:
 	static void _bind_methods();
@@ -39,15 +45,24 @@ public:
 	virtual void _enter_tree() override;
 	virtual void _exit_tree() override;
 	
-	// PMUGG functions for editor use
+	// UI setup
+	void setup_ui(Control* parent);
+	void setup_file_dialog(Control* parent);
+	
+	// Event handlers
+	void on_load_grammar_pressed();
+	void on_file_selected(String path);
+	void on_step_pressed();
+	
+	// PMUGG functions
 	void initialize_pmugg_editor(String file_path, int seed);
 	void reset_pmugg_editor(int seed);
 	void iterate_pmugg_editor(int steps);
 	int get_face_count_editor();
 	void set_pmugg_size_editor(float x, float y, float z);
 	
-	// Dock access
-	GrammarDock* get_dock() { return dock; }
+	// Mesh management
+	void update_mesh();
 };
 
 }
