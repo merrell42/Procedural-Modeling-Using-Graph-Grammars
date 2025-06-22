@@ -4,11 +4,15 @@
 #include <godot_cpp/classes/scene_tree.hpp>
 #include <godot_cpp/classes/node3d.hpp>
 #include <godot_cpp/classes/editor_interface.hpp>
+#include <godot_cpp/classes/timer.hpp>
+#include <godot_cpp/classes/dir_access.hpp>
 #include <godot_cpp/variant/packed_float32_array.hpp>
 #include <godot_cpp/variant/packed_int32_array.hpp>
 #include <godot_cpp/variant/packed_vector3_array.hpp>
 
 using namespace godot;
+
+#define MAX_ITERATIONS 50
 
 void GrammarEditor::_bind_methods() {
     ClassDB::bind_method(D_METHOD("on_load_grammar_pressed"), &GrammarEditor::on_load_grammar_pressed);
@@ -20,6 +24,10 @@ void GrammarEditor::_bind_methods() {
     ClassDB::bind_method(D_METHOD("on_size_x_changed"), &GrammarEditor::on_size_x_changed);
     ClassDB::bind_method(D_METHOD("on_size_y_changed"), &GrammarEditor::on_size_y_changed);
     ClassDB::bind_method(D_METHOD("on_size_z_changed"), &GrammarEditor::on_size_z_changed);
+    ClassDB::bind_method(D_METHOD("on_load_folder_pressed"), &GrammarEditor::on_load_folder_pressed);
+    ClassDB::bind_method(D_METHOD("on_folder_selected"), &GrammarEditor::on_folder_selected);
+    ClassDB::bind_method(D_METHOD("load_file_from_folder"), &GrammarEditor::load_file_from_folder);
+    ClassDB::bind_method(D_METHOD("update_iteration_display"), &GrammarEditor::update_iteration_display);
 }
 
 GrammarEditor::GrammarEditor() {
@@ -39,6 +47,11 @@ GrammarEditor::GrammarEditor() {
     size_x_value = 30.0f;
     size_y_value = 20.0f;
     size_z_value = 10.0f;
+    iteration_count = 0;
+    max_iterations = 50;
+    
+    // Initialize folder processing
+    current_file_index = 0;
 }
 
 GrammarEditor::~GrammarEditor() {}
@@ -131,10 +144,24 @@ void GrammarEditor::setup_ui(Control* parent) {
 	load_grammar_button->add_theme_font_size_override("font_size", 14);
 	file_section->add_child(load_grammar_button);
 	
+	// Load Folder button
+	load_folder_button = memnew(Button);
+	load_folder_button->set_text("Load Folder...");
+	load_folder_button->connect("pressed", Callable(this, "on_load_folder_pressed"));
+	load_folder_button->set_h_size_flags(Control::SIZE_EXPAND_FILL);
+	load_folder_button->add_theme_font_size_override("font_size", 14);
+	file_section->add_child(load_folder_button);
+	
 	// Generation section
 	VBoxContainer* gen_section = memnew(VBoxContainer);
 	gen_section->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	vbox->add_child(gen_section);
+	
+	// Iteration display
+	iteration_label = memnew(Label);
+	iteration_label->set_text("Step: 0");
+	iteration_label->add_theme_color_override("font_color", Color(0.7, 0.7, 0.7));
+	gen_section->add_child(iteration_label);
 	
 	// Play button
 	play_button = memnew(Button);
@@ -241,6 +268,21 @@ void GrammarEditor::setup_file_dialog(Control* parent) {
 		file_dialog->set_current_dir(base_dir);
 	}
 	file_dialog->connect("file_selected", Callable(this, "on_file_selected"));
+	
+	// Setup folder dialog
+	folder_dialog = memnew(FileDialog);
+	parent->add_child(folder_dialog);
+	
+	folder_dialog->set_file_mode(FileDialog::FILE_MODE_OPEN_DIR);
+	folder_dialog->set_access(FileDialog::ACCESS_FILESYSTEM);
+	
+	if (DirAccess::dir_exists_absolute(grammar_dir)) {
+		folder_dialog->set_current_dir(grammar_dir);
+	} else {
+		UtilityFunctions::print("Grammar data directory is not found at: ", grammar_dir);
+		folder_dialog->set_current_dir(base_dir);
+	}
+	folder_dialog->connect("dir_selected", Callable(this, "on_folder_selected"));
 }
 
 void GrammarEditor::on_load_grammar_pressed() {
@@ -277,6 +319,7 @@ void GrammarEditor::on_file_selected(String path) {
 	    step_button->set_disabled(false);
 	    reset_button->set_disabled(false);
 	    play_button->set_disabled(false);
+        max_iterations = -1;
 	} else {
 		UtilityFunctions::print("No editor interface available");
 	}
@@ -288,6 +331,8 @@ void GrammarEditor::on_step_pressed() {
 		return;
 	}
 	iterate(1);
+	iteration_count++;
+	update_iteration_display();
 	update_mesh();
 }
 
@@ -305,6 +350,8 @@ void GrammarEditor::on_reset_pressed() {
 	
 	reset(seed_value);
 	setSize(size_x_value, size_y_value, size_z_value);
+	iteration_count = 0;
+	update_iteration_display();
 	update_mesh();
 }
 
@@ -342,7 +389,25 @@ void GrammarEditor::on_play_pressed() {
 void GrammarEditor::on_animation_timer_timeout() {
 	if (is_playing) {
 		iterate(1);
+		iteration_count++;
+		update_iteration_display();
 		update_mesh();
+		
+		// Check if we've reached max iterations
+		if (iteration_count >= max_iterations && max_iterations > 0) {
+			// Move to next file if available
+			if (current_file_index < folder_files.size() - 1) {
+				current_file_index++;
+				load_file_from_folder(folder_files[current_file_index]);
+				// Continue playing with the new file
+			} else {
+				// No more files, stop playing
+				is_playing = false;
+				play_button->set_text("Play");
+				animation_timer->stop();
+				UtilityFunctions::print("Finished processing all files in folder");
+			}
+		}
 	}
 }
 
@@ -440,4 +505,114 @@ void GrammarEditor::on_size_y_changed(String value) {
 void GrammarEditor::on_size_z_changed(String value) {
     size_z_value = value.to_float();
     setSize(size_x_value, size_y_value, size_z_value);
+}
+
+void GrammarEditor::on_load_folder_pressed() {
+	folder_dialog->popup_centered(Vector2i(800, 600));
+}
+
+void GrammarEditor::on_folder_selected(String path) {
+	UtilityFunctions::print("Loading folder: ", path);
+	
+	// Clear previous folder files
+	folder_files.clear();
+	current_file_index = 0;
+	
+	// Recursively get all JSON files in the folder and subfolders
+	find_json_files_recursive(path);
+	
+	if (folder_files.size() > 0) {
+		UtilityFunctions::print("Found ", folder_files.size(), " JSON files in folder and subfolders");
+		// Load the first file
+		load_file_from_folder(folder_files[0]);
+		
+		// Automatically start playing
+		is_playing = true;
+		play_button->set_text("Stop");
+		
+		// Create timer if it doesn't exist
+		if (!animation_timer) {
+			animation_timer = memnew(Timer);
+			animation_timer->set_wait_time(0.001); // Run as fast as possible
+			animation_timer->connect("timeout", Callable(this, "on_animation_timer_timeout"));
+			add_child(animation_timer);
+		}
+		
+		max_iterations = MAX_ITERATIONS;
+		animation_timer->start();
+	} else {
+		UtilityFunctions::print("No JSON files found in folder or subfolders");
+	}
+}
+
+void GrammarEditor::find_json_files_recursive(String folder_path) {
+	Ref<DirAccess> dir = DirAccess::open(folder_path);
+	if (!dir.is_valid()) {
+		return;
+	}
+	
+	dir->list_dir_begin();
+	String file_name = dir->get_next();
+	
+	while (!file_name.is_empty()) {
+		if (file_name == "." || file_name == "..") {
+			// Skip current and parent directory
+		} else if (dir->current_is_dir()) {
+			// Recursively search subdirectories
+			String subfolder_path = folder_path.path_join(file_name);
+			find_json_files_recursive(subfolder_path);
+		} else if (file_name.ends_with(".json")) {
+			// Add JSON file to the list
+			folder_files.append(folder_path.path_join(file_name));
+		}
+		file_name = dir->get_next();
+	}
+	dir->list_dir_end();
+}
+
+void GrammarEditor::load_file_from_folder(String file_path) {
+	UtilityFunctions::print("Loading file from folder: ", file_path);
+	
+	// Update UI
+	selected_file_label->set_text(file_path.get_file());
+	selected_file_label->add_theme_color_override("font_color", Color(1, 1, 1));
+	selected_file_path = file_path;
+	
+	// Reset iteration count
+	iteration_count = 0;
+	update_iteration_display();
+	
+	// Initialize PMUGG with the selected file
+	EditorInterface* editor_interface = EditorInterface::get_singleton();
+	if (editor_interface) {
+		// Get current values
+		seed_value = (int)seed_input->get_text().to_float();
+		size_x_value = (float)size_x_input->get_text().to_float();
+		size_y_value = (float)size_y_input->get_text().to_float();
+		size_z_value = (float)size_z_input->get_text().to_float();
+		
+		// Initialize the grammar.
+		const char* path_cstr = file_path.utf8().get_data();
+		char result[1024];
+		initialize(path_cstr, result, sizeof(result), seed_value);
+		UtilityFunctions::print(result);
+		
+		// Set the size
+		setSize(size_x_value, size_y_value, size_z_value);
+
+		// Enable the buttons.
+		step_button->set_disabled(false);
+		reset_button->set_disabled(false);
+		play_button->set_disabled(false);
+	} else {
+		UtilityFunctions::print("No editor interface available");
+	}
+}
+
+void GrammarEditor::update_iteration_display() {
+    if (max_iterations > 0) {
+        iteration_label->set_text("Step: " + String::num_int64(iteration_count) + " / " + String::num_int64(max_iterations));
+    } else {
+        iteration_label->set_text("Step: " + String::num_int64(iteration_count));
+    }
 }

@@ -18,6 +18,7 @@
 #include <godot_cpp/variant/utility_functions.hpp>
 #include <godot_cpp/classes/timer.hpp>
 #include <godot_cpp/classes/line_edit.hpp>
+#include <godot_cpp/variant/packed_string_array.hpp>
 
 // Include the DLL header directly
 #include "../cpp_version/pmugg dll/generate.h"
@@ -32,15 +33,18 @@ private:
 	
 	// UI elements
 	Button* load_grammar_button;
+	Button* load_folder_button;
 	Button* reset_button;
 	Button* step_button;
 	Button* play_button;
 	Label* selected_file_label;
+	Label* iteration_label;
 	LineEdit* seed_input;
 	LineEdit* size_x_input;
 	LineEdit* size_y_input;
 	LineEdit* size_z_input;
 	FileDialog* file_dialog;
+	FileDialog* folder_dialog;
 	String selected_file_path;
 	
 	// Animation state
@@ -52,6 +56,30 @@ private:
 	float size_x_value;
 	float size_y_value;
 	float size_z_value;
+	int iteration_count;
+	int max_iterations;
+	
+	// Folder processing
+	PackedStringArray folder_files;
+	int current_file_index;
+
+	// Callbacks
+	void on_load_grammar_pressed();
+	void on_load_folder_pressed();
+	void on_file_selected(String path);
+	void on_folder_selected(String path);
+	void on_reset_pressed();
+	void on_step_pressed();
+	void on_play_pressed();
+	void on_animation_timer_timeout();
+	void on_size_x_changed(String value);
+	void on_size_y_changed(String value);
+	void on_size_z_changed(String value);
+	
+	// Helper methods
+	void load_file_from_folder(String file_path);
+	void update_iteration_display();
+	void find_json_files_recursive(String folder_path);
 
 protected:
 	static void _bind_methods();
@@ -67,17 +95,6 @@ public:
 	void setup_ui(Control* parent);
 	void setup_file_dialog(Control* parent);
 	
-	// Event handlers
-	void on_load_grammar_pressed();
-	void on_file_selected(String path);
-	void on_reset_pressed();
-	void on_step_pressed();
-	void on_play_pressed();
-	void on_animation_timer_timeout();
-	void on_size_x_changed(String value);
-	void on_size_y_changed(String value);
-	void on_size_z_changed(String value);
-
 	void update_mesh();
 	MeshInstance3D* find_generated_mesh();
 };
