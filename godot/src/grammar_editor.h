@@ -43,7 +43,6 @@ public:
 	void initialize_pmugg_editor(String file_path, int seed);
 	void reset_pmugg_editor(int seed);
 	void iterate_pmugg_editor(int steps);
-	void generate_mesh_in_editor();
 	int get_face_count_editor();
 	void set_pmugg_size_editor(float x, float y, float z);
 	

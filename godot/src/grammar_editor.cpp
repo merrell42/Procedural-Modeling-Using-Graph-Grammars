@@ -11,11 +11,9 @@
 using namespace godot;
 
 void GrammarEditor::_bind_methods() {
-    // Bind methods to be accessible from editor scripts
     ClassDB::bind_method(D_METHOD("initialize_pmugg_editor", "file_path", "seed"), &GrammarEditor::initialize_pmugg_editor);
     ClassDB::bind_method(D_METHOD("reset_pmugg_editor", "seed"), &GrammarEditor::reset_pmugg_editor);
     ClassDB::bind_method(D_METHOD("iterate_pmugg_editor", "steps"), &GrammarEditor::iterate_pmugg_editor);
-    ClassDB::bind_method(D_METHOD("generate_mesh_in_editor"), &GrammarEditor::generate_mesh_in_editor);
     ClassDB::bind_method(D_METHOD("get_face_count_editor"), &GrammarEditor::get_face_count_editor);
     ClassDB::bind_method(D_METHOD("set_pmugg_size_editor", "x", "y", "z"), &GrammarEditor::set_pmugg_size_editor);
 }
@@ -26,13 +24,9 @@ GrammarEditor::GrammarEditor() {
     dock = nullptr;
 }
 
-GrammarEditor::~GrammarEditor() {
-    // Cleanup if needed
-}
+GrammarEditor::~GrammarEditor() {}
 
 void GrammarEditor::_enter_tree() {
-    UtilityFunctions::print("PMUGG Editor Plugin activated!");
-    
     // Create and add the dock to the left upper dock slot
     dock = memnew(GrammarDock);
     dock->set_h_size_flags(Control::SIZE_EXPAND_FILL); // Make dock expand to fill available width
@@ -41,18 +35,12 @@ void GrammarEditor::_enter_tree() {
     
     // Force layout update
     dock->force_update_transform();
-    
+
     // Initialize PMUGG with a default grammar
     initialize_pmugg_editor("C:/PMUGG/grammar data/2D Basic Shapes/square filled.json", 0);
-    
-    // Create initial mesh
-    generate_mesh_in_editor();
 }
 
 void GrammarEditor::_exit_tree() {
-    UtilityFunctions::print("PMUGG Editor Plugin deactivated!");
-    
-    // Remove the dock
     if (dock) {
         remove_control_from_bottom_panel(dock);
         dock->queue_free();
@@ -76,7 +64,6 @@ void GrammarEditor::initialize_pmugg_editor(String file_path, int seed) {
 void GrammarEditor::reset_pmugg_editor(int seed) {
     if (pmugg_initialized) {
         reset(seed);
-        generate_mesh_in_editor(); // Automatically regenerate mesh
         UtilityFunctions::print("PMUGG reset with seed: ", seed);
     }
 }
@@ -84,7 +71,6 @@ void GrammarEditor::reset_pmugg_editor(int seed) {
 void GrammarEditor::iterate_pmugg_editor(int steps) {
     if (pmugg_initialized) {
         iterate(steps);
-        generate_mesh_in_editor(); // Automatically regenerate mesh
         UtilityFunctions::print("PMUGG iterated ", steps, " steps. Face count: ", get_face_count_editor());
     }
 }
@@ -99,66 +85,6 @@ int GrammarEditor::get_face_count_editor() {
 void GrammarEditor::set_pmugg_size_editor(float x, float y, float z) {
     if (pmugg_initialized) {
         setSize(x, y, z);
-        generate_mesh_in_editor(); // Automatically regenerate mesh
         UtilityFunctions::print("PMUGG size set to: (", x, ", ", y, ", ", z, ")");
     }
 }
-
-void GrammarEditor::generate_mesh_in_editor() {
-    if (!pmugg_initialized) {
-        return;
-    }
-
-    // Get current scene
-    Node *current_scene = get_editor_interface()->get_edited_scene_root();
-    if (!current_scene) {
-        UtilityFunctions::print("No scene open in editor");
-        return;
-    }
-
-    // Create or find mesh instance
-    if (!mesh_instance) {
-        mesh_instance = memnew(MeshInstance3D);
-        mesh_instance->set_name("PMUGG Generated Mesh");
-        current_scene->add_child(mesh_instance);
-        
-        // Set owner to make it part of the scene
-        mesh_instance->set_owner(current_scene);
-    }
-
-    // Get the mesh from PMUGG
-    MeshCpp mesh = getMesh();
-    
-    // Print mesh information
-    UtilityFunctions::print("PMUGG mesh - Vertices: ", mesh.numVertices, ", Faces: ", mesh.numFaces);
-    
-    // For now, create a simple test mesh since we're just testing the data
-    Ref<ArrayMesh> array_mesh = memnew(ArrayMesh);
-    Array arrays;
-    arrays.resize(Mesh::ARRAY_MAX);
-    
-    // Create a simple triangle for testing
-    PackedVector3Array vertices;
-    PackedInt32Array indices;
-    
-    vertices.push_back(Vector3(0, 1, 0));
-    vertices.push_back(Vector3(-1, 0, 0));
-    vertices.push_back(Vector3(1, 0, 0));
-    
-    indices.push_back(0);
-    indices.push_back(1);
-    indices.push_back(2);
-    
-    arrays[Mesh::ARRAY_VERTEX] = vertices;
-    arrays[Mesh::ARRAY_INDEX] = indices;
-    
-    array_mesh->add_surface_from_arrays(Mesh::PRIMITIVE_TRIANGLES, arrays);
-    mesh_instance->set_mesh(array_mesh);
-    
-    // Create a material
-    Ref<StandardMaterial3D> material = memnew(StandardMaterial3D);
-    material->set_albedo(Color(0.8, 0.3, 0.3)); // Red color
-    mesh_instance->set_material_override(material);
-    
-    UtilityFunctions::print("Generated test mesh while PMUGG reports ", mesh.numVertices, " vertices and ", mesh.numFaces, " faces");
-} 
