@@ -11,11 +11,13 @@
 #include <godot_cpp/classes/label.hpp>
 #include <godot_cpp/classes/file_dialog.hpp>
 #include <godot_cpp/classes/v_box_container.hpp>
+#include <godot_cpp/classes/h_box_container.hpp>
 #include <godot_cpp/classes/project_settings.hpp>
 #include <godot_cpp/classes/dir_access.hpp>
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
 #include <godot_cpp/classes/timer.hpp>
+#include <godot_cpp/classes/line_edit.hpp>
 
 // Include the DLL header directly
 #include "../cpp_version/pmugg dll/generate.h"
@@ -34,12 +36,22 @@ private:
 	Button* step_button;
 	Button* play_button;
 	Label* selected_file_label;
+	LineEdit* seed_input;
+	LineEdit* size_x_input;
+	LineEdit* size_y_input;
+	LineEdit* size_z_input;
 	FileDialog* file_dialog;
 	String selected_file_path;
 	
 	// Animation state
 	bool is_playing;
 	Timer* animation_timer;
+
+	// Values
+	int seed_value;
+	float size_x_value;
+	float size_y_value;
+	float size_z_value;
 
 protected:
 	static void _bind_methods();
@@ -62,6 +74,9 @@ public:
 	void on_step_pressed();
 	void on_play_pressed();
 	void on_animation_timer_timeout();
+	void on_size_x_changed(String value);
+	void on_size_y_changed(String value);
+	void on_size_z_changed(String value);
 
 	void update_mesh();
 	MeshInstance3D* find_generated_mesh();

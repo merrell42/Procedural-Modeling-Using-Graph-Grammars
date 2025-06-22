@@ -17,6 +17,9 @@ void GrammarEditor::_bind_methods() {
     ClassDB::bind_method(D_METHOD("on_reset_pressed"), &GrammarEditor::on_reset_pressed);
     ClassDB::bind_method(D_METHOD("on_play_pressed"), &GrammarEditor::on_play_pressed);
     ClassDB::bind_method(D_METHOD("on_animation_timer_timeout"), &GrammarEditor::on_animation_timer_timeout);
+    ClassDB::bind_method(D_METHOD("on_size_x_changed"), &GrammarEditor::on_size_x_changed);
+    ClassDB::bind_method(D_METHOD("on_size_y_changed"), &GrammarEditor::on_size_y_changed);
+    ClassDB::bind_method(D_METHOD("on_size_z_changed"), &GrammarEditor::on_size_z_changed);
 }
 
 GrammarEditor::GrammarEditor() {
@@ -30,6 +33,12 @@ GrammarEditor::GrammarEditor() {
     
     is_playing = false;
     animation_timer = nullptr;
+    
+    // Initialize values
+    seed_value = 0;
+    size_x_value = 30.0f;
+    size_y_value = 20.0f;
+    size_z_value = 10.0f;
 }
 
 GrammarEditor::~GrammarEditor() {}
@@ -119,6 +128,7 @@ void GrammarEditor::setup_ui(Control* parent) {
 	load_grammar_button->set_text("Load Grammar...");
 	load_grammar_button->connect("pressed", Callable(this, "on_load_grammar_pressed"));
 	load_grammar_button->set_h_size_flags(Control::SIZE_EXPAND_FILL);
+	load_grammar_button->add_theme_font_size_override("font_size", 14);
 	file_section->add_child(load_grammar_button);
 	
 	// Generation section
@@ -132,6 +142,7 @@ void GrammarEditor::setup_ui(Control* parent) {
 	play_button->set_disabled(true);
 	play_button->connect("pressed", Callable(this, "on_play_pressed"));
 	play_button->set_h_size_flags(Control::SIZE_EXPAND_FILL);
+	play_button->add_theme_font_size_override("font_size", 14);
 	gen_section->add_child(play_button);
 	
 	// Reset button
@@ -140,6 +151,7 @@ void GrammarEditor::setup_ui(Control* parent) {
 	reset_button->set_disabled(true);
 	reset_button->connect("pressed", Callable(this, "on_reset_pressed"));
 	reset_button->set_h_size_flags(Control::SIZE_EXPAND_FILL);
+	reset_button->add_theme_font_size_override("font_size", 14);
 	gen_section->add_child(reset_button);
 	
 	// Step button
@@ -148,7 +160,67 @@ void GrammarEditor::setup_ui(Control* parent) {
 	step_button->set_disabled(true);
 	step_button->connect("pressed", Callable(this, "on_step_pressed"));
 	step_button->set_h_size_flags(Control::SIZE_EXPAND_FILL);
+	step_button->add_theme_font_size_override("font_size", 14);
 	gen_section->add_child(step_button);
+	
+	// Parameters section
+	VBoxContainer* params_section = memnew(VBoxContainer);
+	params_section->set_h_size_flags(Control::SIZE_EXPAND_FILL);
+	vbox->add_child(params_section);
+	
+	// Seed input
+	HBoxContainer* seed_container = memnew(HBoxContainer);
+	seed_container->set_h_size_flags(Control::SIZE_EXPAND_FILL);
+	params_section->add_child(seed_container);
+	
+	Label* seed_label = memnew(Label);
+	seed_label->set_text("Seed:");
+	seed_label->set_custom_minimum_size(Vector2(50, 0));
+	seed_container->add_child(seed_label);
+	
+	seed_input = memnew(LineEdit);
+	seed_input->set_text("0");
+	seed_input->set_h_size_flags(Control::SIZE_EXPAND_FILL);
+	seed_input->add_theme_color_override("font_color", Color(0.7, 0.7, 0.7));
+	seed_input->add_theme_font_size_override("font_size", 12);
+	seed_container->add_child(seed_input);
+	
+	// Size inputs
+	HBoxContainer* size_container = memnew(HBoxContainer);
+	size_container->set_h_size_flags(Control::SIZE_EXPAND_FILL);
+	params_section->add_child(size_container);
+	
+	Label* size_label = memnew(Label);
+	size_label->set_text("Size:");
+	size_label->set_custom_minimum_size(Vector2(50, 0));
+	size_container->add_child(size_label);
+	
+	// Size X
+	size_x_input = memnew(LineEdit);
+	size_x_input->set_text("30.0");
+	size_x_input->set_custom_minimum_size(Vector2(60, 0));
+	size_x_input->add_theme_color_override("font_color", Color(0.7, 0.7, 0.7));
+	size_x_input->add_theme_font_size_override("font_size", 12);
+	size_x_input->connect("text_changed", Callable(this, "on_size_x_changed"));
+	size_container->add_child(size_x_input);
+	
+	// Size Y
+	size_y_input = memnew(LineEdit);
+	size_y_input->set_text("20.0");
+	size_y_input->set_custom_minimum_size(Vector2(60, 0));
+	size_y_input->add_theme_color_override("font_color", Color(0.7, 0.7, 0.7));
+	size_y_input->add_theme_font_size_override("font_size", 12);
+	size_y_input->connect("text_changed", Callable(this, "on_size_y_changed"));
+	size_container->add_child(size_y_input);
+	
+	// Size Z
+	size_z_input = memnew(LineEdit);
+	size_z_input->set_text("10.0");
+	size_z_input->set_custom_minimum_size(Vector2(60, 0));
+	size_z_input->add_theme_color_override("font_color", Color(0.7, 0.7, 0.7));
+	size_z_input->add_theme_font_size_override("font_size", 12);
+	size_z_input->connect("text_changed", Callable(this, "on_size_z_changed"));
+	size_container->add_child(size_z_input);
 }
 
 void GrammarEditor::setup_file_dialog(Control* parent) {
@@ -186,11 +258,20 @@ void GrammarEditor::on_file_selected(String path) {
 	// Initialize PMUGG with the selected file
 	EditorInterface* editor_interface = EditorInterface::get_singleton();
 	if (editor_interface) {
+        // Get current values
+        seed_value = (int)seed_input->get_text().to_float();
+        size_x_value = (float)size_x_input->get_text().to_float();
+        size_y_value = (float)size_y_input->get_text().to_float();
+        size_z_value = (float)size_z_input->get_text().to_float();
+        
         // Initialize the grammar.
 		const char* path_cstr = path.utf8().get_data();
 		char result[1024];
-		initialize(path_cstr, result, sizeof(result), 0);
+		initialize(path_cstr, result, sizeof(result), seed_value);
 		UtilityFunctions::print(result);
+		
+		// Set the size
+		setSize(size_x_value, size_y_value, size_z_value);
 
         // Enable the buttons.
 	    step_button->set_disabled(false);
@@ -215,7 +296,15 @@ void GrammarEditor::on_reset_pressed() {
 		UtilityFunctions::print("No file selected!");
 		return;
 	}
-	reset(0);
+	
+	// Get current values
+	seed_value = (int)seed_input->get_text().to_float();
+	size_x_value = (float)size_x_input->get_text().to_float();
+	size_y_value = (float)size_y_input->get_text().to_float();
+	size_z_value = (float)size_z_input->get_text().to_float();
+	
+	reset(seed_value);
+	setSize(size_x_value, size_y_value, size_z_value);
 	update_mesh();
 }
 
@@ -336,4 +425,19 @@ MeshInstance3D* GrammarEditor::find_generated_mesh() {
 		}
 	}
 	return nullptr;
+}
+
+void GrammarEditor::on_size_x_changed(String value) {
+    size_x_value = value.to_float();
+    setSize(size_x_value, size_y_value, size_z_value);
+}
+
+void GrammarEditor::on_size_y_changed(String value) {
+    size_y_value = value.to_float();
+    setSize(size_x_value, size_y_value, size_z_value);
+}
+
+void GrammarEditor::on_size_z_changed(String value) {
+    size_z_value = value.to_float();
+    setSize(size_x_value, size_y_value, size_z_value);
 }
