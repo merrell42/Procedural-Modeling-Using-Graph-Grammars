@@ -24,7 +24,7 @@ GDExample::~GDExample() {
 }
 
 void GDExample::_process(double delta) {
-	time_passed += delta;
+	/* time_passed += delta;
 
 	Vector2 new_position = Vector2(500.0 + (500.0 * sin(time_passed * 2.0)), 500.0 + (500.0 * cos(time_passed * 1.5)));
 
@@ -37,7 +37,7 @@ void GDExample::_process(double delta) {
 		iterate_pmugg(1);
 	}
 	int face_count = get_face_count();
-	UtilityFunctions::print("Face count: ", face_count);
+	UtilityFunctions::print("Face count: ", face_count); */
 }
 
 // Implement DLL wrapper methods

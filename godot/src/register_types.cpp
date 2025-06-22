@@ -1,19 +1,24 @@
 #include "register_types.h"
 
-#include "gdexample.h"
-
 #include <gdextension_interface.h>
 #include <godot_cpp/core/defs.hpp>
 #include <godot_cpp/godot.hpp>
 
+#include "gdexample.h"
+#include "pmugg_editor_plugin.h"
+
 using namespace godot;
 
 void initialize_example_module(ModuleInitializationLevel p_level) {
-	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
-		return;
+	if (p_level == MODULE_INITIALIZATION_LEVEL_SCENE) {
+		ClassDB::register_class<GDExample>();
 	}
-
-	GDREGISTER_RUNTIME_CLASS(GDExample);
+	
+	// Register the editor plugin at editor level
+	if (p_level == MODULE_INITIALIZATION_LEVEL_EDITOR) {
+		ClassDB::register_class<PMUGGDock>();
+		ClassDB::register_class<PMUGGEditorPlugin>();
+	}
 }
 
 void uninitialize_example_module(ModuleInitializationLevel p_level) {
@@ -29,7 +34,7 @@ GDExtensionBool GDE_EXPORT example_library_init(GDExtensionInterfaceGetProcAddre
 
 	init_obj.register_initializer(initialize_example_module);
 	init_obj.register_terminator(uninitialize_example_module);
-	init_obj.set_minimum_library_initialization_level(MODULE_INITIALIZATION_LEVEL_SCENE);
+	init_obj.set_minimum_library_initialization_level(MODULE_INITIALIZATION_LEVEL_EDITOR);
 
 	return init_obj.init();
 }

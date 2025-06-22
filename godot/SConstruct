@@ -20,6 +20,8 @@ env.Append(CPPPATH=["../cpp_version/"])  # Add path to your DLL headers
 if env["platform"] == "windows":
     env.Append(LIBPATH=["../cpp_version/x64/Debug/"])  # Path to your DLL lib file
     env.Append(LIBS=["pmugg dll"])  # Name of your lib file (without .lib extension)
+    # Suppress warning about illegal characters in third-party JSON header
+    env.Append(CXXFLAGS=["/wd4828"])
 
 sources = Glob("src/*.cpp")
 
