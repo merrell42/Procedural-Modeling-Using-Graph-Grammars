@@ -111,7 +111,7 @@ void GraphDrawing::save(string suffix) {
 	cout << "OBJ file successfully written to " << filename << endl;
 }
 
-Mesh GraphDrawing::exportMesh() {
+MeshCpp GraphDrawing::exportMesh() {
 	vector<Vec3> positions;
 	vector<Vec3> normals;
 	vector<int> triangles;

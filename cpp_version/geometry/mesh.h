@@ -8,7 +8,7 @@ using namespace std;
 class Vec3;
 
 // This is for exporting the graph drawing. It is not used internally.
-struct Mesh {
+struct MeshCpp {
     float* positions;
     float* normals;
     int* triangles;
@@ -18,11 +18,11 @@ struct Mesh {
     int numFaces;
 };
 
-Mesh createMesh(
+MeshCpp createMesh(
     vector<Vec3> positions,
     vector<Vec3> normals,
     vector<int> triangles,
     vector<int> faceIndices
 );
 
-void freeMeshMemory(Mesh& mesh);
+void freeMeshMemory(MeshCpp& mesh);

@@ -58,7 +58,7 @@ class GraphDrawing {
 
 		// Save the mesh to an OBJ file.
 		void save(string suffix);
-		Mesh exportMesh();
+		MeshCpp exportMesh();
 
 		// BSP functions.
 		bool bspAddEdge(Edge* edge);

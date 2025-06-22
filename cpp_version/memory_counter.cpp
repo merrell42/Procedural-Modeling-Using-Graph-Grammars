@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "memory_counter.h"
 
-// This is used to detech memory leaks. It's not necessary to always have it on.
+// This is used to detect memory leaks. It's not necessary to always have it on.
 bool MemoryCounterEnabled = false;
 
 std::map<std::string, int> MemoryCounter::creationCounters = {};

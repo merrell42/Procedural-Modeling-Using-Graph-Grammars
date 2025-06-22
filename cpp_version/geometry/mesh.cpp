@@ -1,13 +1,13 @@
 #include "pch.h"
 #include "mesh.h"
 
-Mesh createMesh(
+MeshCpp createMesh(
     vector<Vec3> positions,
     vector<Vec3> normals,
     vector<int> triangles,
     vector<int> faceIndices
 ) {
-    Mesh mesh;
+    MeshCpp mesh;
     mesh.positions = (float*)malloc(3 * positions.size() * sizeof(float));
     mesh.normals = (float*)malloc(3 * normals.size() * sizeof(float));
     mesh.triangles = (int*)malloc(triangles.size() * sizeof(int));
@@ -34,7 +34,7 @@ Mesh createMesh(
     return mesh;
 }
 
-void freeMeshMemory(Mesh& mesh) {
+void freeMeshMemory(MeshCpp& mesh) {
     if (mesh.positions) {
         free(mesh.positions);
         mesh.positions = nullptr;
