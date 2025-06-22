@@ -11,24 +11,14 @@
 using namespace godot;
 
 void GrammarEditor::_bind_methods() {
-    // Bind methods to be accessible from editor scripts
-    ClassDB::bind_method(D_METHOD("initialize_pmugg_editor", "file_path", "seed"), &GrammarEditor::initialize_pmugg_editor);
-    ClassDB::bind_method(D_METHOD("reset_pmugg_editor", "seed"), &GrammarEditor::reset_pmugg_editor);
-    ClassDB::bind_method(D_METHOD("iterate_pmugg_editor", "steps"), &GrammarEditor::iterate_pmugg_editor);
-    ClassDB::bind_method(D_METHOD("get_face_count_editor"), &GrammarEditor::get_face_count_editor);
-    ClassDB::bind_method(D_METHOD("set_pmugg_size_editor", "x", "y", "z"), &GrammarEditor::set_pmugg_size_editor);
-    
-    // Bind UI event handlers
     ClassDB::bind_method(D_METHOD("on_load_grammar_pressed"), &GrammarEditor::on_load_grammar_pressed);
     ClassDB::bind_method(D_METHOD("on_file_selected"), &GrammarEditor::on_file_selected);
     ClassDB::bind_method(D_METHOD("on_step_pressed"), &GrammarEditor::on_step_pressed);
 }
 
 GrammarEditor::GrammarEditor() {
-    pmugg_initialized = false;
     mesh_instance = nullptr;
-    
-    // Initialize UI pointers
+
     load_grammar_button = nullptr;
     step_button_ref = nullptr;
     selected_file_label = nullptr;
@@ -36,13 +26,9 @@ GrammarEditor::GrammarEditor() {
     selected_file_path = "";
 }
 
-GrammarEditor::~GrammarEditor() {
-    // Cleanup if needed
-}
+GrammarEditor::~GrammarEditor() {}
 
 void GrammarEditor::_enter_tree() {
-    UtilityFunctions::print("Grammar Editor Plugin activated!");
-    
     // Create a container for the UI
     Control* ui_container = memnew(Control);
     ui_container->set_h_size_flags(Control::SIZE_EXPAND_FILL);
@@ -54,9 +40,6 @@ void GrammarEditor::_enter_tree() {
     
     // Add the UI container to a dock slot
     add_control_to_dock(DOCK_SLOT_LEFT_UL, ui_container);
-    
-    // Initialize PMUGG with a default grammar
-    initialize_pmugg_editor("C:/PMUGG/grammar data/2D Basic Shapes/square filled.json", 0);
 }
 
 void GrammarEditor::_exit_tree() {
@@ -68,7 +51,7 @@ void GrammarEditor::_exit_tree() {
     }
 }
 
-void GrammarEditor::initialize_pmugg_editor(String file_path, int seed) {
+/* void GrammarEditor::initialize_pmugg_editor(String file_path, int seed) {
     const char* path_cstr = file_path.utf8().get_data();
     char result[1024];
     initialize(path_cstr, result, sizeof(result), seed);
@@ -102,7 +85,7 @@ void GrammarEditor::set_pmugg_size_editor(float x, float y, float z) {
         setSize(x, y, z);
         UtilityFunctions::print("PMUGG size set to: (", x, ", ", y, ", ", z, ")");
     }
-}
+} */
 
 void GrammarEditor::setup_ui(Control* parent) {
 	// Create main layout
@@ -185,20 +168,16 @@ void GrammarEditor::on_file_selected(String path) {
 	// Initialize PMUGG with the selected file
 	EditorInterface* editor_interface = EditorInterface::get_singleton();
 	if (editor_interface) {
-		UtilityFunctions::print("Initializing PMUGG with file: ", path);
-		
-		// Call the DLL initialize function
+        // Initialize the grammar.
 		const char* path_cstr = path.utf8().get_data();
 		char result[1024];
 		initialize(path_cstr, result, sizeof(result), 0);
-		
-		UtilityFunctions::print("PMUGG initialization result: ", result);
+		UtilityFunctions::print(result);
+        // Enable the buttons.
+	    step_button_ref->set_disabled(false);
 	} else {
 		UtilityFunctions::print("No editor interface available");
 	}
-	
-	// Enable buttons
-	step_button_ref->set_disabled(false);
 }
 
 void GrammarEditor::on_step_pressed() {
@@ -215,7 +194,6 @@ void GrammarEditor::update_mesh() {
 	
 	// Get current mesh info
 	MeshCpp mesh = getMesh();
-	UtilityFunctions::print("Vertices: ", mesh.numVertices, ", Faces: ", mesh.numFaces);
 	
 	// Get current scene
 	EditorInterface* editor_interface = EditorInterface::get_singleton();
@@ -229,21 +207,21 @@ void GrammarEditor::update_mesh() {
 		UtilityFunctions::print("No active scene - mesh updated but not added to scene tree");
 		return;
 	}
-	
-	// Find existing mesh instance or create new one
-	MeshInstance3D* mesh_instance = nullptr;
-	for (int i = 0; i < current_scene->get_child_count(); i++) {
-		Node* child = current_scene->get_child(i);
-		if (child->get_class() == "MeshInstance3D" && child->get_name().begins_with("GeneratedMesh_")) {
-			mesh_instance = Object::cast_to<MeshInstance3D>(child);
-			break;
+
+	// Remove mesh if empty. Godot does not support empty meshes.
+	if (mesh.numVertices == 0 || mesh.numTriangles == 0) {
+		MeshInstance3D* existing_mesh = find_generated_mesh();
+		if (existing_mesh) {
+			existing_mesh->queue_free();
 		}
+		return;
 	}
 	
+	// Find existing mesh instance or create new one.
+	MeshInstance3D* mesh_instance = find_generated_mesh();
 	if (!mesh_instance) {
-		// Create new mesh instance if none exists
 		mesh_instance = memnew(MeshInstance3D);
-		mesh_instance->set_name("GeneratedMesh_" + String::num_int64(UtilityFunctions::randi()));
+		mesh_instance->set_name("Generated Mesh");
 		current_scene->add_child(mesh_instance);
 		mesh_instance->set_owner(current_scene);
 	}
@@ -290,4 +268,19 @@ void GrammarEditor::update_mesh() {
 	mesh_instance->set_mesh(array_mesh);
 	
 	UtilityFunctions::print("Mesh updated successfully!");
+}
+
+MeshInstance3D* GrammarEditor::find_generated_mesh() {
+	Node* current_scene = EditorInterface::get_singleton()->get_edited_scene_root();
+	if (!current_scene) {
+		return nullptr;
+	}
+
+	for (int i = 0; i < current_scene->get_child_count(); i++) {
+		Node* child = current_scene->get_child(i);
+		if (child->get_class() == "MeshInstance3D" && child->get_name().begins_with("Generated Mesh")) {
+			return Object::cast_to<MeshInstance3D>(child);
+		}
+	}
+	return nullptr;
 }

@@ -25,7 +25,6 @@ class GrammarEditor : public EditorPlugin {
 	GDCLASS(GrammarEditor, EditorPlugin)
 
 private:
-	bool pmugg_initialized;
 	MeshInstance3D* mesh_instance;
 	
 	// UI elements
@@ -53,16 +52,9 @@ public:
 	void on_load_grammar_pressed();
 	void on_file_selected(String path);
 	void on_step_pressed();
-	
-	// PMUGG functions
-	void initialize_pmugg_editor(String file_path, int seed);
-	void reset_pmugg_editor(int seed);
-	void iterate_pmugg_editor(int steps);
-	int get_face_count_editor();
-	void set_pmugg_size_editor(float x, float y, float z);
-	
-	// Mesh management
+
 	void update_mesh();
+	MeshInstance3D* find_generated_mesh();
 };
 
 }
