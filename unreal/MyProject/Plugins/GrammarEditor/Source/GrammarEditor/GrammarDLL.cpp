@@ -6,6 +6,7 @@
 void* FGrammarDLL::DLLHandle = nullptr;
 bool FGrammarDLL::bIsLoaded = false;
 FGrammarDLL::InitializeFunc FGrammarDLL::Initialize = nullptr;
+FGrammarDLL::IterateFunc FGrammarDLL::Iterate = nullptr;
 
 bool FGrammarDLL::LoadDLL() {
     if (bIsLoaded) {
@@ -25,9 +26,10 @@ bool FGrammarDLL::LoadDLL() {
     
     // Get function pointers
     Initialize = (InitializeFunc)FPlatformProcess::GetDllExport(DLLHandle, TEXT("initialize"));
+    Iterate = (IterateFunc)FPlatformProcess::GetDllExport(DLLHandle, TEXT("iterate"));
     
-    if (Initialize == nullptr) {
-        UE_LOG(LogTemp, Error, TEXT("Failed to get 'initialize' function from Grammar DLL"));
+    if (Initialize == nullptr || Iterate == nullptr) {
+        UE_LOG(LogTemp, Error, TEXT("Failed to get required functions from Grammar DLL"));
         UnloadDLL();
         return false;
     }
@@ -45,6 +47,7 @@ void FGrammarDLL::UnloadDLL() {
     
     bIsLoaded = false;
     Initialize = nullptr;
+    Iterate = nullptr;
     
     UE_LOG(LogTemp, Log, TEXT("Grammar DLL unloaded"));
 }
@@ -53,27 +56,31 @@ bool FGrammarDLL::IsDLLLoaded() {
     return bIsLoaded;
 }
 
-bool FGrammarDLL::TestDLLConnection() {
+bool FGrammarDLL::LoadGrammarFile(const FString& FilePath) {
     if (!bIsLoaded || Initialize == nullptr) {
         UE_LOG(LogTemp, Error, TEXT("DLL is not loaded!"));
         return false;
     }
     
-    // Test with a sample grammar file
-    FString GrammarPath = FPaths::Combine(FPaths::ProjectDir(), TEXT("../../grammar data/2D Basic Shapes/diagonal box.json"));
-    FString FullPath = FPaths::ConvertRelativePathToFull(GrammarPath);
-    
-    if (!FPaths::FileExists(FullPath)) {
-        UE_LOG(LogTemp, Warning, TEXT("Grammar file not found, testing with empty path"));
-        FullPath = TEXT("");
-    }
-    
     // Convert to ANSI for the DLL call
-    FTCHARToUTF8 AnsiPath(*FullPath);
+    FTCHARToUTF8 AnsiPath(*FilePath);
     
     char result[1000];
     Initialize(AnsiPath.Get(), result, 1000, 0);
     
-    UE_LOG(LogTemp, Log, TEXT("DLL test successful! Result: %s"), ANSI_TO_TCHAR(result));
+    UE_LOG(LogTemp, Log, TEXT("Loading: %s"), ANSI_TO_TCHAR(result));
+    return true;
+}
+
+bool FGrammarDLL::Step() {
+    if (!bIsLoaded || Iterate == nullptr) {
+        UE_LOG(LogTemp, Error, TEXT("DLL is not loaded or iterate function not found!"));
+        return false;
+    }
+    
+    // Call iterate with 1 step
+    Iterate(1);
+    
+    UE_LOG(LogTemp, Log, TEXT("Grammar step completed successfully!"));
     return true;
 } 

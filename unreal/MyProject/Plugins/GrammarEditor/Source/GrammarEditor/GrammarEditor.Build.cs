@@ -22,7 +22,8 @@ public class GrammarEditor : ModuleRules
 				"UnrealEd",
 				"WorkspaceMenuStructure",
 				"ToolMenus",
-				"LevelEditor"
+				"LevelEditor",
+				"DesktopPlatform"
 			}
 			);
 	}

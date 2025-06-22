@@ -17,5 +17,6 @@ private:
 	void RegisterMenus();
 	void OpenGrammarEditor();
 	FReply OnTestButtonClicked();
-	FReply OnTestDLLClicked();
+	FReply OnLoadGrammarClicked();
+	FReply OnStepClicked();
 }; 

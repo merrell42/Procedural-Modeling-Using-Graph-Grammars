@@ -7,9 +7,9 @@ public:
     static bool LoadDLL();
     static void UnloadDLL();
     static bool IsDLLLoaded();
-    
-    // Simple test function - just try to call initialize
-    static bool TestDLLConnection();
+
+	static bool LoadGrammarFile(const FString& FilePath);
+	static bool Step();
 
 private:
     static void* DLLHandle;
@@ -17,5 +17,7 @@ private:
     
     // Function pointers
     typedef void (*InitializeFunc)(const char*, char*, int, int);
+    typedef void (*IterateFunc)(int);
     static InitializeFunc Initialize;
+    static IterateFunc Iterate;
 }; 

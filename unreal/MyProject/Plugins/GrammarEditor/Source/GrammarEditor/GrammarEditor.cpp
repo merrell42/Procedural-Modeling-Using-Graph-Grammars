@@ -10,6 +10,8 @@
 #include "WorkspaceMenuStructureModule.h"
 #include "LevelEditor.h"
 #include "ToolMenus.h"
+#include "DesktopPlatformModule.h"
+#include "Framework/Application/SlateApplication.h"
 
 #define LOCTEXT_NAMESPACE "FGrammarEditorModule"
 
@@ -92,8 +94,16 @@ TSharedRef<SDockTab> FGrammarEditorModule::OnSpawnPluginTab(const FSpawnTabArgs&
 			.Padding(10)
 			[
 				SNew(SButton)
-				.Text(LOCTEXT("TestDLLButtonText", "Test DLL"))
-				.OnClicked(FOnClicked::CreateRaw(this, &FGrammarEditorModule::OnTestDLLClicked))
+				.Text(LOCTEXT("LoadGrammarButtonText", "Load Grammar"))
+				.OnClicked(FOnClicked::CreateRaw(this, &FGrammarEditorModule::OnLoadGrammarClicked))
+			]
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			.Padding(10)
+			[
+				SNew(SButton)
+				.Text(LOCTEXT("StepButtonText", "Step"))
+				.OnClicked(FOnClicked::CreateRaw(this, &FGrammarEditorModule::OnStepClicked))
 			]
 		];
 }
@@ -103,14 +113,48 @@ FReply FGrammarEditorModule::OnTestButtonClicked() {
 	return FReply::Handled();
 }
 
-FReply FGrammarEditorModule::OnTestDLLClicked() {
-	UE_LOG(LogTemp, Log, TEXT("Grammar Editor: Testing DLL connection..."));
-	
-	if (FGrammarDLL::IsDLLLoaded()) {
-		FGrammarDLL::TestDLLConnection();
-	} else {
+FReply FGrammarEditorModule::OnLoadGrammarClicked() {
+	if (!FGrammarDLL::IsDLLLoaded()) {
 		UE_LOG(LogTemp, Error, TEXT("DLL is not loaded!"));
+		return FReply::Handled();
 	}
+
+	// Open file dialog
+	IDesktopPlatform* DesktopPlatform = FDesktopPlatformModule::Get();
+	if (DesktopPlatform) {
+		TArray<FString> OutFileNames;
+		const FString DefaultPath = FPaths::ConvertRelativePathToFull(FPaths::Combine(FPaths::ProjectDir(), TEXT("../../grammar data")));
+		
+		bool bOpened = DesktopPlatform->OpenFileDialog(
+			FSlateApplication::Get().FindBestParentWindowHandleForDialogs(nullptr),
+			TEXT("Select Grammar File"),
+			DefaultPath,
+			TEXT(""),
+			TEXT("JSON Files (*.json)|*.json"),
+			EFileDialogFlags::None,
+			OutFileNames
+		);
+		
+		if (bOpened && OutFileNames.Num() > 0) {
+			FString SelectedFile = OutFileNames[0];
+			UE_LOG(LogTemp, Log, TEXT("Loading grammar file: %s"), *SelectedFile);
+			
+			// Load the grammar file using the DLL
+			FGrammarDLL::LoadGrammarFile(SelectedFile);
+		}
+	}
+	
+	return FReply::Handled();
+}
+
+FReply FGrammarEditorModule::OnStepClicked() {
+	if (!FGrammarDLL::IsDLLLoaded()) {
+		UE_LOG(LogTemp, Error, TEXT("DLL is not loaded!"));
+		return FReply::Handled();
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("Executing grammar step..."));
+	FGrammarDLL::Step();
 	
 	return FReply::Handled();
 }
