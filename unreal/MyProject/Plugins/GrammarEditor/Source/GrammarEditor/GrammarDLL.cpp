@@ -172,7 +172,7 @@ void FGrammarDLL::UpdateMesh() {
         FVector Position(
             meshData.positions[i * 3] * 100.0f,
             meshData.positions[i * 3 + 1] * 100.0f,
-            meshData.positions[i * 3 + 2] * 100.0f + 100.0f
+            meshData.positions[i * 3 + 2] * 100.0f + 0.1f
         );
         Vertices.Add(Position);
         
