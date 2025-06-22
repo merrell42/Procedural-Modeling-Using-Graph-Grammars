@@ -5,13 +5,13 @@ These are roughly in priority order weighing cost vs benefits.
 * Add better documentation.
 * Measure code performance and fix simple issues.
 * Add all grammars from web version.
+* Better control the length of the edges.
 * Get optimizer working like the web version.
-* Implement on Unreal Engine and Houdini.
+* Implement on Unreal Engine, Houdini, and Godot.
 * Display the grammars and example models.
 * Add tests.
 * Add license.
 * Cut holes so they appear in Unity.
-* Add materials to the faces.
 
 ## Long-Term Goals
 
