@@ -16,7 +16,9 @@ private:
 	TSharedRef<SDockTab> OnSpawnPluginTab(const FSpawnTabArgs& SpawnTabArgs);
 	void RegisterMenus();
 	void OpenGrammarEditor();
-	FReply OnTestButtonClicked();
 	FReply OnLoadGrammarClicked();
 	FReply OnStepClicked();
+
+private:
+	TSharedPtr<SButton> StepButton;
 }; 

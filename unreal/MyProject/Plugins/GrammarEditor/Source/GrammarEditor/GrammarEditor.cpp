@@ -76,22 +76,7 @@ TSharedRef<SDockTab> FGrammarEditorModule::OnSpawnPluginTab(const FSpawnTabArgs&
 			SNew(SVerticalBox)
 			+ SVerticalBox::Slot()
 			.AutoHeight()
-			.Padding(10)
-			[
-				SNew(STextBlock)
-				.Text(LOCTEXT("HelloWorldText", "Hello World! This is the Grammar Editor window!"))
-			]
-			+ SVerticalBox::Slot()
-			.AutoHeight()
-			.Padding(10)
-			[
-				SNew(SButton)
-				.Text(LOCTEXT("TestButtonText", "Click Me!"))
-				.OnClicked(FOnClicked::CreateRaw(this, &FGrammarEditorModule::OnTestButtonClicked))
-			]
-			+ SVerticalBox::Slot()
-			.AutoHeight()
-			.Padding(10)
+			.Padding(3)
 			[
 				SNew(SButton)
 				.Text(LOCTEXT("LoadGrammarButtonText", "Load Grammar"))
@@ -99,19 +84,17 @@ TSharedRef<SDockTab> FGrammarEditorModule::OnSpawnPluginTab(const FSpawnTabArgs&
 			]
 			+ SVerticalBox::Slot()
 			.AutoHeight()
-			.Padding(10)
+			.Padding(3)
 			[
-				SNew(SButton)
+				SAssignNew(StepButton, SButton)
 				.Text(LOCTEXT("StepButtonText", "Step"))
 				.OnClicked(FOnClicked::CreateRaw(this, &FGrammarEditorModule::OnStepClicked))
+				.IsEnabled(false)
 			]
 		];
 }
 
-FReply FGrammarEditorModule::OnTestButtonClicked() {
-	UE_LOG(LogTemp, Log, TEXT("Grammar Editor: Button was clicked!"));
-	return FReply::Handled();
-}
+
 
 FReply FGrammarEditorModule::OnLoadGrammarClicked() {
 	if (!FGrammarDLL::IsDLLLoaded()) {
@@ -141,6 +124,11 @@ FReply FGrammarEditorModule::OnLoadGrammarClicked() {
 			
 			// Load the grammar file using the DLL
 			FGrammarDLL::LoadGrammarFile(SelectedFile);
+			
+			// Enable the Step button now that a grammar is loaded
+			if (StepButton.IsValid()) {
+				StepButton->SetEnabled(true);
+			}
 		}
 	}
 	
@@ -152,10 +140,7 @@ FReply FGrammarEditorModule::OnStepClicked() {
 		UE_LOG(LogTemp, Error, TEXT("DLL is not loaded!"));
 		return FReply::Handled();
 	}
-
-	UE_LOG(LogTemp, Log, TEXT("Executing grammar step..."));
-	FGrammarDLL::Step();
-	
+	FGrammarDLL::Step();	
 	return FReply::Handled();
 }
 

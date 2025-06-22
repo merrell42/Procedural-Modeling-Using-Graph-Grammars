@@ -12,7 +12,8 @@ public class GrammarEditor : ModuleRules
 				"Core",
 				"Slate",
 				"SlateCore",
-				"InputCore"
+				"InputCore",
+				"Engine"
 			}
 			);
 			
