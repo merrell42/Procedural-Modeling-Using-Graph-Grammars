@@ -15,17 +15,13 @@
 
 static const FName GrammarEditorTabName("GrammarEditor");
 
-void FGrammarEditorModule::StartupModule()
-{
+void FGrammarEditorModule::StartupModule() {
 	UE_LOG(LogTemp, Log, TEXT("Hello World! Grammar Editor Plugin Loaded Successfully!"));
 	
 	// Load the DLL
-	if (FGrammarDLL::LoadDLL())
-	{
+	if (FGrammarDLL::LoadDLL()) {
 		UE_LOG(LogTemp, Log, TEXT("Grammar DLL loaded in StartupModule"));
-	}
-	else
-	{
+	} else {
 		UE_LOG(LogTemp, Error, TEXT("Failed to load Grammar DLL in StartupModule"));
 	}
 	
@@ -39,8 +35,7 @@ void FGrammarEditorModule::StartupModule()
 	UToolMenus::RegisterStartupCallback(FSimpleMulticastDelegate::FDelegate::CreateRaw(this, &FGrammarEditorModule::RegisterMenus));
 }
 
-void FGrammarEditorModule::ShutdownModule()
-{
+void FGrammarEditorModule::ShutdownModule() {
 	UE_LOG(LogTemp, Log, TEXT("Grammar Editor Plugin Unloaded"));
 	
 	// Unload the DLL
@@ -54,8 +49,7 @@ void FGrammarEditorModule::ShutdownModule()
 	UToolMenus::UnregisterOwner(this);
 }
 
-void FGrammarEditorModule::RegisterMenus()
-{
+void FGrammarEditorModule::RegisterMenus() {
 	FToolMenuOwnerScoped OwnerScoped(this);
 	
 	UToolMenu* ToolsMenu = UToolMenus::Get()->ExtendMenu("LevelEditor.MainMenu.Tools");
@@ -69,13 +63,11 @@ void FGrammarEditorModule::RegisterMenus()
 	);
 }
 
-void FGrammarEditorModule::OpenGrammarEditor()
-{
+void FGrammarEditorModule::OpenGrammarEditor() {
 	FGlobalTabmanager::Get()->TryInvokeTab(GrammarEditorTabName);
 }
 
-TSharedRef<SDockTab> FGrammarEditorModule::OnSpawnPluginTab(const FSpawnTabArgs& SpawnTabArgs)
-{
+TSharedRef<SDockTab> FGrammarEditorModule::OnSpawnPluginTab(const FSpawnTabArgs& SpawnTabArgs) {
 	return SNew(SDockTab)
 		.TabRole(ETabRole::NomadTab)
 		[
@@ -106,22 +98,17 @@ TSharedRef<SDockTab> FGrammarEditorModule::OnSpawnPluginTab(const FSpawnTabArgs&
 		];
 }
 
-FReply FGrammarEditorModule::OnTestButtonClicked()
-{
+FReply FGrammarEditorModule::OnTestButtonClicked() {
 	UE_LOG(LogTemp, Log, TEXT("Grammar Editor: Button was clicked!"));
 	return FReply::Handled();
 }
 
-FReply FGrammarEditorModule::OnTestDLLClicked()
-{
+FReply FGrammarEditorModule::OnTestDLLClicked() {
 	UE_LOG(LogTemp, Log, TEXT("Grammar Editor: Testing DLL connection..."));
 	
-	if (FGrammarDLL::IsDLLLoaded())
-	{
+	if (FGrammarDLL::IsDLLLoaded()) {
 		FGrammarDLL::TestDLLConnection();
-	}
-	else
-	{
+	} else {
 		UE_LOG(LogTemp, Error, TEXT("DLL is not loaded!"));
 	}
 	

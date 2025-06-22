@@ -7,10 +7,8 @@
 class SDockTab;
 class FSpawnTabArgs;
 
-class FGrammarEditorModule : public IModuleInterface
-{
+class FGrammarEditorModule : public IModuleInterface {
 public:
-	/** IModuleInterface implementation */
 	virtual void StartupModule() override;
 	virtual void ShutdownModule() override;
 	

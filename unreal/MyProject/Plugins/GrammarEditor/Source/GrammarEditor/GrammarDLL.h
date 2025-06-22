@@ -2,8 +2,7 @@
 
 #include "CoreMinimal.h"
 
-class GRAMMAREDITOR_API FGrammarDLL
-{
+class GRAMMAREDITOR_API FGrammarDLL {
 public:
     static bool LoadDLL();
     static void UnloadDLL();
