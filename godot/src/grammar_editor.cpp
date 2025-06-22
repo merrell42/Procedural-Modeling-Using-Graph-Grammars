@@ -28,10 +28,12 @@ void GrammarEditor::_bind_methods() {
     ClassDB::bind_method(D_METHOD("on_folder_selected"), &GrammarEditor::on_folder_selected);
     ClassDB::bind_method(D_METHOD("load_file_from_folder"), &GrammarEditor::load_file_from_folder);
     ClassDB::bind_method(D_METHOD("update_iteration_display"), &GrammarEditor::update_iteration_display);
+    ClassDB::bind_method(D_METHOD("create_edge_lines"), &GrammarEditor::create_edge_lines);
 }
 
 GrammarEditor::GrammarEditor() {
     mesh_instance = nullptr;
+    edge_lines_instance = nullptr;
 
     load_grammar_button = nullptr;
     step_button = nullptr;
@@ -76,42 +78,6 @@ void GrammarEditor::_exit_tree() {
         mesh_instance->queue_free();
     }
 }
-
-/* void GrammarEditor::initialize_pmugg_editor(String file_path, int seed) {
-    const char* path_cstr = file_path.utf8().get_data();
-    char result[1024];
-    initialize(path_cstr, result, sizeof(result), seed);
-    pmugg_initialized = true;
-    UtilityFunctions::print("PMUGG initialized with: ", file_path);
-}
-
-void GrammarEditor::reset_pmugg_editor(int seed) {
-    if (pmugg_initialized) {
-        reset(seed);
-        UtilityFunctions::print("PMUGG reset with seed: ", seed);
-    }
-}
-
-void GrammarEditor::iterate_pmugg_editor(int steps) {
-    if (pmugg_initialized) {
-        iterate(steps);
-        UtilityFunctions::print("PMUGG iterated ", steps, " steps. Face count: ", get_face_count_editor());
-    }
-}
-
-int GrammarEditor::get_face_count_editor() {
-    if (pmugg_initialized) {
-        return getNumFaces();
-    }
-    return 0;
-}
-
-void GrammarEditor::set_pmugg_size_editor(float x, float y, float z) {
-    if (pmugg_initialized) {
-        setSize(x, y, z);
-        UtilityFunctions::print("PMUGG size set to: (", x, ", ", y, ", ", z, ")");
-    }
-} */
 
 void GrammarEditor::setup_ui(Control* parent) {
 	// Create main layout
@@ -432,7 +398,18 @@ void GrammarEditor::update_mesh() {
 		if (existing_mesh) {
 			existing_mesh->queue_free();
 		}
-		return;
+
+		// Also remove edge lines only if there are no vertices
+		if (mesh.numVertices == 0) {
+			for (int i = 0; i < current_scene->get_child_count(); i++) {
+				Node* child = current_scene->get_child(i);
+				if (child->get_class() == "MeshInstance3D" && child->get_name().begins_with("Edge Lines")) {
+					child->queue_free();
+					break;
+				}
+			}
+		    return;
+		}
 	}
 	
 	// Find existing mesh instance or create a new one.
@@ -465,6 +442,18 @@ void GrammarEditor::update_mesh() {
 		indices[i * 3 + 1] = mesh.triangles[i * 3 + 2];
 		indices[i * 3 + 2] = mesh.triangles[i * 3 + 1];
 	}
+
+	// Create edge lines.
+	PackedInt32Array face_indices;
+	face_indices.resize(mesh.numFaces);
+	for (int i = 0; i < mesh.numFaces; i++) {
+		face_indices[i] = mesh.faceIndices[i];
+	}
+	create_edge_lines(vertices, face_indices);
+    if (mesh.numVertices == 0 || mesh.numTriangles == 0) {
+        return;
+    }
+
 	
 	// Create the mesh surface.
 	Array arrays;
@@ -615,4 +604,72 @@ void GrammarEditor::update_iteration_display() {
     } else {
         iteration_label->set_text("Step: " + String::num_int64(iteration_count));
     }
+}
+
+void GrammarEditor::add_line(PackedVector3Array& edge_vertices, PackedInt32Array& edge_indices, const Vector3& v1, const Vector3& v2) {
+	edge_vertices.append(v1);
+	edge_vertices.append(v2);
+	edge_indices.append(edge_vertices.size() - 2);
+	edge_indices.append(edge_vertices.size() - 1);
+}
+
+void GrammarEditor::create_edge_lines(const PackedVector3Array& vertices, const PackedInt32Array& face_indices) {
+	// Get current scene
+	EditorInterface* editor_interface = EditorInterface::get_singleton();
+	if (!editor_interface) {
+		return;
+	}
+	
+	Node* current_scene = editor_interface->get_edited_scene_root();
+	if (!current_scene) {
+		return;
+	}
+	
+	// Find existing edge lines instance or create new one
+	MeshInstance3D* edge_lines = nullptr;
+	for (int i = 0; i < current_scene->get_child_count(); i++) {
+		Node* child = current_scene->get_child(i);
+		if (child->get_class() == "MeshInstance3D" && child->get_name().begins_with("Edge Lines")) {
+			edge_lines = Object::cast_to<MeshInstance3D>(child);
+			break;
+		}
+	}
+	
+	if (!edge_lines) {
+		edge_lines = memnew(MeshInstance3D);
+		edge_lines->set_name("Edge Lines");
+		current_scene->add_child(edge_lines);
+		edge_lines->set_owner(current_scene);
+	}
+	
+	// Create edge vertices from face indices (like Unity version)
+	PackedVector3Array edge_vertices;
+	PackedInt32Array edge_indices;
+
+	int start_index = 0;
+	for (int i = 0; i < face_indices.size(); i++) {
+		int end_index = face_indices[i];
+		for (int j = start_index; j < end_index - 1; j++) {
+			add_line(edge_vertices, edge_indices, vertices[j], vertices[j + 1]);
+		}
+		add_line(edge_vertices, edge_indices, vertices[end_index - 1], vertices[start_index]);
+		start_index = end_index;
+	}
+	
+	// Create the edge mesh
+	Array arrays;
+	arrays.resize(Mesh::ARRAY_MAX);
+	arrays[Mesh::ARRAY_VERTEX] = edge_vertices;
+	arrays[Mesh::ARRAY_INDEX] = edge_indices;
+	
+	Ref<ArrayMesh> edge_mesh = memnew(ArrayMesh);
+	edge_mesh->add_surface_from_arrays(Mesh::PRIMITIVE_LINES, arrays);
+	edge_lines->set_mesh(edge_mesh);
+	
+	// Create a material for the edge lines
+	Ref<StandardMaterial3D> edge_material = memnew(StandardMaterial3D);
+	edge_material->set_albedo(Color(1, 0, 0, 1.0)); // Red color for edges
+	edge_material->set_shading_mode(StandardMaterial3D::SHADING_MODE_UNSHADED);
+	edge_material->set_transparency(StandardMaterial3D::TRANSPARENCY_ALPHA);
+	edge_lines->set_material_override(edge_material);
 }

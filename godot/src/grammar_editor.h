@@ -30,6 +30,7 @@ class GrammarEditor : public EditorPlugin {
 
 private:
 	MeshInstance3D* mesh_instance;
+	MeshInstance3D* edge_lines_instance;
 	
 	// UI elements
 	Button* load_grammar_button;
@@ -80,6 +81,8 @@ private:
 	void load_file_from_folder(String file_path);
 	void update_iteration_display();
 	void find_json_files_recursive(String folder_path);
+	void create_edge_lines(const PackedVector3Array& vertices, const PackedInt32Array& face_indices);
+	void add_line(PackedVector3Array& edge_vertices, PackedInt32Array& edge_indices, const Vector3& v1, const Vector3& v2);
 
 protected:
 	static void _bind_methods();
