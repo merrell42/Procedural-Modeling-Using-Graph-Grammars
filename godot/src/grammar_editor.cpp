@@ -43,8 +43,7 @@ GrammarEditor::GrammarEditor() {
     
     is_playing = false;
     animation_timer = nullptr;
-    
-    // Initialize values
+
     seed_value = 0;
     size_x_value = 30.0f;
     size_y_value = 20.0f;
@@ -52,19 +51,19 @@ GrammarEditor::GrammarEditor() {
     iteration_count = 0;
     max_iterations = 50;
     
-    // Initialize folder processing
+    // The index of the file in the folder we are currently processing.
     current_file_index = 0;
 }
 
 GrammarEditor::~GrammarEditor() {}
 
 void GrammarEditor::_enter_tree() {
-    // Create a container for the UI
+    // Create a container for the UI.
     Control* ui_container = memnew(Control);
     ui_container->set_h_size_flags(Control::SIZE_EXPAND_FILL);
     ui_container->set_custom_minimum_size(Vector2(200, 0));
     
-    // Create the UI in the container
+    // Create the UI in the container.
     setup_ui(ui_container);
     setup_file_dialog(ui_container);
     
@@ -73,7 +72,6 @@ void GrammarEditor::_enter_tree() {
 }
 
 void GrammarEditor::_exit_tree() {
-    // Clean up mesh instance if it exists
     if (mesh_instance && mesh_instance->is_inside_tree()) {
         mesh_instance->queue_free();
     }
@@ -84,39 +82,25 @@ void GrammarEditor::setup_ui(Control* parent) {
 	VBoxContainer* vbox = memnew(VBoxContainer);
 	vbox->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	parent->add_child(vbox);
-	
-	// Title
+
 	Label* title = memnew(Label);
 	title->set_text("Graph Grammar Editor");
 	title->add_theme_font_size_override("font_size", 16);
 	vbox->add_child(title);
 	
-	// File selection section
+	// File selection section.
 	VBoxContainer* file_section = memnew(VBoxContainer);
 	file_section->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	vbox->add_child(file_section);
 	
-	// Selected file display
+	// Currently selected file.
 	selected_file_label = memnew(Label);
 	selected_file_label->set_text("No file selected");
 	selected_file_label->add_theme_color_override("font_color", Color(0.5, 0.5, 0.5));
 	file_section->add_child(selected_file_label);
 	
-	// Load Grammar button
-	load_grammar_button = memnew(Button);
-	load_grammar_button->set_text("Load Grammar...");
-	load_grammar_button->connect("pressed", Callable(this, "on_load_grammar_pressed"));
-	load_grammar_button->set_h_size_flags(Control::SIZE_EXPAND_FILL);
-	load_grammar_button->add_theme_font_size_override("font_size", 14);
-	file_section->add_child(load_grammar_button);
-	
-	// Load Folder button
-	load_folder_button = memnew(Button);
-	load_folder_button->set_text("Load Folder...");
-	load_folder_button->connect("pressed", Callable(this, "on_load_folder_pressed"));
-	load_folder_button->set_h_size_flags(Control::SIZE_EXPAND_FILL);
-	load_folder_button->add_theme_font_size_override("font_size", 14);
-	file_section->add_child(load_folder_button);
+	load_grammar_button = create_button("Load Grammar...", "on_load_grammar_pressed", file_section);
+	load_folder_button = create_button("Load Folder...", "on_load_folder_pressed", file_section);
 	
 	// Generation section
 	VBoxContainer* gen_section = memnew(VBoxContainer);
@@ -128,42 +112,18 @@ void GrammarEditor::setup_ui(Control* parent) {
 	iteration_label->set_text("Step: 0");
 	iteration_label->add_theme_color_override("font_color", Color(0.7, 0.7, 0.7));
 	gen_section->add_child(iteration_label);
-	
-	// Play button
-	play_button = memnew(Button);
-	play_button->set_text("Play");
-	play_button->set_disabled(true);
-	play_button->connect("pressed", Callable(this, "on_play_pressed"));
-	play_button->set_h_size_flags(Control::SIZE_EXPAND_FILL);
-	play_button->add_theme_font_size_override("font_size", 14);
-	gen_section->add_child(play_button);
-	
-	// Reset button
-	reset_button = memnew(Button);
-	reset_button->set_text("Reset");
-	reset_button->set_disabled(true);
-	reset_button->connect("pressed", Callable(this, "on_reset_pressed"));
-	reset_button->set_h_size_flags(Control::SIZE_EXPAND_FILL);
-	reset_button->add_theme_font_size_override("font_size", 14);
-	gen_section->add_child(reset_button);
-	
-	// Step button
-	step_button = memnew(Button);
-	step_button->set_text("Step");
-	step_button->set_disabled(true);
-	step_button->connect("pressed", Callable(this, "on_step_pressed"));
-	step_button->set_h_size_flags(Control::SIZE_EXPAND_FILL);
-	step_button->add_theme_font_size_override("font_size", 14);
-	gen_section->add_child(step_button);
+
+    // Buttons.
+	play_button = create_button("Play", "on_play_pressed", gen_section, true);
+	reset_button = create_button("Reset", "on_reset_pressed", gen_section, true);
+	step_button = create_button("Step", "on_step_pressed", gen_section, true);
 	
 	// Parameters section
 	VBoxContainer* params_section = memnew(VBoxContainer);
-	params_section->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	vbox->add_child(params_section);
 	
 	// Seed input
 	HBoxContainer* seed_container = memnew(HBoxContainer);
-	seed_container->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	params_section->add_child(seed_container);
 	
 	Label* seed_label = memnew(Label);
@@ -171,49 +131,20 @@ void GrammarEditor::setup_ui(Control* parent) {
 	seed_label->set_custom_minimum_size(Vector2(50, 0));
 	seed_container->add_child(seed_label);
 	
-	seed_input = memnew(LineEdit);
-	seed_input->set_text("0");
-	seed_input->set_h_size_flags(Control::SIZE_EXPAND_FILL);
-	seed_input->add_theme_color_override("font_color", Color(0.7, 0.7, 0.7));
-	seed_input->add_theme_font_size_override("font_size", 12);
-	seed_container->add_child(seed_input);
+	seed_input = create_input("0", "", seed_container);
 	
 	// Size inputs
 	HBoxContainer* size_container = memnew(HBoxContainer);
-	size_container->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	params_section->add_child(size_container);
 	
 	Label* size_label = memnew(Label);
 	size_label->set_text("Size:");
 	size_label->set_custom_minimum_size(Vector2(50, 0));
 	size_container->add_child(size_label);
-	
-	// Size X
-	size_x_input = memnew(LineEdit);
-	size_x_input->set_text("30.0");
-	size_x_input->set_custom_minimum_size(Vector2(60, 0));
-	size_x_input->add_theme_color_override("font_color", Color(0.7, 0.7, 0.7));
-	size_x_input->add_theme_font_size_override("font_size", 12);
-	size_x_input->connect("text_changed", Callable(this, "on_size_x_changed"));
-	size_container->add_child(size_x_input);
-	
-	// Size Y
-	size_y_input = memnew(LineEdit);
-	size_y_input->set_text("20.0");
-	size_y_input->set_custom_minimum_size(Vector2(60, 0));
-	size_y_input->add_theme_color_override("font_color", Color(0.7, 0.7, 0.7));
-	size_y_input->add_theme_font_size_override("font_size", 12);
-	size_y_input->connect("text_changed", Callable(this, "on_size_y_changed"));
-	size_container->add_child(size_y_input);
-	
-	// Size Z
-	size_z_input = memnew(LineEdit);
-	size_z_input->set_text("10.0");
-	size_z_input->set_custom_minimum_size(Vector2(60, 0));
-	size_z_input->add_theme_color_override("font_color", Color(0.7, 0.7, 0.7));
-	size_z_input->add_theme_font_size_override("font_size", 12);
-	size_z_input->connect("text_changed", Callable(this, "on_size_z_changed"));
-	size_container->add_child(size_z_input);
+
+	size_x_input = create_input("30.0", "on_size_x_changed", size_container);
+	size_y_input = create_input("20.0", "on_size_y_changed", size_container);
+	size_z_input = create_input("10.0", "on_size_z_changed", size_container);
 }
 
 void GrammarEditor::setup_file_dialog(Control* parent) {
@@ -258,27 +189,22 @@ void GrammarEditor::on_load_grammar_pressed() {
 void GrammarEditor::on_file_selected(String path) {
 	UtilityFunctions::print("Loading file: ", path);
 	
-	// Update UI
+	// Update UI.
 	selected_file_label->set_text(path.get_file());
 	selected_file_label->add_theme_color_override("font_color", Color(1, 1, 1));
 	selected_file_path = path;
 	
-	// Initialize PMUGG with the selected file
+	// Initialize PMUGG with the selected file.
 	EditorInterface* editor_interface = EditorInterface::get_singleton();
 	if (editor_interface) {
-        // Get current values
-        seed_value = (int)seed_input->get_text().to_float();
-        size_x_value = (float)size_x_input->get_text().to_float();
-        size_y_value = (float)size_y_input->get_text().to_float();
-        size_z_value = (float)size_z_input->get_text().to_float();
-        
-        // Initialize the grammar.
+		// Initialize the grammar.
 		const char* path_cstr = path.utf8().get_data();
 		char result[1024];
+		get_current_values();
 		initialize(path_cstr, result, sizeof(result), seed_value);
 		UtilityFunctions::print(result);
 		
-		// Set the size
+		// Set the size.
 		setSize(size_x_value, size_y_value, size_z_value);
 
         // Enable the buttons.
@@ -308,14 +234,10 @@ void GrammarEditor::on_reset_pressed() {
 		return;
 	}
 	
-	// Get current values
-	seed_value = (int)seed_input->get_text().to_float();
-	size_x_value = (float)size_x_input->get_text().to_float();
-	size_y_value = (float)size_y_input->get_text().to_float();
-	size_z_value = (float)size_z_input->get_text().to_float();
-	
+	get_current_values();
 	reset(seed_value);
 	setSize(size_x_value, size_y_value, size_z_value);
+	
 	iteration_count = 0;
 	update_iteration_display();
 	update_mesh();
@@ -328,27 +250,9 @@ void GrammarEditor::on_play_pressed() {
 	}
 	
 	if (!is_playing) {
-		// Start playing
-		is_playing = true;
-		play_button->set_text("Stop");
-		
-		// Create timer if it doesn't exist
-		if (!animation_timer) {
-			animation_timer = memnew(Timer);
-			animation_timer->set_wait_time(0.001); // Run as fast as possible
-			animation_timer->connect("timeout", Callable(this, "on_animation_timer_timeout"));
-			add_child(animation_timer);
-		}
-		
-		animation_timer->start();
+		start_animation();
 	} else {
-		// Stop playing
-		is_playing = false;
-		play_button->set_text("Play");
-		
-		if (animation_timer) {
-			animation_timer->stop();
-		}
+		stop_animation();
 	}
 }
 
@@ -359,18 +263,15 @@ void GrammarEditor::on_animation_timer_timeout() {
 		update_iteration_display();
 		update_mesh();
 		
-		// Check if we've reached max iterations
+		// Check if we've reached max iterations.
 		if (iteration_count >= max_iterations && max_iterations > 0) {
-			// Move to next file if available
+			// Move to next file if available.
 			if (current_file_index < folder_files.size() - 1) {
 				current_file_index++;
 				load_file_from_folder(folder_files[current_file_index]);
-				// Continue playing with the new file
 			} else {
-				// No more files, stop playing
-				is_playing = false;
-				play_button->set_text("Play");
-				animation_timer->stop();
+				// Stop playing once we've reached the end of the folder.
+				stop_animation();
 				UtilityFunctions::print("Finished processing all files in folder");
 			}
 		}
@@ -449,7 +350,6 @@ void GrammarEditor::update_mesh() {
     if (mesh.numVertices == 0 || mesh.numTriangles == 0) {
         return;
     }
-
 	
 	// Create the mesh surface.
 	Array arrays;
@@ -484,39 +384,24 @@ void GrammarEditor::on_load_folder_pressed() {
 
 void GrammarEditor::on_folder_selected(String path) {
 	UtilityFunctions::print("Loading folder: ", path);
-	
-	// Clear previous folder files
+
 	folder_files.clear();
 	current_file_index = 0;
-	
-	// Recursively get all JSON files in the folder and subfolders
-	find_json_files_recursive(path);
+	find_json_files(path);
 	
 	if (folder_files.size() > 0) {
-		UtilityFunctions::print("Found ", folder_files.size(), " JSON files in folder and subfolders");
-		// Load the first file
+		UtilityFunctions::print("Found ", folder_files.size(), " JSON files in the folder.");
+        // Play the first file.
 		load_file_from_folder(folder_files[0]);
-		
-		// Automatically start playing
-		is_playing = true;
-		play_button->set_text("Stop");
-		
-		// Create timer if it doesn't exist
-		if (!animation_timer) {
-			animation_timer = memnew(Timer);
-			animation_timer->set_wait_time(0.001); // Run as fast as possible
-			animation_timer->connect("timeout", Callable(this, "on_animation_timer_timeout"));
-			add_child(animation_timer);
-		}
-		
+		start_animation();
 		max_iterations = MAX_ITERATIONS;
-		animation_timer->start();
 	} else {
 		UtilityFunctions::print("No JSON files found in folder or subfolders");
 	}
 }
 
-void GrammarEditor::find_json_files_recursive(String folder_path) {
+// Recursively get all JSON files in the folder and subfolders.
+void GrammarEditor::find_json_files(String folder_path) {
 	Ref<DirAccess> dir = DirAccess::open(folder_path);
 	if (!dir.is_valid()) {
 		return;
@@ -531,7 +416,7 @@ void GrammarEditor::find_json_files_recursive(String folder_path) {
 		} else if (dir->current_is_dir()) {
 			// Recursively search subdirectories
 			String subfolder_path = folder_path.path_join(file_name);
-			find_json_files_recursive(subfolder_path);
+			find_json_files(subfolder_path);
 		} else if (file_name.ends_with(".json")) {
 			// Add JSON file to the list
 			folder_files.append(folder_path.path_join(file_name));
@@ -544,40 +429,34 @@ void GrammarEditor::find_json_files_recursive(String folder_path) {
 void GrammarEditor::load_file_from_folder(String file_path) {
 	UtilityFunctions::print("Loading file from folder: ", file_path);
 	
-	// Update UI
+	// Update UI.
 	selected_file_label->set_text(file_path.get_file());
 	selected_file_label->add_theme_color_override("font_color", Color(1, 1, 1));
 	selected_file_path = file_path;
 	
-	// Reset iteration count
+	// Reset iteration count.
 	iteration_count = 0;
 	update_iteration_display();
 	
-	// Initialize PMUGG with the selected file
+	// Initialize PMUGG with the selected file.
 	EditorInterface* editor_interface = EditorInterface::get_singleton();
-	if (editor_interface) {
-		// Get current values
-		seed_value = (int)seed_input->get_text().to_float();
-		size_x_value = (float)size_x_input->get_text().to_float();
-		size_y_value = (float)size_y_input->get_text().to_float();
-		size_z_value = (float)size_z_input->get_text().to_float();
-		
-		// Initialize the grammar.
-		const char* path_cstr = file_path.utf8().get_data();
-		char result[1024];
-		initialize(path_cstr, result, sizeof(result), seed_value);
-		UtilityFunctions::print(result);
-		
-		// Set the size
-		setSize(size_x_value, size_y_value, size_z_value);
-
-		// Enable the buttons.
-		step_button->set_disabled(false);
-		reset_button->set_disabled(false);
-		play_button->set_disabled(false);
-	} else {
+	if (!editor_interface) {
 		UtilityFunctions::print("No editor interface available");
+		return;
 	}
+
+    // Initialize the grammar.
+    const char* path_cstr = file_path.utf8().get_data();
+    char result[1024];
+    get_current_values();
+    initialize(path_cstr, result, sizeof(result), seed_value);
+    UtilityFunctions::print(result);
+    setSize(size_x_value, size_y_value, size_z_value);
+
+    // Enable the buttons.
+    step_button->set_disabled(false);
+    reset_button->set_disabled(false);
+    play_button->set_disabled(false);
 }
 
 void GrammarEditor::update_iteration_display() {
@@ -596,26 +475,24 @@ void GrammarEditor::add_line(PackedVector3Array& edge_vertices, PackedInt32Array
 }
 
 void GrammarEditor::create_edge_lines(const PackedVector3Array& vertices, const PackedInt32Array& face_indices) {
-	// Get current scene
+	// Get current scene.
 	EditorInterface* editor_interface = EditorInterface::get_singleton();
 	if (!editor_interface) {
 		return;
 	}
-	
 	Node* current_scene = editor_interface->get_edited_scene_root();
 	if (!current_scene) {
 		return;
 	}
 	
-	// Find existing edge lines instance or create new one
+	// Find existing edge lines instance or create new one.
 	if (!edge_lines_instance) {
 		edge_lines_instance = memnew(MeshInstance3D);
 		edge_lines_instance->set_name("Edge Lines");
 		current_scene->add_child(edge_lines_instance);
 		edge_lines_instance->set_owner(current_scene);
 	}
-	
-	// Create edge vertices from face indices (like Unity version)
+
 	PackedVector3Array edge_vertices;
 	PackedInt32Array edge_indices;
 
@@ -629,7 +506,7 @@ void GrammarEditor::create_edge_lines(const PackedVector3Array& vertices, const 
 		start_index = end_index;
 	}
 	
-	// Create the edge mesh
+	// Create the edge mesh.
 	Array arrays;
 	arrays.resize(Mesh::ARRAY_MAX);
 	arrays[Mesh::ARRAY_VERTEX] = edge_vertices;
@@ -639,10 +516,65 @@ void GrammarEditor::create_edge_lines(const PackedVector3Array& vertices, const 
 	edge_mesh->add_surface_from_arrays(Mesh::PRIMITIVE_LINES, arrays);
 	edge_lines_instance->set_mesh(edge_mesh);
 	
-	// Create a material for the edge lines
+	// Create a material for the edge lines.
 	Ref<StandardMaterial3D> edge_material = memnew(StandardMaterial3D);
 	edge_material->set_albedo(Color(1, 0, 0, 1.0)); // Red color for edges
 	edge_material->set_shading_mode(StandardMaterial3D::SHADING_MODE_UNSHADED);
 	edge_material->set_transparency(StandardMaterial3D::TRANSPARENCY_ALPHA);
 	edge_lines_instance->set_material_override(edge_material);
+}
+
+Button* GrammarEditor::create_button(const String& text, const String& callback, Control* parent, bool disabled) {
+	Button* button = memnew(Button);
+	button->set_text(text);
+	button->set_disabled(disabled);
+	button->connect("pressed", Callable(this, callback));
+	button->set_h_size_flags(Control::SIZE_EXPAND_FILL);
+	button->add_theme_font_size_override("font_size", 14);
+	parent->add_child(button);
+	return button;
+}
+
+LineEdit* GrammarEditor::create_input(const String& default_value, const String& callback, Control* parent, float min_width) {
+	LineEdit* input = memnew(LineEdit);
+	input->set_text(default_value);
+	input->set_custom_minimum_size(Vector2(min_width, 0));
+	input->add_theme_color_override("font_color", Color(0.7, 0.7, 0.7));
+	input->add_theme_font_size_override("font_size", 12);
+	if (!callback.is_empty()) {
+		input->connect("text_changed", Callable(this, callback));
+	}
+	parent->add_child(input);
+	return input;
+}
+
+void GrammarEditor::get_current_values() {
+	seed_value = (int)seed_input->get_text().to_float();
+	size_x_value = (float)size_x_input->get_text().to_float();
+	size_y_value = (float)size_y_input->get_text().to_float();
+	size_z_value = (float)size_z_input->get_text().to_float();
+}
+
+void GrammarEditor::start_animation() {
+    is_playing = true;
+    play_button->set_text("Stop");
+
+	// Create timer if it doesn't exist.
+	if (!animation_timer) {
+		animation_timer = memnew(Timer);
+		animation_timer->set_wait_time(0.001);
+		animation_timer->connect("timeout", Callable(this, "on_animation_timer_timeout"));
+		add_child(animation_timer);
+	}
+	
+	animation_timer->start();
+}
+
+void GrammarEditor::stop_animation() {
+    is_playing = false;
+    play_button->set_text("Play");
+
+    if (animation_timer) {
+        animation_timer->stop();
+    }
 }

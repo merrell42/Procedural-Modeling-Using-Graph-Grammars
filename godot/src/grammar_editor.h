@@ -80,9 +80,14 @@ private:
 	// Helper methods
 	void load_file_from_folder(String file_path);
 	void update_iteration_display();
-	void find_json_files_recursive(String folder_path);
+	void find_json_files(String folder_path);
 	void create_edge_lines(const PackedVector3Array& vertices, const PackedInt32Array& face_indices);
 	void add_line(PackedVector3Array& edge_vertices, PackedInt32Array& edge_indices, const Vector3& v1, const Vector3& v2);
+	Button* create_button(const String& text, const String& callback, Control* parent, bool disabled = false);
+	LineEdit* create_input(const String& default_value, const String& callback, Control* parent, float min_width = 60.0f);
+	void get_current_values();
+	void start_animation();
+	void stop_animation();
 
 protected:
 	static void _bind_methods();
