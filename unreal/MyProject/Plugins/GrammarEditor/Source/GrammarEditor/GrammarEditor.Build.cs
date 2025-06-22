@@ -13,7 +13,8 @@ public class GrammarEditor : ModuleRules
 				"Slate",
 				"SlateCore",
 				"InputCore",
-				"Engine"
+				"Engine",
+				"CoreUObject"
 			}
 			);
 			
@@ -24,7 +25,13 @@ public class GrammarEditor : ModuleRules
 				"WorkspaceMenuStructure",
 				"ToolMenus",
 				"LevelEditor",
-				"DesktopPlatform"
+				"DesktopPlatform",
+				"MeshDescription",
+				"StaticMeshDescription",
+				"RenderCore",
+				"RHI",
+				"AssetRegistry",
+				"Projects"
 			}
 			);
 	}
