@@ -1,4 +1,4 @@
-#include "pmugg_editor_plugin.h"
+#include "grammar_editor.h"
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
 #include <godot_cpp/classes/editor_interface.hpp>
@@ -7,14 +7,14 @@
 
 using namespace godot;
 
-void PMUGGDock::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("on_load_grammar_pressed"), &PMUGGDock::on_load_grammar_pressed);
-	ClassDB::bind_method(D_METHOD("on_file_selected"), &PMUGGDock::on_file_selected);
-	ClassDB::bind_method(D_METHOD("on_generate_pressed"), &PMUGGDock::on_generate_pressed);
-	ClassDB::bind_method(D_METHOD("on_step_pressed"), &PMUGGDock::on_step_pressed);
+void GrammarDock::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("on_load_grammar_pressed"), &GrammarDock::on_load_grammar_pressed);
+	ClassDB::bind_method(D_METHOD("on_file_selected"), &GrammarDock::on_file_selected);
+	ClassDB::bind_method(D_METHOD("on_generate_pressed"), &GrammarDock::on_generate_pressed);
+	ClassDB::bind_method(D_METHOD("on_step_pressed"), &GrammarDock::on_step_pressed);
 }
 
-PMUGGDock::PMUGGDock() {
+GrammarDock::GrammarDock() {
 	// Initialize pointers
 	load_grammar_button = nullptr;
 	generate_button = nullptr;
@@ -25,17 +25,17 @@ PMUGGDock::PMUGGDock() {
 	selected_file_path = "";
 }
 
-PMUGGDock::~PMUGGDock() {
+GrammarDock::~GrammarDock() {
 	// Cleanup will be handled by Godot
 }
 
-void PMUGGDock::_ready() {
+void GrammarDock::_ready() {
 	UtilityFunctions::print("PMUGG Dock initializing...");
 	setup_ui();
 	setup_file_dialog();
 }
 
-void PMUGGDock::setup_ui() {
+void GrammarDock::setup_ui() {
 	// Create main layout
 	VBoxContainer* vbox = memnew(VBoxContainer);
 	vbox->set_h_size_flags(Control::SIZE_EXPAND_FILL); // Make main container expand to fill width
@@ -99,7 +99,7 @@ void PMUGGDock::setup_ui() {
 	gen_section->add_child(status_label);
 }
 
-void PMUGGDock::setup_file_dialog() {
+void GrammarDock::setup_file_dialog() {
 	file_dialog = memnew(FileDialog);
 	add_child(file_dialog);
 
@@ -119,12 +119,12 @@ void PMUGGDock::setup_file_dialog() {
 	file_dialog->connect("file_selected", Callable(this, "on_file_selected"));
 }
 
-void PMUGGDock::on_load_grammar_pressed() {
+void GrammarDock::on_load_grammar_pressed() {
 	UtilityFunctions::print("Opening file browser...");
 	file_dialog->popup_centered(Vector2i(800, 600));
 }
 
-void PMUGGDock::on_file_selected(String path) {
+void GrammarDock::on_file_selected(String path) {
 	UtilityFunctions::print("Selected grammar file: ", path);
 	
 	// Update UI
@@ -157,7 +157,7 @@ void PMUGGDock::on_file_selected(String path) {
 	step_button_ref->set_disabled(false);
 }
 
-void PMUGGDock::on_generate_pressed() {
+void GrammarDock::on_generate_pressed() {
 	UtilityFunctions::print("Generating mesh...");
 	
 	if (selected_file_path.is_empty()) {
@@ -182,7 +182,7 @@ void PMUGGDock::on_generate_pressed() {
 	status_label->set_text("Generated mesh with " + String::num_int64(face_count) + " faces!");
 }
 
-void PMUGGDock::create_godot_mesh() {
+void GrammarDock::create_godot_mesh() {
 	UtilityFunctions::print("Creating Godot mesh...");
 	
 	// Get current scene
@@ -242,7 +242,7 @@ void PMUGGDock::create_godot_mesh() {
 	status_label->set_text("Mesh generated successfully!");
 }
 
-void PMUGGDock::update_mesh() {
+void GrammarDock::update_mesh() {
 	UtilityFunctions::print("Updating mesh...");
 	
 	// Get current mesh info
@@ -327,7 +327,7 @@ void PMUGGDock::update_mesh() {
 	UtilityFunctions::print("Mesh updated successfully!");
 }
 
-void PMUGGDock::on_step_pressed() {
+void GrammarDock::on_step_pressed() {
 	UtilityFunctions::print("Stepping PMUGG (iterating once)...");
 	
 	if (selected_file_path.is_empty()) {

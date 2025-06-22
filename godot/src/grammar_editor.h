@@ -1,5 +1,5 @@
-#ifndef PMUGG_EDITOR_PLUGIN_H
-#define PMUGG_EDITOR_PLUGIN_H
+#ifndef GRAMMAR_EDITOR_H
+#define GRAMMAR_EDITOR_H
 
 #include <godot_cpp/classes/editor_plugin.hpp>
 #include <godot_cpp/classes/mesh_instance3d.hpp>
@@ -18,8 +18,8 @@
 
 namespace godot {
 
-class PMUGGDock : public Control {
-	GDCLASS(PMUGGDock, Control)
+class GrammarDock : public Control {
+	GDCLASS(GrammarDock, Control)
 
 private:
 	Button* load_grammar_button;
@@ -34,8 +34,8 @@ protected:
 	static void _bind_methods();
 
 public:
-	PMUGGDock();
-	~PMUGGDock();
+	GrammarDock();
+	~GrammarDock();
 
 	void _ready() override;
 	void setup_ui();
@@ -48,20 +48,20 @@ public:
 	void create_godot_mesh();
 };
 
-class PMUGGEditorPlugin : public EditorPlugin {
-	GDCLASS(PMUGGEditorPlugin, EditorPlugin)
+class GrammarEditor : public EditorPlugin {
+	GDCLASS(GrammarEditor, EditorPlugin)
 
 private:
 	bool pmugg_initialized;
 	MeshInstance3D* mesh_instance;
-	PMUGGDock* dock;
+	GrammarDock* dock;
 
 protected:
 	static void _bind_methods();
 
 public:
-	PMUGGEditorPlugin();
-	~PMUGGEditorPlugin();
+	GrammarEditor();
+	~GrammarEditor();
 
 	virtual void _enter_tree() override;
 	virtual void _exit_tree() override;
@@ -75,7 +75,7 @@ public:
 	void set_pmugg_size_editor(float x, float y, float z);
 	
 	// Dock access
-	PMUGGDock* get_dock() { return dock; }
+	GrammarDock* get_dock() { return dock; }
 };
 
 }

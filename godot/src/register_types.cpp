@@ -4,20 +4,15 @@
 #include <godot_cpp/core/defs.hpp>
 #include <godot_cpp/godot.hpp>
 
-#include "gdexample.h"
-#include "pmugg_editor_plugin.h"
+#include "grammar_editor.h"
 
 using namespace godot;
 
 void initialize_example_module(ModuleInitializationLevel p_level) {
-	if (p_level == MODULE_INITIALIZATION_LEVEL_SCENE) {
-		ClassDB::register_class<GDExample>();
-	}
-	
 	// Register the editor plugin at editor level
 	if (p_level == MODULE_INITIALIZATION_LEVEL_EDITOR) {
-		ClassDB::register_class<PMUGGDock>();
-		ClassDB::register_class<PMUGGEditorPlugin>();
+		ClassDB::register_class<GrammarDock>();
+		ClassDB::register_class<GrammarEditor>();
 	}
 }
 

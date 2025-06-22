@@ -1,4 +1,4 @@
-#include "pmugg_editor_plugin.h"
+#include "grammar_editor.h"
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
 #include <godot_cpp/classes/scene_tree.hpp>
@@ -10,31 +10,31 @@
 
 using namespace godot;
 
-void PMUGGEditorPlugin::_bind_methods() {
+void GrammarEditor::_bind_methods() {
     // Bind methods to be accessible from editor scripts
-    ClassDB::bind_method(D_METHOD("initialize_pmugg_editor", "file_path", "seed"), &PMUGGEditorPlugin::initialize_pmugg_editor);
-    ClassDB::bind_method(D_METHOD("reset_pmugg_editor", "seed"), &PMUGGEditorPlugin::reset_pmugg_editor);
-    ClassDB::bind_method(D_METHOD("iterate_pmugg_editor", "steps"), &PMUGGEditorPlugin::iterate_pmugg_editor);
-    ClassDB::bind_method(D_METHOD("generate_mesh_in_editor"), &PMUGGEditorPlugin::generate_mesh_in_editor);
-    ClassDB::bind_method(D_METHOD("get_face_count_editor"), &PMUGGEditorPlugin::get_face_count_editor);
-    ClassDB::bind_method(D_METHOD("set_pmugg_size_editor", "x", "y", "z"), &PMUGGEditorPlugin::set_pmugg_size_editor);
+    ClassDB::bind_method(D_METHOD("initialize_pmugg_editor", "file_path", "seed"), &GrammarEditor::initialize_pmugg_editor);
+    ClassDB::bind_method(D_METHOD("reset_pmugg_editor", "seed"), &GrammarEditor::reset_pmugg_editor);
+    ClassDB::bind_method(D_METHOD("iterate_pmugg_editor", "steps"), &GrammarEditor::iterate_pmugg_editor);
+    ClassDB::bind_method(D_METHOD("generate_mesh_in_editor"), &GrammarEditor::generate_mesh_in_editor);
+    ClassDB::bind_method(D_METHOD("get_face_count_editor"), &GrammarEditor::get_face_count_editor);
+    ClassDB::bind_method(D_METHOD("set_pmugg_size_editor", "x", "y", "z"), &GrammarEditor::set_pmugg_size_editor);
 }
 
-PMUGGEditorPlugin::PMUGGEditorPlugin() {
+GrammarEditor::GrammarEditor() {
     pmugg_initialized = false;
     mesh_instance = nullptr;
     dock = nullptr;
 }
 
-PMUGGEditorPlugin::~PMUGGEditorPlugin() {
+GrammarEditor::~GrammarEditor() {
     // Cleanup if needed
 }
 
-void PMUGGEditorPlugin::_enter_tree() {
+void GrammarEditor::_enter_tree() {
     UtilityFunctions::print("PMUGG Editor Plugin activated!");
     
     // Create and add the dock to the left upper dock slot
-    dock = memnew(PMUGGDock);
+    dock = memnew(GrammarDock);
     dock->set_h_size_flags(Control::SIZE_EXPAND_FILL); // Make dock expand to fill available width
     dock->set_custom_minimum_size(Vector2(200, 0)); // Set minimum width
     add_control_to_dock(DOCK_SLOT_LEFT_UL, dock);
@@ -49,7 +49,7 @@ void PMUGGEditorPlugin::_enter_tree() {
     generate_mesh_in_editor();
 }
 
-void PMUGGEditorPlugin::_exit_tree() {
+void GrammarEditor::_exit_tree() {
     UtilityFunctions::print("PMUGG Editor Plugin deactivated!");
     
     // Remove the dock
@@ -65,7 +65,7 @@ void PMUGGEditorPlugin::_exit_tree() {
     }
 }
 
-void PMUGGEditorPlugin::initialize_pmugg_editor(String file_path, int seed) {
+void GrammarEditor::initialize_pmugg_editor(String file_path, int seed) {
     const char* path_cstr = file_path.utf8().get_data();
     char result[1024];
     PMUGGWrapper::initialize_grammar(path_cstr, result, sizeof(result), seed);
@@ -73,7 +73,7 @@ void PMUGGEditorPlugin::initialize_pmugg_editor(String file_path, int seed) {
     UtilityFunctions::print("PMUGG initialized with: ", file_path);
 }
 
-void PMUGGEditorPlugin::reset_pmugg_editor(int seed) {
+void GrammarEditor::reset_pmugg_editor(int seed) {
     if (pmugg_initialized) {
         PMUGGWrapper::reset_grammar(seed);
         generate_mesh_in_editor(); // Automatically regenerate mesh
@@ -81,7 +81,7 @@ void PMUGGEditorPlugin::reset_pmugg_editor(int seed) {
     }
 }
 
-void PMUGGEditorPlugin::iterate_pmugg_editor(int steps) {
+void GrammarEditor::iterate_pmugg_editor(int steps) {
     if (pmugg_initialized) {
         PMUGGWrapper::iterate_grammar(steps);
         generate_mesh_in_editor(); // Automatically regenerate mesh
@@ -89,14 +89,14 @@ void PMUGGEditorPlugin::iterate_pmugg_editor(int steps) {
     }
 }
 
-int PMUGGEditorPlugin::get_face_count_editor() {
+int GrammarEditor::get_face_count_editor() {
     if (pmugg_initialized) {
         return PMUGGWrapper::get_num_faces();
     }
     return 0;
 }
 
-void PMUGGEditorPlugin::set_pmugg_size_editor(float x, float y, float z) {
+void GrammarEditor::set_pmugg_size_editor(float x, float y, float z) {
     if (pmugg_initialized) {
         PMUGGWrapper::set_size(x, y, z);
         generate_mesh_in_editor(); // Automatically regenerate mesh
@@ -104,7 +104,7 @@ void PMUGGEditorPlugin::set_pmugg_size_editor(float x, float y, float z) {
     }
 }
 
-void PMUGGEditorPlugin::generate_mesh_in_editor() {
+void GrammarEditor::generate_mesh_in_editor() {
     if (!pmugg_initialized) {
         return;
     }
