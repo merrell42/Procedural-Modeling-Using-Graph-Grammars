@@ -1,4 +1,5 @@
 #include "GrammarEditor.h"
+#include "GrammarDLL.h"
 #include "Modules/ModuleManager.h"
 #include "Framework/Docking/TabManager.h"
 #include "Widgets/Docking/SDockTab.h"
@@ -18,6 +19,16 @@ void FGrammarEditorModule::StartupModule()
 {
 	UE_LOG(LogTemp, Log, TEXT("Hello World! Grammar Editor Plugin Loaded Successfully!"));
 	
+	// Load the DLL
+	if (FGrammarDLL::LoadDLL())
+	{
+		UE_LOG(LogTemp, Log, TEXT("Grammar DLL loaded in StartupModule"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to load Grammar DLL in StartupModule"));
+	}
+	
 	// Register the tab spawner - UI Window
 	FGlobalTabmanager::Get()->RegisterNomadTabSpawner(GrammarEditorTabName,
 		FOnSpawnTab::CreateRaw(this, &FGrammarEditorModule::OnSpawnPluginTab))
@@ -31,6 +42,9 @@ void FGrammarEditorModule::StartupModule()
 void FGrammarEditorModule::ShutdownModule()
 {
 	UE_LOG(LogTemp, Log, TEXT("Grammar Editor Plugin Unloaded"));
+	
+	// Unload the DLL
+	FGrammarDLL::UnloadDLL();
 	
 	// Unregister the tab spawner
 	FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(GrammarEditorTabName);
@@ -81,12 +95,36 @@ TSharedRef<SDockTab> FGrammarEditorModule::OnSpawnPluginTab(const FSpawnTabArgs&
 				.Text(LOCTEXT("TestButtonText", "Click Me!"))
 				.OnClicked(FOnClicked::CreateRaw(this, &FGrammarEditorModule::OnTestButtonClicked))
 			]
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			.Padding(10)
+			[
+				SNew(SButton)
+				.Text(LOCTEXT("TestDLLButtonText", "Test DLL"))
+				.OnClicked(FOnClicked::CreateRaw(this, &FGrammarEditorModule::OnTestDLLClicked))
+			]
 		];
 }
 
 FReply FGrammarEditorModule::OnTestButtonClicked()
 {
 	UE_LOG(LogTemp, Log, TEXT("Grammar Editor: Button was clicked!"));
+	return FReply::Handled();
+}
+
+FReply FGrammarEditorModule::OnTestDLLClicked()
+{
+	UE_LOG(LogTemp, Log, TEXT("Grammar Editor: Testing DLL connection..."));
+	
+	if (FGrammarDLL::IsDLLLoaded())
+	{
+		FGrammarDLL::TestDLLConnection();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("DLL is not loaded!"));
+	}
+	
 	return FReply::Handled();
 }
 
