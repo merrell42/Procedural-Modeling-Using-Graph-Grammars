@@ -25,6 +25,7 @@ FGrammarDLL::IterateFunc FGrammarDLL::Iterate = nullptr;
 FGrammarDLL::GetMeshFunc FGrammarDLL::GetMesh = nullptr;
 FGrammarDLL::DestroyMeshFunc FGrammarDLL::DestroyMesh = nullptr;
 FGrammarDLL::ResetFunc FGrammarDLL::ResetFunction = nullptr;
+FGrammarDLL::SetSizeFunc FGrammarDLL::SetSizeFunction = nullptr;
 
 bool FGrammarDLL::LoadDLL() {
     if (bIsLoaded) {
@@ -48,8 +49,9 @@ bool FGrammarDLL::LoadDLL() {
     GetMesh = (GetMeshFunc)FPlatformProcess::GetDllExport(DLLHandle, TEXT("getMesh"));
     DestroyMesh = (DestroyMeshFunc)FPlatformProcess::GetDllExport(DLLHandle, TEXT("destroyMesh"));
     ResetFunction = (ResetFunc)FPlatformProcess::GetDllExport(DLLHandle, TEXT("reset"));
+    SetSizeFunction = (SetSizeFunc)FPlatformProcess::GetDllExport(DLLHandle, TEXT("setSize"));
     
-    if (Initialize == nullptr || Iterate == nullptr || GetMesh == nullptr || DestroyMesh == nullptr || ResetFunction == nullptr) {
+    if (Initialize == nullptr || Iterate == nullptr || GetMesh == nullptr || DestroyMesh == nullptr || ResetFunction == nullptr || SetSizeFunction == nullptr) {
         UE_LOG(LogTemp, Error, TEXT("Failed to get required functions from Grammar DLL"));
         UnloadDLL();
         return false;
@@ -72,6 +74,7 @@ void FGrammarDLL::UnloadDLL() {
     GetMesh = nullptr;
     DestroyMesh = nullptr;
     ResetFunction = nullptr;
+    SetSizeFunction = nullptr;
     
     UE_LOG(LogTemp, Log, TEXT("Grammar DLL unloaded"));
 }
@@ -114,6 +117,16 @@ void FGrammarDLL::Reset(int Seed) {
     UE_LOG(LogTemp, Log, TEXT("Resetting grammar with seed: %d"), Seed);
     ResetFunction(Seed);
     UpdateMesh();
+}
+
+void FGrammarDLL::SetSize(float X, float Y, float Z) {
+    if (!bIsLoaded || SetSizeFunction == nullptr) {
+        UE_LOG(LogTemp, Error, TEXT("DLL is not loaded or setSize function not found!"));
+        return;
+    }
+    
+    UE_LOG(LogTemp, Log, TEXT("Setting size to: X=%f, Y=%f, Z=%f"), X, Y, Z);
+    SetSizeFunction(X, Y, Z);
 }
 
 void FGrammarDLL::UpdateMesh() {
@@ -230,7 +243,7 @@ void FGrammarDLL::UpdateMesh() {
             FVector v2 = Vertices[j + 1];
             
             // Draw line for this edge using LineBatchComponent
-            LineBatchComponent->DrawLine(v1, v2, FLinearColor::Red, SDPG_World, 4.0f, 0.0f);
+            LineBatchComponent->DrawLine(v1, v2, FLinearColor::Black, SDPG_World, 2.0f, 0.0f);
         }
         
         // Connect last vertex to first vertex to close the face
@@ -238,7 +251,7 @@ void FGrammarDLL::UpdateMesh() {
         FVector v2 = Vertices[startIndex];
         
         // Draw line to close the face
-        LineBatchComponent->DrawLine(v1, v2, FLinearColor::Red, SDPG_World, 4.0f, 0.0f);
+        LineBatchComponent->DrawLine(v1, v2, FLinearColor::Black, SDPG_World, 2.0f, 0.0f);
         
         startIndex = endIndex;
     }

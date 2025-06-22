@@ -5,6 +5,7 @@
 #include "Widgets/Docking/SDockTab.h"
 #include "Widgets/Text/STextBlock.h"
 #include "Widgets/Input/SButton.h"
+#include "Widgets/Input/SEditableTextBox.h"
 #include "Widgets/SBoxPanel.h"
 #include "WorkspaceMenuStructure.h"
 #include "WorkspaceMenuStructureModule.h"
@@ -20,8 +21,6 @@ static const FName GrammarEditorTabName("GrammarEditor");
 static const float AnimationInterval = 0.2f;
 
 void FGrammarEditorModule::StartupModule() {
-	UE_LOG(LogTemp, Log, TEXT("Hello World! Grammar Editor Plugin Loaded Successfully!"));
-	
 	// Load the DLL
 	if (FGrammarDLL::LoadDLL()) {
 		UE_LOG(LogTemp, Log, TEXT("Grammar DLL loaded in StartupModule"));
@@ -90,6 +89,88 @@ TSharedRef<SDockTab> FGrammarEditorModule::OnSpawnPluginTab(const FSpawnTabArgs&
 				SNew(SButton)
 				.Text(LOCTEXT("LoadGrammarButtonText", "Load Grammar"))
 				.OnClicked(FOnClicked::CreateRaw(this, &FGrammarEditorModule::OnLoadGrammarClicked))
+			]
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			.Padding(3)
+			[
+				SNew(SHorizontalBox)
+				+ SHorizontalBox::Slot()
+				.AutoWidth()
+				.VAlign(VAlign_Center)
+				.Padding(3)
+				[
+					SNew(STextBlock)
+					.Text(LOCTEXT("SeedLabel", "Seed:"))
+				]
+				+ SHorizontalBox::Slot()
+				.AutoWidth()
+				.Padding(3)
+				[
+					SAssignNew(SeedInput, SEditableTextBox)
+					.Text(FText::FromString(FString::FromInt(CurrentSeed)))
+					.OnTextChanged(FOnTextChanged::CreateRaw(this, &FGrammarEditorModule::OnSeedChanged))
+					.MinDesiredWidth(60.0f)
+				]
+				+ SHorizontalBox::Slot()
+				.AutoWidth()
+				.VAlign(VAlign_Center)
+				.Padding(3)
+				[
+					SNew(STextBlock)
+					.Text(LOCTEXT("SizeLabel", "Size:"))
+				]
+				+ SHorizontalBox::Slot()
+				.AutoWidth()
+				.VAlign(VAlign_Center)
+				.Padding(3)
+				[
+					SNew(STextBlock)
+					.Text(LOCTEXT("SizeXLabel", "X:"))
+				]
+				+ SHorizontalBox::Slot()
+				.AutoWidth()
+				.Padding(3)
+				[
+					SAssignNew(SizeXInput, SEditableTextBox)
+					.Text(FText::FromString(FString::SanitizeFloat(CurrentSizeX)))
+					.OnTextChanged(FOnTextChanged::CreateRaw(this, &FGrammarEditorModule::OnSizeXChanged))
+					.MinDesiredWidth(50.0f)
+				]
+				+ SHorizontalBox::Slot()
+				.AutoWidth()
+				.VAlign(VAlign_Center)
+				.Padding(3)
+				[
+					SNew(STextBlock)
+					.Text(LOCTEXT("SizeYLabel", "Y:"))
+				]
+				+ SHorizontalBox::Slot()
+				.AutoWidth()
+				.Padding(3)
+				[
+					SAssignNew(SizeYInput, SEditableTextBox)
+					.Text(FText::FromString(FString::SanitizeFloat(CurrentSizeY)))
+					.OnTextChanged(FOnTextChanged::CreateRaw(this, &FGrammarEditorModule::OnSizeYChanged))
+					.MinDesiredWidth(50.0f)
+				]
+				+ SHorizontalBox::Slot()
+				.AutoWidth()
+				.VAlign(VAlign_Center)
+				.Padding(3)
+				[
+					SNew(STextBlock)
+					.Text(LOCTEXT("SizeZLabel", "Z:"))
+				]
+				+ SHorizontalBox::Slot()
+				.AutoWidth()
+				.Padding(3)
+				[
+					SAssignNew(SizeZInput, SEditableTextBox)
+					.Text(FText::FromString(FString::SanitizeFloat(CurrentSizeZ)))
+					.OnTextChanged(FOnTextChanged::CreateRaw(this, &FGrammarEditorModule::OnSizeZChanged))
+					.MinDesiredWidth(50.0f)
+				]
 			]
 			+ SVerticalBox::Slot()
 			.AutoHeight()
@@ -191,7 +272,7 @@ FReply FGrammarEditorModule::OnResetClicked() {
 		UE_LOG(LogTemp, Error, TEXT("DLL is not loaded!"));
 		return FReply::Handled();
 	}
-	FGrammarDLL::Reset();
+	FGrammarDLL::Reset(CurrentSeed);
 	return FReply::Handled();
 }
 
@@ -240,6 +321,41 @@ FReply FGrammarEditorModule::OnPlayClicked() {
 	}
 	
 	return FReply::Handled();
+}
+
+void FGrammarEditorModule::OnSeedChanged(const FText& NewText) {
+	FString TextString = NewText.ToString();
+	if (TextString.IsNumeric()) {
+		CurrentSeed = FCString::Atoi(*TextString);
+		UE_LOG(LogTemp, Log, TEXT("Seed changed to: %d"), CurrentSeed);
+	}
+}
+
+void FGrammarEditorModule::OnSizeXChanged(const FText& NewText) {
+	FString TextString = NewText.ToString();
+	if (TextString.IsNumeric()) {
+		CurrentSizeX = FCString::Atof(*TextString);
+		UE_LOG(LogTemp, Log, TEXT("Size X changed to: %f"), CurrentSizeX);
+		FGrammarDLL::SetSize(CurrentSizeX, CurrentSizeY, CurrentSizeZ);
+	}
+}
+
+void FGrammarEditorModule::OnSizeYChanged(const FText& NewText) {
+	FString TextString = NewText.ToString();
+	if (TextString.IsNumeric()) {
+		CurrentSizeY = FCString::Atof(*TextString);
+		UE_LOG(LogTemp, Log, TEXT("Size Y changed to: %f"), CurrentSizeY);
+		FGrammarDLL::SetSize(CurrentSizeX, CurrentSizeY, CurrentSizeZ);
+	}
+}
+
+void FGrammarEditorModule::OnSizeZChanged(const FText& NewText) {
+	FString TextString = NewText.ToString();
+	if (TextString.IsNumeric()) {
+		CurrentSizeZ = FCString::Atof(*TextString);
+		UE_LOG(LogTemp, Log, TEXT("Size Z changed to: %f"), CurrentSizeZ);
+		FGrammarDLL::SetSize(CurrentSizeX, CurrentSizeY, CurrentSizeZ);
+	}
 }
 
 #undef LOCTEXT_NAMESPACE

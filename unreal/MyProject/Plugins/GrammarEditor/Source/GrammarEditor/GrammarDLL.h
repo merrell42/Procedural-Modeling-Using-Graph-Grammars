@@ -30,6 +30,7 @@ public:
 	static void Step();
 	static void UpdateMesh();
 	static void Reset(int Seed = 0);
+	static void SetSize(float X, float Y, float Z);
 
 private:
     static void* DLLHandle;
@@ -52,9 +53,11 @@ private:
     typedef MeshCpp (*GetMeshFunc)();
     typedef void (*DestroyMeshFunc)(MeshCpp&);
     typedef void (*ResetFunc)(int);
+    typedef void (*SetSizeFunc)(float, float, float);
     static InitializeFunc Initialize;
     static IterateFunc Iterate;
     static GetMeshFunc GetMesh;
     static DestroyMeshFunc DestroyMesh;
     static ResetFunc ResetFunction;
+    static SetSizeFunc SetSizeFunction;
 }; 
