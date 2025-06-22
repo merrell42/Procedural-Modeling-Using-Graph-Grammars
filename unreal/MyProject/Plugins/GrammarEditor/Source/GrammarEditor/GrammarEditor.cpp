@@ -93,6 +93,18 @@ TSharedRef<SDockTab> FGrammarEditorModule::OnSpawnPluginTab(const FSpawnTabArgs&
 			.AutoHeight()
 			.Padding(3)
 			[
+				SAssignNew(PlayButton, SButton)
+				.OnClicked(FOnClicked::CreateRaw(this, &FGrammarEditorModule::OnPlayClicked))
+				.IsEnabled(false)
+				[
+					SAssignNew(PlayButtonText, STextBlock)
+					.Text(LOCTEXT("PlayButtonText", "Play"))
+				]
+			]
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			.Padding(3)
+			[
 				SAssignNew(ResetButton, SButton)
 				.Text(LOCTEXT("ResetButtonText", "Reset"))
 				.OnClicked(FOnClicked::CreateRaw(this, &FGrammarEditorModule::OnResetClicked))
@@ -152,6 +164,11 @@ FReply FGrammarEditorModule::OnLoadGrammarClicked() {
 			if (ResetButton.IsValid()) {
 				ResetButton->SetEnabled(true);
 			}
+			
+			// Enable the Play button now that a grammar is loaded
+			if (PlayButton.IsValid()) {
+				PlayButton->SetEnabled(true);
+			}
 		}
 	}
 	
@@ -173,6 +190,53 @@ FReply FGrammarEditorModule::OnResetClicked() {
 		return FReply::Handled();
 	}
 	FGrammarDLL::Reset();
+	return FReply::Handled();
+}
+
+FReply FGrammarEditorModule::OnPlayClicked() {
+	if (!FGrammarDLL::IsDLLLoaded()) {
+		UE_LOG(LogTemp, Error, TEXT("DLL is not loaded!"));
+		return FReply::Handled();
+	}
+	
+	if (!bIsPlaying) {
+		// Start playing
+		bIsPlaying = true;
+		if (PlayButtonText.IsValid()) {
+			PlayButtonText->SetText(LOCTEXT("StopButtonText", "Stop"));
+		}
+		
+		// Start timer to call step every 0.5 seconds
+		if (GEngine && GEngine->GetWorldContexts().Num() > 0) {
+			UWorld* World = GEngine->GetWorldContexts()[0].World();
+			if (World) {
+				World->GetTimerManager().SetTimer(PlayTimerHandle, [this]() {
+					if (bIsPlaying && FGrammarDLL::IsDLLLoaded()) {
+						FGrammarDLL::Step();
+					}
+				}, 0.5f, true);
+			}
+		}
+		
+		UE_LOG(LogTemp, Log, TEXT("Started playing grammar"));
+	} else {
+		// Stop playing
+		bIsPlaying = false;
+		if (PlayButtonText.IsValid()) {
+			PlayButtonText->SetText(LOCTEXT("PlayButtonText", "Play"));
+		}
+		
+		// Clear timer
+		if (GEngine && GEngine->GetWorldContexts().Num() > 0) {
+			UWorld* World = GEngine->GetWorldContexts()[0].World();
+			if (World) {
+				World->GetTimerManager().ClearTimer(PlayTimerHandle);
+			}
+		}
+		
+		UE_LOG(LogTemp, Log, TEXT("Stopped playing grammar"));
+	}
+	
 	return FReply::Handled();
 }
 
