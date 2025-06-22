@@ -17,38 +17,9 @@
 
 // Include the DLL header directly
 #include "../cpp_version/pmugg dll/generate.h"
+#include "grammar_dock.h"
 
 namespace godot {
-
-class GrammarDock : public Control {
-	GDCLASS(GrammarDock, Control)
-
-private:
-	Button* load_grammar_button;
-	Button* generate_button;
-	Button* step_button_ref;
-	Label* selected_file_label;
-	Label* status_label;
-	FileDialog* file_dialog;
-	String selected_file_path;
-
-protected:
-	static void _bind_methods();
-
-public:
-	GrammarDock();
-	~GrammarDock();
-
-	void _ready() override;
-	void setup_ui();
-	void setup_file_dialog();
-	void on_load_grammar_pressed();
-	void on_file_selected(String path);
-	void on_generate_pressed();
-	void on_step_pressed();
-	void update_mesh();
-	void create_godot_mesh();
-};
 
 class GrammarEditor : public EditorPlugin {
 	GDCLASS(GrammarEditor, EditorPlugin)

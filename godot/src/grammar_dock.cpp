@@ -1,4 +1,4 @@
-#include "grammar_editor.h"
+#include "grammar_dock.h"
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
 #include <godot_cpp/classes/editor_interface.hpp>
@@ -10,51 +10,39 @@ using namespace godot;
 void GrammarDock::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("on_load_grammar_pressed"), &GrammarDock::on_load_grammar_pressed);
 	ClassDB::bind_method(D_METHOD("on_file_selected"), &GrammarDock::on_file_selected);
-	ClassDB::bind_method(D_METHOD("on_generate_pressed"), &GrammarDock::on_generate_pressed);
 	ClassDB::bind_method(D_METHOD("on_step_pressed"), &GrammarDock::on_step_pressed);
 }
 
 GrammarDock::GrammarDock() {
-	// Initialize pointers
 	load_grammar_button = nullptr;
-	generate_button = nullptr;
 	step_button_ref = nullptr;
 	selected_file_label = nullptr;
-	status_label = nullptr;
 	file_dialog = nullptr;
 	selected_file_path = "";
 }
 
-GrammarDock::~GrammarDock() {
-	// Cleanup will be handled by Godot
-}
+GrammarDock::~GrammarDock() {}
 
 void GrammarDock::_ready() {
-	UtilityFunctions::print("PMUGG Dock initializing...");
 	setup_ui();
 	setup_file_dialog();
 }
 
 void GrammarDock::setup_ui() {
-	// Create main layout
 	VBoxContainer* vbox = memnew(VBoxContainer);
-	vbox->set_h_size_flags(Control::SIZE_EXPAND_FILL); // Make main container expand to fill width
+	vbox->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	add_child(vbox);
 	
 	// Title
 	Label* title = memnew(Label);
-	title->set_text("Graph Grammar Generator");
+	title->set_text("Graph Grammar Editor");
 	title->add_theme_font_size_override("font_size", 16);
 	vbox->add_child(title);
 	
 	// File selection section
 	VBoxContainer* file_section = memnew(VBoxContainer);
-	file_section->set_h_size_flags(Control::SIZE_EXPAND_FILL); // Make section expand to fill width
+	file_section->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	vbox->add_child(file_section);
-	
-	Label* file_label = memnew(Label);
-	file_label->set_text("Grammar File:");
-	file_section->add_child(file_label);
 	
 	// Selected file display
 	selected_file_label = memnew(Label);
@@ -74,14 +62,6 @@ void GrammarDock::setup_ui() {
 	gen_section->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	vbox->add_child(gen_section);
 	
-	// Generate button
-	generate_button = memnew(Button);
-	generate_button->set_text("Generate Mesh");
-	generate_button->set_disabled(true);
-	generate_button->connect("pressed", Callable(this, "on_generate_pressed"));
-	generate_button->set_h_size_flags(Control::SIZE_EXPAND_FILL);
-	gen_section->add_child(generate_button);
-	
 	// Step button
 	Button* step_button = memnew(Button);
 	step_button->set_text("Step");
@@ -89,14 +69,7 @@ void GrammarDock::setup_ui() {
 	step_button->connect("pressed", Callable(this, "on_step_pressed"));
 	step_button->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	gen_section->add_child(step_button);
-	
-	// Store reference to step button
 	step_button_ref = step_button;
-	
-	// Status label
-	status_label = memnew(Label);
-	status_label->set_text("Ready to load grammar file");
-	gen_section->add_child(status_label);
 }
 
 void GrammarDock::setup_file_dialog() {
@@ -146,100 +119,12 @@ void GrammarDock::on_file_selected(String path) {
 		initialize(path_cstr, result, sizeof(result), 0);
 		
 		UtilityFunctions::print("PMUGG initialization result: ", result);
-		status_label->set_text("Grammar loaded - ready to generate");
 	} else {
 		UtilityFunctions::print("No editor interface available");
-		status_label->set_text("Error: No editor interface");
 	}
 	
-	// Enable generate button
-	generate_button->set_disabled(false);
+	// Enable buttons.
 	step_button_ref->set_disabled(false);
-}
-
-void GrammarDock::on_generate_pressed() {
-	UtilityFunctions::print("Generating mesh...");
-	
-	if (selected_file_path.is_empty()) {
-		UtilityFunctions::print("No file selected!");
-		return;
-	}
-	
-	// Call PMUGG functions to generate the mesh
-	UtilityFunctions::print("Resetting PMUGG with random seed...");
-	reset((int)UtilityFunctions::randi());
-	
-	UtilityFunctions::print("Iterating PMUGG 5 steps...");
-	iterate(5);
-	
-	int face_count = getNumFaces();
-	UtilityFunctions::print("Generated ", face_count, " faces");
-	
-	// Create the mesh in the scene
-	create_godot_mesh();
-	
-	// Update status
-	status_label->set_text("Generated mesh with " + String::num_int64(face_count) + " faces!");
-}
-
-void GrammarDock::create_godot_mesh() {
-	UtilityFunctions::print("Creating Godot mesh...");
-	
-	// Get current scene
-	EditorInterface* editor_interface = EditorInterface::get_singleton();
-	if (!editor_interface) {
-		UtilityFunctions::print("No editor interface available");
-		return;
-	}
-	
-	Node* current_scene = editor_interface->get_edited_scene_root();
-	if (!current_scene) {
-		UtilityFunctions::print("No active scene - mesh created but not added to scene tree");
-		return;
-	}
-	
-	// Create ArrayMesh
-	Ref<ArrayMesh> array_mesh = memnew(ArrayMesh);
-	Array arrays;
-	arrays.resize(Mesh::ARRAY_MAX);
-	
-	// Create a simple test triangle
-	PackedVector3Array vertices;
-	PackedInt32Array indices;
-	PackedVector3Array normals;
-	
-	vertices.push_back(Vector3(0, 1, 0));
-	vertices.push_back(Vector3(-1, 0, 0));
-	vertices.push_back(Vector3(1, 0, 0));
-	
-	indices.push_back(0);
-	indices.push_back(1);
-	indices.push_back(2);
-	
-	normals.push_back(Vector3(0, 0, 1));
-	normals.push_back(Vector3(0, 0, 1));
-	normals.push_back(Vector3(0, 0, 1));
-	
-	arrays[Mesh::ARRAY_VERTEX] = vertices;
-	arrays[Mesh::ARRAY_INDEX] = indices;
-	arrays[Mesh::ARRAY_NORMAL] = normals;
-	
-	// Create the mesh surface
-	array_mesh->add_surface_from_arrays(Mesh::PRIMITIVE_TRIANGLES, arrays);
-	
-	// Create MeshInstance3D node
-	MeshInstance3D* mesh_instance = memnew(MeshInstance3D);
-	mesh_instance->set_mesh(array_mesh);
-	mesh_instance->set_name("GeneratedMesh_" + String::num_int64(UtilityFunctions::randi()));
-	
-	// Add to current scene
-	current_scene->add_child(mesh_instance);
-	mesh_instance->set_owner(current_scene);
-	
-	UtilityFunctions::print("Added generated mesh to scene: ", mesh_instance->get_name());
-	UtilityFunctions::print("Mesh generation complete!");
-	
-	status_label->set_text("Mesh generated successfully!");
 }
 
 void GrammarDock::update_mesh() {
@@ -321,23 +206,14 @@ void GrammarDock::update_mesh() {
 	array_mesh->add_surface_from_arrays(Mesh::PRIMITIVE_TRIANGLES, arrays);
 	mesh_instance->set_mesh(array_mesh);
 	
-	// Update status
-	status_label->set_text("Updated - " + String::num_int64(mesh.numVertices) + " vertices, " + String::num_int64(mesh.numFaces) + " faces");
-	
 	UtilityFunctions::print("Mesh updated successfully!");
 }
 
 void GrammarDock::on_step_pressed() {
-	UtilityFunctions::print("Stepping PMUGG (iterating once)...");
-	
 	if (selected_file_path.is_empty()) {
 		UtilityFunctions::print("No file selected!");
 		return;
 	}
-	
-	// Iterate PMUGG once
 	iterate(1);
-	
-	// Update the mesh in the scene
 	update_mesh();
 } 
