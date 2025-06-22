@@ -394,26 +394,22 @@ void GrammarEditor::update_mesh() {
 
 	// Remove mesh if empty. Godot does not support empty meshes.
 	if (mesh.numVertices == 0 || mesh.numTriangles == 0) {
-		MeshInstance3D* existing_mesh = find_generated_mesh();
-		if (existing_mesh) {
-			existing_mesh->queue_free();
+		if (mesh_instance) {
+			mesh_instance->queue_free();
+			mesh_instance = nullptr;
 		}
-
+		
 		// Also remove edge lines only if there are no vertices
 		if (mesh.numVertices == 0) {
-			for (int i = 0; i < current_scene->get_child_count(); i++) {
-				Node* child = current_scene->get_child(i);
-				if (child->get_class() == "MeshInstance3D" && child->get_name().begins_with("Edge Lines")) {
-					child->queue_free();
-					break;
-				}
+			if (edge_lines_instance) {
+				edge_lines_instance->queue_free();
+				edge_lines_instance = nullptr;
 			}
 		    return;
 		}
 	}
 	
 	// Find existing mesh instance or create a new one.
-	MeshInstance3D* mesh_instance = find_generated_mesh();
 	if (!mesh_instance) {
 		mesh_instance = memnew(MeshInstance3D);
 		mesh_instance->set_name("Generated Mesh");
@@ -465,20 +461,6 @@ void GrammarEditor::update_mesh() {
 	Ref<ArrayMesh> array_mesh = memnew(ArrayMesh);
 	array_mesh->add_surface_from_arrays(Mesh::PRIMITIVE_TRIANGLES, arrays);
 	mesh_instance->set_mesh(array_mesh);
-}
-
-MeshInstance3D* GrammarEditor::find_generated_mesh() {
-	Node* current_scene = EditorInterface::get_singleton()->get_edited_scene_root();
-	if (!current_scene) {
-		return nullptr;
-	}
-	for (int i = 0; i < current_scene->get_child_count(); i++) {
-		Node* child = current_scene->get_child(i);
-		if (child->get_class() == "MeshInstance3D" && child->get_name().begins_with("Generated Mesh")) {
-			return Object::cast_to<MeshInstance3D>(child);
-		}
-	}
-	return nullptr;
 }
 
 void GrammarEditor::on_size_x_changed(String value) {
@@ -626,20 +608,11 @@ void GrammarEditor::create_edge_lines(const PackedVector3Array& vertices, const 
 	}
 	
 	// Find existing edge lines instance or create new one
-	MeshInstance3D* edge_lines = nullptr;
-	for (int i = 0; i < current_scene->get_child_count(); i++) {
-		Node* child = current_scene->get_child(i);
-		if (child->get_class() == "MeshInstance3D" && child->get_name().begins_with("Edge Lines")) {
-			edge_lines = Object::cast_to<MeshInstance3D>(child);
-			break;
-		}
-	}
-	
-	if (!edge_lines) {
-		edge_lines = memnew(MeshInstance3D);
-		edge_lines->set_name("Edge Lines");
-		current_scene->add_child(edge_lines);
-		edge_lines->set_owner(current_scene);
+	if (!edge_lines_instance) {
+		edge_lines_instance = memnew(MeshInstance3D);
+		edge_lines_instance->set_name("Edge Lines");
+		current_scene->add_child(edge_lines_instance);
+		edge_lines_instance->set_owner(current_scene);
 	}
 	
 	// Create edge vertices from face indices (like Unity version)
@@ -664,12 +637,12 @@ void GrammarEditor::create_edge_lines(const PackedVector3Array& vertices, const 
 	
 	Ref<ArrayMesh> edge_mesh = memnew(ArrayMesh);
 	edge_mesh->add_surface_from_arrays(Mesh::PRIMITIVE_LINES, arrays);
-	edge_lines->set_mesh(edge_mesh);
+	edge_lines_instance->set_mesh(edge_mesh);
 	
 	// Create a material for the edge lines
 	Ref<StandardMaterial3D> edge_material = memnew(StandardMaterial3D);
 	edge_material->set_albedo(Color(1, 0, 0, 1.0)); // Red color for edges
 	edge_material->set_shading_mode(StandardMaterial3D::SHADING_MODE_UNSHADED);
 	edge_material->set_transparency(StandardMaterial3D::TRANSPARENCY_ALPHA);
-	edge_lines->set_material_override(edge_material);
+	edge_lines_instance->set_material_override(edge_material);
 }

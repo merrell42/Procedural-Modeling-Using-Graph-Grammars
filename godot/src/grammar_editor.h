@@ -99,7 +99,6 @@ public:
 	void setup_file_dialog(Control* parent);
 	
 	void update_mesh();
-	MeshInstance3D* find_generated_mesh();
 };
 
 }
