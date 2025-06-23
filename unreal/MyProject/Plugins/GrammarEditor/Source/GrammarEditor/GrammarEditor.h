@@ -26,7 +26,10 @@ private:
 	void OnSizeYChanged(const FText& NewText);
 	void OnSizeZChanged(const FText& NewText);
 	void ProcessNextFileInFolder();
-	void FindJsonFilesInDirectory(const FString& DirectoryPath);
+	void FindJsonFiles(const FString& DirectoryPath);
+	bool IsDLLReady();
+	void UpdateStatusText();
+	void SetButtonStates(bool bEnabled);
 
 private:
 	TSharedPtr<SButton> StepButton;
@@ -39,19 +42,19 @@ private:
 	TSharedPtr<SEditableTextBox> SizeXInput;
 	TSharedPtr<SEditableTextBox> SizeYInput;
 	TSharedPtr<SEditableTextBox> SizeZInput;
+
 	FString CurrentGrammarFile;
-	bool bIsPlaying = false;
+	bool isPlaying = false;
 	FTimerHandle PlayTimerHandle;
 	int32 CurrentSeed = 0;
 	float CurrentSizeX = 30.0f;
 	float CurrentSizeY = 20.0f;
 	float CurrentSizeZ = 10.0f;
+	int32 CurrentIteration = 0;
 	
 	// Folder processing variables
 	TArray<FString> JsonFilesToProcess;
 	int32 CurrentFileIndex = 0;
-	int32 CurrentIteration = 0;
-	const int32 MaxIterationsPerFile = 50;
-	bool bIsProcessingFolder = false;
+	bool isProcessingFolder = false;
 	FTimerHandle FolderProcessingTimerHandle;
 }; 

@@ -23,35 +23,30 @@
 static const FName GrammarEditorTabName("GrammarEditor");
 
 static const float AnimationInterval = 0.2f;
+static const int32 MaxIterationsPerFile = 50;
 
 void FGrammarEditorModule::StartupModule() {
-	// Load the DLL
 	if (FGrammarDLL::LoadDLL()) {
 		UE_LOG(LogTemp, Log, TEXT("Grammar DLL loaded in StartupModule"));
 	} else {
 		UE_LOG(LogTemp, Error, TEXT("Failed to load Grammar DLL in StartupModule"));
 	}
 	
-	// Register the tab spawner - UI Window
+	// Register the tab spawner.
 	FGlobalTabmanager::Get()->RegisterNomadTabSpawner(GrammarEditorTabName,
 		FOnSpawnTab::CreateRaw(this, &FGrammarEditorModule::OnSpawnPluginTab))
 		.SetDisplayName(LOCTEXT("FGrammarEditorTabTitle", "Grammar Editor"))
 		.SetGroup(WorkspaceMenu::GetMenuStructure().GetDeveloperToolsMiscCategory());
 		
-	// Add menu entry
+	// Add menu entry.
 	UToolMenus::RegisterStartupCallback(FSimpleMulticastDelegate::FDelegate::CreateRaw(this, &FGrammarEditorModule::RegisterMenus));
 }
 
 void FGrammarEditorModule::ShutdownModule() {
 	UE_LOG(LogTemp, Log, TEXT("Grammar Editor Plugin Unloaded"));
-	
-	// Unload the DLL
+
 	FGrammarDLL::UnloadDLL();
-	
-	// Unregister the tab spawner
 	FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(GrammarEditorTabName);
-	
-	// Unregister menus
 	UToolMenus::UnRegisterStartupCallback(this);
 	UToolMenus::UnregisterOwner(this);
 }
@@ -190,11 +185,11 @@ TSharedRef<SDockTab> FGrammarEditorModule::OnSpawnPluginTab(const FSpawnTabArgs&
 			[
 				SAssignNew(PlayButton, SButton)
 				.OnClicked(FOnClicked::CreateRaw(this, &FGrammarEditorModule::OnPlayClicked))
-				.IsEnabled(false)
 				[
 					SAssignNew(PlayButtonText, STextBlock)
 					.Text(LOCTEXT("PlayButtonText", "Play"))
 				]
+				.IsEnabled(false)
 			]
 			+ SVerticalBox::Slot()
 			.AutoHeight()
@@ -218,8 +213,7 @@ TSharedRef<SDockTab> FGrammarEditorModule::OnSpawnPluginTab(const FSpawnTabArgs&
 }
 
 FReply FGrammarEditorModule::OnLoadGrammarClicked() {
-	if (!FGrammarDLL::IsDLLLoaded()) {
-		UE_LOG(LogTemp, Error, TEXT("DLL is not loaded!"));
+	if (!IsDLLReady()) {
 		return FReply::Handled();
 	}
 
@@ -245,27 +239,15 @@ FReply FGrammarEditorModule::OnLoadGrammarClicked() {
 			
 			CurrentGrammarFile = FPaths::GetBaseFilename(SelectedFile);
 			CurrentIteration = 0;
-			if (StatusText.IsValid()) {
-				StatusText->SetText(FText::FromString(FString::Printf(TEXT("%s"), *CurrentGrammarFile)));
-			}
+			UpdateStatusText();
 			
 			FGrammarDLL::LoadGrammarFile(SelectedFile);
 			FGrammarDLL::Reset(CurrentSeed);
-			
-			// Enable buttons
-			if (StepButton.IsValid()) {
-				StepButton->SetEnabled(true);
-			}
-			if (ResetButton.IsValid()) {
-				ResetButton->SetEnabled(true);
-			}
-			if (PlayButton.IsValid()) {
-				PlayButton->SetEnabled(true);
-			}
+			SetButtonStates(true);
 			
 			// Stop folder processing if active
-			if (bIsProcessingFolder) {
-				bIsProcessingFolder = false;
+			if (isProcessingFolder) {
+				isProcessingFolder = false;
 				if (GEngine && GEngine->GetWorldContexts().Num() > 0) {
 					UWorld* World = GEngine->GetWorldContexts()[0].World();
 					if (World) {
@@ -279,69 +261,58 @@ FReply FGrammarEditorModule::OnLoadGrammarClicked() {
 	return FReply::Handled();
 }
 
+void FGrammarEditorModule::UpdateStatusText() {
+	if (StatusText.IsValid()) {
+		FString StatusString;
+		if (isProcessingFolder) {
+			StatusString = FString::Printf(TEXT("Processing: %s (%d/%d files, iteration %d/%d)"), 
+				*FPaths::GetBaseFilename(JsonFilesToProcess[CurrentFileIndex]),
+				CurrentFileIndex + 1, JsonFilesToProcess.Num(),
+				CurrentIteration + 1, MaxIterationsPerFile);
+		} else {
+			if (CurrentIteration == 0) {
+				StatusString = FString::Printf(TEXT("%s"), *CurrentGrammarFile);
+			} else {
+				StatusString = FString::Printf(TEXT("%s (iteration %d)"), *CurrentGrammarFile, CurrentIteration);
+			}
+		}
+		StatusText->SetText(FText::FromString(StatusString));
+	}
+}
+
 FReply FGrammarEditorModule::OnStepClicked() {
-	if (!FGrammarDLL::IsDLLLoaded()) {
-		UE_LOG(LogTemp, Error, TEXT("DLL is not loaded!"));
+	if (!IsDLLReady()) {
 		return FReply::Handled();
 	}
 
 	FGrammarDLL::Step();
-	
-	// Update iteration count for single file processing
-	if (!bIsProcessingFolder && !CurrentGrammarFile.IsEmpty()) {
+	if (!isProcessingFolder && !CurrentGrammarFile.IsEmpty()) {
 		CurrentIteration++;
-		if (StatusText.IsValid()) {
-			FString StatusString = FString::Printf(TEXT("%s (iteration %d)"), *CurrentGrammarFile, CurrentIteration);
-			StatusText->SetText(FText::FromString(StatusString));
-		}
 	}
-	
-	// Stop folder processing if active
-	if (bIsProcessingFolder) {
-		bIsProcessingFolder = false;
-		if (GEngine && GEngine->GetWorldContexts().Num() > 0) {
-			UWorld* World = GEngine->GetWorldContexts()[0].World();
-			if (World) {
-				World->GetTimerManager().ClearTimer(FolderProcessingTimerHandle);
-			}
-		}
-		if (StatusText.IsValid()) {
-			FString StatusString = FString::Printf(TEXT("%s (iteration %d)"), *CurrentGrammarFile, CurrentIteration);
-			StatusText->SetText(FText::FromString(StatusString));
-		}
-	}
-	
+	UpdateStatusText();
 	return FReply::Handled();
 }
 
 FReply FGrammarEditorModule::OnResetClicked() {
-	if (!FGrammarDLL::IsDLLLoaded()) {
-		UE_LOG(LogTemp, Error, TEXT("DLL is not loaded!"));
+	if (!IsDLLReady()) {
 		return FReply::Handled();
 	}
 
 	FGrammarDLL::Reset(CurrentSeed);
-	
-	// Reset iteration count for single file processing
-	if (!bIsProcessingFolder && !CurrentGrammarFile.IsEmpty()) {
-		CurrentIteration = 0;
-		if (StatusText.IsValid()) {
-			StatusText->SetText(FText::FromString(FString::Printf(TEXT("%s"), *CurrentGrammarFile)));
-		}
-	}
+	CurrentIteration = 0;
+	UpdateStatusText();
 	
 	return FReply::Handled();
 }
 
 FReply FGrammarEditorModule::OnPlayClicked() {
-	if (!FGrammarDLL::IsDLLLoaded()) {
-		UE_LOG(LogTemp, Error, TEXT("DLL is not loaded!"));
+	if (!IsDLLReady()) {
 		return FReply::Handled();
 	}
 
-	if (bIsPlaying || bIsProcessingFolder) {
+	if (isPlaying || isProcessingFolder) {
 		// Stop playing or folder processing
-		bIsPlaying = false;
+		isPlaying = false;
 		if (PlayButtonText.IsValid()) {
 			PlayButtonText->SetText(LOCTEXT("PlayButtonText", "Play"));
 		}
@@ -355,22 +326,19 @@ FReply FGrammarEditorModule::OnPlayClicked() {
 		}
 		
 		// Stop folder processing if active
-		if (bIsProcessingFolder) {
-			bIsProcessingFolder = false;
+		if (isProcessingFolder) {
+			isProcessingFolder = false;
 			if (GEngine && GEngine->GetWorldContexts().Num() > 0) {
 				UWorld* World = GEngine->GetWorldContexts()[0].World();
 				if (World) {
 					World->GetTimerManager().ClearTimer(FolderProcessingTimerHandle);
 				}
 			}
-			if (StatusText.IsValid()) {
-				FString StatusString = FString::Printf(TEXT("%s (iteration %d)"), *CurrentGrammarFile, CurrentIteration);
-				StatusText->SetText(FText::FromString(StatusString));
-			}
+			UpdateStatusText();
 		}
 	} else {
 		// Start playing
-		bIsPlaying = true;
+		isPlaying = true;
 		if (PlayButtonText.IsValid()) {
 			PlayButtonText->SetText(LOCTEXT("StopButtonText", "Stop"));
 		}
@@ -381,15 +349,12 @@ FReply FGrammarEditorModule::OnPlayClicked() {
 			if (World) {
 				World->GetTimerManager().SetTimer(PlayTimerHandle, 
 					[this]() { 
-						if (bIsPlaying) {
+						if (isPlaying) {
 							FGrammarDLL::Step();
 							// Update iteration count for single file processing
-							if (!bIsProcessingFolder && !CurrentGrammarFile.IsEmpty()) {
+							if (!isProcessingFolder && !CurrentGrammarFile.IsEmpty()) {
 								CurrentIteration++;
-								if (StatusText.IsValid()) {
-									FString StatusString = FString::Printf(TEXT("%s (iteration %d)"), *CurrentGrammarFile, CurrentIteration);
-									StatusText->SetText(FText::FromString(StatusString));
-								}
+								UpdateStatusText();
 							}
 						}
 					}, 
@@ -437,8 +402,7 @@ void FGrammarEditorModule::OnSizeZChanged(const FText& NewText) {
 }
 
 FReply FGrammarEditorModule::OnLoadFolderClicked() {
-	if (!FGrammarDLL::IsDLLLoaded()) {
-		UE_LOG(LogTemp, Error, TEXT("DLL is not loaded!"));
+	if (!IsDLLReady()) {
 		return FReply::Handled();
 	}
 
@@ -459,22 +423,13 @@ FReply FGrammarEditorModule::OnLoadFolderClicked() {
 			UE_LOG(LogTemp, Log, TEXT("Loading folder: %s"), *SelectedDirectory);
 			
 			// Find all JSON files in the directory and subdirectories
-			FindJsonFilesInDirectory(SelectedDirectory);
+			FindJsonFiles(SelectedDirectory);
 			
 			if (JsonFilesToProcess.Num() > 0) {
 				// Start processing
 				CurrentFileIndex = 0;
 				CurrentIteration = 0;
-				bIsProcessingFolder = true;
-				
-				// Update progress text
-				if (StatusText.IsValid()) {
-					FString ProgressText = FString::Printf(TEXT("Processing: %s (%d/%d files, iteration %d/%d)"), 
-						*FPaths::GetBaseFilename(JsonFilesToProcess[CurrentFileIndex]),
-						CurrentFileIndex + 1, JsonFilesToProcess.Num(),
-						CurrentIteration + 1, MaxIterationsPerFile);
-					StatusText->SetText(FText::FromString(ProgressText));
-				}
+				isProcessingFolder = true;
 				
 				// Change Play button to Stop
 				if (PlayButtonText.IsValid()) {
@@ -485,23 +440,13 @@ FReply FGrammarEditorModule::OnLoadFolderClicked() {
 				FString FirstFile = JsonFilesToProcess[CurrentFileIndex];
 				CurrentGrammarFile = FPaths::GetBaseFilename(FirstFile);
 				CurrentIteration = 0; // Reset iteration count for folder processing
-				if (StatusText.IsValid()) {
-					StatusText->SetText(FText::FromString(FString::Printf(TEXT("%s"), *CurrentGrammarFile)));
-				}
+				UpdateStatusText();
 				
 				FGrammarDLL::LoadGrammarFile(FirstFile);
 				FGrammarDLL::Reset(CurrentSeed);
 				
 				// Enable buttons
-				if (StepButton.IsValid()) {
-					StepButton->SetEnabled(true);
-				}
-				if (ResetButton.IsValid()) {
-					ResetButton->SetEnabled(true);
-				}
-				if (PlayButton.IsValid()) {
-					PlayButton->SetEnabled(true);
-				}
+				SetButtonStates(true);
 				
 				// Start timer for processing
 				if (GEngine && GEngine->GetWorldContexts().Num() > 0) {
@@ -526,7 +471,7 @@ FReply FGrammarEditorModule::OnLoadFolderClicked() {
 	return FReply::Handled();
 }
 
-void FGrammarEditorModule::FindJsonFilesInDirectory(const FString& DirectoryPath) {
+void FGrammarEditorModule::FindJsonFiles(const FString& DirectoryPath) {
 	JsonFilesToProcess.Empty();
 	
 	UE_LOG(LogTemp, Log, TEXT("Starting to search for JSON files in: %s"), *DirectoryPath);
@@ -544,10 +489,10 @@ void FGrammarEditorModule::FindJsonFilesInDirectory(const FString& DirectoryPath
 		UE_LOG(LogTemp, Log, TEXT("Searching in directory: %s"), *CurrentPath);
 		
 		// Iterate through all items in the directory to find files and subdirectories
-		PlatformFile.IterateDirectory(*CurrentPath, [&](const TCHAR* FilenameOrDirectory, bool bIsDirectory) -> bool {
-			UE_LOG(LogTemp, Log, TEXT("Found item: %s (isDirectory: %s)"), FilenameOrDirectory, bIsDirectory ? TEXT("true") : TEXT("false"));
+		PlatformFile.IterateDirectory(*CurrentPath, [&](const TCHAR* FilenameOrDirectory, bool isDirectory) -> bool {
+			UE_LOG(LogTemp, Log, TEXT("Found item: %s (isDirectory: %s)"), FilenameOrDirectory, isDirectory ? TEXT("true") : TEXT("false"));
 			
-			if (bIsDirectory) {
+			if (isDirectory) {
 				// Skip . and .. directories
 				FString DirName = FPaths::GetBaseFilename(FilenameOrDirectory);
 				if (DirName != TEXT(".") && DirName != TEXT("..")) {
@@ -572,9 +517,9 @@ void FGrammarEditorModule::FindJsonFilesInDirectory(const FString& DirectoryPath
 }
 
 void FGrammarEditorModule::ProcessNextFileInFolder() {
-	if (!bIsProcessingFolder || CurrentFileIndex >= JsonFilesToProcess.Num()) {
+	if (!isProcessingFolder || CurrentFileIndex >= JsonFilesToProcess.Num()) {
 		// Finished processing all files
-		bIsProcessingFolder = false;
+		isProcessingFolder = false;
 		if (StatusText.IsValid()) {
 			StatusText->SetText(LOCTEXT("FolderProcessingCompleteText", "Folder processing complete!"));
 		}
@@ -590,14 +535,6 @@ void FGrammarEditorModule::ProcessNextFileInFolder() {
 	FGrammarDLL::Step();
 	CurrentIteration++;
 	
-	// Update progress text
-	if (StatusText.IsValid()) {
-		FString ProgressText = FString::Printf(TEXT("Processing: %s (%d/%d files, iteration %d/%d)"), 
-			*FPaths::GetBaseFilename(JsonFilesToProcess[CurrentFileIndex]),
-			CurrentFileIndex + 1, JsonFilesToProcess.Num(),
-			CurrentIteration + 1, MaxIterationsPerFile);
-		StatusText->SetText(FText::FromString(ProgressText));
-	}
 	
 	// Check if we've reached max iterations for current file
 	if (CurrentIteration >= MaxIterationsPerFile) {
@@ -609,9 +546,6 @@ void FGrammarEditorModule::ProcessNextFileInFolder() {
 			// Load next file
 			FString NextFile = JsonFilesToProcess[CurrentFileIndex];
 			CurrentGrammarFile = FPaths::GetBaseFilename(NextFile);
-			if (StatusText.IsValid()) {
-				StatusText->SetText(FText::FromString(FString::Printf(TEXT("%s"), *CurrentGrammarFile)));
-			}
 			
 			FGrammarDLL::LoadGrammarFile(NextFile);
 			FGrammarDLL::Reset(CurrentSeed);
@@ -619,15 +553,36 @@ void FGrammarEditorModule::ProcessNextFileInFolder() {
 			UE_LOG(LogTemp, Log, TEXT("Moving to next file: %s (%d/%d)"), *CurrentGrammarFile, CurrentFileIndex + 1, JsonFilesToProcess.Num());
 		}
 	}
+	UpdateStatusText();
 	
 	// Schedule next iteration
-	if (bIsProcessingFolder && GEngine && GEngine->GetWorldContexts().Num() > 0) {
+	if (isProcessingFolder && GEngine && GEngine->GetWorldContexts().Num() > 0) {
 		UWorld* World = GEngine->GetWorldContexts()[0].World();
 		if (World) {
 			World->GetTimerManager().SetTimer(FolderProcessingTimerHandle, 
 				[this]() { ProcessNextFileInFolder(); }, 
 				AnimationInterval, false);
 		}
+	}
+}
+
+bool FGrammarEditorModule::IsDLLReady() {
+	if (!FGrammarDLL::IsDLLLoaded()) {
+		UE_LOG(LogTemp, Error, TEXT("DLL is not loaded!"));
+		return false;
+	}
+	return true;
+}
+
+void FGrammarEditorModule::SetButtonStates(bool bEnabled) {
+	if (StepButton.IsValid()) {
+		StepButton->SetEnabled(bEnabled);
+	}
+	if (ResetButton.IsValid()) {
+		ResetButton->SetEnabled(bEnabled);
+	}
+	if (PlayButton.IsValid()) {
+		PlayButton->SetEnabled(bEnabled);
 	}
 }
 
