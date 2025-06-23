@@ -217,7 +217,7 @@ FReply FGrammarEditorModule::OnLoadGrammarClicked() {
 		return FReply::Handled();
 	}
 
-	// Open file dialog
+	// Open file dialog.
 	IDesktopPlatform* DesktopPlatform = FDesktopPlatformModule::Get();
 	if (DesktopPlatform) {
 		TArray<FString> OutFilenames;
@@ -245,7 +245,7 @@ FReply FGrammarEditorModule::OnLoadGrammarClicked() {
 			FGrammarDLL::Reset(CurrentSeed);
 			SetButtonStates(true);
 			
-			// Stop folder processing if active
+			// Stop folder processing if active.
 			if (isProcessingFolder) {
 				isProcessingFolder = false;
 				ClearTimer(FolderProcessingTimerHandle);
@@ -305,31 +305,31 @@ FReply FGrammarEditorModule::OnPlayClicked() {
 	}
 
 	if (isPlaying || isProcessingFolder) {
-		// Stop playing or folder processing
+		// Stop playing or folder processing.
 		isPlaying = false;
 		if (PlayButtonText.IsValid()) {
 			PlayButtonText->SetText(LOCTEXT("PlayButtonText", "Play"));
 		}
 		ClearTimer(PlayTimerHandle);
 		
-		// Stop folder processing if active
+		// Stop folder processing if active.
 		if (isProcessingFolder) {
 			isProcessingFolder = false;
 			ClearTimer(FolderProcessingTimerHandle);
 			UpdateStatusText();
 		}
 	} else {
-		// Start playing
+		// Start playing.
 		isPlaying = true;
 		if (PlayButtonText.IsValid()) {
 			PlayButtonText->SetText(LOCTEXT("StopButtonText", "Stop"));
 		}
 		
-		// Start timer
+		// Start timer.
 		StartTimer(PlayTimerHandle, AnimationInterval, [this]() { 
 			if (isPlaying) {
 				FGrammarDLL::Step();
-				// Update iteration count for single file processing
+				// Update iteration count for single file processing.
 				if (!isProcessingFolder && !CurrentGrammarFile.IsEmpty()) {
 					CurrentIteration++;
 					UpdateStatusText();
@@ -377,7 +377,7 @@ FReply FGrammarEditorModule::OnLoadFolderClicked() {
 		return FReply::Handled();
 	}
 
-	// Open directory dialog
+	// Open directory dialog.
 	IDesktopPlatform* DesktopPlatform = FDesktopPlatformModule::Get();
 	if (DesktopPlatform) {
 		FString SelectedDirectory;
@@ -404,7 +404,7 @@ FReply FGrammarEditorModule::OnLoadFolderClicked() {
 					PlayButtonText->SetText(LOCTEXT("StopButtonText", "Stop"));
 				}
 				
-				// Load the first file
+				// Load the first file.
 				FString FirstFile = JsonFilesToProcess[CurrentFileIndex];
 				CurrentGrammarFile = FPaths::GetBaseFilename(FirstFile);
 				CurrentIteration = 0;
@@ -414,7 +414,7 @@ FReply FGrammarEditorModule::OnLoadFolderClicked() {
 				FGrammarDLL::Reset(CurrentSeed);
 				SetButtonStates(true);
 				
-				// Start timer for processing
+				// Start timer for processing.
 				StartTimer(FolderProcessingTimerHandle, AnimationInterval, [this]() { 
 					ProcessNextFileInFolder(); 
 				}, false);
@@ -443,17 +443,17 @@ void FGrammarEditorModule::FindJsonFiles(const FString& DirectoryPath) {
 	TFunction<void(const FString&)> FindJsonFilesRecursive = [&](const FString& CurrentPath) {
 		UE_LOG(LogTemp, Log, TEXT("Searching in directory: %s"), *CurrentPath);
 		
-		// Iterate through all items in the directory to find files and subdirectories
+		// Iterate through all items in the directory to find files and subdirectories.
 		PlatformFile.IterateDirectory(*CurrentPath, [&](const TCHAR* FilenameOrDirectory, bool isDirectory) -> bool {
 			if (isDirectory) {
-				// Skip . and .. directories
+				// Skip . and .. directories.
 				FString DirName = FPaths::GetBaseFilename(FilenameOrDirectory);
 				if (DirName != TEXT(".") && DirName != TEXT("..")) {
 					UE_LOG(LogTemp, Log, TEXT("Recursing into subdirectory: %s"), FilenameOrDirectory);
 					FindJsonFilesRecursive(FilenameOrDirectory);
 				}
 			} else {
-				// Check if it's a JSON file
+				// Check if it's a JSON file.
 				FString FilePath = FilenameOrDirectory;
 				if (FPaths::GetExtension(FilePath).ToLower() == TEXT("json")) {
 					UE_LOG(LogTemp, Log, TEXT("Adding JSON file: %s"), *FilePath);
@@ -470,12 +470,12 @@ void FGrammarEditorModule::FindJsonFiles(const FString& DirectoryPath) {
 
 void FGrammarEditorModule::ProcessNextFileInFolder() {
 	if (!isProcessingFolder || CurrentFileIndex >= JsonFilesToProcess.Num()) {
-		// Finished processing all files
+		// Finished processing all files.
 		isProcessingFolder = false;
 		if (StatusText.IsValid()) {
 			StatusText->SetText(LOCTEXT("FolderProcessingCompleteText", "Folder processing complete!"));
 		}
-		// Change Stop button back to Play
+		// Change Stop button back to Play.
 		if (PlayButtonText.IsValid()) {
 			PlayButtonText->SetText(LOCTEXT("PlayButtonText", "Play"));
 		}
@@ -483,14 +483,13 @@ void FGrammarEditorModule::ProcessNextFileInFolder() {
 		return;
 	}
 	
-	// Perform one iteration
+	// Perform one iteration.
 	FGrammarDLL::Step();
 	CurrentIteration++;
 	
 	
-	// Check if we've reached max iterations for current file
+	// If we've reached max iterations for current file, move onto next file.
 	if (CurrentIteration >= MaxIterationsPerFile) {
-		// Move to next file
 		CurrentFileIndex++;
 		CurrentIteration = 0;		
 		if (CurrentFileIndex < JsonFilesToProcess.Num()) {
@@ -505,7 +504,7 @@ void FGrammarEditorModule::ProcessNextFileInFolder() {
 	}
 	UpdateStatusText();
 	
-	// Schedule next iteration
+	// Schedule next iteration.
 	if (isProcessingFolder) {
 		StartTimer(FolderProcessingTimerHandle, AnimationInterval, [this]() { 
 			ProcessNextFileInFolder(); 

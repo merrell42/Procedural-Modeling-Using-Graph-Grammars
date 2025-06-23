@@ -34,7 +34,7 @@ public:
 
 private:
     static void* DLLHandle;
-    static bool bIsLoaded;
+    static bool isLoaded;
     
     // Mesh structure matching the DLL
     struct MeshCpp {

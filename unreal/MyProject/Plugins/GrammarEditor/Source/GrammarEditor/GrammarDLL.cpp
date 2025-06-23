@@ -17,9 +17,9 @@
 #include "ProceduralMeshComponent.h"
 #include "Components/LineBatchComponent.h"
 
-// Static member initialization
+// Static member initialization.
 void* FGrammarDLL::DLLHandle = nullptr;
-bool FGrammarDLL::bIsLoaded = false;
+bool FGrammarDLL::isLoaded = false;
 FGrammarDLL::InitializeFunc FGrammarDLL::Initialize = nullptr;
 FGrammarDLL::IterateFunc FGrammarDLL::Iterate = nullptr;
 FGrammarDLL::GetMeshFunc FGrammarDLL::GetMesh = nullptr;
@@ -28,14 +28,12 @@ FGrammarDLL::ResetFunc FGrammarDLL::ResetFunction = nullptr;
 FGrammarDLL::SetSizeFunc FGrammarDLL::SetSizeFunction = nullptr;
 
 bool FGrammarDLL::LoadDLL() {
-    if (bIsLoaded) {
+    if (isLoaded) {
         return true;
     }
 
-    // Get the path to the DLL
+    // Load the DLL.
     FString DLLPath = FPaths::Combine(FPaths::ProjectPluginsDir(), TEXT("GrammarEditor/Binaries/Win64/pmugg dll.dll"));
-    
-    // Load the DLL
     DLLHandle = FPlatformProcess::GetDllHandle(*DLLPath);
     
     if (DLLHandle == nullptr) {
@@ -43,7 +41,7 @@ bool FGrammarDLL::LoadDLL() {
         return false;
     }
     
-    // Get function pointers
+    // Get function pointers.
     Initialize = (InitializeFunc)FPlatformProcess::GetDllExport(DLLHandle, TEXT("initialize"));
     Iterate = (IterateFunc)FPlatformProcess::GetDllExport(DLLHandle, TEXT("iterate"));
     GetMesh = (GetMeshFunc)FPlatformProcess::GetDllExport(DLLHandle, TEXT("getMesh"));
@@ -51,13 +49,14 @@ bool FGrammarDLL::LoadDLL() {
     ResetFunction = (ResetFunc)FPlatformProcess::GetDllExport(DLLHandle, TEXT("reset"));
     SetSizeFunction = (SetSizeFunc)FPlatformProcess::GetDllExport(DLLHandle, TEXT("setSize"));
     
-    if (Initialize == nullptr || Iterate == nullptr || GetMesh == nullptr || DestroyMesh == nullptr || ResetFunction == nullptr || SetSizeFunction == nullptr) {
+    if (Initialize == nullptr || Iterate == nullptr || GetMesh == nullptr || DestroyMesh == nullptr ||
+        ResetFunction == nullptr || SetSizeFunction == nullptr) {
         UE_LOG(LogTemp, Error, TEXT("Failed to get required functions from Grammar DLL"));
         UnloadDLL();
         return false;
     }
     
-    bIsLoaded = true;
+    isLoaded = true;
     UE_LOG(LogTemp, Log, TEXT("Grammar DLL loaded successfully!"));
     return true;
 }
@@ -68,7 +67,7 @@ void FGrammarDLL::UnloadDLL() {
         DLLHandle = nullptr;
     }
     
-    bIsLoaded = false;
+    isLoaded = false;
     Initialize = nullptr;
     Iterate = nullptr;
     GetMesh = nullptr;
@@ -76,20 +75,20 @@ void FGrammarDLL::UnloadDLL() {
     ResetFunction = nullptr;
     SetSizeFunction = nullptr;
     
-    UE_LOG(LogTemp, Log, TEXT("Grammar DLL unloaded"));
+    UE_LOG(LogTemp, Log, TEXT("Grammar DLL unloaded."));
 }
 
 bool FGrammarDLL::IsDLLLoaded() {
-    return bIsLoaded;
+    return isLoaded;
 }
 
 void FGrammarDLL::LoadGrammarFile(const FString& FilePath) {
-    if (!bIsLoaded || Initialize == nullptr) {
+    if (!isLoaded || Initialize == nullptr) {
         UE_LOG(LogTemp, Error, TEXT("DLL is not loaded!"));
         return;
     }
     
-    // Convert to ANSI for the DLL call
+    // Convert to ANSI for the DLL call.
     FTCHARToUTF8 AnsiPath(*FilePath);
     
     char result[1000];
@@ -100,16 +99,17 @@ void FGrammarDLL::LoadGrammarFile(const FString& FilePath) {
 }
 
 void FGrammarDLL::Step() {
-    if (!bIsLoaded || Iterate == nullptr) {
+    if (!isLoaded || Iterate == nullptr) {
         UE_LOG(LogTemp, Error, TEXT("DLL is not loaded or iterate function not found!"));
         return;
     }
+
     Iterate(1);
     UpdateMesh();
 }
 
 void FGrammarDLL::Reset(int Seed) {
-    if (!bIsLoaded || ResetFunction == nullptr) {
+    if (!isLoaded || ResetFunction == nullptr) {
         UE_LOG(LogTemp, Error, TEXT("DLL is not loaded or reset function not found!"));
         return;
     }
@@ -120,7 +120,7 @@ void FGrammarDLL::Reset(int Seed) {
 }
 
 void FGrammarDLL::SetSize(float X, float Y, float Z) {
-    if (!bIsLoaded || SetSizeFunction == nullptr) {
+    if (!isLoaded || SetSizeFunction == nullptr) {
         UE_LOG(LogTemp, Error, TEXT("DLL is not loaded or setSize function not found!"));
         return;
     }
@@ -130,20 +130,24 @@ void FGrammarDLL::SetSize(float X, float Y, float Z) {
 }
 
 void FGrammarDLL::UpdateMesh() {
-    if (!bIsLoaded || GetMesh == nullptr || DestroyMesh == nullptr) {
+    if (!isLoaded || GetMesh == nullptr || DestroyMesh == nullptr) {
         UE_LOG(LogTemp, Error, TEXT("DLL is not loaded or mesh functions not found!"));
         return;
     }
     
-    // Get mesh data from DLL
+    // Helper function for drawing lines.
+    auto DrawLine = [](ULineBatchComponent* LineBatch, const FVector& Start, const FVector& End) {
+        LineBatch->DrawLine(Start, End, FLinearColor::Black, SDPG_World, 2.0f, 0.0f);
+    };
+    
+    // Get mesh data from DLL.
     MeshCpp meshData = GetMesh();
     
-    // Get the current world
+    // Get the current world.
     UWorld* World = nullptr;
     if (GEngine && GEngine->GetWorldContexts().Num() > 0) {
         World = GEngine->GetWorldContexts()[0].World();
-    }
-    
+    }    
     if (!World) {
         UE_LOG(LogTemp, Error, TEXT("No world found for mesh creation"));
         DestroyMesh(meshData);
@@ -158,20 +162,20 @@ void FGrammarDLL::UpdateMesh() {
         }
     }
     
-    // Create new actor with procedural mesh component
+    // Create new actor with procedural mesh component.
     AActor* MeshActor = World->SpawnActor<AActor>();
     MeshActor->SetActorLabel(TEXT("GeneratedMesh"));
     
-    // Add procedural mesh component
+    // Add procedural mesh component.
     UProceduralMeshComponent* ProcMeshComponent = NewObject<UProceduralMeshComponent>(MeshActor);
     MeshActor->SetRootComponent(ProcMeshComponent);
     ProcMeshComponent->RegisterComponent();
     
-    // Add line batch component for drawing edges
+    // Add line batch component for drawing edges.
     ULineBatchComponent* LineBatchComponent = NewObject<ULineBatchComponent>(MeshActor);
     LineBatchComponent->RegisterComponent();
     
-    // Prepare mesh data for procedural component
+    // Prepare mesh data for procedural component.
     TArray<FVector> Vertices;
     TArray<int32> Triangles;
     TArray<FVector> Normals;
@@ -193,14 +197,12 @@ void FGrammarDLL::UpdateMesh() {
             meshData.positions[i * 3 + 2] * 100.0f + 0.1f
         );
         Vertices.Add(Position);
-        
-        // Use normals from DLL data (convert Y and Z coordinates like positions)
+
         FVector Normal(
             meshData.normals[i * 3],
             meshData.normals[i * 3 + 1],
             meshData.normals[i * 3 + 2]
         );
-        Normal.Normalize(); // Ensure it's normalized
         Normals.Add(Normal);
         
         UVs.Add(FVector2D(0, 0));
@@ -213,7 +215,7 @@ void FGrammarDLL::UpdateMesh() {
         int32 i1 = meshData.triangles[i * 3 + 1];
         int32 i2 = meshData.triangles[i * 3 + 2];
         
-        // Validate indices
+        // Validate indices.
         if (i0 >= meshData.numVertices || i1 >= meshData.numVertices || i2 >= meshData.numVertices) {
             continue;
         }
@@ -223,39 +225,29 @@ void FGrammarDLL::UpdateMesh() {
         Triangles.Add(i2);
     }
     
-    // Create the procedural mesh section for faces
+    // Create the procedural mesh section for faces.
     ProcMeshComponent->CreateMeshSection(0, Vertices, Triangles, Normals, UVs, VertexColors, Tangents, true);
     
-    // Set a basic material for faces
+    // Set a basic material for faces.
     UMaterial* DefaultMaterial = LoadObject<UMaterial>(nullptr, TEXT("/Engine/BasicShapes/BasicShapeMaterial"));
     if (DefaultMaterial) {
         ProcMeshComponent->SetMaterial(0, DefaultMaterial);
     }
     
-    // Generate edges from face indices and draw them using LineBatchComponent
+    // Generate edges from face indices and draw them using LineBatchComponent.
     int32 startIndex = 0;
     for (int32 i = 0; i < meshData.numFaces; i++) {
         int32 endIndex = meshData.faceIndices[i];
         
-        // Create edges for each face
+        // Create edges for each face.
         for (int32 j = startIndex; j < endIndex - 1; j++) {
-            FVector v1 = Vertices[j];
-            FVector v2 = Vertices[j + 1];
-            
-            // Draw line for this edge using LineBatchComponent
-            LineBatchComponent->DrawLine(v1, v2, FLinearColor::Black, SDPG_World, 2.0f, 0.0f);
+            DrawLine(LineBatchComponent, Vertices[j], Vertices[j + 1]);
         }
-        
-        // Connect last vertex to first vertex to close the face
-        FVector v1 = Vertices[endIndex - 1];
-        FVector v2 = Vertices[startIndex];
-        
-        // Draw line to close the face
-        LineBatchComponent->DrawLine(v1, v2, FLinearColor::Black, SDPG_World, 2.0f, 0.0f);
+        DrawLine(LineBatchComponent, Vertices[endIndex - 1], Vertices[startIndex]);
         
         startIndex = endIndex;
     }
     
-    // Clean up DLL memory
+    // Clean up DLL memory.
     DestroyMesh(meshData);
 } 

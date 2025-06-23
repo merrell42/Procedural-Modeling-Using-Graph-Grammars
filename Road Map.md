@@ -7,7 +7,7 @@ These are roughly in priority order weighing cost vs benefits.
 * Add all grammars from web version.
 * Better control the length of the edges.
 * Get optimizer working like the web version.
-* Implement on Unreal Engine, Houdini, and Godot.
+* Implement on Houdini and 3DS Max.
 * Display the grammars and example models.
 * Add tests.
 * Add license.
