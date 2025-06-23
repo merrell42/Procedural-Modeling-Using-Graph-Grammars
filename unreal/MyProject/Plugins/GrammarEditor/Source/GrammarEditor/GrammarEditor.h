@@ -17,6 +17,7 @@ private:
 	void RegisterMenus();
 	void OpenGrammarEditor();
 	FReply OnLoadGrammarClicked();
+	FReply OnLoadFolderClicked();
 	FReply OnStepClicked();
 	FReply OnResetClicked();
 	FReply OnPlayClicked();
@@ -24,13 +25,17 @@ private:
 	void OnSizeXChanged(const FText& NewText);
 	void OnSizeYChanged(const FText& NewText);
 	void OnSizeZChanged(const FText& NewText);
+	void ProcessNextFileInFolder();
+	void FindJsonFilesInDirectory(const FString& DirectoryPath);
 
 private:
 	TSharedPtr<SButton> StepButton;
 	TSharedPtr<SButton> ResetButton;
 	TSharedPtr<SButton> PlayButton;
+	TSharedPtr<SButton> LoadFolderButton;
 	TSharedPtr<STextBlock> PlayButtonText;
 	TSharedPtr<STextBlock> FileNameText;
+	TSharedPtr<STextBlock> FolderProgressText;
 	TSharedPtr<SEditableTextBox> SeedInput;
 	TSharedPtr<SEditableTextBox> SizeXInput;
 	TSharedPtr<SEditableTextBox> SizeYInput;
@@ -42,4 +47,12 @@ private:
 	float CurrentSizeX = 30.0f;
 	float CurrentSizeY = 20.0f;
 	float CurrentSizeZ = 10.0f;
+	
+	// Folder processing variables
+	TArray<FString> JsonFilesToProcess;
+	int32 CurrentFileIndex = 0;
+	int32 CurrentIteration = 0;
+	const int32 MaxIterationsPerFile = 50;
+	bool bIsProcessingFolder = false;
+	FTimerHandle FolderProcessingTimerHandle;
 }; 
