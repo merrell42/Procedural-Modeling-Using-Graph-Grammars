@@ -12,6 +12,10 @@ Vec2::Vec2(const Vec2& newVec2)
     MemoryCounter::creation("Vec2");
 }
 
+Vec2::~Vec2() {
+    MemoryCounter::destruction("Vec2");
+}
+
 Vec2::Vec2(double x_, double y_, bool track)
     : x(x_), y(y_) {
     if (track) {

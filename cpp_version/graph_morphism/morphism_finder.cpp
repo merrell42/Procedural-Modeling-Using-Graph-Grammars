@@ -402,7 +402,7 @@ Morphism* MorphismFinder::assignHalfEdge(HalfEdge* halfEdgeA, GraphHalfEdge* hal
     }
 }
 
-// Helper function to find the nearest intersection between a edge and a face
+// Helper function to find the nearest intersection between an edge and a face.
 void MorphismFinder::findNearestIntersection(Face* faceA, const Vec3& p0, const Vec3& p1, const Vec2& dir2, IntersectResult& nearestIntersect, int maxDim) {
     vector<Vec3> fPositions = faceA->getPositions();
     vector<IntersectionData> intersections = Intersector::edgeFaceIntersect(p0, p1, fPositions, maxDim);

@@ -53,7 +53,7 @@ int getNumFaces() {
 	return (int)model->getCurrent()->getFaceMap().size();
 }
 
-Mesh getMesh() {
+MeshCpp getMesh() {
 	return model->getCurrent()->exportMesh();
 }
 
@@ -62,6 +62,6 @@ void setSize(float x, float y, float z) {
 	globalSettings["Extents"] = extents;
 }
 
-void destroyMesh(Mesh& mesh) {
+void destroyMesh(MeshCpp& mesh) {
 	freeMeshMemory(mesh);
 }

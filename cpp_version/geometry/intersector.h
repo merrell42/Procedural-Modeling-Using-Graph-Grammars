@@ -16,35 +16,15 @@ struct IntersectionData {
 
 class Intersector {
 public:
-    // The minimum angle in degrees between two edge segments for them to intersect.
-    // If they are within this angle they are close enough to being parallel that they
-    // can be ignored.
-    static constexpr double MIN_ANGLE = 1e-6f;
     static constexpr double MIN_CROSS_PRODUCT = 0.000001;
     static constexpr double FAR_DISTANCE = 10000.0;
 
-    // The thickness of the edges in pixels.
-    static constexpr double THICKNESS = 0.1f;
+    // Detect if two line segments intersect.
+    static optional<Vec2> intersect(const Vec2& s1, const Vec2& e1, const Vec2& s2, const Vec2& e2);
 
-    struct IntersectOptions {
-        double thickness2;
-        IntersectOptions() : thickness2(THICKNESS) {}
-    };
-
-    struct FaceIntersection {
-        Vec2 pos;
-        int indexA;
-        int indexB;
-    };
-
-    static optional<Vec2> intersect(const Vec2& s1, const Vec2& e1,
-                                       const Vec2& s2, const Vec2& e2);
-
-    static optional<Vec2> intersect(const Vec2& s1, const Vec2& e1,
-                                       const Vec2& s2, const Vec2& e2, double thickness);
-
+    // Determine where an edge and a face intersect.
     static vector<IntersectionData> edgeFaceIntersect(
-        const Vec3& edge0Start, const Vec3& edge0End, const vector<Vec3>& fPositions, int maxDim);
+        const Vec3& edgeStart, const Vec3& edgeEnd, const vector<Vec3>& fPositions, int maxDim);
 
 private:
     Intersector() = delete; // Static class

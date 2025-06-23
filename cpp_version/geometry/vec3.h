@@ -12,9 +12,7 @@ class Vec3 {
 public:
     Vec3(const Vec3& newVec3);
     Vec3(double x = 0, double y = 0, double z = 0, bool track = true);
-    ~Vec3() {
-        MemoryCounter::destruction("Vec3");
-    }
+    ~Vec3();
 
     double getX() const { return x; }
     double getY() const { return y; }

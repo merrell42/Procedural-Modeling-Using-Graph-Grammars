@@ -23,6 +23,10 @@ Vec3::Vec3(double x_, double y_, double z_, bool track)
     }
 }
 
+Vec3::~Vec3() {
+    MemoryCounter::destruction("Vec3");
+}
+
 double Vec3::getValue(int dim) const {
     switch (dim) {
         case 0: return x;
