@@ -30,6 +30,8 @@ private:
 	bool IsDLLReady();
 	void UpdateStatusText();
 	void SetButtonStates(bool bEnabled);
+	void StartTimer(FTimerHandle& TimerHandle, float Interval, TFunction<void()> Callback, bool bLooping = false);
+	void ClearTimer(FTimerHandle& TimerHandle);
 
 private:
 	TSharedPtr<SButton> StepButton;
