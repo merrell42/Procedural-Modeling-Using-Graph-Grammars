@@ -34,8 +34,7 @@ private:
 	TSharedPtr<SButton> PlayButton;
 	TSharedPtr<SButton> LoadFolderButton;
 	TSharedPtr<STextBlock> PlayButtonText;
-	TSharedPtr<STextBlock> FileNameText;
-	TSharedPtr<STextBlock> FolderProgressText;
+	TSharedPtr<STextBlock> StatusText;
 	TSharedPtr<SEditableTextBox> SeedInput;
 	TSharedPtr<SEditableTextBox> SizeXInput;
 	TSharedPtr<SEditableTextBox> SizeYInput;
