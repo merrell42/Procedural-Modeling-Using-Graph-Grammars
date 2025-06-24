@@ -1,3 +1,4 @@
+#include "pch.h"
 #include <algorithm>
 
 int min(int a, int b) {

@@ -10,5 +10,5 @@ public:
 
     static void creation(const std::string& type);
     static void destruction(const std::string& type);
-    static void printStatistics();
+    static void printStats();
 };

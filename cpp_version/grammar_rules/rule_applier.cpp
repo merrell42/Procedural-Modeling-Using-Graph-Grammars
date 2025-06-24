@@ -658,6 +658,7 @@ pair<vector<double>, bool> RuleApplier::sampleFaceCentric() {
     }
     basisOrders.push_back((int)settings->orderIds.size());
 
+    timer->start("Set Placements");
     for (size_t i = 0; i < settings->basisIds.size(); i++) {
         int id = settings->basisIds[i];
         auto* fPlace = settings->facePlacements[id].get();
@@ -673,9 +674,11 @@ pair<vector<double>, bool> RuleApplier::sampleFaceCentric() {
 
         if (fPlace->getFixed() && !range.isInside(fPlace->getD())) {
             effort = numeric_limits<double>::infinity();
+            timer->stop("Set Placements");
             return make_pair(vector<double>(), false);
         }
         if (range.isEmpty()) {
+            timer->stop("Set Placements");
             return make_pair(vector<double>(), false);
         }
         if (!fPlace->getFixed()) {
@@ -687,6 +690,7 @@ pair<vector<double>, bool> RuleApplier::sampleFaceCentric() {
         orderInfo.erase(orderInfo.begin());
         setPlacements(orderIds, orderInfo);
     }
+    timer->stop("Set Placements");
 
     vector<double> positions;
     for (auto* vertex : freeVertices) {

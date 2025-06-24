@@ -28,17 +28,12 @@ void Mutator::iterate(int steps) {
         }
 
         // auto cost = optimizer.computeCost();
-        timer->start("Accept Or Reject");
         // if (optimizer.isAccepted(cost)) {
         if (true) {
             accept();
         } else {
             reject();
         }
-        timer->stop("Accept Or Reject");
-
-        timer->start("Save");
-        timer->stop("Save");
 
         bool maxTimeEnabled = globalSettings["Max Time Enabled"].get<bool>();
         int maxIterations = globalSettings["Max Iterations"].get<int>();

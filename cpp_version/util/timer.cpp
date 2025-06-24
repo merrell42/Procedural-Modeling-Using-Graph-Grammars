@@ -56,6 +56,10 @@ double Timer::getAverage(const string& name) const {
 }
 
 void Timer::printStats() const {
+    if (!TIMER_ENABLED) {
+        return;
+    }
+
     // Calculate column widths
     size_t nameWidth = 0;
     size_t totalWidth = 12;  // Fixed width for total time
@@ -70,8 +74,7 @@ void Timer::printStats() const {
     // Print header
     cout << left << setw(nameWidth) << "Name" << " | "
               << right << setw(totalWidth) << "Total (ms)" << " | "
-              << setw(countWidth) << "Count" << " | "
-              << setw(avgWidth) << "Avg (ms)" << endl;
+              << setw(countWidth) << "Count" << endl;
 
     // Print separator
     cout << string(nameWidth + totalWidth + countWidth + avgWidth + 6, '-') << endl;
@@ -94,8 +97,7 @@ void Timer::printStats() const {
         cout << left << setw(nameWidth) << name << " | "
                   << right << fixed << setprecision(3)
                   << setw(totalWidth) << data->totalTime << " | "
-                  << setw(countWidth) << data->count << " | "
-                  << setw(avgWidth) << avg << endl;
+                  << setw(countWidth) << data->count << endl;
     }
 }
 

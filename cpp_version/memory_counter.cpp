@@ -28,7 +28,7 @@ void MemoryCounter::destruction(const std::string& key) {
     destructionCounters[key]++;
 }
 
-void MemoryCounter::printStatistics() {
+void MemoryCounter::printStats() {
     if (!MemoryCounterEnabled) {
         return;
     }

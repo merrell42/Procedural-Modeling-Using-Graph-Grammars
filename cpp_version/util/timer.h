@@ -6,6 +6,8 @@
 
 using namespace std;
 
+const bool TIMER_ENABLED = true;
+
 class Timer {
 public:
     Timer();
