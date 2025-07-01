@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <memory>
+#include <map>
 #include "../geometry/vec2.h"
 #include "../graph/graph.h"
 #include "../graph_drawing/model.h"
@@ -49,7 +50,6 @@ public:
 private:
     Model* model;
     bool nodesModified;
-    Face* groundFace;
     bool groundEnabled;
 
     // Helper methods
@@ -70,6 +70,6 @@ private:
     static void addOuterFaces(Morphism* map, Graph* graphB);
 
     // Cache for spliced vertex types
-    static unordered_map<int, VertexType*> splicedVertexTypes;
+    static map<int, VertexType*> splicedVertexTypes;
 };
 

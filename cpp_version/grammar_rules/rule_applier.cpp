@@ -86,18 +86,20 @@ static void destroyEdges(const vector<vector<Edge*>>& edgeGroup) {
         for (Edge* edge : edgeGroup) {
             if (edge) {
                 auto halfEdges = edge->getHalfEdges();
-                halfEdgeSet.insert(halfEdges[0]);
-                halfEdgeSet.insert(halfEdges[1]);
+                if (halfEdges[0]) {
+                    halfEdgeSet.insert(halfEdges[0]);
+                }
+                if (halfEdges[1]) {
+                    halfEdgeSet.insert(halfEdges[1]);
+                }
                 edge->destroy();
             }
         }
     }
     for (const auto& halfEdge : halfEdgeSet) {
-        if (halfEdge) {
-            halfEdge->getFace()->removeHalfEdge(halfEdge);
-            vertexSet.insert(halfEdge->getVertex());
-            halfEdge->destroy();
-        }
+        halfEdge->getFace()->removeHalfEdge(halfEdge);
+        vertexSet.insert(halfEdge->getVertex());
+        halfEdge->destroy();
     }
     for (const auto& vertex : vertexSet) {
         if (vertex) {
@@ -328,7 +330,7 @@ EditGraph* RuleApplier::createGraph() {
             openPaths.push_back(path);
         }
     }
-
+    
     destroyEdges(splitEdges);
 
     // Process faces.
@@ -492,23 +494,24 @@ void RuleApplier::setupFaceCentric() {
         auto* fixedFaceA = faceBtoA[i];
         auto* endFace = endGraph->getBFaces()[i];
         
-         if (endFace) {
-             int faceIndex = indexOf(endGraph->getFaces(), endFace);
-             auto* fixedFaceB = graph->faces[faceIndex];
-             double d;
+        if (endFace) {
+            int faceIndex = indexOf(endGraph->getFaces(), endFace);
+            auto* fixedFaceB = graph->faces[faceIndex];
+            double d;
 
-             // Use the value from outerFacesA if fixedFaceA is destroyed.
-             /*if (fixedFaceA->getNode()->isDestroyed()) {
-                 fixedFaceA = morphism->outerFacesA[i];
-                 d = morphism->outerFacesD[i];
-             } else {*/
-                 auto normal = fixedFaceB->getFaceType()->getNormal();
-                 auto vPosition = fixedFaceA->getHalfEdges()[0]->getVertex()->getPosition();
-                 d = normal.dot(vPosition);
-             // }
+            // Use the value from outerFacesA if fixedFaceA is destroyed.
+            /*if (fixedFaceA->getNode()->isDestroyed()) {
+                fixedFaceA = morphism->outerFacesA[i];
+                d = morphism->outerFacesD[i];
+            } else {*/
+                auto normal = fixedFaceB->getFaceType()->getNormal();
+                auto halfEdges = fixedFaceA->getHalfEdges();
+                auto vPosition = halfEdges[0]->getVertex()->getPosition();
+                d = normal.dot(vPosition);
+            // }
 
-             addFixedFace(fixedFaceA, fixedFaceB, d);
-         }
+            addFixedFace(fixedFaceA, fixedFaceB, d);
+        }
     }
 
     // Process face placements
@@ -518,7 +521,8 @@ void RuleApplier::setupFaceCentric() {
             auto* group = face->getGroup();
             if (group->getFaces().size() > 1) {
                 auto normal = face->getFaceType()->getNormal();
-                auto vPosition = face->getHalfEdges()[0]->getVertex()->getPosition();
+                auto halfEdges = face->getHalfEdges();
+                auto vPosition = halfEdges[0]->getVertex()->getPosition();
                 double d = normal.dot(vPosition);
                 addFixedFace(face, face, d);
             }

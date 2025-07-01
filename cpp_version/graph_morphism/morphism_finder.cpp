@@ -10,27 +10,18 @@
 #include "../settings.h"
 #include "../util/util.h"
 
-unordered_map<int, VertexType*> MorphismFinder::splicedVertexTypes;
+map<int, VertexType*> MorphismFinder::splicedVertexTypes;
 
 MorphismFinder::MorphismFinder(Model* model, bool groundEnabled)
     : model(model)
     , nodesModified(false)
-    , groundFace(nullptr)
     , groundEnabled(groundEnabled) {}
 
 void MorphismFinder::reset() {
     nodesModified = false;
-    groundFace = nullptr;
 }
 
 Morphism* MorphismFinder::findMorphism(Graph* graphB) {
-    if (!groundFace && groundEnabled) {
-        auto faces = model->getCurrent()->getFaceMap();
-        if (!faces.empty()) {
-            groundFace = faces.begin()->second;
-        }
-    }
-
     auto verticesB = graphB->getVertices();
     if (verticesB.empty()) {
         return findStarterMap(graphB);
@@ -110,10 +101,17 @@ void MorphismFinder::addOuterFaces(Morphism* map, Graph* graphB) {
 
 
 Face* MorphismFinder::findFace(FaceType* faceType) {
-    if (groundEnabled && faceType == groundFace->getFaceType()) {
-        auto preference = globalSettings["Prefer Ground"].get<double>();
-        if (Util::randomUniform(0, 1) < preference) {
-            return groundFace;
+    if (groundEnabled) {
+        // Get current ground face (lowest ID) rather than using cached pointer
+        auto faces = model->getCurrent()->getFaceMap();
+        if (!faces.empty()) {
+            Face* currentGroundFace = faces.begin()->second;
+            if (faceType == currentGroundFace->getFaceType()) {
+                auto preference = globalSettings["Prefer Ground"].get<double>();
+                if (Util::randomUniform(0, 1) < preference) {
+                    return currentGroundFace;
+                }
+            }
         }
     }
 

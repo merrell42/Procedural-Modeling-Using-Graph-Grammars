@@ -1,6 +1,6 @@
 #pragma once
 #include <iostream>
-#include <unordered_map>
+#include <map>
 #include <vector>
 #include "model.h"
 #include "../memory_counter.h"
@@ -70,5 +70,5 @@ private:
 	vector<int> bspNodeIds;
 
 	// A list of vertex types that are created when splitting an edge.
-	static unordered_map<int, VertexType*> splitVertexTypes;
+	static map<int, VertexType*> splitVertexTypes;
 };

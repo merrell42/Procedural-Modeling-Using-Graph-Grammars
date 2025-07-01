@@ -25,7 +25,7 @@ Edge::~Edge() {
 }
 
 // A static list of vertex types that are created when splitting an edge.
-unordered_map<int, VertexType*> Edge::splitVertexTypes;
+map<int, VertexType*> Edge::splitVertexTypes;
 
 Edge* Edge::copy() {
 	auto result = new Edge(model, id, type, halfEdgeIds, bspNodeIds);

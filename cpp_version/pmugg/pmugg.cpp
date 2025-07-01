@@ -21,7 +21,7 @@ using Json = nlohmann::json;
 
 int main() {
 	// string filePath = "../../grammar data/2D Basic Shapes/square filled.json";
-	// string filePath = "../../grammar data/3D Shapes/box-grounded.json";
+	// string filePath = "../../grammar data/3D Shapes/L-floating.json";
 	// string filePath = "../../grammar data/2D Branches/A.json";
 	string filePath = "../../grammar data/3D Complex Shapes/castle.json";
 	resetRandom(2);

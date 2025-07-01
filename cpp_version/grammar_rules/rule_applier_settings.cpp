@@ -2,6 +2,10 @@
 #include "rule_applier_settings.h"
 #include "../util/util.h"
 
+VertexPlacement* RuleApplierSettings::getVertex(int id) { return vertexPlacements[id].get(); }
+EdgePlacement* RuleApplierSettings::getEdge(int id) { return edgePlacements[id].get(); }
+FacePlacement* RuleApplierSettings::getFace(int id) { return facePlacements[id].get(); }
+
 void RuleApplierSettings::addToOrder(int id, const string& type, int vertexId) {
     if (find(orderIds.begin(), orderIds.end(), id) == orderIds.end()) {
         orderIds.push_back(id);
@@ -11,21 +15,23 @@ void RuleApplierSettings::addToOrder(int id, const string& type, int vertexId) {
 
 int RuleApplierSettings::createFace(const Vec3& normal) {
     int id = newFaceCounter--;
-    facePlacements[id] = make_unique<FacePlacement>(normal, id, this, nullptr /* unsure about this*/);
+    facePlacements[id] = make_unique<FacePlacement>(normal, id, this, nullptr);
     return id;
 }
 
+// Merges two coplanar faces so they are treated as one.
+// All references to idB are replaced with idA.
 void RuleApplierSettings::mergeFace(int idA, int idB) {
     uniqueFaceMap[idB] = idA;
     
-    // Update all face mappings
+    // Update all face mappings.
     for (auto& [key, value] : uniqueFaceMap) {
         if (value == idB) {
             value = idA;
         }
     }
 
-    // Update vertex placements
+    // Update vertex placements.
     for (auto& [key, vPlace] : vertexPlacements) {
         for (auto& faceId : vPlace->freeFaceIds) {
             if (faceId == idB) {
@@ -35,7 +41,6 @@ void RuleApplierSettings::mergeFace(int idA, int idB) {
                 getFace(idA)->vertexIds.push_back(vId);
             }
         }
-        
         for (auto& faceId : vPlace->unfreeFaceIds) {
             if (faceId == idB) {
                 faceId = idA;
@@ -47,6 +52,7 @@ void RuleApplierSettings::mergeFace(int idA, int idB) {
     }
 }
 
+// Finds the index where the basis face in the orderIds.
 int RuleApplierSettings::findBasisOrder(const int basisId) {
     for (size_t index = 0; index < orderIds.size(); ++index) {
         if (orderIds[index] == basisId && orderInfo[index].type == "face") {

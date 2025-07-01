@@ -12,6 +12,22 @@ ProductionRule::ProductionRule(
     ground(false),
     id(nextId++) {}
 
+const vector<Graph*>& ProductionRule::getStartGraphs() const {
+    return startGraphs;
+}
+
+const vector<Graph*>& ProductionRule::getEndGraphs() const {
+    return endGraphs;
+}
+
+bool ProductionRule::isGround() const {
+    return ground;
+}
+
+int ProductionRule::getId() const {
+    return id;
+}
+
 ProductionRule* ProductionRule::import(const Json& json, Primitives* shape) {
     vector<Graph*> startGraphs;
     vector<Graph*> endGraphs;

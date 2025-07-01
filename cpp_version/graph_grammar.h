@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <memory>
-#include <unordered_map>
+#include <map>
 #include "../third_party/json.h"
 #include "../primitives/face_type.h"
 #include "../primitives/primitives.h"
@@ -52,7 +52,7 @@ private:
         vector<Graph*> edge;
         vector<Graph*> vertex;
         vector<EdgeType*> edgeTypes;
-        unordered_map<string, EdgeType*> splicedEdgeTypes;
+        map<string, EdgeType*> splicedEdgeTypes;
     };
 
     struct Match {

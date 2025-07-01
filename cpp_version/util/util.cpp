@@ -7,8 +7,8 @@
 #include <iostream>
 #include "minmax.h"
 
-int randomCount = 0;
-int randomSeed = 42;
+static int randomCount = 0;
+static int randomSeed = 42;
 
 double random() {
     double x = (double)sin(randomSeed + randomCount) * (10000 + randomSeed);

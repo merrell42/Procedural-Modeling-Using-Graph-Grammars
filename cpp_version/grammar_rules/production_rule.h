@@ -12,6 +12,8 @@ class Primitives;
 struct DrawOptions;
 struct OrderInfo;
 
+// A production rule consists of a set of graph that have the same
+// graph boundary and can be switched out for each other.
 class ProductionRule {
 public:
     explicit ProductionRule(
@@ -21,10 +23,12 @@ public:
     static ProductionRule* import(const Json& json, Primitives* shape);
     ~ProductionRule() = default;
 
-    const vector<Graph*>& getStartGraphs() const { return startGraphs; }
-    const vector<Graph*>& getEndGraphs() const { return endGraphs; }
-    bool isGround() const { return ground; }
-    int getId() const { return id; }
+    // End graphs are the same as start graphs except the splices are removed.
+    // The splices are not needed when creating the end graphs.
+    const vector<Graph*>& getStartGraphs() const;
+    const vector<Graph*>& getEndGraphs() const;
+    bool isGround() const;
+    int getId() const;
 
 private:
     vector<Graph*> startGraphs;
