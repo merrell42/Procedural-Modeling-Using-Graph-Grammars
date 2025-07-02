@@ -12,7 +12,7 @@ using System.Text;
 
 namespace Grammar {
     public class GrammarEditorWindow : EditorWindow {
-        private const int MAX_ITERATION = 50;
+        private const int MAX_ITERATION = 200;
 
         [MenuItem("Window/Graph Grammar Generator")] 
         public static void Init() {
@@ -58,6 +58,9 @@ namespace Grammar {
         private static extern void iterate(int steps);
 
         [DllImport(pmuggDll, CallingConvention = CallingConvention.Cdecl)]
+        private static extern int iterateToTime(float timeSeconds);
+
+        [DllImport(pmuggDll, CallingConvention = CallingConvention.Cdecl)]
         private static extern void setSize(float x, float y, float z);
 
         private static Material sharedLineMaterial = null;
@@ -74,6 +77,7 @@ namespace Grammar {
         private int seed = 0;
         private Vector3 size = new Vector3(30, 20, 10);
         private Vector3 previousSize;
+        private System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
 
         // Reusable arrays to prevent garbage collection pressure
         private float[] positionsArray;
@@ -94,6 +98,7 @@ namespace Grammar {
                 isAnimating = false;
             }
 
+            timer.Start();
             isAnimating = true;
             EditorApplication.update += AnimationUpdate;
         }
@@ -114,11 +119,13 @@ namespace Grammar {
                     return;
                 }
             }
-            iterate(1);
+            
+            float timePerFrame = 0.1f;
+            int stepsCompleted = iterateToTime(timePerFrame);
+            iterationCount += stepsCompleted;
+
             UpdateMesh();
             SceneView.RepaintAll();
-
-            iterationCount++;
             
             Repaint();
         }
@@ -212,7 +219,7 @@ namespace Grammar {
             existingMeshFilter.sharedMesh = outputMesh;
             Selection.activeGameObject = gameObject;
             
-            var creator = FindObjectOfType<GrammarCreator>();
+            var creator = FindFirstObjectByType<GrammarCreator>();
             if (creator) {
                 gameObject.transform.parent = creator.transform;
             }
@@ -247,9 +254,7 @@ namespace Grammar {
             if (meshObj != null) {
                 linesContainer.transform.parent = meshObj.transform;
             }
-            
-            // Example: Draw lines connecting some vertices
-            // In a real implementation, you would get the actual edge data from your grammar
+
             Color lineColor = new Color(0.0f, 0.0f, 0.0f, 1.0f);
             float width = 0.05f;
 
@@ -298,10 +303,12 @@ namespace Grammar {
 
         private void StopAnimation() {
             EditorApplication.update -= AnimationUpdate;
+            timer.Stop();
             isAnimating = false;
         }
 
         private void ResetGeneration() {
+            timer.Reset();
             reset(seed);
             iterationCount = 0;
             UpdateMesh();
@@ -357,7 +364,11 @@ namespace Grammar {
             EditorGUILayout.BeginVertical();
 
             string stepText = maxIteration > 0 ? $"Step: {iterationCount} / {maxIteration}" : $"Step: {iterationCount}";
-            EditorGUILayout.LabelField($"{grammarName}    -     {stepText}");
+            string timerText = $"    -     {timer.Elapsed.TotalSeconds:F1}s";
+            if (iterationCount > 0) {
+                timerText += $" ({1000 * timer.Elapsed.TotalSeconds / iterationCount:F3} ms/step)";
+            }
+            EditorGUILayout.LabelField($"{grammarName}    -     {stepText}{timerText}");
 
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("Seed", GUILayout.Width(50));

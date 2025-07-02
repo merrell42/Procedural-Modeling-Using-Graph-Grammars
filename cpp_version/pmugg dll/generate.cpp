@@ -4,6 +4,7 @@
 #include <fstream>
 #include <vector>
 #include <sstream>
+#include <chrono>
 #include "../graph_grammar.h"
 #include "../mutator.h"
 #include "../graph_mutator.h"
@@ -47,6 +48,18 @@ void reset(int seed) {
 
 void iterate(int steps) {
 	mutator->iterate(steps);
+}
+
+int iterateToTime(float timeSeconds) {
+	int steps = 0;
+	auto startTime = std::chrono::high_resolution_clock::now();
+	auto targetDuration = std::chrono::duration<float>(timeSeconds);
+	
+	while (std::chrono::high_resolution_clock::now() - startTime < targetDuration) {
+		mutator->iterate(1);
+		steps++;
+	}
+	return steps;
 }
 
 int getNumFaces() {
