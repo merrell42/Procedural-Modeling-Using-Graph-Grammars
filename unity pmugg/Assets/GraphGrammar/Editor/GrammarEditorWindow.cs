@@ -29,7 +29,7 @@ namespace Grammar {
 #else
         // Other platforms load plugins dynamically, so pass the
         // name of the plugin's dynamic library.
-        const string pmuggDll = "pmugg dll.dll";
+        const string pmuggDll = "pmugg release.dll";
 #endif  
         [StructLayout(LayoutKind.Sequential)]
         public struct MeshDLL {

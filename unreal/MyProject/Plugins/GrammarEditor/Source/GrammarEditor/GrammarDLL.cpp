@@ -33,7 +33,7 @@ bool FGrammarDLL::LoadDLL() {
     }
 
     // Load the DLL.
-    FString DLLPath = FPaths::Combine(FPaths::ProjectPluginsDir(), TEXT("GrammarEditor/Binaries/Win64/pmugg dll.dll"));
+    FString DLLPath = FPaths::Combine(FPaths::ProjectPluginsDir(), TEXT("GrammarEditor/Binaries/Win64/pmugg release.dll"));
     DLLHandle = FPlatformProcess::GetDllHandle(*DLLPath);
     
     if (DLLHandle == nullptr) {
