@@ -97,7 +97,7 @@ Matrix* VertexPlacement::getA(const vector<int>& faceIds) {
 Matrix* VertexPlacement::getM() {
     if (!M) {
         Matrix* A = getA(unfreeFaceIds);
-        // The three faces are coledgear.
+        // The three faces are colinear.
         // Return null if A is not invertible
         if (abs(Matrix::det(*A)) < 1e-8) {
             delete A;
@@ -130,38 +130,37 @@ void VertexPlacement::setPosition() {
 }
 
 Range VertexPlacement::getRange() {
-    vector<vector<double>> m3(3, vector<double>(1));
-    vector<vector<double>> b3(3, vector<double>(1));
-
+    timer->start("Vertex Matrix");
+    double m3[3], b3[3];
     for (size_t i = 0; i < 3; i++) {
         int id = unfreeFaceIds[i];
         FacePlacement* fPlace = settings->getFace(id);
         auto mbi = fPlace->getChangeMB();
-        m3[i][0] = mbi.m;
-        b3[i][0] = mbi.b;
+        m3[i] = mbi.m;
+        b3[i] = mbi.b;
     }
 
-    Matrix* m3Matrix = new Matrix(m3);
-    Matrix* b3Matrix = new Matrix(b3);
-    Matrix* mMatrix = Matrix::multiply(getM(), m3Matrix);
-    Matrix* bMatrix = Matrix::multiply(getM(), b3Matrix);
-    auto m = mMatrix->valueOf();
-    auto b = bMatrix->valueOf();
+    auto M = getM()->valueOf();
+    double m[3] = {0}, b[3] = {0};
+    // Multiply M times m3 and b3.
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            m[i] += M[i][j] * m3[j];
+            b[i] += M[i][j] * b3[j];
+        }
+    }
+    timer->stop("Vertex Matrix");
 
-    delete m3Matrix;
-    delete b3Matrix;
-
+    timer->start("Vertex Range");
     Range range(-numeric_limits<double>::infinity(), numeric_limits<double>::infinity());
     for (int i = 0; i < 3; i++) {
-        Range rangeI = Range::transformCreate(m[i][0], b[i][0], Range(settings->lower[i], settings->upper[i]));
+        Range rangeI = Range::transformCreate(m[i], b[i], Range(settings->lower[i], settings->upper[i]));
         range = range.intersect(rangeI);
     }
+    timer->stop("Vertex Range");
 
-    slope = Vec3(m[0][0], m[1][0], m[2][0]);
-    value = Vec3(b[0][0], b[1][0], b[2][0]);
-
-    delete mMatrix;
-    delete bMatrix;
+    slope = Vec3(m[0], m[1], m[2]);
+    value = Vec3(b[0], b[1], b[2]);
 
     return range;
 }

@@ -78,6 +78,7 @@ void EdgePlacement::addConstraint(int id) {
 }
 
 Range EdgePlacement::getRange() const {
+    timer->start("Edge Range");
     auto* vPlace0 = settings->getVertex(vertexIds[0]);
     auto* vPlace1 = settings->getVertex(vertexIds[1]);
     
@@ -96,5 +97,6 @@ Range EdgePlacement::getRange() const {
         tileLength = edgeSettings->getDouble("Tile Length");
     }
 
+    timer->stop("Edge Range");
     return Range::transformCreate(mLength, bLength, Range(lengthMin, lengthMax, tileLength));
 }

@@ -23,25 +23,34 @@ int main() {
 	// string filePath = "../../grammar data/2D Basic Shapes/square filled.json";
 	// string filePath = "../../grammar data/3D Shapes/L-floating.json";
 	// string filePath = "../../grammar data/2D Branches/A.json";
-	string filePath = "../../grammar data/3D Complex Shapes/castle.json";
+	vector<string> filePaths = {
+		"../../grammar data/3D Complex Shapes/castle.json",
+		"../../grammar data/2D Basic Shapes/square hollow.json",
+		"../../grammar data/3D Shapes/house1.json",
+		"../../grammar data/3D Shapes/docks.json",
+	};
 	resetRandom(2);
 
-	try {
-		Json parsed = readJsonFile(filePath, false);
-		cout << parsed["name"] << endl;
-		auto hierarchy = GraphGrammar::import(parsed);
-		auto model = new Model();
-		auto mutator = new Mutator(model, new GraphMutator(hierarchy, model));
-		mutator->iterate(20);
-		model->reset();
-	} catch (const exception& e) {
-	 	cout << "Error: " << e.what() << endl;
+	for (string filePath : filePaths) {
+		timer->reset();
+		
+		try {
+			Json parsed = readJsonFile(filePath, false);
+			cout << endl << parsed["name"] << endl;
+			auto hierarchy = GraphGrammar::import(parsed);
+			auto model = new Model();
+			auto mutator = new Mutator(model, new GraphMutator(hierarchy, model));
+			mutator->iterate(100);
+			model->reset();
+		} catch (const exception& e) {
+			cout << "Error: " << e.what() << endl;
+		}
+
+		// Print memory leak statistics before program exits
+		MemoryCounter::printStats();
+
+		timer->printStats();
 	}
-
-	// Print memory leak statistics before program exits
-	MemoryCounter::printStats();
-
-	timer->printStats();
 	
 	return 0;
 }

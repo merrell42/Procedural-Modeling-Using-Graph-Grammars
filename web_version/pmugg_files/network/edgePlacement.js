@@ -50,6 +50,7 @@ ms.edgePlacement.prototype.addConstraint = function(id) {
 };
 
 ms.edgePlacement.prototype.getRange = function() {
+    timer->start("Edge Range");
 	var vPlace0 = this.settings.getVertex(this.vertexIds[0]);
 	var vPlace1 = this.settings.getVertex(this.vertexIds[1]);
 	var mb0 = vPlace0.getChangeMB();
@@ -64,6 +65,7 @@ ms.edgePlacement.prototype.getRange = function() {
 	if (brush && brush.get('Rigid Tiled')) {
 		tileLength = brush.get('Tile Length');
 	}
+    timer->stop("Edge Range");
 
 	return ms.range.transformCreate(mLength, bLength, new ms.range(lengthMin, lengthMax, tileLength));
 };

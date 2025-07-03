@@ -15,11 +15,11 @@ void Mutator::reset() {
 }
 
 void Mutator::iterate(int steps) {
-    timer->start("Guide Mutator");
+    timer->start("Total");
 
     int finishStep = model->numSteps + steps;
     while (model->numSteps < finishStep) {
-        cout << model->numSteps << " " << model->getCurrent()->getFaceMap().size() << endl;
+        // cout << model->numSteps << " " << model->getCurrent()->getFaceMap().size() << endl;
 
         if (model->numSteps == 0) {
             mutateGround();
@@ -40,7 +40,7 @@ void Mutator::iterate(int steps) {
 
         model->numSteps++;
     }
-    timer->stop("Guide Mutator");
+    timer->stop("Total");
 }
 
 // Add the ground plane.
@@ -55,9 +55,9 @@ void Mutator::mutate() {
     while (!done) {
         switch(Util::randomDistribution(probabilities)) {
             case 0: {
-                timer->start("Add Fragment");
+                timer->start("Add Graph");
                 bool success = graphMutator->addStartInstance(false);
-                timer->stop("Add Fragment");
+                timer->stop("Add Graph");
                 if (success) {
                     return;
                 } else {
@@ -67,9 +67,9 @@ void Mutator::mutate() {
                 break;
             }
             case 1: {
-                timer->start("Remove Fragment");
+                timer->start("Remove Graph");
                 bool success = graphMutator->changeRandomInstance(true);
-                timer->stop("Remove Fragment");
+                timer->stop("Remove Graph");
                 if (success) {
                     return;
                 } else {
@@ -79,9 +79,9 @@ void Mutator::mutate() {
                 break;
             }
             case 2: {
-                timer->start("Modify Fragment");
+                timer->start("Modify Graph");
                 bool success = graphMutator->changeRandomInstance(false);
-                timer->stop("Modify Fragment");
+                timer->stop("Modify Graph");
                 if (success) {
                     return;
                 } else {

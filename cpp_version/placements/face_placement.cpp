@@ -104,12 +104,13 @@ void FacePlacement::makeFixed(const FixedFace& fixedFace) {
 }
 
 Range FacePlacement::getRange(int vertexId) {
+    timer->start("Face Range");
     const auto& lower = settings->lower;
     const auto& upper = settings->upper;
 
     double m = 1.0;
     double b = 0.0;
-
+    
     if (vertexId != -1) {
         auto* vPlace = settings->getVertex(vertexId);
         m = normal.dot(vPlace->slope);
@@ -117,6 +118,7 @@ Range FacePlacement::getRange(int vertexId) {
     }
 
     if (fixed) {
+        timer->stop("Face Range");
         if (m == 0) {
             return Range(-numeric_limits<double>::infinity(),
                         numeric_limits<double>::infinity());
@@ -139,13 +141,13 @@ Range FacePlacement::getRange(int vertexId) {
             highD += ni * lower[i];
         }
     }
-
     Range range((double)lowD, (double)highD);
     for (auto* neighbor : fixedNeighbors) {
         Range rangeI = neighbor->dirBounds(normal);
         range = range.intersect(rangeI);
     }
 
+    timer->stop("Face Range");
     return Range::transformCreate((double)m, (double)b, range);
 }
 
