@@ -7,6 +7,7 @@
 #include "../primitives/face_type.h"
 #include "../third_party/earcut/earcut.h"
 #include "../util/util.h"
+#include "../util/timer.h"
 
 Face::Face(Model* model, int id, FaceType* faceType, vector<int> halfEdgeIds, bool looped, vector<int> bspNodeIds, int groupId, bool hole)
 	: model(model)
@@ -267,7 +268,10 @@ void Face::removeFromBsp() {
 }
 
 bool Face::addToBsp() {
-    return model->getCurrent()->bspAddFace(this);
+    timer->start("AddToBsp");
+    bool success = model->getCurrent()->bspAddFace(this);
+    timer->stop("AddToBsp");
+    return success;
 }
 
 Plane Face::getPlane() const {

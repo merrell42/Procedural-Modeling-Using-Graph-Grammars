@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "intersector.h"
 #include <cmath>
+#include "../util/timer.h"
 
 optional<Vec2> Intersector::intersect(
     const Vec2& s1, const Vec2& e1,

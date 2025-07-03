@@ -60,7 +60,7 @@ bool FacePlacement::coplanar(FacePlacement* fPlaceB) const {
 }
 
 void FacePlacement::constrain(bool addBasis, int vertexId) {
-    settings->addToOrder(id, "face", vertexId);
+    settings->addToOrder(id, OrderInfo::Type::Face, vertexId);
 
     if (addBasis) {
         settings->basisIds.push_back(id);
@@ -104,7 +104,6 @@ void FacePlacement::makeFixed(const FixedFace& fixedFace) {
 }
 
 Range FacePlacement::getRange(int vertexId) {
-    timer->start("Face Range");
     const auto& lower = settings->lower;
     const auto& upper = settings->upper;
 
@@ -118,7 +117,6 @@ Range FacePlacement::getRange(int vertexId) {
     }
 
     if (fixed) {
-        timer->stop("Face Range");
         if (m == 0) {
             return Range(-numeric_limits<double>::infinity(),
                         numeric_limits<double>::infinity());
@@ -144,10 +142,9 @@ Range FacePlacement::getRange(int vertexId) {
     Range range((double)lowD, (double)highD);
     for (auto* neighbor : fixedNeighbors) {
         Range rangeI = neighbor->dirBounds(normal);
-        range = range.intersect(rangeI);
+        range.intersect(rangeI);
     }
 
-    timer->stop("Face Range");
     return Range::transformCreate((double)m, (double)b, range);
 }
 

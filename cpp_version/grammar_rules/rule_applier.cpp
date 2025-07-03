@@ -579,24 +579,35 @@ bool RuleApplier::hasViolations(const vector<double>& positions, const Limits& l
 
 Range RuleApplier::getRange(
     const vector<int>& orderIds,
-    const vector<OrderInfo>& orderInfo
+    const vector<OrderInfo>& orderInfo,
+    int startIndex,
+    int endIndex
 ) {
     Range range(-numeric_limits<double>::infinity(),
         numeric_limits<double>::infinity());
 
-    for (size_t i = 0; i < orderIds.size(); i++) {
+    for (size_t i = startIndex; i < endIndex; i++) {
         int id = orderIds[i];
         const auto& info = orderInfo[i];
 
         Range rangeI;
-        if (info.type == "vertex") {
-            rangeI = settings->getVertex(id)->getRange();
-        } else if (info.type == "edge") {
-            rangeI = settings->getEdge(id)->getRange();
-        } else if (info.type == "face") {
-            rangeI = settings->getFace(id)->getRange(info.vertexId);
+        switch (info.type) {
+            case OrderInfo::Type::Vertex:
+                rangeI = settings->getVertex(id)->getRange();
+                break;
+            case OrderInfo::Type::Edge:
+                rangeI = settings->getEdge(id)->getRange();
+                break;
+            case OrderInfo::Type::Face:
+                rangeI = settings->getFace(id)->getRange(info.vertexId);
+                break;
         }
-        range = range.intersect(rangeI);
+        range.intersect(rangeI);
+
+        // Early exit if range is empty
+        if (range.isEmpty()) {
+            return range;
+        }
     }
 
     return range;
@@ -604,15 +615,17 @@ Range RuleApplier::getRange(
 
 void RuleApplier::setPlacements(
     const vector<int>& orderIds,
-    const vector<OrderInfo>& orderInfo
+    const vector<OrderInfo>& orderInfo,
+    int startIndex,
+    int endIndex
 ) {
-    for (size_t i = 0; i < orderIds.size(); i++) {
+    for (size_t i = startIndex; i < endIndex; i++) {
         int id = orderIds[i];
         const auto& info = orderInfo[i];
 
-        if (info.type == "vertex") {
+        if (info.type == OrderInfo::Type::Vertex) {
             settings->getVertex(id)->setPosition();
-        } else if (info.type == "face") {
+        } else if (info.type == OrderInfo::Type::Face) {
             settings->getFace(id)->setFromVertex(info.vertexId);
         }
     }
@@ -662,27 +675,22 @@ pair<vector<double>, bool> RuleApplier::sampleFaceCentric() {
     }
     basisOrders.push_back((int)settings->orderIds.size());
 
-    timer->start("Set Placements");
+    // timer->start("Set Placements");
     for (size_t i = 0; i < settings->basisIds.size(); i++) {
         int id = settings->basisIds[i];
         auto* fPlace = settings->facePlacements[id].get();
         int start = basisOrders[i];
         int end = basisOrders[i + 1];
 
-        vector<int> orderIds(settings->orderIds.begin() + start,
-            settings->orderIds.begin() + end);
-        vector<OrderInfo> orderInfo(settings->orderInfo.begin() + start,
-            settings->orderInfo.begin() + end);
-
-        auto range = getRange(orderIds, orderInfo);
+        auto range = getRange(settings->orderIds, settings->orderInfo, start, end);
 
         if (fPlace->getFixed() && !range.isInside(fPlace->getD())) {
             effort = numeric_limits<double>::infinity();
-            timer->stop("Set Placements");
+            // timer->stop("Set Placements`");
             return make_pair(vector<double>(), false);
         }
         if (range.isEmpty()) {
-            timer->stop("Set Placements");
+            // timer->stop("Set Placements");
             return make_pair(vector<double>(), false);
         }
         if (!fPlace->getFixed()) {
@@ -690,11 +698,9 @@ pair<vector<double>, bool> RuleApplier::sampleFaceCentric() {
             fPlace->setD(d);
         }
 
-        orderIds.erase(orderIds.begin());
-        orderInfo.erase(orderInfo.begin());
-        setPlacements(orderIds, orderInfo);
+        setPlacements(settings->orderIds, settings->orderInfo, start + 1, end);
     }
-    timer->stop("Set Placements");
+    // timer->stop("Set Placements");
 
     vector<double> positions;
     for (auto* vertex : freeVertices) {

@@ -42,44 +42,30 @@ double Matrix::det2x2(double a, double b, double c, double d) {
 }
 
 double Matrix::det(const Matrix& A) {
-    if (A.size[0] == 2 && A.size[1] == 2) {
-        return det2x2(A.data[0][0], A.data[0][1],
-                     A.data[1][0], A.data[1][1]);
-    } else if (A.size[0] == 3 && A.size[1] == 3) {
-        const auto& d = A.data;
-        double a = d[0][0], b = d[0][1], c = d[0][2];
-        double e = d[1][0], f = d[1][1], g = d[1][2];
-        double h = d[2][0], i = d[2][1], j = d[2][2];
-        return a*f*j + b*g*h + c*e*i - c*f*h - b*e*j - a*g*i;
-    }
-    throw runtime_error("det only implemented for 2x2 and 3x3");
+    const auto& d = A.data;
+    double a = d[0][0], b = d[0][1], c = d[0][2];
+    double e = d[1][0], f = d[1][1], g = d[1][2];
+    double h = d[2][0], i = d[2][1], j = d[2][2];
+    return a*f*j + b*g*h + c*e*i - c*f*h - b*e*j - a*g*i;
 }
 
 Matrix* Matrix::inverse(const Matrix* A) {
-    if (A->size[0] == 2 && A->size[1] == 2) {
-        double det1 = 1.0 / det(*A);
-        const auto& a = A->data;
-        return new Matrix({{det1 * a[1][1], -det1 * a[0][1]},
-                      {-det1 * a[1][0], det1 * a[0][0]}});
-    } else if (A->size[0] == 3 && A->size[1] == 3) {
-        double det1 = 1.0 / det(*A);
-        const auto& d = A->data;
-        vector<vector<double>> result(3, vector<double>(3));
+    double det1 = 1.0 / det(*A);
+    const auto& d = A->data;
+    vector<vector<double>> result(3, vector<double>(3));
         
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                int s = (j + 1) % 3;
-                int t = (j + 2) % 3;
-                int u = (i + 1) % 3;
-                int v = (i + 2) % 3;
-                double a = d[s][u];
-                double b = d[t][u];
-                double c = d[s][v];
-                double e = d[t][v];
-                result[i][j] = det1 * det2x2(a, b, c, e);
-            }
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            int s = (j + 1) % 3;
+            int t = (j + 2) % 3;
+            int u = (i + 1) % 3;
+            int v = (i + 2) % 3;
+            double a = d[s][u];
+            double b = d[t][u];
+            double c = d[s][v];
+            double e = d[t][v];
+            result[i][j] = det1 * det2x2(a, b, c, e);
         }
-        return new Matrix(result);
     }
-    throw runtime_error("inv only implemented for 2x2 and 3x3");
+    return new Matrix(result);
 }

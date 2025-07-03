@@ -7,45 +7,41 @@
 #include "minmax.h"
 
 Range::Range()
-    : data({ 0, 0 })
-    , tileLength(0) {}
+    : low(0), high(0), tileLength(0) {}
 
-Range::Range(double low, double high, double tilelen)
-    : data({low, high})
-    , tileLength(tilelen) {}
+Range::Range(double low_, double high_, double tilelen)
+    : low(low_), high(high_), tileLength(tilelen) {}
 
-Range Range::intersect(const Range& rangeB) const {
-    return Range(
-        max(data[0], rangeB.data[0]),
-        min(data[1], rangeB.data[1]),
-        lcm(tileLength, rangeB.tileLength)
-    );
+void Range::intersect(const Range& rangeB) {
+    low = std::max(low, rangeB.low);
+    high = std::min(high, rangeB.high);
+    tileLength = lcm(tileLength, rangeB.tileLength);
 }
 
 bool Range::isEmpty() const {
-    return data[1] < data[0];
+    return high < low;
 }
 
 double Range::sample() const {
     if (tileLength == 0) {
-        return Util::randomUniform(data[0], data[1]);
+        return Util::randomUniform(low, high);
     } else {
-        double low = ceil(data[0] / tileLength);
-        double high = floor(data[1] / tileLength);
-        return low + Util::randomUniform(0, high - low + 1);
+        double l = ceil(low / tileLength);
+        double h = floor(high / tileLength);
+        return l + Util::randomUniform(0, h - l + 1);
     }
 }
 
 bool Range::isInside(double x) const {
     double m = ERROR_MARGIN;
-    return (data[0] - m <= x) && (x <= data[1] + m);
+    return (low - m <= x) && (x <= high + m);
 }
 
 Range Range::transform(double a, double b) const {
     if (a > 0) {
-        return Range(a * data[0] + b, a * data[1] + b, a * tileLength);
+        return Range(a * low + b, a * high + b, a * tileLength);
     } else {
-        return Range(a * data[1] + b, a * data[0] + b, a * tileLength);
+        return Range(a * high + b, a * low + b, a * tileLength);
     }
 }
 
@@ -69,7 +65,7 @@ double Range::gcd(const vector<double>& arr) {
         [](double a, double b) { return gcd2(a, b); });
 }
 
-double Range::lcm(double a, double b) {
+inline double Range::lcm(double a, double b) {
     if (abs(a) < ERROR_MARGIN) {
         return b;
     }
@@ -79,10 +75,6 @@ double Range::lcm(double a, double b) {
     return (a * b) / gcd2(a, b);
 }
 
-const vector<double>& Range::getData() const {
-    return data;
-}
-
-double Range::getTileLength() const {
-    return tileLength;
-}
+double Range::getLow() const { return low; }
+double Range::getHigh() const { return high; }
+double Range::getTileLength() const { return tileLength; }

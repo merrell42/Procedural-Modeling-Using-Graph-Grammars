@@ -14,7 +14,8 @@ class EdgePlacement;
 class FacePlacement;
 
 struct OrderInfo {
-    string type;
+    enum class Type { Vertex, Edge, Face };
+    Type type;
     int vertexId;
 };
 
@@ -26,7 +27,7 @@ public:
     EdgePlacement* getEdge(int id);
     FacePlacement* getFace(int id);
 
-    void addToOrder(int id, const string& type, int vertexId);
+    void addToOrder(int id, OrderInfo::Type type, int vertexId);
     int createFace(const Vec3& normal);
     void mergeFace(int idA, int idB);
     int findBasisOrder(const int basisId);

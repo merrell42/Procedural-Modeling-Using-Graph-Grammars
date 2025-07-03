@@ -9,10 +9,11 @@ public:
     Range(double low, double high, double tileLength = 0);
     ~Range() = default;
 
-    const vector<double>& getData() const;
+    double getLow() const;
+    double getHigh() const;
     double getTileLength() const;
 
-    Range intersect(const Range& rangeB) const;
+    void intersect(const Range& rangeB);
     bool isEmpty() const;
     double sample() const;
     bool isInside(double x) const;
@@ -25,7 +26,8 @@ public:
     static constexpr double ERROR_MARGIN = 1e-5f;
 
 private:
-    vector<double> data;  // [low, high]
+    double low;
+    double high;
     double tileLength;
 
     static double gcd2(double x, double y);

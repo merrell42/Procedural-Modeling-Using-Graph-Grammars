@@ -41,6 +41,7 @@ int main() {
 			auto model = new Model();
 			auto mutator = new Mutator(model, new GraphMutator(hierarchy, model));
 			mutator->iterate(100);
+			cout << "Num Faces: " << model->getCurrent()->getFaceMap().size() << endl;
 			model->reset();
 		} catch (const exception& e) {
 			cout << "Error: " << e.what() << endl;

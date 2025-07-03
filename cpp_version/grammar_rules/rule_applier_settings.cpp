@@ -6,7 +6,7 @@ VertexPlacement* RuleApplierSettings::getVertex(int id) { return vertexPlacement
 EdgePlacement* RuleApplierSettings::getEdge(int id) { return edgePlacements[id].get(); }
 FacePlacement* RuleApplierSettings::getFace(int id) { return facePlacements[id].get(); }
 
-void RuleApplierSettings::addToOrder(int id, const string& type, int vertexId) {
+void RuleApplierSettings::addToOrder(int id, OrderInfo::Type type, int vertexId) {
     if (find(orderIds.begin(), orderIds.end(), id) == orderIds.end()) {
         orderIds.push_back(id);
         orderInfo.push_back({type, vertexId});
@@ -55,7 +55,7 @@ void RuleApplierSettings::mergeFace(int idA, int idB) {
 // Finds the index where the basis face in the orderIds.
 int RuleApplierSettings::findBasisOrder(const int basisId) {
     for (size_t index = 0; index < orderIds.size(); ++index) {
-        if (orderIds[index] == basisId && orderInfo[index].type == "face") {
+        if (orderIds[index] == basisId && orderInfo[index].type == OrderInfo::Type::Face) {
             return static_cast<int>(index);
         }
     }

@@ -47,7 +47,7 @@ void VertexPlacement::constrainFace(int id) {
 
 void VertexPlacement::propagate() {
     if (unfreeFaceIds.size() >= 3) {
-        settings->addToOrder(this->id, "vertex", -1);
+        settings->addToOrder(this->id, OrderInfo::Type::Vertex, -1);
         
         // Handle free faces and colinear faces.
         auto freeIds = freeFaceIds;
@@ -130,7 +130,6 @@ void VertexPlacement::setPosition() {
 }
 
 Range VertexPlacement::getRange() {
-    timer->start("Vertex Matrix");
     double m3[3], b3[3];
     for (size_t i = 0; i < 3; i++) {
         int id = unfreeFaceIds[i];
@@ -149,15 +148,11 @@ Range VertexPlacement::getRange() {
             b[i] += M[i][j] * b3[j];
         }
     }
-    timer->stop("Vertex Matrix");
-
-    timer->start("Vertex Range");
     Range range(-numeric_limits<double>::infinity(), numeric_limits<double>::infinity());
     for (int i = 0; i < 3; i++) {
         Range rangeI = Range::transformCreate(m[i], b[i], Range(settings->lower[i], settings->upper[i]));
-        range = range.intersect(rangeI);
+        range.intersect(rangeI);
     }
-    timer->stop("Vertex Range");
 
     slope = Vec3(m[0], m[1], m[2]);
     value = Vec3(b[0], b[1], b[2]);
