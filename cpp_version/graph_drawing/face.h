@@ -56,6 +56,9 @@ class Face {
 		void createGroup();
 		void splitGroup();
 
+		bool isAbovePlane(Plane* plane) const;
+		bool isBelowPlane(Plane* plane) const;
+
 	private:
 		Model* model;
 		int id;

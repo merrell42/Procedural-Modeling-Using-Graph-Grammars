@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "bsp_node.h"
 #include <set>
+#include "../util/timer.h"
 
 static set<int> createdBspNodeIds;
 static set<int> destroyedBspNodeIds;
@@ -107,9 +108,12 @@ bool BspNode::addFace(Face* face) {
             return below->addFace(face);
         }
         case PlaneClassification::BOTH: {
+            timer->start("hasFaceIntersection");
             if (hasFaceIntersection(face)) {
+                timer->stop("hasFaceIntersection");
                 return false;
             }
+            timer->stop("hasFaceIntersection");
             BspNode* above = getAboveNode();
             BspNode* below = getBelowNode();
             return above->addFace(face) && below->addFace(face);
@@ -246,21 +250,10 @@ PlaneClassification BspNode::classifyFace(Face* face) {
     if (faceIds.size() == 0) {
         return PlaneClassification::ON_PLANE;
     }
-    auto positions = face->getPositions();
-    bool isAbove = false;
-    bool isBelow = false;
-    for (const auto& position : positions) {
-        if (isPointAbovePlane(position)) {
-            isAbove = true;
-            break;
-        }
-    }
-    for (const auto& position : positions) {
-        if (isPointBelowPlane(position)) {
-            isBelow = true;
-            break;
-        }
-    }
+    
+    bool isAbove = face->isAbovePlane(plane);
+    bool isBelow = face->isBelowPlane(plane);
+
     if (isAbove && isBelow) {
         return PlaneClassification::BOTH;
     }
@@ -322,11 +315,17 @@ bool BspNode::hasFaceIntersection(Face* faceA) {
     auto current = model->getCurrent();
     // TODO: It might be more efficient to first check if the planes are parallel.
     // We also ignore cases where the plane exactly slices an edge of the face.
+    timer->start("getIntersections");
     auto intersections = faceA->getIntersections(plane);
+    timer->stop("getIntersections");
     for (int faceId : faceIds) {
         Face* faceB = current->getFace(faceId);
         for (const Vec3& intersection : intersections) {
-            if (faceB->containsPoint(intersection)) {
+
+            timer->start("containsPoint");
+            bool isContained = faceB->containsPoint(intersection);
+            timer->stop("containsPoint");
+            if (isContained) {
                 return true;
             }
         }

@@ -13,8 +13,8 @@ Range::Range(double low_, double high_, double tilelen)
     : low(low_), high(high_), tileLength(tilelen) {}
 
 void Range::intersect(const Range& rangeB) {
-    low = std::max(low, rangeB.low);
-    high = std::min(high, rangeB.high);
+    low = max(low, rangeB.low);
+    high = min(high, rangeB.high);
     tileLength = lcm(tileLength, rangeB.tileLength);
 }
 

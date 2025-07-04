@@ -99,6 +99,26 @@ void Face::append(Face* faceB) {
     faceB->destroy();
 }
 
+bool Face::isAbovePlane(Plane* plane) const {
+    for (int i = 0; i < halfEdgeIds.size(); i++) {
+        auto halfEdge = getHalfEdge(i);
+        if (plane->isAbove(halfEdge->getPosition())) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Face::isBelowPlane(Plane* plane) const {
+    for (int i = 0; i < halfEdgeIds.size(); i++) {
+        auto halfEdge = getHalfEdge(i);
+        if (plane->isBelow(halfEdge->getPosition())) {
+            return true;
+        }
+    }
+    return false;
+}
+
 vector<Vec3> Face::getPositions() const {
     vector<Vec3> positions;
     auto halfEdges = getHalfEdges();
@@ -319,26 +339,27 @@ bool Face::containsPoint(Vec3 point) const {
     int maxDim = faceType->getMaxDim();
     Vec2 point2D = point.dropDim(maxDim);
     auto positions = getPositions2D();
-    auto n = positions.size();
-
-    vector<bool> isAbove(n);
-    vector<bool> isBelow(n);
-    double y = point2D.getY();
-    for (int i = 0; i < n; i++) {
-        isAbove[i] = positions[i].getY() > y;
-        isBelow[i] = positions[i].getY() < y;
-    }
+    size_t n = positions.size();
+    double y = point2D.y;
+    double x = point2D.x;
     int count = 0;
-    for (int i = 0; i < n; i++) {
-        int i2 = (i + 1) % n;
-        if ((isAbove[i] && isBelow[i2]) || (isBelow[i] && isAbove[i2])) {
-            double x1 = positions[i].getX();
-            double x2 = positions[i2].getX();
-            double y1 = positions[i].getY();
-            double y2 = positions[i2].getY();
+
+    for (size_t i = 0; i < n; i++) {
+        size_t i2 = (i + 1) % n;
+        double y1 = positions[i].y;
+        double y2 = positions[i2].y;
+        double x1 = positions[i].x;
+        double x2 = positions[i2].x;
+
+        bool isAbove1 = y1 > y;
+        bool isBelow2 = y2 < y;
+        bool isBelow1 = y1 < y;
+        bool isAbove2 = y2 > y;
+
+        if ((isAbove1 && isBelow2) || (isBelow1 && isAbove2)) {
             double s = (y - y1) / (y2 - y1);
-            double x = x1 + (x2 - x1) * s;
-            if (point2D.getX() < x) {
+            double xCross = x1 + (x2 - x1) * s;
+            if (x < xCross) {
                 count++;
             }
         }
