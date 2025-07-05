@@ -297,7 +297,7 @@ EditGraph* RuleApplier::createGraph() {
                 faceHalfEdgesI.push_back(halfToHalfEdge(half));
             }
 
-            MorphismPath* path = MorphismPath::createPath(faceHalfEdgesI, merged->edges);
+            MorphismPath* path = MorphismPath::createPath(faceHalfEdgesI);
             HalfEdge* pathEnd = halfToHalfEdge(endHalf);
             vector<HalfEdge*> pathHalfEdges = { faceHalfEdgesI[0], pathEnd };
             path->setHalfEdges(pathHalfEdges);
