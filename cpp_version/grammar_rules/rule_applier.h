@@ -61,16 +61,16 @@ private:
     // The morphism matches the start graph to the graph drawing.
     Morphism* morphism = nullptr;
     EditGraph* graph = nullptr;
+    Model* model = nullptr;
 
     bool ground = false;
     int dims = 2;
 
+    // Paths around the faces that we are editing that can be expanded.
     vector<MorphismPath*> openPaths;
-    Model* model = nullptr;
 
     // freeVertices are the same as graph->vertices with the empty vertices removed.
     vector<Vertex*> freeVertices;
-    vector<int> propagationOrder;
 
     // Fixed vertices and faces are ones that cannot be moved.
     vector<int> fixedVertexIds;
@@ -79,7 +79,6 @@ private:
     // Effort is the number of samples we've tried.
     double effort = 0;
     unique_ptr<RuleApplierSettings> settings;
-
 
     // Helper functions
     void addFixedFace(Face* faceA, Face* faceB, double d);
@@ -91,8 +90,7 @@ private:
     vector<MorphismPath*> getFreeablePaths() const;
     void freeOneVertex(Vertex* vertex);
     bool placeVertexPositions(const vector<double>& positions);
-    Limits findLimits();
-    bool hasViolations(const vector<double>& positions, const Limits& limits);
+    bool outOfBounds(const vector<double>& positions);
     Range getRange(const vector<int>& orderIds, const vector<OrderInfo>& orderInfo, int startIndex, int endIndex);
     void setPlacements(const vector<int>& orderIds, const vector<OrderInfo>& orderInfo, int startIndex, int endIndex);
     pair<vector<double>, bool> createGroundPlane();

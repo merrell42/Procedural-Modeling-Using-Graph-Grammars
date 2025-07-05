@@ -504,37 +504,27 @@ void RuleApplier::setupForSampling() {
         }
     }
 
-    // Constain all the vertices until they all have three constraints.
+    // Constrain all the vertices until they all have three constraints.
     constrainVertexIds(fixedVertexIds, settings.get());
     constrainVertexIds(vertexIds, settings.get());
 }
 
-Limits RuleApplier::findLimits() {
-    vector<double> minLimit;
-    vector<double> maxLimit;
+// Determine if any positions are outside the extent of the model we are generating.
+bool RuleApplier::outOfBounds(const vector<double>& positions) {
     auto extents = getExtents();
-
-    // Find limits for each vertex.
-    for (size_t i = 0; i < freeVertices.size(); i++) {
-        for (int dim = 0; dim < 3; dim++) {
-            minLimit.push_back(0);
-            maxLimit.push_back(extents[dim]);
-        }
-    }
-    return { minLimit, maxLimit };
-}
-
-// Determine if any positions are outside the acceptable limits.
-bool RuleApplier::hasViolations(const vector<double>& positions, const Limits& limits) {
     for (size_t i = 0; i < positions.size(); i++) {
         double value = positions[i];
-        if (value < limits.min[i] || value > limits.max[i]) {
+        int dim = i % 3;
+        if (value < 0 || value > extents[dim]) {
             return true;
         }
     }
     return false;
 }
 
+// Find the range of d-values for one face placement. Since face placement may determine
+// the position of some vertices and edges, those positions constrain the d-values more.
+// We take the intersect of the acceptable ranges for all affected faces, edges, and vertices.
 Range RuleApplier::getRange(
     const vector<int>& orderIds,
     const vector<OrderInfo>& orderInfo,
@@ -562,7 +552,7 @@ Range RuleApplier::getRange(
         }
         range.intersect(rangeI);
 
-        // Early exit if range is empty
+        // Early exit if range is empty.
         if (range.isEmpty()) {
             return range;
         }
@@ -683,8 +673,6 @@ bool RuleApplier::sampleRepeatedly() {
     timer->start("Sample Repeatedly");
 
     effort = 0;
-    auto limits = findLimits();
-
     while (true) {
         if (effort > maxEffort) {
             timer->stop("Sample Repeatedly");
@@ -692,7 +680,7 @@ bool RuleApplier::sampleRepeatedly() {
         }
 
         auto [positions, success] = sampleSolutionSpace();
-        bool violated = !success || hasViolations(positions, limits);
+        bool violated = !success || outOfBounds(positions);
 
         if (!violated) {
             timer->stop("Sample Repeatedly");
@@ -727,7 +715,7 @@ void RuleApplier::freeVertex() {
         return;
     }
 
-    // Pick a random path
+    // Pick a random path.
     auto* path = Util::pick(freeablePaths);
     auto* vertex = path->randomNextVertex();
     freeOneVertex(vertex);
@@ -889,7 +877,6 @@ void RuleApplier::reject() {
     graph = nullptr;
 
     freeVertices.clear();
-    propagationOrder.clear();
 
     effort = numeric_limits<double>::infinity();
 }
