@@ -58,13 +58,9 @@ void RuleApplier::create(const Production& production, Model* model_, int dims_)
         effort = numeric_limits<double>::infinity();
         return;
     }
-    for (auto* edge : graph->edges) {
-        edges.push_back(edge);
-    }
 }
 
 void RuleApplier::addEdgeToGraph(Edge* edge) {
-    edges.push_back(edge);
     auto edgeHalfEdges = edge->getHalfEdges();
     for (auto* halfEdge : edgeHalfEdges) {
         Util::union_(graph->vertices, {halfEdge->getVertex()});
@@ -301,7 +297,7 @@ EditGraph* RuleApplier::createGraph() {
                 faceHalfEdgesI.push_back(halfToHalfEdge(half));
             }
 
-            MorphismPath* path = MorphismPath::createPath(faceHalfEdgesI, merged->edges, &edges);
+            MorphismPath* path = MorphismPath::createPath(faceHalfEdgesI, merged->edges);
             HalfEdge* pathEnd = halfToHalfEdge(endHalf);
             vector<HalfEdge*> pathHalfEdges = { faceHalfEdgesI[0], pathEnd };
             path->setHalfEdges(pathHalfEdges);
@@ -757,8 +753,8 @@ void RuleApplier::freeOneVertex(Vertex* vertex) {
     // Process all vertex halfEdges
     for (auto* vHalfEdge : vertexHalfEdges) {
         auto* edge = vHalfEdge->getEdge();
-        // Add edge if it's not already in edges.
-        if (!contains(edges, edge)) {
+        // Add edge if it's not already in graph->edges.
+        if (!contains(graph->edges, edge)) {
             addEdgeToGraph(edge);
         }
     }
@@ -795,7 +791,7 @@ void RuleApplier::freeOneVertex(Vertex* vertex) {
             (*path1)->expandForward();
         } else {
             // Create new path
-            auto* path = new MorphismPath({}, &edges);
+            auto* path = new MorphismPath({});
             path->setHalfEdges({vHalfEdge, vHalfEdge});
             path->expandBackward();
             path->expandForward();
@@ -819,11 +815,11 @@ bool RuleApplier::placeVertexPositions(const vector<double>& positions) {
 
     }
     if (dims == 2) {
-        for (int i = 0; i < (int)edges.size(); i++) {
-            bool success = edges[i]->addToBsp();
+        for (int i = 0; i < (int)graph->edges.size(); i++) {
+            bool success = graph->edges[i]->addToBsp();
             if (!success) {
                 for (int j = i - 1; j >= 0; j--) {
-                    edges[j]->removeFromBsp();
+                    graph->edges[j]->removeFromBsp();
                 }
                 return false;
             }
@@ -892,7 +888,6 @@ void RuleApplier::reject() {
     delete graph;
     graph = nullptr;
 
-    edges.clear();
     freeVertices.clear();
     propagationOrder.clear();
     basisEdges.clear();

@@ -8,9 +8,8 @@
 int MorphismPath::count = 0;
 
 MorphismPath* MorphismPath::createPath(const vector<HalfEdge*>& halfEdges,
-                                        const vector<Edge*>& edges,
-                                        vector<Edge*>* lines) {
-    vector<IndexInfo> indices;
+                                        const vector<Edge*>& edges) {
+    vector<EdgeInfo> edgeInfos;
     for (auto* halfEdge : halfEdges) {
         auto it = find_if(edges.begin(), edges.end(),
             [halfEdge](Edge* edge) {
@@ -20,16 +19,14 @@ MorphismPath* MorphismPath::createPath(const vector<HalfEdge*>& halfEdges,
             cout << "halfEdge is not found in edges." << endl;
             return nullptr;
         }
-        int index = (int)distance(edges.begin(), it);
-        indices.push_back({index, !halfEdge->getIsAtStart()});
+        Edge* edge = *it;
+        edgeInfos.push_back({edge, !halfEdge->getIsAtStart()});
     }
-    return new MorphismPath(indices, lines);
+    return new MorphismPath(edgeInfos);
 }
 
-MorphismPath::MorphismPath(const vector<IndexInfo>& indices,
-                             vector<Edge*>* edges)
-    : indices(indices)
-    , edges(edges)
+MorphismPath::MorphismPath(const vector<EdgeInfo>& edgeInfos)
+    : edgeInfos(edgeInfos)
     , extendable{true, true}
     , id(count++) {
     MemoryCounter::creation("MorphismPath");
@@ -58,13 +55,13 @@ Vertex* MorphismPath::randomNextVertex() {
 
 Vertex* MorphismPath::rigidNextVertex() {
     for (int i = 0; i < 2; i++) {
-        if (extendable[i] && indices.size() >= 2) {
+        if (extendable[i] && edgeInfos.size() >= 2) {
             vector<int> iIndices;
             if (i == 0) {
                 iIndices = {0, 1};
             } else {
-                iIndices = {static_cast<int>(indices.size() - 2),
-                           static_cast<int>(indices.size() - 1)};
+                iIndices = {static_cast<int>(edgeInfos.size() - 2),
+                           static_cast<int>(edgeInfos.size() - 1)};
             }
             // Two consecutive indices must be rigid.
             bool rigid = true;
@@ -81,16 +78,12 @@ Vertex* MorphismPath::rigidNextVertex() {
 }
 
 Edge* MorphismPath::edgeFromIndex(int index) {
-    return (*edges)[indices[index].index];
+    return edgeInfos[index].edge;
 }
 
-MorphismPath::IndexInfo MorphismPath::indexForHalfEdge(HalfEdge* halfEdge) {
-    auto it = find_if(edges->begin(), edges->end(), 
-        [halfEdge](Edge* edge) {
-            return edge == halfEdge->getEdge();
-        });
+MorphismPath::EdgeInfo MorphismPath::edgeInfoForHalfEdge(HalfEdge* halfEdge) {
     return {
-        static_cast<int>(distance(edges->begin(), it)),
+        halfEdge->getEdge(),
         halfEdge->getIsAtStart()
     };
 }
@@ -99,14 +92,14 @@ void MorphismPath::expandBackward() {
     auto* prevHalfEdge = halfEdges[0]->prev();
     if (prevHalfEdge) {
         halfEdges[0] = prevHalfEdge;
-        indices.insert(indices.begin(), indexForHalfEdge(prevHalfEdge));
+        edgeInfos.insert(edgeInfos.begin(), edgeInfoForHalfEdge(prevHalfEdge));
     } else {
         extendable[0] = false;
     }
 }
 
 void MorphismPath::expandForward() {
-    indices.push_back(indexForHalfEdge(halfEdges[1]));
+    edgeInfos.push_back(edgeInfoForHalfEdge(halfEdges[1]));
     auto* nextHalfEdge = halfEdges[1]->next();
     if (nextHalfEdge) {
         halfEdges[1] = nextHalfEdge;
@@ -118,6 +111,6 @@ void MorphismPath::expandForward() {
 void MorphismPath::merge(MorphismPath* pathB) {
     halfEdges[1] = pathB->halfEdges[1];
     extendable[1] = pathB->extendable[1];
-    indices.insert(indices.end(), pathB->indices.begin(), pathB->indices.end());
+    edgeInfos.insert(edgeInfos.end(), pathB->edgeInfos.begin(), pathB->edgeInfos.end());
 }
 

@@ -66,8 +66,6 @@ private:
     int dims = 2;
 
     vector<MorphismPath*> openPaths;
-    // TODO: Delete edges. It is the same as graph -> edges.
-    vector<Edge*> edges;
     Model* model = nullptr;
 
     // freeVertices are the same as graph->vertices with the empty vertices removed.

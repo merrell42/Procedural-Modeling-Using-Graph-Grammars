@@ -8,17 +8,16 @@
 
 class MorphismPath {
 public:
-    struct IndexInfo {
-        int index;
+    struct EdgeInfo {
+        Edge* edge;
         bool isForward;
     };
 
     static int count;
     static MorphismPath* createPath(const vector<HalfEdge*>& halfEdges,
-                                   const vector<Edge*>& edges,
-                                   vector<Edge*>* lines);
+                                   const vector<Edge*>& edges);
 
-    MorphismPath(const vector<IndexInfo>& indices, vector<Edge*>* edges);
+    MorphismPath(const vector<EdgeInfo>& edgeInfos);
     ~MorphismPath();
 
     void setHalfEdges(const vector<HalfEdge*>& halfEdges);
@@ -26,14 +25,13 @@ public:
     Vertex* randomNextVertex();
     Vertex* rigidNextVertex();
     Edge* edgeFromIndex(int index);
-    IndexInfo indexForHalfEdge(HalfEdge* halfEdge);
+    EdgeInfo edgeInfoForHalfEdge(HalfEdge* halfEdge);
     void expandBackward();
     void expandForward();
     void merge(MorphismPath* pathB);
 
     // Member variables
-    vector<IndexInfo> indices;
-    vector<Edge*>* edges;
+    vector<EdgeInfo> edgeInfos;
     vector<HalfEdge*> halfEdges;
     vector<bool> extendable;
     int id;
