@@ -98,5 +98,6 @@ private:
     bool hasViolations(const vector<double>& positions, const Limits& limits);
     Range getRange(const vector<int>& orderIds, const vector<OrderInfo>& orderInfo, int startIndex, int endIndex);
     void setPlacements(const vector<int>& orderIds, const vector<OrderInfo>& orderInfo, int startIndex, int endIndex);
+    pair<vector<double>, bool> createGroundPlane();
 };
 

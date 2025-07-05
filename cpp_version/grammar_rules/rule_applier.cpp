@@ -593,29 +593,35 @@ void RuleApplier::setPlacements(
     }
 }
 
-pair<vector<double>, bool> RuleApplier::sampleSolutionSpace() {
-    // This is special logic for handling ground rules.
-    if (ground) {
-        vector<double> result;
-        auto& vertices = endGraph->getVertices();
+pair<vector<double>, bool> RuleApplier::createGroundPlane() {
+    vector<double> result;
+    auto& vertices = endGraph->getVertices();
 
-        if (vertices.size() == 4) {
-            vector<double> lower = {0, 0, 0};
-            auto upper = getExtents();
-            for (auto* vertex : vertices) {
-                auto dir = vertex->getHalfEdges()[0]->getDir();
-                if (dir.getX() > 0.9) {          // +X
-                    result.insert(result.end(), { lower[0], lower[1], lower[2] + 1 });
-                } else if (dir.getX() < -0.9) {  // -X
-                    result.insert(result.end(), { upper[0], upper[1], lower[2] + 1 });
-                } else if (dir.getY() > 0.9) {   // +Y
-                    result.insert(result.end(), { upper[0], lower[1], lower[2] + 1 });
-                } else if (dir.getY() < -0.9) {  // -Y
-                    result.insert(result.end(), { lower[0], upper[1], lower[2] + 1 });
-                }
+    if (vertices.size() == 4) {
+        vector<double> lower = {0, 0, 0};
+        auto upper = getExtents();
+        for (auto* vertex : vertices) {
+            auto dir = vertex->getHalfEdges()[0]->getDir();
+            if (dir.getX() > 0.9) {          // +X
+                result.insert(result.end(), { lower[0], lower[1], lower[2] + 1 });
+            } else if (dir.getX() < -0.9) {  // -X
+                result.insert(result.end(), { upper[0], upper[1], lower[2] + 1 });
+            } else if (dir.getY() > 0.9) {   // +Y
+                result.insert(result.end(), { upper[0], lower[1], lower[2] + 1 });
+            } else if (dir.getY() < -0.9) {  // -Y
+                result.insert(result.end(), { lower[0], upper[1], lower[2] + 1 });
             }
-            return make_pair(result, true);
         }
+        return make_pair(result, true);
+    } else {
+        cout << "Ground rules must have 4 vertices." << endl;
+        return {};
+    }
+}
+
+pair<vector<double>, bool> RuleApplier::sampleSolutionSpace() {
+    if (ground) {
+        return createGroundPlane();
     }
 
     bool success = true;
