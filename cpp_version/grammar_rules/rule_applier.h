@@ -24,6 +24,7 @@ struct EditGraph {
     vector<Vertex*> vertices;
     vector<Edge*> edges;
     vector<Face*> faces;
+    vector<HalfEdge*> halfEdges;
 };
 
 struct Limits {
@@ -44,13 +45,11 @@ public:
     static constexpr double minLength = 0;
 
     // Static factory method
-    static unique_ptr<RuleApplier> buildNormally(const Production& production, 
-                                                       Model* model, int dims);
+    static unique_ptr<RuleApplier> build(const Production& production, Model* model, int dims);
+    void create(const Production& production, Model* model, int dims);
 
     bool solve();
-    void setup();
-    void create(const Production& production, Model* model, int dims);
-    void addEdge(Edge* edge, bool addToGraph);
+    void addEdgeToGraph(Edge* edge);
     EditGraph* createGraph();
     void reject();
     void freeVertex();
@@ -59,32 +58,37 @@ public:
 private:
     Graph* startGraph = nullptr;
     Graph* endGraph = nullptr;
+    // The morphism matches the start graph to the graph drawing.
     Morphism* morphism = nullptr;
+    EditGraph* graph = nullptr;
+
     bool ground = false;
     int dims = 2;
     
     vector<MorphismPath*> openPaths;
+    // TODO: Delete edges. It is the same as graph -> edges.
     vector<Edge*> edges;
     Model* model = nullptr;
 
+    // freeVertices are the same as graph->vertices with the empty vertices removed.
     vector<Vertex*> freeVertices;
-    vector<Edge*> freeEdges;
     vector<FixedFace> fixedFaces;
     vector<int> propagationOrder;
     vector<Edge*> basisEdges;
     vector<int> fixedVertexIds;
+
+    // Effort is the number of samples we've tried.
     double effort = 0;
-    EditGraph* graph = nullptr;
-    double angle = 0;
     unique_ptr<RuleApplierSettings> settings;
+
 
     // Helper functions
     void addFixedFace(Face* faceA, Face* faceB, double d);
     // bool mergeDuplicateEdges();
-    void setupFaceCentric();
-    bool sampleSolutionSpace();
+    void setup();
+    bool sampleRepeatedly();
     void constrainVertexIds(vector<int>& vIds, RuleApplierSettings* settings);
-    pair<vector<double>, bool> sampleFaceCentric();
+    pair<vector<double>, bool> sampleSolutionSpace();
     vector<MorphismPath*> getFreeablePaths() const;
     void freeOneVertex(Vertex* vertex);
     bool placeVertexPositions(const vector<double>& positions);

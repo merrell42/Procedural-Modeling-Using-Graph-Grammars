@@ -43,8 +43,8 @@ void MorphismPath::setHalfEdges(const vector<HalfEdge*>& halfEdges) {
     this->halfEdges = halfEdges;
 }
 
-int MorphismPath::extendableness() const {
-    return extendable[0] + extendable[1];
+bool MorphismPath::isExtendable() const {
+    return extendable[0] || extendable[1];
 }
 
 Vertex* MorphismPath::randomNextVertex() {

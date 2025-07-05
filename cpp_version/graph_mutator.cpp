@@ -45,9 +45,8 @@ bool GraphMutator::applyProduction(Production production) {
     production.morphism = morphism;
 
     timer->start("Build Normally");
-
     int dims = hierarchy->getDims();
-    auto ruleApplier = RuleApplier::buildNormally(production, model, dims);
+    auto ruleApplier = RuleApplier::build(production, model, dims);
     timer->stop("Build Normally");
 
     if (!ruleApplier) {

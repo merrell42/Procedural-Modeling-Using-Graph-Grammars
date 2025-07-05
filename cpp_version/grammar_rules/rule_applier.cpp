@@ -23,9 +23,7 @@ RuleApplier::~RuleApplier() {
     openPaths.clear();
 }
 
-unique_ptr<RuleApplier> RuleApplier::buildNormally(
-    const Production& production, Model* model, int dims) {
-    
+unique_ptr<RuleApplier> RuleApplier::build(const Production& production, Model* model, int dims) {
     auto result = make_unique<RuleApplier>();
     result->create(production, model, dims);
     
@@ -37,23 +35,22 @@ unique_ptr<RuleApplier> RuleApplier::buildNormally(
 }
 
 void RuleApplier::create(const Production& production, Model* model_, int dims_) {
-    startGraph = production.startGraph;
     model = model_;
+    dims = dims_;
+    startGraph = production.startGraph;
     endGraph = production.endGraph;
- 
     morphism = production.morphism;
     ground = production.ground;
-    dims = dims_;
 
     effort = 0;
 
-    timer->start("Create Graph");
     // TODO: Merge duplicate edges
     /*if (!mergeDuplicateEdges()) {
         effort = numeric_limits<double>::infinity();
         return;
     }*/
 
+    timer->start("Create Graph");
     graph = createGraph();
     timer->stop("Create Graph");
 
@@ -61,24 +58,21 @@ void RuleApplier::create(const Production& production, Model* model_, int dims_)
         effort = numeric_limits<double>::infinity();
         return;
     }
-
     for (auto* edge : graph->edges) {
-        addEdge(edge, false);
+        edges.push_back(edge);
     }
 }
 
-void RuleApplier::addEdge(Edge* edge, bool addToGraph) {
+void RuleApplier::addEdgeToGraph(Edge* edge) {
     edges.push_back(edge);
-
-    if (addToGraph) {
-        auto edgeHalfEdges = edge->getHalfEdges();
-        for (auto* halfEdge : edgeHalfEdges) {
-            Util::union_(graph->vertices, {halfEdge->getVertex()});
-        }
-        graph->edges.push_back(edge);
+    auto edgeHalfEdges = edge->getHalfEdges();
+    for (auto* halfEdge : edgeHalfEdges) {
+        Util::union_(graph->vertices, {halfEdge->getVertex()});
     }
+    graph->edges.push_back(edge);
 }
 
+// Destroy edges and the half-edges and vertices they're connected to.
 static void destroyEdges(const vector<vector<Edge*>>& edgeGroup) {
     set<HalfEdge*> halfEdgeSet;
     set<Vertex*> vertexSet;
@@ -113,7 +107,7 @@ EditGraph* RuleApplier::createGraph() {
     auto& endEdges = endGraph->getEdges();
     EditGraph* merged = new EditGraph();
     
-    // Save face locations
+    // Save face locations. This may need to be added back in.
     /*if (morphism->outerFaces) {
         morphism->outerFacesD.clear();
         for (auto* outerFace : morphism->outerFaces) {
@@ -123,27 +117,23 @@ EditGraph* RuleApplier::createGraph() {
         }
     }*/
 
-    // Maps from half edges to merge halfEdges
-    vector<HalfEdge*> mergedHalfEdges(endGraph->getHalfEdges().size());
-    fill(mergedHalfEdges.begin(), mergedHalfEdges.end(), nullptr);
+    // Maps from half edges to merge halfEdges.
+    merged->halfEdges.resize(endGraph->getHalfEdges().size(), nullptr);
     auto halfToHalfEdge = [&](GraphHalfEdge* half) -> HalfEdge* {
         int index = Util::findIndex<GraphHalfEdge*>(endGraph->getHalfEdges(), half);
-        return mergedHalfEdges[index];
+        return merged->halfEdges[index];
     };
-    
     auto setHalfToHalfEdge = [&](GraphHalfEdge* half, HalfEdge* halfEdge) {
         int index = Util::findIndex<GraphHalfEdge*>(endGraph->getHalfEdges(), half);
-        mergedHalfEdges[index] = halfEdge;
+        merged->halfEdges[index] = halfEdge;
     };
 
     vector<vector<Edge*>> splitEdges;
     vector<vector<HalfEdge*>> splitHalfEdges;
-    if (morphism) {
-        splitEdges.resize(morphism->edgeBtoA.size());
-        splitHalfEdges.resize(morphism->edgeBtoA.size());
-        for (size_t i = 0; i < morphism->edgeBtoA.size(); ++i) {
-            splitEdges[i] = {morphism->edgeBtoA[i]};
-        }
+    splitEdges.resize(morphism->edgeBtoA.size());
+    splitHalfEdges.resize(morphism->edgeBtoA.size());
+    for (size_t i = 0; i < morphism->edgeBtoA.size(); ++i) {
+        splitEdges[i] = {morphism->edgeBtoA[i]};
     }
 
     // Create vertices
@@ -154,16 +144,7 @@ EditGraph* RuleApplier::createGraph() {
 
         if (v->boundaryIndex() < 0) {
             auto* type = v->getType();
-            
-            // Create a random position. This was for debugging in the web version.
-            // The position is later replaced.
-            Vec3 randomPosition = Vec3(
-                5.0 * random(),
-                5.0 * random(),
-                5.0 * random()
-            );
-
-            auto* newVertex = new Vertex(model, randomPosition, type);
+            auto* newVertex = new Vertex(model, Vec3(0, 0, 0), type);
             newVertex->createHalfEdges();
             merged->vertices[i] = newVertex;
             
@@ -174,9 +155,6 @@ EditGraph* RuleApplier::createGraph() {
                 setHalfToHalfEdge(halfs[j], vHalfEdges[j]);
             }
         }
-    }
-    if (startGraph->getId() == 0) {
-        int x = 0;
     }
 
     struct EdgeData {
@@ -368,14 +346,10 @@ EditGraph* RuleApplier::createGraph() {
 }
 
 bool RuleApplier::solve() {
-    setup();
-    return sampleSolutionSpace();
-}
-
-void RuleApplier::setup() {
     timer->start("Setup");
-    setupFaceCentric();
+    setup();
     timer->stop("Setup");
+    return sampleRepeatedly();
 }
 
 // Static helper function.
@@ -434,7 +408,7 @@ vector<double> RuleApplier::getExtents() {
     return extents;
 }
 
-void RuleApplier::setupFaceCentric() {
+void RuleApplier::setup() {
     auto extents = getExtents();
     const Vec3 lower(1, 1, 0);
     const Vec3 upper(extents[0] - 1, extents[1] - 1, extents[2]);
@@ -545,25 +519,6 @@ Limits RuleApplier::findLimits() {
             maxLimit.push_back(extents[dim]);
         }
     }
-
-    // Handle edge limits
-    for (auto* edge : freeEdges) {
-
-        double minLength = 0;
-        double maxLength = numeric_limits<double>::infinity();
-
-        // TODO: Use edgeSettings to set edge lengths.
-        /*auto* edgeType = edge->getEdgeType();
-        auto* edgeSettings = edgeType->getEdgeSettings();
-        if (edgeSettings && edgeSettings->get("Strict Length")) {
-            minLength = edgeSettings->get("Min Length");
-            maxLength = edgeSettings->get("Max Length");
-        }*/
-
-        minLimit.push_back(minLength);
-        maxLimit.push_back(maxLength);
-    }
-
     return { minLimit, maxLimit };
 }
 
@@ -631,7 +586,7 @@ void RuleApplier::setPlacements(
     }
 }
 
-pair<vector<double>, bool> RuleApplier::sampleFaceCentric() {
+pair<vector<double>, bool> RuleApplier::sampleSolutionSpace() {
     if (ground) {
         vector<double> result;
         auto& vertices = endGraph->getVertices();
@@ -714,23 +669,23 @@ pair<vector<double>, bool> RuleApplier::sampleFaceCentric() {
     return make_pair(positions, true);
 }
 
-bool RuleApplier::sampleSolutionSpace() {
-    timer->start("Sample Solutions");
+bool RuleApplier::sampleRepeatedly() {
+    timer->start("Sample Repeatedly");
 
     effort = 0;
     auto limits = findLimits();
 
     while (true) {
         if (effort > maxEffort) {
-            timer->stop("Sample Solutions");
+            timer->stop("Sample Repeatedly");
             return false;
         }
 
-        auto [positions, success] = sampleFaceCentric();
+        auto [positions, success] = sampleSolutionSpace();
         bool violated = !success || hasViolations(positions, limits);
 
         if (!violated) {
-            timer->stop("Sample Solutions");
+            timer->stop("Sample Repeatedly");
             timer->start("Place Vertices");
 
             if (placeVertexPositions(positions)) {
@@ -739,7 +694,7 @@ bool RuleApplier::sampleSolutionSpace() {
             }
 
             timer->stop("Place Vertices");
-            timer->start("Sample Solutions");
+            timer->start("Sample Repeatedly");
         }
         effort++;
     }
@@ -750,7 +705,7 @@ vector<MorphismPath*> RuleApplier::getFreeablePaths() const {
     copy_if(openPaths.begin(), openPaths.end(), back_inserter(result),
         [](MorphismPath* path) {
             return path->halfEdges[0] != path->halfEdges[1] &&
-                path->extendableness() > 0;
+                path->isExtendable();
         });
     return result;
 }
@@ -789,8 +744,8 @@ void RuleApplier::freeOneVertex(Vertex* vertex) {
     for (auto* vHalfEdge : vertexHalfEdges) {
         auto* edge = vHalfEdge->getEdge();
         // Add edge if it's not already in edges.
-        if (std::find(edges.begin(), edges.end(), edge) == edges.end()) {
-            addEdge(edge, true);
+        if (!contains(edges, edge)) {
+            addEdgeToGraph(edge);
         }
     }
 
@@ -925,7 +880,6 @@ void RuleApplier::reject() {
 
     edges.clear();
     freeVertices.clear();
-    freeEdges.clear();
     propagationOrder.clear();
     basisEdges.clear();
 

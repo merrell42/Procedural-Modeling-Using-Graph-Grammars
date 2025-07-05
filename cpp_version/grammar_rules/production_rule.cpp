@@ -55,4 +55,3 @@ ProductionRule* ProductionRule::import(const Json& json, Primitives* shape) {
     result->ground = json["ground"];
     return result;
 }
-

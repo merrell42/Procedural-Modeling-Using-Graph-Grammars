@@ -22,7 +22,7 @@ public:
     ~MorphismPath();
 
     void setHalfEdges(const vector<HalfEdge*>& halfEdges);
-    int extendableness() const;
+    bool isExtendable() const;
     Vertex* randomNextVertex();
     Vertex* rigidNextVertex();
     Edge* edgeFromIndex(int index);
