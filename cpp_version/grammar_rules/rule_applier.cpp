@@ -890,7 +890,6 @@ void RuleApplier::reject() {
 
     freeVertices.clear();
     propagationOrder.clear();
-    basisEdges.clear();
 
     effort = numeric_limits<double>::infinity();
 }

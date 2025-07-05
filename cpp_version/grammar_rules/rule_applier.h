@@ -71,7 +71,6 @@ private:
     // freeVertices are the same as graph->vertices with the empty vertices removed.
     vector<Vertex*> freeVertices;
     vector<int> propagationOrder;
-    vector<Edge*> basisEdges;
 
     // Fixed vertices and faces are ones that cannot be moved.
     vector<int> fixedVertexIds;
