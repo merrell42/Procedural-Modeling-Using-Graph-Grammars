@@ -136,7 +136,7 @@ EditGraph* RuleApplier::createGraph() {
         splitEdges[i] = {morphism->edgeBtoA[i]};
     }
 
-    // Create vertices
+    // Create vertices.
     const auto numVertices = endVertices.size();
     merged->vertices.resize(numVertices, nullptr);
     for (size_t i = 0; i < numVertices; ++i) {
@@ -147,10 +147,10 @@ EditGraph* RuleApplier::createGraph() {
             auto* newVertex = new Vertex(model, Vec3(0, 0, 0), type);
             newVertex->createHalfEdges();
             merged->vertices[i] = newVertex;
-            
+
             auto vHalfEdges = newVertex->getHalfEdges();
             auto& halfs = v->getHalfEdges();
-            
+
             for (size_t j = 0; j < halfs.size(); ++j) {
                 setHalfToHalfEdge(halfs[j], vHalfEdges[j]);
             }
@@ -346,38 +346,42 @@ EditGraph* RuleApplier::createGraph() {
 }
 
 bool RuleApplier::solve() {
-    timer->start("Setup");
-    setup();
-    timer->stop("Setup");
+    timer->start("setupForSampling");
+    setupForSampling();
+    timer->stop("setupForSampling");
     return sampleRepeatedly();
 }
 
-// Static helper function.
+// Add constraints to all the vertex placements until they all have 3 constraints.
+// Find all vertices with less than 3 constraints and pick a vertex that is the most
+// constrained first. Continue until all have 3 constraints.
 void RuleApplier::constrainVertexIds(vector<int>& vertexIds, RuleApplierSettings* settings) {
-    vector vIds(vertexIds);
-    while (!vIds.empty()) {
-        vector<int> newVIdsToConstrain;
+    vector idsToConstrain(vertexIds);
+    while (true) {
+        vector<int> newIdsToConstrain;
         VertexPlacement* mostConstrained = nullptr;
-        int maxConstraints = -1;
+        int mostConstraints = -1;
 
-        for (int id : vIds) {
+        for (int id : idsToConstrain) {
             auto* vPlace = settings->getVertex(id);
             int numConstraints = vPlace->getNumConstraints();
 
             if (numConstraints < 3) {
-                if (maxConstraints < numConstraints) {
-                    maxConstraints = numConstraints;
+                if (mostConstraints < numConstraints) {
+                    mostConstraints = numConstraints;
                     mostConstrained = vPlace;
                 }
-                newVIdsToConstrain.push_back(id);
+                newIdsToConstrain.push_back(id);
             }
         }
 
         if (mostConstrained) {
             mostConstrained->addConstraint();
+        } else {
+            return;
         }
 
-        vIds = move(newVIdsToConstrain);
+        idsToConstrain = move(newIdsToConstrain);
     }
 }
 
@@ -385,12 +389,11 @@ void RuleApplier::constrainVertexIds(vector<int>& vertexIds, RuleApplierSettings
 void RuleApplier::addFixedFace(Face* fixedFaceA, Face* fixedFaceB, double d) {
     auto* fPlace = settings->getFace(fixedFaceB->getId());
 
-    // Check if face is already fixed
+    // Check if face is already fixed.
     auto it = find_if(fixedFaces.begin(), fixedFaces.end(),
         [fPlace](const FixedFace& fixed) {
             return fixed.fPlace == fPlace;
         });
-
     if (it != fixedFaces.end()) {
         return;
     }
@@ -408,7 +411,7 @@ vector<double> RuleApplier::getExtents() {
     return extents;
 }
 
-void RuleApplier::setup() {
+void RuleApplier::setupForSampling() {
     auto extents = getExtents();
     const Vec3 lower(1, 1, 0);
     const Vec3 upper(extents[0] - 1, extents[1] - 1, extents[2]);
@@ -419,13 +422,13 @@ void RuleApplier::setup() {
     vector<int> basisIds;
     vector<int> vertexIds;
 
-    // Process edges
+    // Create an edge placement for each edge.
     for (auto* edge : graph->edges) {
         int id = edge->getId();
         settings->edgePlacements[id] = make_unique<EdgePlacement>(edge, id, settings.get());
     }
 
-    // Process vertices
+    // Create an vertex placement for each vertex.
     for (auto* vertex : graph->vertices) {
         if (!vertex) {
             continue;
@@ -437,18 +440,19 @@ void RuleApplier::setup() {
         settings->vertexPlacements[id]->initialize();
     }
 
-    // Initialize edge placements
+    // Initialize edge placements.
     for (auto* edge : graph->edges) {
         int id = edge->getId();
         settings->edgePlacements[id]->initialize();
     }
 
-    // Check three faces for each vertex
+    // Guarantee that all vertex placements have three face placements.
     for (int id : vertexIds) {
-        settings->getVertex(id)->checkThreeFaces();
+        settings->getVertex(id)->guaranteeThreeFaces();
     }
 
-    // Process fixed vertices from open paths.
+    // Open paths have a fixed vertex at each end.
+    // Add their IDs to fixedVertexIDs.
     fixedVertexIds.clear();
     for (auto* path : openPaths) {
         for (int j = 0; j < 2; ++j) {
@@ -460,7 +464,7 @@ void RuleApplier::setup() {
         }
     }
 
-    // Process fixed faces
+    // Find all fixed faces.
     fixedFaces.clear();
     auto& faceBtoA = morphism->faceBtoA;
     
@@ -473,6 +477,7 @@ void RuleApplier::setup() {
             auto* fixedFaceB = graph->faces[faceIndex];
             double d;
 
+            // TODO: Add this back in.
             // Use the value from outerFacesA if fixedFaceA is destroyed.
             /*if (fixedFaceA->getNode()->isDestroyed()) {
                 fixedFaceA = morphism->outerFacesA[i];
@@ -488,7 +493,7 @@ void RuleApplier::setup() {
         }
     }
 
-    // Process face placements
+    // Add fixed faces for face groups with holes in them.
     for (auto& [_, fPlace] : settings->facePlacements) {
         auto face = fPlace->getFace();
         if (face) {
@@ -503,6 +508,7 @@ void RuleApplier::setup() {
         }
     }
 
+    // Constain all the vertices until they all have three constraints.
     constrainVertexIds(fixedVertexIds, settings.get());
     constrainVertexIds(vertexIds, settings.get());
 }
@@ -512,7 +518,7 @@ Limits RuleApplier::findLimits() {
     vector<double> maxLimit;
     auto extents = getExtents();
 
-    // Handle vertex limits
+    // Find limits for each vertex.
     for (size_t i = 0; i < freeVertices.size(); i++) {
         for (int dim = 0; dim < 3; dim++) {
             minLimit.push_back(0);
@@ -522,6 +528,7 @@ Limits RuleApplier::findLimits() {
     return { minLimit, maxLimit };
 }
 
+// Determine if any positions are outside the acceptable limits.
 bool RuleApplier::hasViolations(const vector<double>& positions, const Limits& limits) {
     for (size_t i = 0; i < positions.size(); i++) {
         double value = positions[i];
@@ -587,6 +594,7 @@ void RuleApplier::setPlacements(
 }
 
 pair<vector<double>, bool> RuleApplier::sampleSolutionSpace() {
+    // This is special logic for handling ground rules.
     if (ground) {
         vector<double> result;
         auto& vertices = endGraph->getVertices();

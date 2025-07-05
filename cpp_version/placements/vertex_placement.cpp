@@ -231,11 +231,15 @@ vector<int> VertexPlacement::getAllFaceIds() const {
 }
 
 int VertexPlacement::getNumConstraints() const {
-    return (int)unfreeFaceIds.size();
+    return unfreeFaceIds.size();
 }
 
-
-void VertexPlacement::checkThreeFaces() {
+// Add a third face for leaf vertices.
+// Leaf vertices are only connected to one edge.
+// The edge gives one constraint.
+// They are on a plane which gives another constraint.
+// Add a third constraint by adding a fake face orthogonal to both.
+void VertexPlacement::guaranteeThreeFaces() {
     if (freeFaceIds.size() < 2) {
         cout << "Vertex should have at least two faces.\n";
     } else if (freeFaceIds.size() == 2) {

@@ -64,7 +64,7 @@ private:
 
     bool ground = false;
     int dims = 2;
-    
+
     vector<MorphismPath*> openPaths;
     // TODO: Delete edges. It is the same as graph -> edges.
     vector<Edge*> edges;
@@ -72,10 +72,12 @@ private:
 
     // freeVertices are the same as graph->vertices with the empty vertices removed.
     vector<Vertex*> freeVertices;
-    vector<FixedFace> fixedFaces;
     vector<int> propagationOrder;
     vector<Edge*> basisEdges;
+
+    // Fixed vertices and faces are ones that cannot be moved.
     vector<int> fixedVertexIds;
+    vector<FixedFace> fixedFaces;
 
     // Effort is the number of samples we've tried.
     double effort = 0;
@@ -85,7 +87,7 @@ private:
     // Helper functions
     void addFixedFace(Face* faceA, Face* faceB, double d);
     // bool mergeDuplicateEdges();
-    void setup();
+    void setupForSampling();
     bool sampleRepeatedly();
     void constrainVertexIds(vector<int>& vIds, RuleApplierSettings* settings);
     pair<vector<double>, bool> sampleSolutionSpace();

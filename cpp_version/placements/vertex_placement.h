@@ -31,7 +31,7 @@ public:
     void initialize();
     void addFixedNeighbor(const FixedFace& fixedFace);
     void addFreeFace(int id);
-    void checkThreeFaces();
+    void guaranteeThreeFaces();
     int getNumConstraints() const;
     const Vec3& getPosition() const;
     vector<int> getAllFaceIds() const;
