@@ -313,18 +313,24 @@ bool BspNode::hasEdgeIntersection(Edge* edgeA) {
 // Detect face intersections.
 bool BspNode::hasFaceIntersection(Face* faceA) {
     auto current = model->getCurrent();
-    // TODO: It might be more efficient to first check if the planes are parallel.
+
+    // You could first check if the planes are parallel, but this doesn't
+    // seem to make things faster.
+    /* if (plane->normal.dot(faceA->getPlane().normal) > 0.99) {
+        return false;
+    }; */
+
     // We also ignore cases where the plane exactly slices an edge of the face.
-    timer->start("getIntersections");
+    // timer->start("getIntersections");
     auto intersections = faceA->getIntersections(plane);
-    timer->stop("getIntersections");
+    // timer->stop("getIntersections");
     for (int faceId : faceIds) {
         Face* faceB = current->getFace(faceId);
         for (const Vec3& intersection : intersections) {
 
-            timer->start("containsPoint");
+            // timer->start("containsPoint");
             bool isContained = faceB->containsPoint(intersection);
-            timer->stop("containsPoint");
+            // timer->stop("containsPoint");
             if (isContained) {
                 return true;
             }

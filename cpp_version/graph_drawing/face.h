@@ -66,7 +66,7 @@ class Face {
 		bool looped;
 		FaceType* faceType;
 		vector<int> bspNodeIds;
-		// A face group represening an outer face with holes.
+		// A face group representing an outer face with holes.
 		int groupId;
 		bool hole;
 
