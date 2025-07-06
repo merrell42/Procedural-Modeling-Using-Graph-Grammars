@@ -113,7 +113,7 @@ EditGraph* RuleApplier::createGraph() {
         }
     }*/
 
-    // Maps from half edges to merge halfEdges.
+    // Maps from half edges to merge half edges.
     merged->halfEdges.resize(endGraph->getHalfEdges().size(), nullptr);
     auto halfToHalfEdge = [&](GraphHalfEdge* half) -> HalfEdge* {
         int index = Util::findIndex<GraphHalfEdge*>(endGraph->getHalfEdges(), half);
@@ -362,6 +362,7 @@ void RuleApplier::constrainVertexIds(vector<int>& vertexIds, RuleApplierSettings
             auto* vPlace = settings->getVertex(id);
             int numConstraints = vPlace->getNumConstraints();
 
+            // Find the vertex placement with the most constraints that are less than 3.
             if (numConstraints < 3) {
                 if (mostConstraints < numConstraints) {
                     mostConstraints = numConstraints;
@@ -561,6 +562,7 @@ Range RuleApplier::getRange(
     return range;
 }
 
+// Update the vertex and face placements. The edge placements can be ignored.
 void RuleApplier::setPlacements(
     const vector<int>& orderIds,
     const vector<OrderInfo>& orderInfo,
@@ -570,11 +572,13 @@ void RuleApplier::setPlacements(
     for (size_t i = startIndex; i < endIndex; i++) {
         int id = orderIds[i];
         const auto& info = orderInfo[i];
-
-        if (info.type == OrderInfo::Type::Vertex) {
-            settings->getVertex(id)->setPosition();
-        } else if (info.type == OrderInfo::Type::Face) {
-            settings->getFace(id)->setFromVertex(info.vertexId);
+        switch (info.type) {
+            case OrderInfo::Type::Vertex:
+                settings->getVertex(id)->setPosition();
+                break;
+            case OrderInfo::Type::Face:
+                settings->getFace(id)->setFromVertex(info.vertexId);
+                break;
         }
     }
 }
@@ -610,49 +614,51 @@ pair<vector<double>, bool> RuleApplier::sampleSolutionSpace() {
         return createGroundPlane();
     }
 
-    bool success = true;
     for (const auto& fixed : fixedFaces) {
         fixed.fPlace->setD(fixed.d);
         fixed.fPlace->setFixed(true);
     }
 
     for (int id : fixedVertexIds) {
-        success = success && settings->getVertex(id)->fixPosition();
+        auto success = settings->getVertex(id)->fixPosition();
+        if (!success) {
+            return {};
+        }
     }
 
-    if (!success) {
-        return {};
-    }
-
-    vector<int> basisOrders;
+    vector<int> basisIndices;
     for (const auto& basisId : settings->basisIds) {
-        basisOrders.push_back(settings->findBasisOrder(basisId));
+        basisIndices.push_back(settings->findBasisIndex(basisId));
     }
-    basisOrders.push_back((int)settings->orderIds.size());
+    basisIndices.push_back((int)settings->orderIds.size());
 
     // timer->start("Set Placements");
     for (size_t i = 0; i < settings->basisIds.size(); i++) {
         int id = settings->basisIds[i];
         auto* fPlace = settings->facePlacements[id].get();
-        int start = basisOrders[i];
-        int end = basisOrders[i + 1];
 
+        // Find the acceptable ranges for all the placements between two consecutive basis indices.
+        int start = basisIndices[i];
+        int end = basisIndices[i + 1];
         auto range = getRange(settings->orderIds, settings->orderInfo, start, end);
 
-        if (fPlace->getFixed() && !range.isInside(fPlace->getD())) {
-            effort = numeric_limits<double>::infinity();
-            // timer->stop("Set Placements`");
-            return make_pair(vector<double>(), false);
-        }
         if (range.isEmpty()) {
             // timer->stop("Set Placements");
             return make_pair(vector<double>(), false);
         }
-        if (!fPlace->getFixed()) {
+
+        if (fPlace->getFixed()) {
+            // If the face placement is already fixed make sure it is within the acceptable range.
+            if (!range.isInside(fPlace->getD())) {
+                effort = numeric_limits<double>::infinity();
+                // timer->stop("Set Placements`");
+                return make_pair(vector<double>(), false);
+            }
+        } else {
+            // Otherwise pick a value within the range.
             double d = range.sample();
             fPlace->setD(d);
         }
-
         setPlacements(settings->orderIds, settings->orderInfo, start + 1, end);
     }
     // timer->stop("Set Placements");
@@ -678,7 +684,6 @@ bool RuleApplier::sampleRepeatedly() {
             timer->stop("Sample Repeatedly");
             return false;
         }
-
         auto [positions, success] = sampleSolutionSpace();
         bool violated = !success || outOfBounds(positions);
 
@@ -698,6 +703,7 @@ bool RuleApplier::sampleRepeatedly() {
     }
 }
 
+// Return all paths that are extendable and not in a loop.
 vector<MorphismPath*> RuleApplier::getFreeablePaths() const {
     vector<MorphismPath*> result;
     copy_if(openPaths.begin(), openPaths.end(), back_inserter(result),
@@ -708,26 +714,33 @@ vector<MorphismPath*> RuleApplier::getFreeablePaths() const {
     return result;
 }
 
-void RuleApplier::freeVertex() {
+Vertex* RuleApplier::pickVertexToFree() {
     auto freeablePaths = getFreeablePaths();
     if (freeablePaths.empty()) {
         effort++;
-        return;
+        return nullptr;
     }
 
     // Pick a random path.
     auto* path = Util::pick(freeablePaths);
-    auto* vertex = path->randomNextVertex();
-    freeOneVertex(vertex);
+    return path->randomNextVertex();
+}
+
+void RuleApplier::freeVertex(Vertex* vertex) {
+    if (!vertex) {
+        return;
+    }
+    freeVertexBase(vertex);
 
     bool done = false;
     while (!done) {
         done = true;
-        freeablePaths = getFreeablePaths();
+        auto freeablePaths = getFreeablePaths();
 
+        // Free vertices that are rigidly attach to the vertex that was freed.
         for (auto* path : freeablePaths) {
             if (auto* rigidVertex = path->rigidNextVertex()) {
-                freeOneVertex(rigidVertex);
+                freeVertexBase(rigidVertex);
                 done = false;
                 break;
             }
@@ -735,13 +748,12 @@ void RuleApplier::freeVertex() {
     }
 }
 
-void RuleApplier::freeOneVertex(Vertex* vertex) {
+void RuleApplier::freeVertexBase(Vertex* vertex) {
     auto vertexHalfEdges = vertex->getHalfEdges();
 
-    // Process all vertex halfEdges
+    // Add any adjacent edges that have not already been added to graph->edges.
     for (auto* vHalfEdge : vertexHalfEdges) {
         auto* edge = vHalfEdge->getEdge();
-        // Add edge if it's not already in graph->edges.
         if (!contains(graph->edges, edge)) {
             addEdgeToGraph(edge);
         }

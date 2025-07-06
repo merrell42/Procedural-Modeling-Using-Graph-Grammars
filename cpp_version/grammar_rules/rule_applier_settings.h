@@ -30,7 +30,7 @@ public:
     void addToOrder(int id, OrderInfo::Type type, int vertexId);
     int createFace(const Vec3& normal);
     void mergeFace(int idA, int idB);
-    int findBasisOrder(const int basisId);
+    int findBasisIndex(const int basisId);
 
     // Member variables.
     int newFaceCounter = -1;

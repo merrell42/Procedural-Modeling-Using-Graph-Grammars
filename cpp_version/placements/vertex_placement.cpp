@@ -256,11 +256,13 @@ bool VertexPlacement::fixPosition() {
     this->slope = Vec3::ORIGIN;
     this->value = this->vertex->getPosition();
 
-    bool success = true;
     for (const auto& id : this->getAllFaceIds()) {
-        success = success && settings->getFace(id)->setFromVertex(this->id);
+        auto success = settings->getFace(id)->setFromVertex(this->id);
+        if (!success) {
+            return false;
+        }
         settings->getFace(id)->setFixed(true);
     }
 
-    return success;
+    return true;
 }

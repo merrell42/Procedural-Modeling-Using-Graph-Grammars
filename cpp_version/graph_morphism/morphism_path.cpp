@@ -34,6 +34,7 @@ bool MorphismPath::isExtendable() const {
     return extendable[0] || extendable[1];
 }
 
+// Pick a random vertex from either end of the path that is extendable.
 Vertex* MorphismPath::randomNextVertex() {
     vector<double> probabilities;
     for (bool e : extendable) {

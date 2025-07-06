@@ -56,7 +56,6 @@ bool GraphMutator::applyProduction(Production production) {
 
     int effort = 0;
     int effortLimit = globalSettings["Mutator Effort Limit"].get<int>();
-    int verticesToFree = globalSettings["Vertices to Free"].get<int>();
 
     while (effort < effortLimit) {
         timer->start("RuleApplier Solve");
@@ -68,9 +67,8 @@ bool GraphMutator::applyProduction(Production production) {
             return true;
         }
 
-        for (int i = 0; i < verticesToFree; i++) {
-            ruleApplier->freeVertex();
-        }
+        auto vertex = ruleApplier->pickVertexToFree();
+        ruleApplier->freeVertex(vertex);
         effort++;
     }
 

@@ -52,7 +52,8 @@ public:
     void addEdgeToGraph(Edge* edge);
     EditGraph* createGraph();
     void reject();
-    void freeVertex();
+    Vertex* pickVertexToFree();
+    void freeVertex(Vertex* vertex);
     vector<double> getExtents();
 
 private:
@@ -88,7 +89,7 @@ private:
     void constrainVertexIds(vector<int>& vIds, RuleApplierSettings* settings);
     pair<vector<double>, bool> sampleSolutionSpace();
     vector<MorphismPath*> getFreeablePaths() const;
-    void freeOneVertex(Vertex* vertex);
+    void freeVertexBase(Vertex* vertex);
     bool placeVertexPositions(const vector<double>& positions);
     bool outOfBounds(const vector<double>& positions);
     Range getRange(const vector<int>& orderIds, const vector<OrderInfo>& orderInfo, int startIndex, int endIndex);

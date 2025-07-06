@@ -24,7 +24,6 @@ Json globalSettings = {
     {"Major Grid Spacing", 40},
     {"Snap Angle", 20},
     {"Mutator Effort Limit", 20},
-    {"Vertices to Free", 1},
     {"Prefer Ground", 0.9f},
     {"Empty Border", true},
     {"Beta", 1},

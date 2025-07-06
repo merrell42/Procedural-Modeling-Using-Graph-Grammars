@@ -53,7 +53,7 @@ void RuleApplierSettings::mergeFace(int idA, int idB) {
 }
 
 // Finds the index where the basis face in the orderIds.
-int RuleApplierSettings::findBasisOrder(const int basisId) {
+int RuleApplierSettings::findBasisIndex(const int basisId) {
     for (size_t index = 0; index < orderIds.size(); ++index) {
         if (orderIds[index] == basisId && orderInfo[index].type == OrderInfo::Type::Face) {
             return static_cast<int>(index);
