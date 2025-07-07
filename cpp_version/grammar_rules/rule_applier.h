@@ -67,7 +67,8 @@ private:
     bool ground = false;
     int dims = 2;
 
-    // Paths around the faces that we are editing that can be expanded.
+    // The open paths represent section of each face that have been freed and can move.
+    // We use these paths to find the next vertex that should be freed.
     vector<MorphismPath*> openPaths;
 
     // freeVertices are the same as graph->vertices with the empty vertices removed.

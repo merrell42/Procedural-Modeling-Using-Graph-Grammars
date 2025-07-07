@@ -20,6 +20,9 @@ MorphismPath::MorphismPath(const vector<Edge*>& pathEdges)
     , extendable{true, true}
     , id(count++) {
     MemoryCounter::creation("MorphismPath");
+    // Initialize to nullptr. They are set by setHalfEdges.
+    halfEdges[0] = nullptr;
+    halfEdges[1] = nullptr;
 }
 
 MorphismPath::~MorphismPath() {
@@ -27,7 +30,8 @@ MorphismPath::~MorphismPath() {
 }
 
 void MorphismPath::setHalfEdges(const vector<HalfEdge*>& halfEdges) {
-    this->halfEdges = halfEdges;
+    this->halfEdges[0] = halfEdges[0];
+    this->halfEdges[1] = halfEdges[1];
 }
 
 bool MorphismPath::isExtendable() const {

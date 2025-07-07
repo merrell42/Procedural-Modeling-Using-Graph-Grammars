@@ -759,38 +759,42 @@ void RuleApplier::freeVertexBase(Vertex* vertex) {
         }
     }
 
-    // Process paths for each halfEdge
+    // Update the open paths for each half-edge of the vertex.
     for (auto* vHalfEdge : vertexHalfEdges) {
         auto* edge = vHalfEdge->getEdge();
-        
+
+        // Find the paths that start and end with vHalfEdge.
         auto findPath0 = [vHalfEdge](MorphismPath* path) { 
             return path->halfEdges[0] == vHalfEdge; 
         };
         auto findPath1 = [vHalfEdge](MorphismPath* path) { 
             return path->halfEdges[1] == vHalfEdge; 
         };
-
         auto path0 = find_if(openPaths.begin(), openPaths.end(), findPath0);
         auto path1 = find_if(openPaths.begin(), openPaths.end(), findPath1);
 
         if (path0 != openPaths.end() && path1 != openPaths.end()) {
             if (*path0 == *path1) {
-                // Same path
-                (*path0)->halfEdges.clear();
+                // The freed section now forms a complete loop around the face. The entire
+                // face is free. Remove it from openPaths.
                 delete* path0;
                 Util::remove(openPaths, *path0);
             } else {
-                // Different paths
+                // We have freed two sections of the same face which are now touching at a vertex
+                // that was just freed. Merge the two sections into one freed section.
                 (*path1)->merge(*path0);
                 delete* path0;
                 Util::remove(openPaths, *path0);
             }
         } else if (path0 != openPaths.end()) {
+            // If vHalfEdge is at the start of a freed section expand it backwards from the start.
             (*path0)->expandBackward();
         } else if (path1 != openPaths.end()) {
+            // If vHalfEdge is at the end of a freed section expand it forward from the end.
             (*path1)->expandForward();
         } else {
-            // Create new path
+            // Create new path at vHalfEdge. Create a freed section expanded once in each
+            // direction since the vertex is free now.
             auto* path = new MorphismPath({});
             path->setHalfEdges({vHalfEdge, vHalfEdge});
             path->expandBackward();
@@ -827,6 +831,7 @@ bool RuleApplier::placeVertexPositions(const vector<double>& positions) {
         return true;
     }
 
+    // Find all faces we need to test for intersections.
     vector<Face*> facesToIntersect;
     for (const auto& [_, fPlace] : settings->facePlacements) {
         if (fPlace->getFace()) {
@@ -871,6 +876,7 @@ bool RuleApplier::placeVertexPositions(const vector<double>& positions) {
     for (size_t i = 0; i < facesToIntersect.size(); i++) {
         facesToIntersect[i]->removeFromBsp();
     }
+    // Check if each face intersects any faces in the BSP tree.
     for (int i = 0; i < (int)facesToIntersect.size(); i++) {
         bool success = facesToIntersect[i]->addToBsp();
         if (!success) {
