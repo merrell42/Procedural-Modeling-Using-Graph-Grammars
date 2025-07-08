@@ -40,6 +40,15 @@ GraphEdge* GraphVertex::interiorEdge() const {
     return nullptr;
 }
 
+GraphHalfEdge* GraphVertex::interiorHalfEdge() const {
+    for (auto* half : halfEdges) {
+        if (half->getEdge() != nullptr) {
+            return half;
+        }
+    }
+    return nullptr;
+}
+
 void GraphVertex::import(const Json& json) {
     halfEdges.clear();
     auto& graphHalfEdges = graph->getHalfEdges();

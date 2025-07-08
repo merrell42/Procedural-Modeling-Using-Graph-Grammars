@@ -7,6 +7,7 @@
 class Graph;
 class Edge;
 
+// A graph morphism is a mapping from a graph to a graph drawing.
 class Morphism {
 public:
     Morphism();

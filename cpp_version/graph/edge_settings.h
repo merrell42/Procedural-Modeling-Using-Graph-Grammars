@@ -8,7 +8,7 @@
 using namespace std;
 using Json = nlohmann::json;
 
-// A set of properties that multiple edges can share.
+// A settings that multiple edges can share.
 class EdgeSettings {
 public:
     EdgeSettings();

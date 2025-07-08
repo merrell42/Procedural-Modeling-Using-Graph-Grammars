@@ -6,8 +6,6 @@
 #include "graph_vertex.h"
 #include "../util/util.h"
 
-int GraphHalfEdge::nextId = 0;
-
 GraphHalfEdge::GraphHalfEdge(bool forward)
     : forward(forward)
     , vertex(nullptr)
@@ -17,8 +15,7 @@ GraphHalfEdge::GraphHalfEdge(bool forward)
     , prev(nullptr)
     , next(nullptr)
     , face(nullptr)
-    , graph(nullptr)
-    , id(nextId++) {}
+    , graph(nullptr) {}
 
 GraphHalfEdge* GraphHalfEdge::connectGraph(Graph* newGraph) {
     graph = newGraph;
@@ -56,6 +53,7 @@ void GraphHalfEdge::setFace(GraphFace* f) {
     face = f;
 }
 
+// The edge pointed in the opposite direction sharing the same edge.
 GraphHalfEdge* GraphHalfEdge::getTwin() const {
     auto halfEdges = edge->getHalfEdges();
     if (halfEdges.size() != 2) {
@@ -74,6 +72,7 @@ bool GraphHalfEdge::isLoopy() const {
     return last->getNext() != nullptr;
 }
 
+// Get the direction from the edge type. The direction is reverse when forward is false.
 Vec3 GraphHalfEdge::getDir() const {
     if (!edge) {
         // This maybe should be null.

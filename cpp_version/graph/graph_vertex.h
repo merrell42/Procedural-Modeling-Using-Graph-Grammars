@@ -25,16 +25,18 @@ public:
     void setType(VertexType* newType);
     // The index of the vertex on the graph boundary.
     int boundaryIndex() const;
-    // Returns the first edge next to the vertex.
+    // For a boundary vertex return the interior edge / half-edge.
     GraphEdge* interiorEdge() const;
+    GraphHalfEdge* interiorHalfEdge() const;
 
     GraphVertex* connectGraph(Graph* graph);
     void setHalfEdge(GraphHalfEdge* halfEdge, int index);
 
     // TODO: Replace with edgeType.
-    string kind;
+    // string kind;
 
 private:
+    // All half-edges that originate from this vertex.
     vector<GraphHalfEdge*> halfEdges;
     VertexType* type;
     Graph* graph;

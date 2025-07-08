@@ -39,6 +39,8 @@ void GraphFace::import(const Json & json) {
     // }
 }
 
+// Get the connected half-edges on a face.
+// Continue until the path ends or the path loops.
 vector<GraphHalfEdge*> GraphFace::getConnectedHalfEdges(const GraphHalfEdge* start) {
     vector<GraphHalfEdge*> result;
     const GraphHalfEdge* current = start;
@@ -56,16 +58,17 @@ vector<GraphHalfEdge*> GraphFace::getOuterHalfEdges() const {
     return vector<GraphHalfEdge*>();
 }
 
+// Replace half-edge a with b.
 void GraphFace::replaceHalfEdge(GraphHalfEdge* a, GraphHalfEdge* b) {
     if (outerComponent == a) {
         outerComponent = b;
     }
     
-    for (size_t i = 0; i < innerComponents.size(); i++) {
+    /* for (size_t i = 0; i < innerComponents.size(); i++) {
         if (innerComponents[i] == a) {
             innerComponents[i] = b;
         }
-    }
+    } */
     b->setFace(this);
 }
 

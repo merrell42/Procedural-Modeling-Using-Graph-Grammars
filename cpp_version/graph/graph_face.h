@@ -29,7 +29,7 @@ public:
 private:
     GraphHalfEdge* outerComponent;
     // Inner components are not currently used, but they may be needed for holes in the future.
-    vector<GraphHalfEdge*> innerComponents;
+    // vector<GraphHalfEdge*> innerComponents;
     FaceType* type;
     Graph* graph;
     int id;

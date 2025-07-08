@@ -299,18 +299,10 @@ EditGraph* RuleApplier::createGraph() {
     auto& bVertices = endGraph->getBVertices();
     for (size_t i = 0; i < bVertices.size(); i++) {
         // For each boundary vertex, find a half-edge pointing away from the boundary.
-        auto halfs = bVertices[i]->getHalfEdges();
-        GraphHalfEdge* validHalf = nullptr;
-        for (auto* half : halfs) {
-            if (half->getEdge() != nullptr) {
-                validHalf = half;
-                break;
-            }
-        }
-
-        if (validHalf) {
+        GraphHalfEdge* interiorHalf = bVertices[i]->interiorHalfEdge();
+        if (interiorHalf) {
             // Starting from the boundary, trace a path along the face.
-            auto endHalfs = GraphFace::getConnectedHalfEdges(validHalf);
+            auto endHalfs = GraphFace::getConnectedHalfEdges(interiorHalf);
             GraphHalfEdge* lastEndHalf = const_cast<GraphHalfEdge*>(endHalfs.back());
             endHalfs.pop_back();
 

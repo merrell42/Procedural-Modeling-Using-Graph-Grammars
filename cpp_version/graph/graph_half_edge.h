@@ -38,18 +38,21 @@ public:
     void setFace(GraphFace* f);
 
 private:
+    // True, if the half-edge is pointed in the direction of the edge's type.
     bool forward;
+
+    // The vertex (sometimes called origin) of the half-edge.
     GraphVertex* vertex;
     GraphEdge* edge;
-    // The indices within the vertex and edge.
+
+    // The index of this half-edge within the vertex and the edge.
     int vertexIndex;
     int edgeIndex;
+
+    // The previous / next half-edge on the face.
     GraphHalfEdge* prev;
     GraphHalfEdge* next;
     GraphFace* face;
     Graph* graph;
-    int id;
-
-    static int nextId;
 };
 

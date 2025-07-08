@@ -25,6 +25,7 @@ GraphEdge* GraphEdge::connectGraph(Graph* newGraph) {
     return this;
 }
 
+// Merge two colinear edges into one.
 void GraphEdge::merge(GraphEdge* edgeB, bool mergeForward) {
     auto* interior = graph;
 
@@ -35,6 +36,7 @@ void GraphEdge::merge(GraphEdge* edgeB, bool mergeForward) {
         auto forward = halfA->getForward();
         
         if (!(forward ^ mergeForward)) {
+            // Connect halfA to after halfB.
             auto* nextB = halfB->getNext();
             halfA->disconnect();
             halfB->disconnect();
@@ -42,6 +44,7 @@ void GraphEdge::merge(GraphEdge* edgeB, bool mergeForward) {
         } else {
             auto* prevB = halfB->getPrev();
             if (prevB) {
+                // Connect halfA to before halfB.
                 prevB->disconnect();
                 halfB->disconnect();
                 prevB->connectNext(halfA);

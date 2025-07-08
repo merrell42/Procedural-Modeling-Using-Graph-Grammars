@@ -87,7 +87,7 @@ Graph* Graph::import(const Json& json, Primitives* shape) {
         auto vertexData = json["vertexTypes"][index];
         int type = vertexData["type"].get<int>();
         auto kind = vertexData["kind"].get<string>();
-        result->getVertices()[index]->kind = kind;
+        // result->getVertices()[index]->kind = kind;
         auto vertexType = (kind == "v") ? shape->vertexTypes[type] : edgeVertex;
         result->getVertices()[index]->setType(vertexType);
     }

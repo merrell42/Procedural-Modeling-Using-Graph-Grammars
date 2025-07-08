@@ -20,6 +20,7 @@ public:
     EdgeType* getType() const;
     void setType(EdgeType* newType);
 
+    // Connect the graph and edge together.
     GraphEdge* connectGraph(Graph* graph);
     // Merge two colinear edges into one.
     void merge(GraphEdge* edgeB, bool mergeForward);
