@@ -99,8 +99,7 @@ static void destroyEdges(const vector<vector<Edge*>>& edgeGroup) {
 }
 
 EditGraph* RuleApplier::createGraph() {
-    auto& endVertices = endGraph->getVertices();
-    auto& endEdges = endGraph->getEdges();
+    // The merged graph merges the end graph where the start graph was originally.
     EditGraph* merged = new EditGraph();
     
     // Save face locations. This may need to be added back in.
@@ -109,30 +108,39 @@ EditGraph* RuleApplier::createGraph() {
         for (auto* outerFace : morphism->outerFaces) {
             morphism->outerFacesD.push_back(
                 outerFace->getFaceType()->getNormal().dot(
-                    outerFace->getHalfEdges()[0]->getPosition()));
+                    outerFace->getHalfEdges()[0]->getPosition())); 
         }
     }*/
 
-    // Maps from half edges to merge half edges.
+    // Maps from end graph half-edges to merged half-edges.
     merged->halfEdges.resize(endGraph->getHalfEdges().size(), nullptr);
-    auto halfToHalfEdge = [&](GraphHalfEdge* half) -> HalfEdge* {
-        int index = Util::findIndex<GraphHalfEdge*>(endGraph->getHalfEdges(), half);
+    auto endToMergedHalf = [&](GraphHalfEdge* endHalf) -> HalfEdge* {
+        int index = Util::findIndex<GraphHalfEdge*>(endGraph->getHalfEdges(), endHalf);
         return merged->halfEdges[index];
     };
-    auto setHalfToHalfEdge = [&](GraphHalfEdge* half, HalfEdge* halfEdge) {
-        int index = Util::findIndex<GraphHalfEdge*>(endGraph->getHalfEdges(), half);
-        merged->halfEdges[index] = halfEdge;
+    auto setEndToMergedHalf = [&](GraphHalfEdge* endHalf, HalfEdge* mergedHalf) {
+        int index = Util::findIndex<GraphHalfEdge*>(endGraph->getHalfEdges(), endHalf);
+        merged->halfEdges[index] = mergedHalf;
+    };
+    // Maps from end graph vertices to merged vertices.
+    auto endToMergedVertex = [&](GraphVertex* endVertex) -> Vertex* {
+        int index = Util::findIndex<GraphVertex*>(endGraph->getVertices(), endVertex);
+        return merged->vertices[index];
     };
 
+    // Each entry in splitEdges initially starts with one edge.
+    // If an edge is split it is saved in splitEdges as two edges.
     vector<vector<Edge*>> splitEdges;
     vector<vector<HalfEdge*>> splitHalfEdges;
-    splitEdges.resize(morphism->edgeBtoA.size());
-    splitHalfEdges.resize(morphism->edgeBtoA.size());
-    for (size_t i = 0; i < morphism->edgeBtoA.size(); ++i) {
+    int numEdges = (int)morphism->edgeBtoA.size();
+    splitEdges.resize(numEdges);
+    splitHalfEdges.resize(numEdges);
+    for (size_t i = 0; i < numEdges; ++i) {
         splitEdges[i] = {morphism->edgeBtoA[i]};
     }
 
-    // Create vertices.
+    // Create vertices that are not on the boundary.
+    auto& endVertices = endGraph->getVertices();
     const auto numVertices = endVertices.size();
     merged->vertices.resize(numVertices, nullptr);
     for (size_t i = 0; i < numVertices; ++i) {
@@ -148,38 +156,42 @@ EditGraph* RuleApplier::createGraph() {
             auto& halfs = v->getHalfEdges();
 
             for (size_t j = 0; j < halfs.size(); ++j) {
-                setHalfToHalfEdge(halfs[j], vHalfEdges[j]);
+                setEndToMergedHalf(halfs[j], vHalfEdges[j]);
             }
         }
     }
 
     struct EdgeData {
-        vector<HalfEdge*> coreHalfEdges;
-        vector<GraphHalfEdge*> halfEdges;
+        vector<HalfEdge*> mergedHalfs;
+        vector<GraphHalfEdge*> endHalfs;
         bool modified;
     };
 
-    // Process edges
+    // Go through each edge in the end graph, splitting it when it's on the boundary.
     vector<EdgeData> edgeData;
+    auto& endEdges = endGraph->getEdges();
     for (size_t i = 0; i < endEdges.size(); ++i) {
         auto* endEdge = endEdges[i];
         auto& edgeHalfs = endEdge->getHalfEdges();
-        vector<HalfEdge*> coreHalfEdges;
-        vector<GraphHalfEdge*> halfEdges;
+        vector<HalfEdge*> mergedHalfs;
+        vector<GraphHalfEdge*> endHalfs;
         bool modified = false;
 
+        // Iterate through each half-edge of the edge.
         for (size_t e = 0; e < edgeHalfs.size(); ++e) {
-            auto* half = edgeHalfs[e][0];
-            auto* hVertex = half->getVertex();
-            int hIndex = Util::findIndex(endVertices, hVertex);
-            auto* core = merged->vertices[hIndex];
+            auto* endHalf = edgeHalfs[e][0];
+            auto* endVertex = endHalf->getVertex();
+            auto* mergedVertex = endToMergedVertex(endVertex);
 
-            int boundaryIndex = hVertex->boundaryIndex();
+            // If the end vertex is on the boundary. Split the edge in half.
+            int boundaryIndex = endVertex->boundaryIndex();
             if (boundaryIndex >= 0) {
+                // Find the edge location in the start graph.
                 int startIndex = Util::findIndex(startGraph->getEdges(),
                     startGraph->getBVertices()[boundaryIndex]->interiorEdge());
-                
+
                 if (splitEdges[startIndex].size() == 1) {
+                    // Split the edge if it hasn't already been split.
                     int count = 0;
                     for (int i = 0; i < splitEdges.size(); i++) {
                         if (splitEdges[i][0] == splitEdges[startIndex][0]) {
@@ -195,136 +207,149 @@ EditGraph* RuleApplier::createGraph() {
                     splitHalfEdges[startIndex] = split.nextHalfEdges;
                 }
 
-                int edgeIndex = half->getForward() ? 0 : 1;
-                auto* coreHalfEdge = splitEdges[startIndex][edgeIndex]->getHalfEdges()[e];
-                splitEdges[startIndex][edgeIndex] = nullptr;
-                coreHalfEdges.push_back(coreHalfEdge);
-
-                halfEdges.push_back(half);
                 modified = true;
-                setHalfToHalfEdge(half, coreHalfEdge);
+                int edgeIndex = endHalf->getForward() ? 0 : 1;
+                auto* mergedHalf = splitEdges[startIndex][edgeIndex]->getHalfEdges()[e];
+                splitEdges[startIndex][edgeIndex] = nullptr;
+                mergedHalfs.push_back(mergedHalf);
+                setEndToMergedHalf(endHalf, mergedHalf);
             } else {
-                auto* coreHalfEdge = core->getHalfEdges()[half->getVertexIndex()];
-                coreHalfEdges.push_back(coreHalfEdge);
-                halfEdges.push_back(half);
+                auto* mergedHalf = mergedVertex->getHalfEdges()[endHalf->getVertexIndex()];
+                mergedHalfs.push_back(mergedHalf);
             }
+            endHalfs.push_back(endHalf);
         }
-        
-        edgeData.push_back({coreHalfEdges, halfEdges, modified});
+        edgeData.push_back({mergedHalfs, endHalfs, modified});
     }
 
-    // Process end edges.
+    // Add half-edges on the boundary to the merged graph.
     for (size_t i = 0; i < endEdges.size(); i++) {
         GraphEdge* endEdge = endEdges[i];
         auto edgeHalfs = endEdge->getHalfEdges();
 
         for (size_t e = 0; e < edgeHalfs.size(); e++) {
             GraphHalfEdge* halfNext = edgeHalfs[e][0]->getNext();
+            // If half next has no edge, it is on the boundary.
             if (!halfNext->getEdge()) {
+                // Map from the boundary of the end graph to the boundary of the start graph.
                 int boundaryIndex = indexOf(endGraph->getBHalfEdges(), halfNext);
                 auto startHalf = startGraph->getBHalfEdges()[boundaryIndex];
-                int edgeIndex = indexOf(startGraph->getEdges(), startHalf->getPrev()->getEdge());
-                int startIndex = indexOf(startGraph->getHalfEdges(), startHalf);
-                setHalfToHalfEdge(halfNext, splitHalfEdges[edgeIndex][e]);                
+                int startIndex = indexOf(startGraph->getEdges(), startHalf->getPrev()->getEdge());
+                setEndToMergedHalf(halfNext, splitHalfEdges[startIndex][e]);
             }
         }
     }
 
     bool failed = false;
 
-    // Process faces in end graph.
-    for (GraphFace* face : endGraph->getFaces()) {
-        auto halfs = face->getOuterHalfEdges();
-        size_t N = halfs.size();
+    // For each face on the end graph, find consecutive half-edges convert them to the
+    // merged graph and merge the faces together.
+    for (GraphFace* endFace : endGraph->getFaces()) {
+        auto endHalfs = endFace->getOuterHalfEdges();
+        size_t N = endHalfs.size();
 
         for (size_t i = 0; i < N; i++) {
-            GraphHalfEdge* halfA = const_cast<GraphHalfEdge*>(halfs[i]);
-            GraphHalfEdge* halfB = const_cast<GraphHalfEdge*>(halfs[(i + 1) % N]);
-            HalfEdge* halfEdgeA = halfToHalfEdge(halfA);
-            HalfEdge* halfEdgeB = halfToHalfEdge(halfB);
+            GraphHalfEdge* endHalfA = const_cast<GraphHalfEdge*>(endHalfs[i]);
+            GraphHalfEdge* endHalfB = const_cast<GraphHalfEdge*>(endHalfs[(i + 1) % N]);
+            HalfEdge* mergedHalfA = endToMergedHalf(endHalfA);
+            HalfEdge* mergedHalfB = endToMergedHalf(endHalfB);
 
-            if (!halfEdgeA || !halfEdgeB) {
+            if (!mergedHalfA || !mergedHalfB) {
                 failed = true;
                 continue;
             }
-            halfEdgeA->mergeFaces(halfEdgeB);
+            mergedHalfA->mergeFaces(mergedHalfB);
         }
     }
 
     if (failed) {
-        // Handle error case
-        cerr << "Do not know how this can happen, but halfToHalfEdge is missing an halfEdge." << endl;
-        return merged; // Return empty merged data
+        cout << "Do not know how this can happen, but endToMergedHalf is missing an halfEdge." << endl;
+        return merged;
     }
 
-    // Process edge data.
+    // Set merged edges using edgeData.
     merged->edges.resize(edgeData.size());
     for (size_t i = 0; i < edgeData.size(); i++) {
         EdgeData& datum = edgeData[i];
-        Edge* edge0 = datum.coreHalfEdges[0]->getEdge();
+        Edge* edge0 = datum.mergedHalfs[0]->getEdge();
 
-        for (size_t j = 1; j < datum.coreHalfEdges.size(); j++) {
-            HalfEdge* halfEdgeJ = datum.coreHalfEdges[j];
+        // Edge normally have 2 half-edges, but that's not always true.
+        // A new edge is created for each half-edge, but they're really the same.
+        // Combine these edges into one.
+        for (size_t j = 1; j < datum.mergedHalfs.size(); j++) {
+            HalfEdge* halfEdgeJ = datum.mergedHalfs[j];
             Edge* edgeJ = halfEdgeJ->getEdge();
-            edge0->addHalfEdge(halfEdgeJ, datum.halfEdges[j]->getEdgeIndex());
+            edge0->addHalfEdge(halfEdgeJ, datum.endHalfs[j]->getEdgeIndex());
             edgeJ->destroy();
         }
         merged->edges[i] = edge0;
 
+        // Include the vertices at both ends of the eget.
         if (datum.modified) {
             vector<Vertex*> newVertices = {
-                datum.coreHalfEdges[0]->getVertex(),
-                datum.coreHalfEdges[1]->getVertex()
+                datum.mergedHalfs[0]->getVertex(),
+                datum.mergedHalfs[1]->getVertex()
             };
             Util::union_(merged->vertices, newVertices);
         }
     }
 
-    // Process boundary vertices.
+    // Create open paths by starting with the boundary vertices and
+    // tracing paths along their faces.
     auto& bVertices = endGraph->getBVertices();
     for (size_t i = 0; i < bVertices.size(); i++) {
+        // For each boundary vertex, find a half-edge pointing away from the boundary.
         auto halfs = bVertices[i]->getHalfEdges();
-        auto it = find_if(halfs.begin(), halfs.end(),
-            [](GraphHalfEdge* half) { return half->getEdge() != nullptr; });
+        GraphHalfEdge* validHalf = nullptr;
+        for (auto* half : halfs) {
+            if (half->getEdge() != nullptr) {
+                validHalf = half;
+                break;
+            }
+        }
 
-        if (it != halfs.end()) {
-            auto faceHalfs = GraphFace::getConnectedHalfEdges(*it);
-            GraphHalfEdge* endHalf = const_cast<GraphHalfEdge*>(faceHalfs.back());
-            faceHalfs.pop_back();
+        if (validHalf) {
+            // Starting from the boundary, trace a path along the face.
+            auto endHalfs = GraphFace::getConnectedHalfEdges(validHalf);
+            GraphHalfEdge* lastEndHalf = const_cast<GraphHalfEdge*>(endHalfs.back());
+            endHalfs.pop_back();
 
-            vector<HalfEdge*> faceHalfEdgesI;
-            for (GraphHalfEdge* half : faceHalfs) {
-                faceHalfEdgesI.push_back(halfToHalfEdge(half));
+            // Convert to merged half-edges.
+            vector<HalfEdge*> mergedHalfs;
+            for (GraphHalfEdge* half : endHalfs) {
+                mergedHalfs.push_back(endToMergedHalf(half));
             }
 
-            MorphismPath* path = MorphismPath::createPath(faceHalfEdgesI);
-            HalfEdge* pathEnd = halfToHalfEdge(endHalf);
-            vector<HalfEdge*> pathHalfEdges = { faceHalfEdgesI[0], pathEnd };
-            path->setHalfEdges(pathHalfEdges);
+            // Create the path.
+            MorphismPath* path = MorphismPath::createPath(mergedHalfs);
+            HalfEdge* lastMergedHalf = endToMergedHalf(lastEndHalf);
+            path->setHalfEdges({ mergedHalfs[0], lastMergedHalf });
             openPaths.push_back(path);
         }
     }
-    
+
+    // Destroy these edges and the vertices and half-edges they connect to. 
     destroyEdges(splitEdges);
 
-    // Process faces.
+    // Add the merged faces by converting the end faces.
     merged->faces.clear();
-    for (GraphFace* face : endGraph->getFaces()) {
-        GraphHalfEdge* half = face->getOuterComponent();
-        if (half) {
-            merged->faces.push_back(halfToHalfEdge(half)->getFace());
+    for (GraphFace* endFace : endGraph->getFaces()) {
+        GraphHalfEdge* endHalf = endFace->getOuterComponent();
+        if (endHalf) {
+            auto mergedFace = endToMergedHalf(endHalf)->getFace();
+            merged->faces.push_back(mergedFace);
         }
     }
 
-    // Process outer faces.
+    // The boundary face is always a hole. Set hole to true.
     size_t faceIndex = 0;
     for (GraphFace* outerFace : endGraph->getBFaces()) {
         faceIndex = indexOf(endGraph->getFaces(), outerFace);
         merged->faces[faceIndex]->setHole(true);
     }
+    // Split the face off from a group if it is not a hole, but is not in
+    // outer position. It was split from another face, but is no longer coplanar.
     for (Face* face : merged->faces) {
-		// Split the face off from a group if it is not a hole, but is not in
-		// outer position. It was split from another face, but is no longer coplanar.
         if (!face->isHole() &&
             indexOf(face->getGroup()->getFaces(), face) > 0) {
             face->splitGroup();
@@ -335,7 +360,7 @@ EditGraph* RuleApplier::createGraph() {
     //morphism.outerFacesA.clear();
     //for (Face* endFace : endGraph->getOuterFaces()) {
     //    morphism.outerFacesA.push_back(
-    //        halfToHalfEdge(endFace->getOuterComponent())->getFace());
+    //        endToMergedHalf(endFace->getOuterComponent())->getFace());
     //}
 
     return merged;
@@ -614,11 +639,11 @@ pair<vector<double>, bool> RuleApplier::sampleSolutionSpace() {
         return createGroundPlane();
     }
 
+    // Set the fixed faces and fixed vertices.
     for (const auto& fixed : fixedFaces) {
         fixed.fPlace->setD(fixed.d);
         fixed.fPlace->setFixed(true);
     }
-
     for (int id : fixedVertexIds) {
         auto success = settings->getVertex(id)->fixPosition();
         if (!success) {
@@ -675,6 +700,7 @@ pair<vector<double>, bool> RuleApplier::sampleSolutionSpace() {
     return make_pair(positions, true);
 }
 
+// Sample solution until once is successful or we pass the maximum effort.
 bool RuleApplier::sampleRepeatedly() {
     timer->start("Sample Repeatedly");
 
@@ -721,7 +747,7 @@ Vertex* RuleApplier::pickVertexToFree() {
         return nullptr;
     }
 
-    // Pick a random path.
+    // Pick a random vertex from a random path.
     auto* path = Util::pick(freeablePaths);
     return path->randomNextVertex();
 }
@@ -818,6 +844,7 @@ bool RuleApplier::placeVertexPositions(const vector<double>& positions) {
         }*/
 
     }
+    // In 2D, check for edge intersections.
     if (dims == 2) {
         for (int i = 0; i < (int)graph->edges.size(); i++) {
             bool success = graph->edges[i]->addToBsp();
