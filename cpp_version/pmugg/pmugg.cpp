@@ -40,14 +40,14 @@ int main() {
 			auto hierarchy = GraphGrammar::import(parsed);
 			auto model = new Model();
 			auto mutator = new Mutator(model, new GraphMutator(hierarchy, model));
-			mutator->iterate(20);
+			mutator->iterate(100);
 			cout << "Num Faces: " << model->getCurrent()->getFaceMap().size() << endl;
 			model->reset();
 		} catch (const exception& e) {
 			cout << "Error: " << e.what() << endl;
 		}
 
-		// Print memory leak statistics before program exits
+		// Print memory leak statistics before program exits.
 		MemoryCounter::printStats();
 
 		timer->printStats();

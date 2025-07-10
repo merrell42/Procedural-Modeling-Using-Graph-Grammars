@@ -284,7 +284,7 @@ EditGraph* RuleApplier::createGraph() {
         }
         merged->edges[i] = edge0;
 
-        // Include the vertices at both ends of the eget.
+        // Include the vertices at both ends of the edge.
         if (datum.modified) {
             vector<Vertex*> newVertices = {
                 datum.mergedHalfs[0]->getVertex(),
@@ -315,7 +315,8 @@ EditGraph* RuleApplier::createGraph() {
             // Create the path.
             MorphismPath* path = MorphismPath::createPath(mergedHalfs);
             HalfEdge* lastMergedHalf = endToMergedHalf(lastEndHalf);
-            path->setHalfEdges({ mergedHalfs[0], lastMergedHalf });
+            HalfEdge* halfEdges[2] = { mergedHalfs[0], lastMergedHalf };
+            path->setHalfEdges(halfEdges);
             openPaths.push_back(path);
         }
     }
@@ -814,7 +815,8 @@ void RuleApplier::freeVertexBase(Vertex* vertex) {
             // Create new path at vHalfEdge. Create a freed section expanded once in each
             // direction since the vertex is free now.
             auto* path = new MorphismPath({});
-            path->setHalfEdges({vHalfEdge, vHalfEdge});
+            HalfEdge* halfEdges[2] = {vHalfEdge, vHalfEdge};
+            path->setHalfEdges(halfEdges);
             path->expandBackward();
             path->expandForward();
             openPaths.push_back(path);

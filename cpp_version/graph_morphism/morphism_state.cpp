@@ -16,10 +16,6 @@ MorphismState::~MorphismState() {
     MemoryCounter::destruction("MorphismState");
 }
 
-void MorphismState::setQueue(const vector<HalfEdgeData>& newQueue) {
-    queue = newQueue;
-}
-
 void MorphismState::assignVertex(Vertex* vertexA, int indexB) {
     auto* vertexB = info->graphB->getVertices()[indexB];
     morphism->vertexBtoA[indexB] = vertexA;
@@ -29,10 +25,11 @@ void MorphismState::assignVertex(Vertex* vertexA, int indexB) {
         if (!halfB) {
             continue;
         }
+        HalfEdgeData data(halfB, vertexA);
         if (halfB->isSpliced()) {
-            spliceQueue.push_back(HalfEdgeData(halfB, vertexA));
+            spliceQueue.push_back(data);
         } else {
-            queue.push_back(HalfEdgeData(halfB, vertexA));
+            queue.push_back(data);
         }
     }
 }

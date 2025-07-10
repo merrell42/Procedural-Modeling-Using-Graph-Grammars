@@ -15,11 +15,10 @@ public:
     MorphismPath(const vector<Edge*>& pathEdges);
     ~MorphismPath();
 
-    void setHalfEdges(const vector<HalfEdge*>& halfEdges);
+    void setHalfEdges(HalfEdge* halfEdges[2]);
     bool isExtendable() const;
     Vertex* randomNextVertex();
     Vertex* rigidNextVertex();
-    Edge* edgeFromIndex(int index);
     void expandBackward();
     void expandForward();
     void merge(MorphismPath* pathB);

@@ -29,7 +29,7 @@ MorphismPath::~MorphismPath() {
     MemoryCounter::destruction("MorphismPath");
 }
 
-void MorphismPath::setHalfEdges(const vector<HalfEdge*>& halfEdges) {
+void MorphismPath::setHalfEdges(HalfEdge* halfEdges[2]) {
     this->halfEdges[0] = halfEdges[0];
     this->halfEdges[1] = halfEdges[1];
 }
@@ -48,6 +48,7 @@ Vertex* MorphismPath::randomNextVertex() {
     return halfEdges[index]->getVertex();
 }
 
+// This is to handle shapes with rigid edges that have a fixed length.
 Vertex* MorphismPath::rigidNextVertex() {
     for (int i = 0; i < 2; i++) {
         if (extendable[i] && pathEdges.size() >= 2) {
@@ -61,7 +62,7 @@ Vertex* MorphismPath::rigidNextVertex() {
             // Two consecutive indices must be rigid.
             bool rigid = true;
             for (int j = 0; j < 2; j++) {
-                auto* edge = edgeFromIndex(iIndices[j]);
+                auto* edge = pathEdges[iIndices[j]];
                 rigid = rigid && !edge->getEdgeType()->extendable();
             }
             if (rigid) {
@@ -72,10 +73,8 @@ Vertex* MorphismPath::rigidNextVertex() {
     return nullptr;
 }
 
-Edge* MorphismPath::edgeFromIndex(int index) {
-    return pathEdges[index];
-}
-
+// Move the start of the path to the previous half-edge.
+// If none exists, the path is no longer extendable.
 void MorphismPath::expandBackward() {
     auto* prevHalfEdge = halfEdges[0]->prev();
     if (prevHalfEdge) {
@@ -86,6 +85,8 @@ void MorphismPath::expandBackward() {
     }
 }
 
+// Move the end of the path to the next half-edge.
+// If none exists, the path is no longer extendable.
 void MorphismPath::expandForward() {
     pathEdges.push_back(halfEdges[1]->getEdge());
     auto* nextHalfEdge = halfEdges[1]->next();
@@ -96,9 +97,9 @@ void MorphismPath::expandForward() {
     }
 }
 
+// Merge pathB onto the end of this path.
 void MorphismPath::merge(MorphismPath* pathB) {
     halfEdges[1] = pathB->halfEdges[1];
     extendable[1] = pathB->extendable[1];
     pathEdges.insert(pathEdges.end(), pathB->pathEdges.begin(), pathB->pathEdges.end());
 }
-
