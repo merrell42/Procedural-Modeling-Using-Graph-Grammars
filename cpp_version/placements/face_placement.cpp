@@ -94,7 +94,7 @@ bool FacePlacement::setFromVertex(int vertexId) {
         return false;
     }
     
-    setD(d);
+    setD(newD);
     return true;
 }
 

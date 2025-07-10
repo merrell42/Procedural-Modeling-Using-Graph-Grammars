@@ -234,7 +234,7 @@ vector<int> VertexPlacement::getAllFaceIds() const {
 }
 
 int VertexPlacement::getNumConstraints() const {
-    return (int)unfreeFaceIds.size();
+    return (int)constrainedFaceIds.size();
 }
 
 // Add a third face for leaf vertices.

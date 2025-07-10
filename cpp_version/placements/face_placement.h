@@ -53,6 +53,8 @@ private:
     // Fixed means the face cannot move.
     bool fixed{false};
     unordered_set<Face*> fixedNeighbors;
+
+    // When it is set the plane is defined by it's normal and d.
     double d{0.0};
     double slope{0.0};
     double value{0.0};
