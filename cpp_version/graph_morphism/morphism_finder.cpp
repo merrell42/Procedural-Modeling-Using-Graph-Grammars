@@ -475,7 +475,7 @@ IntersectResult MorphismFinder::castRay(const Vec3& p0, const Vec3& dir, FaceGro
 // Cast a series of rays for splicing. Start at halfB and continue until the
 // until we've completed the series of spliced half-edges.
 HalfEdge* MorphismFinder::castSeriesOfRays(GraphHalfEdge* halfB, const Vec3& startPos, FaceGroup* groupA, const map<int, Face*>& faceMap, int maxDim) {
-    Vec3 p0 = startPos;
+    Vec3 p0 = startPos.copy();
     GraphHalfEdge* nextB = halfB->getNext();
     
     while (true) {
@@ -494,21 +494,20 @@ HalfEdge* MorphismFinder::castSeriesOfRays(GraphHalfEdge* halfB, const Vec3& sta
             double maxDistance = max(nearestDist, (double)maxRayDistance);
             double d = Util::randomUniform(0, maxDistance);
 
-            // TODO: This looks wrong. Check it.
-            p0 = dir;
-            p0.scale(d);
-            p0.add(startPos);
+            p0.add(dir.copy().scale(d));
         } else {
-            // Check that the first intersection is an edge with the correct type.
+            // We've reached the end of the spliced edges.
+            // Check that we now intersect an edge with the correct type.
             HalfEdge* nextA = firstIntersection.face->getHalfEdges()[firstIntersection.data->index];
             EdgeType* edgeTypeA = nextA->getEdgeType();
             EdgeType* edgeTypeB = nextB->getEdge()->getType();
 
             delete firstIntersection.data;
-            if (edgeTypeA != edgeTypeB) {
-                return nullptr;
-            } else {
+            // If types match, return the half-edge. Otherwise, we have failed.
+            if (edgeTypeA == edgeTypeB) {
                 return nextA;
+            } else {
+                return nullptr;
             }
         }
 
