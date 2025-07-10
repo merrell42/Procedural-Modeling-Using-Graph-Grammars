@@ -35,9 +35,8 @@ public:
     MorphismFinder(Model* model, bool groundEnabled);
     ~MorphismFinder() = default;
 
-    // Core functionality
     Morphism* findMorphism(Graph* graphB);
-    Morphism* findStarterMap(Graph* graphB);
+    Morphism* findStarterMorphism(Graph* graphB);
     void reset();
 
     // Static configuration
@@ -52,24 +51,22 @@ private:
     bool nodesModified;
     bool groundEnabled;
 
-    // Helper methods
     Face* findFace(FaceType* faceType);
     Morphism* findContinue(MorphismState* state);
     Morphism* assignVertex(MorphismState* state, Vertex* vertexA, int indexB);
     Morphism* matchHalfEdge(const HalfEdgeData& halfEdgeData, MorphismState* state);
+    Morphism* matchSplicedHalfEdge(const HalfEdgeData& halfEdgeData, MorphismState* state);
     Morphism* assignHalfEdge(HalfEdge* halfEdgeA, GraphHalfEdge* halfB, MorphismState* state);
-    Morphism* spliceHalfEdge(const HalfEdgeData& halfEdgeData, MorphismState* state);
 
     // Ray casting methods
     /*Face* castVolumeRaySeries(Face* face, const vector<GraphHalfEdge*>& rayHalfs, Face* goalFace);*/
     static IntersectResult castRay(const Vec3& p0, const Vec3& dir, FaceGroup* groupA, const map<int, Face*>& faceMap, int maxDim);
-    static HalfEdge* castRaySeries(GraphHalfEdge* halfB, const Vec3& startPos, FaceGroup* groupA, const map<int, Face*>& faceMap, int maxDim);
-    static void findNearestIntersection(Face* faceA, const Vec3& p0, const Vec3& p1, const Vec2& dir2, IntersectResult& nearestIntersect, int maxDim);
+    static HalfEdge* castSeriesOfRays(GraphHalfEdge* halfB, const Vec3& startPos, FaceGroup* groupA, const map<int, Face*>& faceMap, int maxDim);
+    static void findFirstIntersection(Face* faceA, const Vec3& p0, const Vec3& p1, const Vec2& dir2, IntersectResult& nearestIntersect, int maxDim);
 
-    // Static helper methods
-    static void addOuterFaces(Morphism* map, Graph* graphB);
+    // static void addOuterFaces(Morphism* map, Graph* graphB);
 
-    // Cache for spliced vertex types
+    // Cache for spliced vertex types.
     static map<int, VertexType*> splicedVertexTypes;
 };
 

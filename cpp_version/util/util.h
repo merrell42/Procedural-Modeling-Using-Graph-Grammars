@@ -2,6 +2,7 @@
 #include <vector>
 #include <functional>
 #include <string>
+#include <unordered_set>
 #include "../geometry/vec3.h"
 
 template <typename T> static
@@ -39,8 +40,9 @@ public:
 
     template<typename T>
     static void union_(vector<T>& a, const vector<T>& b) {
+        unordered_set<T> existing(a.begin(), a.end());
         for (const auto& elem : b) {
-            if (find(a.begin(), a.end(), elem) == a.end()) {
+            if (existing.insert(elem).second) {
                 a.push_back(elem);
             }
         }
