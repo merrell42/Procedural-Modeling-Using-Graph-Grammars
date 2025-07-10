@@ -19,6 +19,7 @@ struct FixedFace {
     double d;
 };
 
+// Represents the location of a face in the graph drawing.
 class FacePlacement {
 public:
     FacePlacement(const Vec3& normal, int id, RuleApplierSettings* settings, Face* face);
@@ -26,7 +27,7 @@ public:
 
     Face* getFace() const;
     double getD() const;
-    bool isFree() const;
+    bool isConstrained() const;
     const Vec3& getNormal() const;
     void setFixed(bool fixed);
     bool getFixed() const;
@@ -47,10 +48,12 @@ private:
     Vec3 normal;
     Face* face;
     RuleApplierSettings* settings;
-    bool free{true};
-    vector<Face*> fixedNeighbors;
-    double d{0.0};
+    // Constrained means is constrained in the optimization.
+    bool constrained{false};
+    // Fixed means the face cannot move.
     bool fixed{false};
+    unordered_set<Face*> fixedNeighbors;
+    double d{0.0};
     double slope{0.0};
     double value{0.0};
 };

@@ -12,6 +12,7 @@ void VertexPlacement::initialize() {
         Face* face = halfEdge->getFace();
         int id = face->getId();
 
+        // Create the face placement if it doesn't exist.
         if (!settings->getFace(id)) {
             auto normal = face->getFaceType()->getNormal();
             settings->facePlacements[id] = make_unique<FacePlacement>(normal, id, settings, face);
@@ -33,20 +34,20 @@ void VertexPlacement::constrainFace(int id) {
     if (it != freeFaceIds.end()) {
         freeFaceIds.erase(it);
     }
-    unfreeFaceIds.push_back(id);
+    constrainedFaceIds.push_back(id);
 
     // Check if the face IDs are colinear.
-    if (unfreeFaceIds.size() == 3) {
+    if (constrainedFaceIds.size() == 3) {
         auto* M = getM();
         if (!M) {
-            unfreeFaceIds.pop_back();
+            constrainedFaceIds.pop_back();
             colinearFaceIds.push_back(id);
         }
     }
 }
 
 void VertexPlacement::propagate() {
-    if (unfreeFaceIds.size() >= 3) {
+    if (constrainedFaceIds.size() >= 3) {
         settings->addToOrder(this->id, OrderInfo::Type::Vertex, -1);
         
         // Handle free faces and colinear faces.
@@ -55,7 +56,7 @@ void VertexPlacement::propagate() {
         
         for (int faceId : freeIds) {
             auto* fPlace = settings->getFace(faceId);
-            if (fPlace->isFree()) {
+            if (!fPlace->isConstrained()) {
                 fPlace->constrain(false, this->id);
             }
         }
@@ -96,7 +97,7 @@ Matrix* VertexPlacement::getA(const vector<int>& faceIds) {
 
 Matrix* VertexPlacement::getM() {
     if (!M) {
-        Matrix* A = getA(unfreeFaceIds);
+        Matrix* A = getA(constrainedFaceIds);
         // The three faces are colinear.
         // Return null if A is not invertible
         if (abs(Matrix::det(*A)) < 1e-8) {
@@ -112,8 +113,10 @@ Matrix* VertexPlacement::getM() {
 void VertexPlacement::setPosition() {
     vector<vector<double>> D(3, vector<double>(1));
 
+    // The position is at the intersection of three planes.
+    // Using the d-values for each plane, find the intersection point.
     for (size_t i = 0; i < 3; i++) {
-        int id = unfreeFaceIds[i];
+        int id = constrainedFaceIds[i];
         FacePlacement* fPlace = settings->getFace(id);
         D[i][0] = fPlace->getD();
     }
@@ -132,7 +135,7 @@ void VertexPlacement::setPosition() {
 Range VertexPlacement::getRange() {
     double m3[3], b3[3];
     for (size_t i = 0; i < 3; i++) {
-        int id = unfreeFaceIds[i];
+        int id = constrainedFaceIds[i];
         FacePlacement* fPlace = settings->getFace(id);
         auto mbi = fPlace->getChangeMB();
         m3[i] = mbi.m;
@@ -220,10 +223,10 @@ void VertexPlacement::addFreeFace(int id) {
 
 vector<int> VertexPlacement::getAllFaceIds() const {
     vector<int> allFaceIds;
-    allFaceIds.reserve(unfreeFaceIds.size() + freeFaceIds.size() + colinearFaceIds.size());
+    allFaceIds.reserve(constrainedFaceIds.size() + freeFaceIds.size() + colinearFaceIds.size());
 
     // Concatenate the vectors.
-    allFaceIds.insert(allFaceIds.end(), unfreeFaceIds.begin(), unfreeFaceIds.end());
+    allFaceIds.insert(allFaceIds.end(), constrainedFaceIds.begin(), constrainedFaceIds.end());
     allFaceIds.insert(allFaceIds.end(), freeFaceIds.begin(), freeFaceIds.end());
     allFaceIds.insert(allFaceIds.end(), colinearFaceIds.begin(), colinearFaceIds.end());
 

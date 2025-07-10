@@ -10,32 +10,19 @@ using Json = nlohmann::json;
 // Type definition for version update functions.
 using VersionUpdateFunction = function<void(Json&)>;
 
+// Manages the versioning of the JSON file, so that we can change the format of the
+// JSON file without breaking existing files.
 class JsonVersionManager {
 public:
     // Register a function that updates JSON to the next version.
-    static void registerUpdateFunction(VersionUpdateFunction updateFunc) {
-        versionUpdates.push_back(updateFunc);
-    }
+    static void registerUpdateFunction(VersionUpdateFunction updateFunc);
 
-    static void setInitialized(bool value) {
-        initialized = value;
-    }
+    static void setInitialized(bool value);
 
-    static bool isInitialized() {
-        return initialized;
-    }
+    static bool isInitialized();
 
     // Update JSON from its current version to the latest version.
-    static void updateToLatest(Json& json) {
-        int currentVersion = json.contains("version") ? json["version"].get<int>() : 0;
-        
-        // Apply each update function in sequence until we reach the latest version.
-        while (currentVersion < versionUpdates.size()) {
-            versionUpdates[currentVersion](json);
-            currentVersion++;
-            json["version"] = currentVersion;
-        }
-    }
+    static void updateToLatest(Json& json);
     
 private:
     // List of functions that update the JSON to the next version.

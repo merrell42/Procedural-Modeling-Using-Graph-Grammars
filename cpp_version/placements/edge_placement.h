@@ -23,8 +23,12 @@ public:
 private:
     Edge* edge;
     int id;
-    std::vector<int> vertexIds;
     Vec3 dir;
     RuleApplierSettings* settings;
+
+    // The edges are constrainted by the vertices at the end of the edges.
+    // Constraints is the same as vertex IDs, but may be in a different
+    // order and only partially filled.
+    std::vector<int> vertexIds;
     std::vector<int> constraints;
 };

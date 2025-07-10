@@ -13,11 +13,14 @@ class RuleApplierSettings;
 class Range;
 class Matrix;
 
+// Represents possible changes to the position of a vertex along a basis direction.
+// b is the initial value, m is the direction of change.
 struct ChangeVecMB {
     Vec3 m;
     Vec3 b;
 };
 
+// Represents the location of a vertex in the graph drawing.
 class VertexPlacement {
 public:
     VertexPlacement(Vertex* vertex, int id, RuleApplierSettings* settings) : vertex(vertex), id(id), settings(settings), M(nullptr) {
@@ -46,7 +49,7 @@ public:
     Vec3 slope;
     Vec3 value;
     vector<int> freeFaceIds;
-    vector<int> unfreeFaceIds;
+    vector<int> constrainedFaceIds;
 
 private:
     Vertex* vertex;
@@ -55,6 +58,9 @@ private:
     vector<int> colinearFaceIds;
     Matrix* M;
 
-    Matrix* getA(const vector<int>& faceIds);
+    // The vertex is at the intersection of three planes.
+    // Multiply M times the d-values for each plane to get the position.
     Matrix* getM();
+    // A is the inverse of M. A depends on the normals of the three planes.
+    Matrix* getA(const vector<int>& faceIds);
 };

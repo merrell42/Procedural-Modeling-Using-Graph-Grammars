@@ -41,7 +41,7 @@ void RuleApplierSettings::mergeFace(int idA, int idB) {
                 getFace(idA)->vertexIds.push_back(vId);
             }
         }
-        for (auto& faceId : vPlace->unfreeFaceIds) {
+        for (auto& faceId : vPlace->constrainedFaceIds) {
             if (faceId == idB) {
                 faceId = idA;
                 int vId = key;
