@@ -31,11 +31,8 @@ public:
 
     // Array operations
     template<typename T>
-    static void remove(vector<T>& array, const T& element) {
-        auto it = find(array.begin(), array.end(), element);
-        if (it != array.end()) {
-            array.erase(it);
-        }
+    static inline void remove(vector<T>& array, const T& element) {
+        array.erase(std::remove(array.begin(), array.end(), element), array.end());
     }
 
     template<typename T>

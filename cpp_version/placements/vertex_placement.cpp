@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "vertex_placement.h"
+#include "../util/util.h"
 
 void VertexPlacement::initialize() {
     vector<HalfEdge*> halfEdges = vertex->getHalfEdges();
@@ -21,6 +22,7 @@ void VertexPlacement::initialize() {
     }
 }
 
+// Constrain the first free face.
 void VertexPlacement::addConstraint() {
     if (freeFaceIds.empty()) {
         throw runtime_error("No free faces available for constraint");
@@ -29,11 +31,9 @@ void VertexPlacement::addConstraint() {
     settings->getFace(freeFaceId)->constrain(true, -1);
 }
 
+// Remove the face ID from the free faces and add to the constrained one.
 void VertexPlacement::constrainFace(int id) {
-    auto it = find(freeFaceIds.begin(), freeFaceIds.end(), id);
-    if (it != freeFaceIds.end()) {
-        freeFaceIds.erase(it);
-    }
+    Util::remove(freeFaceIds, id);
     constrainedFaceIds.push_back(id);
 
     // Check if the face IDs are colinear.
@@ -46,6 +46,8 @@ void VertexPlacement::constrainFace(int id) {
     }
 }
 
+// If the position of the vertex is full constrained, propagate its position to the
+// neighboring geometry.
 void VertexPlacement::propagate() {
     if (constrainedFaceIds.size() >= 3) {
         settings->addToOrder(this->id, OrderInfo::Type::Vertex, -1);
