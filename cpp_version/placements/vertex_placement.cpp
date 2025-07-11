@@ -31,7 +31,7 @@ void VertexPlacement::addConstraint() {
     settings->getFace(freeFaceId)->constrain(true, -1);
 }
 
-// Remove the face ID from the free faces and add to the constrained one.
+// Remove the ID from the free faces and add it to the constrained ones.
 void VertexPlacement::constrainFace(int id) {
     Util::remove(freeFaceIds, id);
     constrainedFaceIds.push_back(id);
@@ -50,25 +50,25 @@ void VertexPlacement::constrainFace(int id) {
 // neighboring geometry.
 void VertexPlacement::propagate() {
     if (constrainedFaceIds.size() >= 3) {
-        settings->addToOrder(this->id, OrderInfo::Type::Vertex, -1);
-        
-        // Handle free faces and colinear faces.
+        settings->addToOrder(id, OrderInfo::Type::Vertex, -1);
+
+        // Constrain all the remaining free faces and colinear ones since the
+        // vertex position is now fully constrained.
         auto freeIds = freeFaceIds;
         freeIds.insert(freeIds.end(), colinearFaceIds.begin(), colinearFaceIds.end());
-        
         for (int faceId : freeIds) {
             auto* fPlace = settings->getFace(faceId);
             if (!fPlace->isConstrained()) {
-                fPlace->constrain(false, this->id);
+                fPlace->constrain(false, id);
             }
         }
 
-        // Handle connected edges.
+        // Propagate to connected edges.
         for (HalfEdge* halfEdge : vertex->getHalfEdges()) {
             int edgeId = halfEdge->getEdge()->getId();
             auto* ePlace = settings->getEdge(edgeId);
             if (ePlace) {
-                ePlace->addConstraint(this->id);
+                ePlace->addConstraint(id);
             }
 
             auto* prev = halfEdge->prev();
@@ -77,7 +77,7 @@ void VertexPlacement::propagate() {
                 int prevEdgeId = prev->getEdge()->getId();
                 auto* prevEPlace = settings->getEdge(prevEdgeId);
                 if (prevEPlace) {
-                    prevEPlace->addConstraint(this->id);
+                    prevEPlace->addConstraint(id);
                 }
             }
         }
@@ -87,9 +87,10 @@ void VertexPlacement::propagate() {
 Matrix* VertexPlacement::getA(const vector<int>& faceIds) {
     vector<vector<double>> A(3, vector<double>(3));
 
+    // A defines how the d-values affect the vertex position using face normals.
     for (size_t i = 0; i < 3; i++) {
         int id = faceIds[i];
-        FacePlacement* fPlace = settings->getFace(id);
+        auto fPlace = settings->getFace(id);
         Vec3 n = fPlace->getNormal();
         A[i] = { n.getX(), n.getY(), n.getZ()};
     }
@@ -97,6 +98,7 @@ Matrix* VertexPlacement::getA(const vector<int>& faceIds) {
     return new Matrix(A);
 }
 
+// M inverts the matrix A telling us how the vertex position is found from the d-values.
 Matrix* VertexPlacement::getM() {
     if (!M) {
         Matrix* A = getA(constrainedFaceIds);
@@ -134,7 +136,9 @@ void VertexPlacement::setPosition() {
     delete bMatrix;
 }
 
+// Find the range of possible positions for the vertex.
 Range VertexPlacement::getRange() {
+    // Determine how the 3 basis vectors affect the vertex position.
     double m3[3], b3[3];
     for (size_t i = 0; i < 3; i++) {
         int id = constrainedFaceIds[i];
@@ -153,6 +157,7 @@ Range VertexPlacement::getRange() {
             b[i] += M[i][j] * b3[j];
         }
     }
+    // Limit the range so that the vertex is inside the bounds of the model.
     Range range(-numeric_limits<double>::infinity(), numeric_limits<double>::infinity());
     for (int i = 0; i < 3; i++) {
         Range rangeI = Range::transformCreate(m[i], b[i], Range(settings->lower[i], settings->upper[i]));
@@ -185,17 +190,18 @@ void VertexPlacement::addFixedNeighbor(const FixedFace& fixedFace) {
 }
 
 void VertexPlacement::addFreeFace(int id) {
-    // Update id if a new ID is found.
+    // If we have combined multiple faces, get the canonical ID here.
     auto it = settings->uniqueFaceMap.find(id);
     if (it != settings->uniqueFaceMap.end()) {
         id = it->second;
     }
 
-    // Check if the ID is already in freeFaceIds.
-    if (find(freeFaceIds.begin(), freeFaceIds.end(), id) != freeFaceIds.end()) {
+    // If the ID is already in freeFaceIds, do nothing.
+    if (contains(freeFaceIds, id)) {
         return;
     }
 
+    // Check if the new face is coplanar with any of the existing faces.
     FacePlacement* newFreeFace = settings->getFace(id);
     int coplanarId = 0;
     bool isCoplanar = false;
@@ -208,6 +214,7 @@ void VertexPlacement::addFreeFace(int id) {
         }
     }
 
+    // If the new face is coplanar with any of the existing faces, merge them.
     if (isCoplanar) {
         settings->mergeFace(coplanarId, id);
         id = coplanarId;
@@ -215,14 +222,16 @@ void VertexPlacement::addFreeFace(int id) {
         freeFaceIds.push_back(id);
     }
 
-    settings->getFace(id)->addVertexId(this->id); // Add the vertex ID to the face
+    // Add the vertex ID to the face.
+    settings->getFace(id)->addVertexId(this->id);
 
-    // Check for colinearity
+    // Check for colinearity.
     //if (freeFaceIds.size() == 3 && getA(freeFaceIds).empty()) {
-    //    freeFaceIds.pop_back(); // Remove the last face ID
+    //    freeFaceIds.pop_back();
     //}
 }
 
+// Get all the face IDs including the constrained, free, and colinear faces.
 vector<int> VertexPlacement::getAllFaceIds() const {
     vector<int> allFaceIds;
     allFaceIds.reserve(constrainedFaceIds.size() + freeFaceIds.size() + colinearFaceIds.size());
@@ -232,7 +241,7 @@ vector<int> VertexPlacement::getAllFaceIds() const {
     allFaceIds.insert(allFaceIds.end(), freeFaceIds.begin(), freeFaceIds.end());
     allFaceIds.insert(allFaceIds.end(), colinearFaceIds.begin(), colinearFaceIds.end());
 
-    return allFaceIds; // Return the combined vector.
+    return allFaceIds;
 }
 
 int VertexPlacement::getNumConstraints() const {
@@ -257,16 +266,18 @@ void VertexPlacement::guaranteeThreeFaces() {
     }
 }
 
+// Fix the vertex placement based on the vertex value.
 bool VertexPlacement::fixPosition() {
-    this->slope = Vec3::ORIGIN;
-    this->value = this->vertex->getPosition();
+    slope = Vec3::ORIGIN;
+    value = vertex->getPosition();
 
-    for (const auto& id : this->getAllFaceIds()) {
-        auto success = settings->getFace(id)->setFromVertex(this->id);
+    // If this contradicts any of the fixed faces, fail by returning false.
+    for (const auto& faceId : getAllFaceIds()) {
+        auto success = settings->getFace(faceId)->setFromVertex(id);
         if (!success) {
             return false;
         }
-        settings->getFace(id)->setFixed(true);
+        settings->getFace(faceId)->setFixed(true);
     }
 
     return true;
