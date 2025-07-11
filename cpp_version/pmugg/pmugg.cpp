@@ -19,10 +19,8 @@
 using namespace std;
 using Json = nlohmann::json;
 
+// The main function for the command line version.
 int main() {
-	// string filePath = "../../grammar data/2D Basic Shapes/square filled.json";
-	// string filePath = "../../grammar data/3D Shapes/L-floating.json";
-	// string filePath = "../../grammar data/2D Branches/A.json";
 	vector<string> filePaths = {
 		"../../grammar data/3D Complex Shapes/castle.json",
 		"../../grammar data/2D Basic Shapes/square hollow.json",
@@ -31,10 +29,11 @@ int main() {
 	};
 	resetRandom(2);
 
+	// Run the program for each file.
 	for (string filePath : filePaths) {
 		timer->reset();
-		
 		try {
+			// Import the grammar JSON file then iterate 100 steps.
 			Json parsed = readJsonFile(filePath, false);
 			cout << endl << parsed["name"] << endl;
 			auto hierarchy = GraphGrammar::import(parsed);
@@ -47,9 +46,8 @@ int main() {
 			cout << "Error: " << e.what() << endl;
 		}
 
-		// Print memory leak statistics before program exits.
+		// Print memory leak and timing statistics before program exits.
 		MemoryCounter::printStats();
-
 		timer->printStats();
 	}
 	

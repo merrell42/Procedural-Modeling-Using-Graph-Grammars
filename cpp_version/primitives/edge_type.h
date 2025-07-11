@@ -12,11 +12,14 @@ using Json = nlohmann::json;
 class FaceType;
 class Primitives;
 
+// A face type and a boolean for if the face is on the right or left side of the edge.
 struct FaceData {
     FaceType* type;
     bool onRight;
 };
 
+// Represents an edge type. Edges with the same type are locally similar.
+// Contains a direction and an array of face types.
 class EdgeType {
 public:
     EdgeType(const vector<FaceData>& faceData, const Vec3& dir, 

@@ -20,6 +20,7 @@ using Json = nlohmann::json;
 Model* model;
 Mutator* mutator;
 
+// Initialize the model and mutator from the JSON file. Return messages in the result string.
 void initialize(const char* filePath, char* result, int len, int seed) {
 	resetRandom(seed);
 
@@ -40,16 +41,19 @@ void initialize(const char* filePath, char* result, int len, int seed) {
 	}
 }
 
+// Reset the model and mutator.
 void reset(int seed) {
 	model->reset();
 	mutator->reset();
 	resetRandom(seed);
 }
 
+// Iterate some number of steps.
 void iterate(int steps) {
 	mutator->iterate(steps);
 }
 
+// Iterate until a certain amount of time has passed.
 int iterateToTime(float timeSeconds) {
 	int steps = 0;
 	auto startTime = std::chrono::high_resolution_clock::now();
@@ -62,19 +66,23 @@ int iterateToTime(float timeSeconds) {
 	return steps;
 }
 
+// Return the number of faces in the current model.
 int getNumFaces() {
 	return (int)model->getCurrent()->getFaceMap().size();
 }
 
+// Return the current mesh.
 MeshCpp getMesh() {
 	return model->getCurrent()->exportMesh();
 }
 
+// Set the size of the model.
 void setSize(float x, float y, float z) {
 	std::vector<double> extents = {x, y, z};
 	globalSettings["Extents"] = extents;
 }
 
+// Free memory for the mesh.
 void destroyMesh(MeshCpp& mesh) {
 	freeMeshMemory(mesh);
 }
