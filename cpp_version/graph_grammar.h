@@ -15,6 +15,8 @@ class Primitives;
 class EdgeType;
 class VertexType;
 
+// Everything needed to apply a production rule. The start and end
+// graphs and morphism to the graph drawing.
 struct Production {
     Graph* startGraph;
     Graph* endGraph;
@@ -22,42 +24,37 @@ struct Production {
     bool ground;
 };
 
+// A graph grammar is a set of production rules that are used to modify the graph drawing.
 class GraphGrammar {
 public:
     GraphGrammar();
     ~GraphGrammar() = default;
     static GraphGrammar* import(const Json& json);
 
-    void reset();
-    const vector<ProductionRule*>& getGroundRules() const;
-    int getDims() const { return shape->dims; }
-
+    // Get a production rule.
     Production getProduction();
     Production getRemoveProduction();
     Production getStarterProduction(bool useGround);
 
+    bool isGrounded() const;
+
+    // Get the number of dimensions of the graph.
+    int getDims() const { return primitives->dims; }
+
 private:
-    vector<vector<Graph*>> generations;
-    vector<Graph*> nodeQueue;
-    Graph* emptyGraph;
-
-    Primitives* shape;
-    vector<ProductionRule*> rules;
+    // The production rules.
+    // Starter rules have an empty start graph.
     vector<ProductionRule*> starterRules;
+    // Normal rules have a non-empty start graph.
+    vector<ProductionRule*> rules;
+    // Ground rules are like starter rules, but just for creating the
+    // ground plane on the first iteration.
     vector<ProductionRule*> groundRules;
+
+    Graph* emptyGraph;
+    Primitives* primitives;
+
+    // True if there is a ground plane for this model.
     bool grounded;
-
-    struct GraphSet {
-        vector<Graph*> face;
-        vector<Graph*> edge;
-        vector<Graph*> vertex;
-        vector<EdgeType*> edgeTypes;
-        map<string, EdgeType*> splicedEdgeTypes;
-    };
-
-    struct Match {
-        vector<int> vertices;
-        vector<array<int, 4>> edges;
-    };
 };
 

@@ -1,13 +1,9 @@
-// pmugg.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
-
 #include "pch.h"
 #include <fstream>
 #include <iostream>
 #include <vector>
 #include "../graph_grammar.h"
 #include "../mutator.h"
-#include "../graph_mutator.h"
 #include "../primitives/primitives.h"
 #include "../third_party/json.h"
 #include "../graph_drawing/model.h"
@@ -36,9 +32,9 @@ int main() {
 			// Import the grammar JSON file then iterate 100 steps.
 			Json parsed = readJsonFile(filePath, false);
 			cout << endl << parsed["name"] << endl;
-			auto hierarchy = GraphGrammar::import(parsed);
+			auto grammar = GraphGrammar::import(parsed);
 			auto model = new Model();
-			auto mutator = new Mutator(model, new GraphMutator(hierarchy, model));
+			auto mutator = new Mutator(model, grammar);
 			mutator->iterate(100);
 			cout << "Num Faces: " << model->getCurrent()->getFaceMap().size() << endl;
 			model->reset();

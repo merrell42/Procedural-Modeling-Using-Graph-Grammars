@@ -26,9 +26,9 @@ void initialize(const char* filePath, char* result, int len, int seed) {
 
 	try {
 		Json parsed = readJsonFile(filePath);
-		auto hierarchy = GraphGrammar::import(parsed);
+		auto grammar = GraphGrammar::import(parsed);
 		model = new Model();
-		mutator = new Mutator(model, new GraphMutator(hierarchy, model));
+		mutator = new Mutator(model, new GraphMutator(grammar, model));
 		strcpy_s(result, len, "Success");
 	} catch (const Json::exception& e) {
 		string errorMsg = "Error: JSON parsing failed - ";

@@ -2,35 +2,35 @@
 #include <functional>
 #include <memory>
 #include <string>
-#include "graph_mutator.h"
+#include "graph_grammar.h"
 #include "../util/timer.h"
 #include "../graph_drawing/model.h"
+#include "../graph_morphism/morphism_finder.h"
 
 class Classifier;
 class Timer;
 class Model;
 class MutationArea;
-class GraphMutator;
+class Morphism;
+class GraphGrammar;
 
 class Mutator {
 public:
-    Mutator(Model* model, GraphMutator* graphMutator);
+    Mutator(Model* model, GraphGrammar* grammar);
     ~Mutator() = default;
 
-    void iterate(int step);
+    void iterate(int steps);
     void mutate();
     void mutateGround();
-    void accept();
-    void reject();
     void reset();
-
-    // Static members
-    static int taskCount;
-    static constexpr int findMutableVertexAttempts = 20;
-    static constexpr int findMutableEdgeAttempts = 20;
 
 private:
     Model* model;
-    unique_ptr<GraphMutator> graphMutator;
+    GraphGrammar* grammar;
+    unique_ptr<MorphismFinder> morphismFinder;
+
+    bool addStartInstance(bool useGround);
+    bool changeRandomInstance(bool justDestructible = false);
+    bool applyProduction(Production production);
 };
 

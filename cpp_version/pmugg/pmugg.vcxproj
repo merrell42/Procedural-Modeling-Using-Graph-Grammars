@@ -171,7 +171,6 @@
     <ClCompile Include="..\graph_morphism\morphism_info.cpp" />
     <ClCompile Include="..\graph_morphism\morphism_path.cpp" />
     <ClCompile Include="..\graph_morphism\morphism_state.cpp" />
-    <ClCompile Include="..\graph_mutator.cpp" />
     <ClCompile Include="..\json versioning\json_migrations.cpp" />
     <ClCompile Include="..\json versioning\json_version_manager.cpp" />
     <ClCompile Include="..\json versioning\read_json_file.cpp" />
@@ -227,7 +226,6 @@
     <ClInclude Include="..\graph_morphism\morphism_info.h" />
     <ClInclude Include="..\graph_morphism\morphism_path.h" />
     <ClInclude Include="..\graph_morphism\morphism_state.h" />
-    <ClInclude Include="..\graph_mutator.h" />
     <ClInclude Include="..\json versioning\json_migrations.h" />
     <ClInclude Include="..\json versioning\json_version_manager.h" />
     <ClInclude Include="..\json versioning\read_json_file.h" />

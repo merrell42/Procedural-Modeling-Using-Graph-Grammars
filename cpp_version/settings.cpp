@@ -1,8 +1,8 @@
 #include "pch.h"
 #include "settings.h"
 
-
-
+// TODO: Remove the unused settings.
+// Most of these settings are no longer used.
 Json globalSettings = {
     {"Extents", vector<int>{30, 20, 10}},
     {"Incremental Mutation", true},
@@ -56,9 +56,7 @@ Json globalSettings = {
     {"Edge Weld Probability", 0.7f},
     {"Node Debug", -1},
     {"Debug Alerts", false},
-    {"Max Time Enabled", false},
     {"Max Time", 10},
-    {"Max Iterations", 100},
     {"Generations", 5},
     {"Max Connectors", 100},
     {"Winding Enabled", true},
