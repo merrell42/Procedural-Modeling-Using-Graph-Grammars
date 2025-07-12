@@ -169,8 +169,8 @@ VertexType* Edge::getVertexType(EdgeType* edgeType) {
 
         // Create a spliced vertex with two edges.
 		VertexType* vertexType = new VertexType();
-        vertexType->addEdge(edgeType, true);
-        vertexType->addEdge(edgeType, false);
+        vertexType->addHalfEdge(edgeType, true);
+        vertexType->addHalfEdge(edgeType, false);
         vertexType->setSpliced(true);
 
         splitVertexTypes[id] = vertexType;

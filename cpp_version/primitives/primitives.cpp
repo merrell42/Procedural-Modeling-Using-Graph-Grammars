@@ -19,25 +19,25 @@ Primitives* Primitives::import(const Json& json) {
     if (json.contains("dims")) {
         dims = json.at("dims");
     }
-    auto shape = new Primitives(dims);
+    auto primitives = new Primitives(dims);
 
     vector<FaceType*> faceTypes;
     for (const auto& type : json.at("faceTypes")) {
         faceTypes.push_back(FaceType::import(type));
     }
-    shape->faceTypes = faceTypes;
+    primitives->faceTypes = faceTypes;
 
     vector<EdgeType*> edgeTypes;
     for (const auto& type : json.at("edgeTypes")) {
-        edgeTypes.push_back(EdgeType::import(type, shape));
+        edgeTypes.push_back(EdgeType::import(type, primitives));
     }
-    shape->edgeTypes = edgeTypes;
+    primitives->edgeTypes = edgeTypes;
     
     vector<VertexType*> vertexTypes;
     for (const auto& type : json.at("vertexTypes")) {
-        vertexTypes.push_back(VertexType::import(type, shape));
+        vertexTypes.push_back(VertexType::import(type, primitives));
     }
-    shape->vertexTypes = vertexTypes;
+    primitives->vertexTypes = vertexTypes;
 
-    return shape;
+    return primitives;
 }

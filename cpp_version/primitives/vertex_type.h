@@ -27,15 +27,12 @@ public:
 
     const vector<HalfEdgeType>& getHalfEdgeTypes() const;
     bool getSpliced() const;
-
-    void addEdge(EdgeType* edge, bool isAtStart);
     void setSpliced(bool spliced);
+
+    void addHalfEdge(EdgeType* edge, bool isAtStart);
 
 private:
     vector<HalfEdgeType> halfEdgeTypes;
     bool spliced;
-    int id;
-
-    static int nextId;
 };
 

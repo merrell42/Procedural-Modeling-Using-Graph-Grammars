@@ -4,11 +4,7 @@
 #include "primitives.h"
 #include "../util/util.h"
 
-int VertexType::nextId = 0;
-
-VertexType::VertexType()
-    : spliced(false)
-    , id(nextId++) {
+VertexType::VertexType() : spliced(false) {
 }
 
 const vector<HalfEdgeType>& VertexType::getHalfEdgeTypes() const {
@@ -19,7 +15,11 @@ bool VertexType::getSpliced() const {
     return spliced;
 }
 
-void VertexType::addEdge(EdgeType* edge, bool isAtStart) {
+void VertexType::setSpliced(bool spliced) {
+    this->spliced = spliced;
+}
+
+void VertexType::addHalfEdge(EdgeType* edge, bool isAtStart) {
     auto dir = edge->getDir();
     if (!isAtStart) {
         dir = dir * -1.0f;
@@ -31,10 +31,6 @@ void VertexType::addEdge(EdgeType* edge, bool isAtStart) {
     halfEdgeType.isAtStart = isAtStart;
 
     halfEdgeTypes.push_back(halfEdgeType);
-}
-
-void VertexType::setSpliced(bool spliced) {
-    this->spliced = spliced;
 }
 
 VertexType* VertexType::import(const Json& json, Primitives* shape) {    

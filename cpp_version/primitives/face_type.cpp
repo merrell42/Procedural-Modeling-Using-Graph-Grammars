@@ -6,31 +6,10 @@
 #include <cmath>
 #include <math.h>
 
-int FaceType::nextId = 0;
-
 FaceType::FaceType(const string& mat, const Vec3& n)
     : material(mat)
-    , normal(n)
-    , id(nextId++) {
-    computeOrthonormalBasis();
+    , normal(n) {
     maxDim = Util::maxDim(normal);
-}
-
-void FaceType::computeOrthonormalBasis() {
-    // Find the smallest component of the normal.
-    int minDim = 0;
-    double minVal = abs(normal[0]);
-    for (int i = 1; i < 3; i++) {
-        if (abs(normal[i]) < minVal) {
-            minDim = i;
-            minVal = abs(normal[i]);
-        }
-    }
-    // Create two vectors orthogonal to the normal.
-    u = Vec3();
-    u.setValue(1.0f, minDim);
-    u = normal.cross(u).normalize();
-    v = normal.cross(u).normalize();
 }
 
 

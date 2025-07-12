@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <unordered_set>
 #include "../geometry/vec3.h"
 #include "../util/range.h"
 #include "../memory_counter.h"

@@ -16,19 +16,10 @@ public:
 
     static FaceType* import(const Json& json);
 
-    Vec3 u;
-    Vec3 v;
-    int id;
-
 private:
     string material;
     Vec3 normal;
     Vec3 color;
     int maxDim;
-
-    static int nextId;
-
-    // Helper methods
-    void computeOrthonormalBasis();
 };
 

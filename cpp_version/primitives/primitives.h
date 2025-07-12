@@ -9,6 +9,7 @@
 class VertexType;
 class EdgeType;
 
+// A collection of all the primitive types: vertex, edge, and face types.
 class Primitives {
 public:
     Primitives(int dims);
