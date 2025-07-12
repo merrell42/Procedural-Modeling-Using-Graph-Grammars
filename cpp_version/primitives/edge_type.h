@@ -25,6 +25,7 @@ public:
     EdgeType(const vector<FaceData>& faceData, const Vec3& dir, 
                const map<string, bool>& options = {});
     ~EdgeType() = default;
+    static EdgeType* import(const Json& json, Primitives* shape);
 
     const vector<FaceData>& getFaceData() const;
     const Vec3& getDir() const;
@@ -36,11 +37,8 @@ public:
     void setSpliced(bool newSpliced);
     bool extendable() const;
 
-    static EdgeType* import(const Json& json, Primitives* shape);
-
-    vector<FaceData> faceData;
-
 private:
+    vector<FaceData> faceData;
     Vec3 dir;
     EdgeSettings* edgeSettings;
     bool isRigid;

@@ -29,7 +29,7 @@ void Vertex::createHalfEdges() {
 
 	for (const auto& halfEdgeType : halfEdgeTypes) {
 		EdgeType* edgeType = halfEdgeType.edge;
-		const vector<FaceData> faceData = edgeType->faceData;
+		const vector<FaceData> faceData = edgeType->getFaceData();
 
 		for (size_t faceIndex = 0; faceIndex < faceData.size(); ++faceIndex) {
 			const FaceData& faceDatum = faceData[faceIndex];

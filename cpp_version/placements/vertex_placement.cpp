@@ -72,7 +72,7 @@ void VertexPlacement::propagate() {
             }
 
             auto* prev = halfEdge->prev();
-            if (prev->getEdgeType()->faceData.size() == 1) {
+            if (prev->getEdgeType()->getFaceData().size() == 1) {
                 // If prev edge only has one halfEdge, propagate to previous vertex.
                 int prevEdgeId = prev->getEdge()->getId();
                 auto* prevEPlace = settings->getEdge(prevEdgeId);

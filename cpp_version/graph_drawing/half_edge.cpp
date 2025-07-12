@@ -32,7 +32,7 @@ HalfEdge::~HalfEdge() {
 
 FaceType* HalfEdge::getFaceType() {
     if (!faceTypeCached) {
-        const auto& faceData = edgeType->faceData;
+        const auto& faceData = edgeType->getFaceData();
         faceTypeCached = faceData[faceIndex].type;
     }
     return faceTypeCached;
