@@ -115,16 +115,16 @@ EditGraph* RuleApplier::createGraph() {
     // Maps from end graph half-edges to merged half-edges.
     merged->halfEdges.resize(endGraph->getHalfEdges().size(), nullptr);
     auto endToMergedHalf = [&](GraphHalfEdge* endHalf) -> HalfEdge* {
-        int index = Util::findIndex<GraphHalfEdge*>(endGraph->getHalfEdges(), endHalf);
+        int index = indexOf<GraphHalfEdge*>(endGraph->getHalfEdges(), endHalf);
         return merged->halfEdges[index];
     };
     auto setEndToMergedHalf = [&](GraphHalfEdge* endHalf, HalfEdge* mergedHalf) {
-        int index = Util::findIndex<GraphHalfEdge*>(endGraph->getHalfEdges(), endHalf);
+        int index = indexOf<GraphHalfEdge*>(endGraph->getHalfEdges(), endHalf);
         merged->halfEdges[index] = mergedHalf;
     };
     // Maps from end graph vertices to merged vertices.
     auto endToMergedVertex = [&](GraphVertex* endVertex) -> Vertex* {
-        int index = Util::findIndex<GraphVertex*>(endGraph->getVertices(), endVertex);
+        int index = indexOf<GraphVertex*>(endGraph->getVertices(), endVertex);
         return merged->vertices[index];
     };
 
@@ -187,7 +187,7 @@ EditGraph* RuleApplier::createGraph() {
             int boundaryIndex = endVertex->boundaryIndex();
             if (boundaryIndex >= 0) {
                 // Find the edge location in the start graph.
-                int startIndex = Util::findIndex(startGraph->getEdges(),
+                int startIndex = indexOf(startGraph->getEdges(),
                     startGraph->getBVertices()[boundaryIndex]->interiorEdge());
 
                 if (splitEdges[startIndex].size() == 1) {

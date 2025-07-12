@@ -21,23 +21,8 @@ void resetRandom(int seed) {
     randomCount = 0;
 }
 
-double Util::fixAngle(double angle) {
-    while (angle > PI) {
-        angle -= 2 * PI;
-    }
-    while (angle <= -PI) {
-        angle += 2 * PI;
-    }
-    return angle;
-}
-
 int Util::randomInt(int count) {
     return static_cast<int>(random() * count);
-}
-
-template<typename T>
-void Util::fastConcat(vector<T>& allData, const vector<T>& newData) {
-    allData.insert(allData.end(), newData.begin(), newData.end());
 }
 
 int Util::maxDim(const Vec3& n) {

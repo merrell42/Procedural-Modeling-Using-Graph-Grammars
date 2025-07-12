@@ -8,8 +8,7 @@ Matrix::Matrix(const Matrix& newMatrix)
     MemoryCounter::creation("Matrix");
 }
 
-Matrix::Matrix(const vector<vector<double>>& d)
-    : data(d) {
+Matrix::Matrix(const vector<vector<double>>& d) : data(d) {
     MemoryCounter::creation("Matrix");
     size = {static_cast<int>(data.size()),
             static_cast<int>(data.empty() ? 0 : data[0].size())};
@@ -37,10 +36,12 @@ Matrix* Matrix::multiply(const Matrix* A, const Matrix* B) {
     return result;
 }
 
+// Find the determinant of a 2x2 matrix.
 double Matrix::det2x2(double a, double b, double c, double d) {
     return a * d - b * c;
 }
 
+// Find the determinant of a 3x3 matrix.
 double Matrix::det(const Matrix& A) {
     const auto& d = A.data;
     double a = d[0][0], b = d[0][1], c = d[0][2];
@@ -49,6 +50,7 @@ double Matrix::det(const Matrix& A) {
     return a*f*j + b*g*h + c*e*i - c*f*h - b*e*j - a*g*i;
 }
 
+// Find the inverse of a 3x3 matrix.
 Matrix* Matrix::inverse(const Matrix* A) {
     double det1 = 1.0 / det(*A);
     const auto& d = A->data;

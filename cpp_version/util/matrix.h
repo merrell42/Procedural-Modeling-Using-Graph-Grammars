@@ -15,6 +15,8 @@ public:
     const vector<vector<double>>& valueOf() const { return data; }
     const vector<int>& getSize() const { return size; }
     static Matrix* multiply(const Matrix* A, const Matrix* B);
+
+    // For inverse and det the matrix is assumed to be a 3x3 matrix.
     static Matrix* inverse(const Matrix* A);
     static double det(const Matrix& A);
     static double det2x2(double a, double b, double c, double d);

@@ -6,12 +6,12 @@
 #include "util.h"
 #include "minmax.h"
 
-Range::Range()
-    : low(0), high(0), tileLength(0) {}
+Range::Range() : low(0), high(0), tileLength(0) {}
 
 Range::Range(double low_, double high_, double tilelen)
     : low(low_), high(high_), tileLength(tilelen) {}
 
+// Intersect two ranges. If they have tile lengths, compute the least common multiple.
 void Range::intersect(const Range& rangeB) {
     low = max(low, rangeB.low);
     high = min(high, rangeB.high);
@@ -22,6 +22,7 @@ bool Range::isEmpty() const {
     return high < low;
 }
 
+// Sample a random value from the range.
 double Range::sample() const {
     if (tileLength == 0) {
         return Util::randomUniform(low, high);
@@ -32,39 +33,49 @@ double Range::sample() const {
     }
 }
 
+// Check if a value is inside the range.
 bool Range::isInside(double x) const {
     double m = ERROR_MARGIN;
     return (low - m <= x) && (x <= high + m);
 }
 
-Range Range::transform(double a, double b) const {
-    if (a > 0) {
-        return Range(a * low + b, a * high + b, a * tileLength);
+// Transform the range by a linear function.
+Range Range::transform(double m, double b) const {
+    if (m > 0) {
+        return Range(m * low + b, m * high + b, m * tileLength);
     } else {
-        return Range(a * high + b, a * low + b, a * tileLength);
+        return Range(m * high + b, m * low + b, m * tileLength);
     }
 }
 
-Range Range::transformCreate(double a, double b, const Range& rangeB) {
-    if (abs(a) < ERROR_MARGIN) {
+// Transform a range by a linear function.
+Range Range::transformCreate(double m, double b, const Range& rangeB) {
+    // If the slope is 0, return an infinite range if the value b is acceptable
+    // and an empty range if it is not.
+    if (abs(m) < ERROR_MARGIN) {
         if (rangeB.isInside(b)) {
             return Range(-INFINITY, INFINITY);
         } else {
-            return Range(INFINITY, -INFINITY);  // Empty range
+            // Empty range.
+            return Range(INFINITY, -INFINITY);
         }
     }
-    return rangeB.transform(1.0f / a, -b / a);
+    // Otherwise, transform the range by the inverse of the slope.
+    return rangeB.transform(1.0 / m, -b / m);
 }
 
+// Find the greatest common divisor of two numbers.
 double Range::gcd2(double x, double y) {
     return (y < ERROR_MARGIN) ? x : gcd2(y, fmod(x, y));
 }
 
+// Find the greatest common divisor of an array of numbers.
 double Range::gcd(const vector<double>& arr) {
     return accumulate(arr.begin(), arr.end(), arr[0],
         [](double a, double b) { return gcd2(a, b); });
 }
 
+// Find the least common multiple of two numbers.
 inline double Range::lcm(double a, double b) {
     if (abs(a) < ERROR_MARGIN) {
         return b;

@@ -16,7 +16,7 @@ void Timer::start(const string& name) {
     ensureTimer(name);
     auto& timer = timers[name];
     if (!timer.isRunning) {
-        timer.startTime = chrono::high_resolution_clock::now();
+        timer.startTime = Clock::now();
         timer.isRunning = true;
     }
 }
@@ -24,7 +24,7 @@ void Timer::start(const string& name) {
 void Timer::stop(const string& name) {
     auto& timer = timers[name];
     if (timer.isRunning) {
-        auto endTime = chrono::high_resolution_clock::now();
+        auto endTime = Clock::now();
         auto duration = endTime - timer.startTime;
         timer.totalTime += toMilliseconds(duration);
         timer.count++;
@@ -71,15 +71,15 @@ void Timer::printStats() const {
     }
     nameWidth = max((int)nameWidth, (int)size_t(4));  // Minimum width for "Name"
 
-    // Print header
+    // Print header.
     cout << left << setw(nameWidth) << "Name" << " | "
               << right << setw(totalWidth) << "Total (ms)" << " | "
               << setw(countWidth) << "Count" << endl;
 
-    // Print separator
+    // Print separator.
     cout << string(nameWidth + totalWidth + countWidth + avgWidth + 6, '-') << endl;
 
-    // Sort timers by total time
+    // Sort timers by total time.
     vector<pair<string, const TimerData*>> sortedTimers;
     for (const auto& [name, data] : timers) {
         sortedTimers.emplace_back(name, &data);
@@ -90,7 +90,7 @@ void Timer::printStats() const {
             return a.second->totalTime > b.second->totalTime;
         });
 
-    // Print timer data
+    // Print timer data.
     for (const auto& [name, data] : sortedTimers) {
         double avg = data->count > 0 ? data->totalTime / data->count : 0.0;
         
@@ -108,7 +108,7 @@ void Timer::ensureTimer(const string& name) {
     }
 }
 
-double Timer::toMilliseconds(const chrono::high_resolution_clock::duration& duration) {
+double Timer::toMilliseconds(const Clock::duration& duration) {
     return chrono::duration<double, milli>(duration).count();
 }
 
