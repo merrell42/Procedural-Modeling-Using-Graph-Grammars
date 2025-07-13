@@ -7,7 +7,6 @@
 #include <chrono>
 #include "../graph_grammar.h"
 #include "../mutator.h"
-#include "../graph_mutator.h"
 #include "../primitives/primitives.h"
 #include "../graph_drawing/model.h"
 #include "../util/util.h"
@@ -28,7 +27,7 @@ void initialize(const char* filePath, char* result, int len, int seed) {
 		Json parsed = readJsonFile(filePath);
 		auto grammar = GraphGrammar::import(parsed);
 		model = new Model();
-		mutator = new Mutator(model, new GraphMutator(grammar, model));
+		mutator = new Mutator(model, grammar);
 		strcpy_s(result, len, "Success");
 	} catch (const Json::exception& e) {
 		string errorMsg = "Error: JSON parsing failed - ";
