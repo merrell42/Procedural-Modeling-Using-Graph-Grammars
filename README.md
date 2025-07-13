@@ -10,7 +10,9 @@ This works as a plugin in Unity, Unreal Engine, and Godot. In each of these game
 
 ![editor screenshot](editor%20screenshot.png)
 
-If you hit the play button, it will generate shapes according to the graph grammar. You can also click the step button to go through each step individually. You can also click the load folder button. This will load all the graph grammars in a folder and will cycle through them. This is a nice way to quickly test many different grammars. I also have a web version.
+If you hit the play button, it will generate shapes according to the graph grammar. You can also click the step button to go through each step individually. You can also click the load folder button. This will load all the graph grammars in a folder and will cycle through them. This is a nice way to quickly test many different grammars.
+
+There is also a web version. To use it, open the [html file](https://github.com/merrell42/PMUGG/blob/main/web_version/pmugg.html). The web version is the old deprecated version.
 
 ## References
 
