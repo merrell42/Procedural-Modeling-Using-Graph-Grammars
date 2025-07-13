@@ -2,6 +2,8 @@
 
 This project is a way to procedurally generate large complex shapes using graph grammars. The code is written in C++ and is used as a plugin to generate shapes in Unity, Unreal Engine and Godot. There is also a web version written in Javascript.
 
+![teaser](teaser.png)
+
 ## How to Use
 
 This works as a plugin in Unity, Unreal Engine, and Godot. In each of these game engines, there is a simple editor you can use to try to this out. In the editor, you can load a graph grammar from a file. These files are in the [grammar data directory](https://github.com/merrell42/PMUGG/tree/main/grammar%20data).
