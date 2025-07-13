@@ -27,11 +27,11 @@ void Mutator::iterate(int steps) {
         // cout << model->numSteps << " " << model->getCurrent()->getFaceMap().size() << endl;
 
         if (model->numSteps == 0) {
-            mutateGround();
+            auto production = grammar->getStarterProduction(true);
+            applyProduction(production);
         } else {
             mutate();
         }
-
         // auto cost = optimizer.computeCost();
         // if (optimizer.isAccepted(cost)) {
         if (true) {
@@ -44,59 +44,43 @@ void Mutator::iterate(int steps) {
     timer->stop("Total");
 }
 
-// Add the ground plane.
-void Mutator::mutateGround() {
-    bool success = addStartInstance(true);
-};
-
 void Mutator::mutate() {
+    // The probability of picking a particular production rule.
+    // This is weighted towards normal production rules instead of starter and removal rules.
     vector<double> probabilities = {1, 1, 10};
     bool done = false;
 
     while (!done) {
-        switch(Util::randomDistribution(probabilities)) {
-            case 0: {
-                timer->start("Add Graph");
-                bool success = addStartInstance(false);
-                timer->stop("Add Graph");
-                if (success) {
-                    return;
-                } else {
-                    model->reject();
-                    probabilities[0] = 0;
-                }
+        auto ruleType = Util::randomDistribution(probabilities);
+        Production production;
+        switch(ruleType) {
+            case 0:
+                // Creates a new graph from nothing.
+                production = grammar->getStarterProduction(false);
                 break;
-            }
-            case 1: {
-                timer->start("Remove Graph");
-                bool success = changeRandomInstance(true);
-                timer->stop("Remove Graph");
-                if (success) {
-                    return;
-                } else {
-                    model->reject();
-                    probabilities[1] = 0;
-                }
+            case 1:
+                // Removes an existing graph to nothing.
+                production = grammar->getRemovalProduction();
                 break;
-            }
-            case 2: {
-                timer->start("Modify Graph");
-                bool success = changeRandomInstance(false);
-                timer->stop("Modify Graph");
-                if (success) {
-                    return;
-                } else {
-                    model->reject();
-                    probabilities[2] = 0;
-                }
+            case 2:
+                // Use normal rule that modify graphs.
+                production = grammar->getProduction();
                 break;
-            }
+        }
+        bool success = applyProduction(production);
+        if (success) {
+            return;
+        } else {
+            // If unsuccessful, try again with a different rule type.
+            model->reject();
+            probabilities[ruleType] = 0;
         }
 
         if (globalSettings["Fewer Start Productions"].get<bool>() && model->numSteps > 1) {
             return;
         }
 
+        // If all rule types have been eliminated return unsuccessfully.
         done = true;
         for (double probability : probabilities) {
             if (probability > 0) {
@@ -107,18 +91,7 @@ void Mutator::mutate() {
     }
 }
 
-bool Mutator::addStartInstance(bool useGround) {
-    auto production = grammar->getStarterProduction(useGround);
-    return applyProduction(production);
-}
-
-bool Mutator::changeRandomInstance(bool justDestructible) {
-    auto production = justDestructible ?
-        grammar->getRemoveProduction() :
-        grammar->getProduction();
-    return applyProduction(production);
-}
-
+// Apply a production rule. Return true if successful.
 bool Mutator::applyProduction(Production production) {
     if (!production.startGraph && !production.endGraph) {
         return false;
@@ -130,23 +103,23 @@ bool Mutator::applyProduction(Production production) {
     if (!morphism) {
         return false;
     }
-
     production.morphism = morphism;
 
-    timer->start("Build Normally");
+    timer->start("Build Rule Applier");
     int dims = grammar->getDims();
     auto ruleApplier = RuleApplier::build(production, model, dims);
-    timer->stop("Build Normally");
+    timer->stop("Build Rule Applier");
 
     if (!ruleApplier) {
         delete morphism;
         return false;
     }
 
+    // Try to apply the rule by sampling different solutions until effort limit is reached.
     int effort = 0;
     int effortLimit = globalSettings["Mutator Effort Limit"].get<int>();
-
     while (effort < effortLimit) {
+        // This repeatedly tries solutions with the current configuration.
         timer->start("RuleApplier Solve");
         bool success = ruleApplier->solve();
         timer->stop("RuleApplier Solve");
@@ -156,6 +129,8 @@ bool Mutator::applyProduction(Production production) {
             return true;
         }
 
+        // Free a vertex so that it is allowed to move.
+        // This can turn an overconstrained problem in to a solvable one.
         auto vertex = ruleApplier->pickVertexToFree();
         ruleApplier->freeVertex(vertex);
         effort++;

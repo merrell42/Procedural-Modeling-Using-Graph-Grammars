@@ -2,6 +2,8 @@
 #include "settings.h"
 #include <stdexcept>
 
+// TODO: Use this code. It is not used yet.
+
 namespace ms {
 
 bool Optimizer::detailedCost = false;

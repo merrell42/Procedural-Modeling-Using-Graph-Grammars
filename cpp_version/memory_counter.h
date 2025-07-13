@@ -3,6 +3,7 @@
 #include <map>
 #include <string>
 
+// Memory counter is used to detect memory leaks.
 class MemoryCounter {
 public:
     static std::map<std::string, int> creationCounters;

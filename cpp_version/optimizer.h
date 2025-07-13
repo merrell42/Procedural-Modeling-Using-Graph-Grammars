@@ -4,6 +4,9 @@
 
 namespace ms {
 
+// TODO: Start using this. This class is not used yet.
+// It will be used to guide the mutations so we don't always accept all of them,
+// but instead optimize for desired properties.
 class Optimizer {
 public:
     explicit Optimizer(const NodeStats& nodeStats);

@@ -58,7 +58,7 @@ Production GraphGrammar::getStarterProduction(bool useGround) {
 
 // Find the opposite of getStarterProduction that is a production that starts with
 // graph and replaces it with the empty graph.
-Production GraphGrammar::getRemoveProduction() {
+Production GraphGrammar::getRemovalProduction() {
     if (starterRules.empty()) {
         return {nullptr, nullptr, nullptr, false};
     }

@@ -1,7 +1,5 @@
 # PMUGG: Procedural Modeling Using Graph Grammars
 
-The code is very poorly documented. I’ve been working on this alone for many years. It’s still just in the proof-of-concept stage. It contains code I wrote over a decade ago and much of the old code hasn’t been cleaned up. This file is only documentation at a high level.
-
 There are two parts to the paper I wrote. The first part is to extract a graph grammar from an input shape. The second part is to use a graph grammar to generated shape. This code only includes the second part.
 
 This is currently built as a web page entirely on the frontend with no backend code. I have a demo of this project at http://demo.paulmerrell.org/.

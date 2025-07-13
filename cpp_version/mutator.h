@@ -21,7 +21,6 @@ public:
 
     void iterate(int steps);
     void mutate();
-    void mutateGround();
     void reset();
 
 private:
@@ -29,8 +28,6 @@ private:
     GraphGrammar* grammar;
     unique_ptr<MorphismFinder> morphismFinder;
 
-    bool addStartInstance(bool useGround);
-    bool changeRandomInstance(bool justDestructible = false);
     bool applyProduction(Production production);
 };
 

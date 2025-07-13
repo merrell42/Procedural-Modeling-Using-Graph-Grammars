@@ -33,7 +33,7 @@ public:
 
     // Get a production rule.
     Production getProduction();
-    Production getRemoveProduction();
+    Production getRemovalProduction();
     Production getStarterProduction(bool useGround);
 
     bool isGrounded() const;
