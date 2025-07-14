@@ -2,15 +2,13 @@ These are roughly in priority order weighing cost vs benefits.
 
 ## Short-Term Goals
 
-* Add better documentation.
-* Measure code performance and fix simple issues.
+* Add materials.
 * Add all grammars from web version.
 * Better control the length of the edges.
 * Get optimizer working like the web version.
 * Implement on Houdini and 3DS Max.
 * Display the grammars and example models.
 * Add tests.
-* Add license.
 * Cut holes so they appear in Unity.
 
 ## Long-Term Goals

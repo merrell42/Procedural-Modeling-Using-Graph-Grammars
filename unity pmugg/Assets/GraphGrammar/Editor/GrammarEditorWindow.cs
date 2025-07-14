@@ -200,7 +200,11 @@ namespace Grammar {
                 gameObject = new GameObject("Generated Mesh");                    
                 MeshFilter meshFilter = gameObject.AddComponent<MeshFilter>();
                 MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();
-                var material = AssetDatabase.GetBuiltinExtraResource<Material>("Default-Material.mat");
+                var material = AssetDatabase.LoadAssetAtPath<Material>("Assets/Default.mat");
+                if (material == null) {
+                    // Fallback to creating a default material
+                    material = new Material(Shader.Find("Standard"));
+                }
                 meshRenderer.material = material;
             }
             
@@ -384,7 +388,8 @@ namespace Grammar {
             EditorGUILayout.EndHorizontal();
 
             if (GUILayout.Button("Load Grammar")) {
-                string path = EditorUtility.OpenFilePanel("Load Grammar", "", "");
+                string defaultPath = GetGrammarDataDirectory();
+                string path = EditorUtility.OpenFilePanel("Load Grammar", defaultPath, "json");
                 if (!string.IsNullOrEmpty(path)) {
                     maxIteration = 0;
                     LoadGrammarFile(path);
@@ -392,7 +397,8 @@ namespace Grammar {
             }
             
             if (GUILayout.Button("Load Folder")) {
-                string folderPath = EditorUtility.OpenFolderPanel("Load Grammar Folder", "", "");
+                string defaultPath = GetGrammarDataDirectory();
+                string folderPath = EditorUtility.OpenFolderPanel("Load Grammar Folder", defaultPath, "");
                 if (!string.IsNullOrEmpty(folderPath)) {
                     LoadGrammarFolder(folderPath);
                 }
@@ -446,6 +452,34 @@ namespace Grammar {
             maxIteration = MAX_ITERATION;
             LoadGrammarFile(fileQueue.Dequeue());
             StartAnimation();
+        }
+        
+        private string GetGrammarDataDirectory() {
+            // Try to find the grammar data directory relative to the project
+            string projectPath = Application.dataPath;
+            string grammarDataPath = Path.Combine(projectPath, "..", "grammar data");
+            
+            // If the grammar data folder exists in the project root, use it
+            if (Directory.Exists(grammarDataPath)) {
+                return grammarDataPath;
+            }
+            
+            // Fallback: try to find it in common locations
+            string[] possiblePaths = {
+                Path.Combine(projectPath, "..", "grammar data"),
+                Path.Combine(projectPath, "..", "..", "grammar data"),
+                Path.Combine(projectPath, "grammar data"),
+                Path.Combine(projectPath, "..", "..", "..", "grammar data")
+            };
+            
+            foreach (string path in possiblePaths) {
+                if (Directory.Exists(path)) {
+                    return path;
+                }
+            }
+            
+            // If not found, return the project root
+            return Path.GetDirectoryName(projectPath);
         }
         
         private string GetRelativePath(string rootPath, string fullPath) {
