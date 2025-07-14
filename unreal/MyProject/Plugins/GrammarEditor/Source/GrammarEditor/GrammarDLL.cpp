@@ -22,6 +22,7 @@ void* FGrammarDLL::DLLHandle = nullptr;
 bool FGrammarDLL::isLoaded = false;
 FGrammarDLL::InitializeFunc FGrammarDLL::Initialize = nullptr;
 FGrammarDLL::IterateFunc FGrammarDLL::Iterate = nullptr;
+FGrammarDLL::IterateToTimeFunc FGrammarDLL::IterateToTime = nullptr;
 FGrammarDLL::GetMeshFunc FGrammarDLL::GetMesh = nullptr;
 FGrammarDLL::DestroyMeshFunc FGrammarDLL::DestroyMesh = nullptr;
 FGrammarDLL::ResetFunc FGrammarDLL::ResetFunction = nullptr;
@@ -44,12 +45,13 @@ bool FGrammarDLL::LoadDLL() {
     // Get function pointers.
     Initialize = (InitializeFunc)FPlatformProcess::GetDllExport(DLLHandle, TEXT("initialize"));
     Iterate = (IterateFunc)FPlatformProcess::GetDllExport(DLLHandle, TEXT("iterate"));
+    IterateToTime = (IterateToTimeFunc)FPlatformProcess::GetDllExport(DLLHandle, TEXT("iterateToTime"));
     GetMesh = (GetMeshFunc)FPlatformProcess::GetDllExport(DLLHandle, TEXT("getMesh"));
     DestroyMesh = (DestroyMeshFunc)FPlatformProcess::GetDllExport(DLLHandle, TEXT("destroyMesh"));
     ResetFunction = (ResetFunc)FPlatformProcess::GetDllExport(DLLHandle, TEXT("reset"));
     SetSizeFunction = (SetSizeFunc)FPlatformProcess::GetDllExport(DLLHandle, TEXT("setSize"));
     
-    if (Initialize == nullptr || Iterate == nullptr || GetMesh == nullptr || DestroyMesh == nullptr ||
+    if (Initialize == nullptr || Iterate == nullptr || IterateToTime == nullptr || GetMesh == nullptr || DestroyMesh == nullptr ||
         ResetFunction == nullptr || SetSizeFunction == nullptr) {
         UE_LOG(LogTemp, Error, TEXT("Failed to get required functions from Grammar DLL"));
         UnloadDLL();
@@ -70,6 +72,7 @@ void FGrammarDLL::UnloadDLL() {
     isLoaded = false;
     Initialize = nullptr;
     Iterate = nullptr;
+    IterateToTime = nullptr;
     GetMesh = nullptr;
     DestroyMesh = nullptr;
     ResetFunction = nullptr;
@@ -106,6 +109,17 @@ void FGrammarDLL::Step() {
 
     Iterate(1);
     UpdateMesh();
+}
+
+int FGrammarDLL::StepToTime(float TimeSeconds) {
+    if (!isLoaded || IterateToTime == nullptr) {
+        UE_LOG(LogTemp, Error, TEXT("DLL is not loaded or iterateToTime function not found!"));
+        return 0;
+    }
+
+    int stepsCompleted = IterateToTime(TimeSeconds);
+    UpdateMesh();
+    return stepsCompleted;
 }
 
 void FGrammarDLL::Reset(int Seed) {

@@ -328,10 +328,10 @@ FReply FGrammarEditorModule::OnPlayClicked() {
 		// Start timer.
 		StartTimer(PlayTimerHandle, AnimationInterval, [this]() { 
 			if (isPlaying) {
-				FGrammarDLL::Step();
-				// Update iteration count for single file processing.
+				int stepsCompleted = FGrammarDLL::StepToTime(TIME_PER_FRAME);
+				// Update iteration count.
 				if (!isProcessingFolder && !CurrentGrammarFile.IsEmpty()) {
-					CurrentIteration++;
+					CurrentIteration += stepsCompleted;
 					UpdateStatusText();
 				}
 			}
@@ -483,9 +483,9 @@ void FGrammarEditorModule::ProcessNextFileInFolder() {
 		return;
 	}
 	
-	// Perform one iteration.
-	FGrammarDLL::Step();
-	CurrentIteration++;
+	// Perform iterations based on time.
+	int stepsCompleted = FGrammarDLL::StepToTime(TIME_PER_FRAME);
+	CurrentIteration += stepsCompleted;
 	
 	
 	// If we've reached max iterations for current file, move onto next file.

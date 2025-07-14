@@ -9,6 +9,9 @@ class FSpawnTabArgs;
 
 class FGrammarEditorModule : public IModuleInterface {
 public:
+	// Time in seconds for each animation frame.
+	static constexpr float TIME_PER_FRAME = 0.1f; 
+	
 	virtual void StartupModule() override;
 	virtual void ShutdownModule() override;
 	

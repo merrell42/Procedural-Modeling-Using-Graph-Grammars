@@ -28,6 +28,7 @@ public:
 
 	static void LoadGrammarFile(const FString& FilePath);
 	static void Step();
+	static int StepToTime(float TimeSeconds);
 	static void UpdateMesh();
 	static void Reset(int Seed = 0);
 	static void SetSize(float X, float Y, float Z);
@@ -50,12 +51,14 @@ private:
     // Function pointers
     typedef void (*InitializeFunc)(const char*, char*, int, int);
     typedef void (*IterateFunc)(int);
+    typedef int (*IterateToTimeFunc)(float);
     typedef MeshCpp (*GetMeshFunc)();
     typedef void (*DestroyMeshFunc)(MeshCpp&);
     typedef void (*ResetFunc)(int);
     typedef void (*SetSizeFunc)(float, float, float);
     static InitializeFunc Initialize;
     static IterateFunc Iterate;
+    static IterateToTimeFunc IterateToTime;
     static GetMeshFunc GetMesh;
     static DestroyMeshFunc DestroyMesh;
     static ResetFunc ResetFunction;
