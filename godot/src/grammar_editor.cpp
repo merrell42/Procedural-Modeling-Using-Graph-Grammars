@@ -14,6 +14,9 @@ using namespace godot;
 
 #define MAX_ITERATIONS 50
 
+ // Animation time step per frame.
+#define TIME_PER_FRAME 0.05f
+
 void GrammarEditor::_bind_methods() {
     ClassDB::bind_method(D_METHOD("on_load_grammar_pressed"), &GrammarEditor::on_load_grammar_pressed);
     ClassDB::bind_method(D_METHOD("on_file_selected"), &GrammarEditor::on_file_selected);
@@ -257,25 +260,26 @@ void GrammarEditor::on_play_pressed() {
 }
 
 void GrammarEditor::on_animation_timer_timeout() {
-	if (is_playing) {
-		iterate(1);
-		iteration_count++;
-		update_iteration_display();
-		update_mesh();
-		
-		// Check if we've reached max iterations.
-		if (iteration_count >= max_iterations && max_iterations > 0) {
-			// Move to next file if available.
-			if (current_file_index < folder_files.size() - 1) {
-				current_file_index++;
-				load_file_from_folder(folder_files[current_file_index]);
-			} else {
-				// Stop playing once we've reached the end of the folder.
-				stop_animation();
-				UtilityFunctions::print("Finished processing all files in folder");
-			}
-		}
-	}
+    if (is_playing) {
+		// TODO: Check that this is working. I'm having trouble recompiling the plugin.
+        int steps_completed = iterateToTime(TIME_PER_FRAME);
+        iteration_count += steps_completed;
+        update_iteration_display();
+        update_mesh();
+        
+        // Check if we've reached max iterations.
+        if (iteration_count >= max_iterations && max_iterations > 0) {
+            // Move to next file if available.
+            if (current_file_index < folder_files.size() - 1) {
+                current_file_index++;
+                load_file_from_folder(folder_files[current_file_index]);
+            } else {
+                // Stop playing once we've reached the end of the folder.
+                stop_animation();
+                UtilityFunctions::print("Finished processing all files in folder");
+            }
+        }
+    }
 }
 
 void GrammarEditor::update_mesh() {
