@@ -12,7 +12,7 @@
 
 using namespace godot;
 
-#define MAX_ITERATIONS 50
+#define MAX_ITERATIONS 200
 
  // Animation time step per frame.
 #define TIME_PER_FRAME 0.05f
