@@ -13,9 +13,16 @@ I'm not 100% sure this is right. I'd love for someone other than me to test this
 
 1. **Clone the Repository**
    ```bash
-   git clone <repository-url>
+   git clone --recurse-submodules <repository-url>
    cd PMUGG/godot
    ```
+
+If the repository is already cloned without the necessary Godot submodule, you can
+clone the submodule with the following command:
+
+  ```bash
+  git submodule update --init --recursive
+  ```
 
 2. **Build the Plugin**
    ```bash
@@ -95,4 +102,5 @@ godot/
 - The "Play" button starts continuous generation
 - Use "Step" to iterate one step at a time.
 
-**Note**: This plugin is compiled for Windows x64 platforms. For other platforms, the C++ backend would need to be recompiled for the target platform. 
+**Note**: This plugin is compiled for Windows x64 platforms. For other platforms, the C++ backend would need to be recompiled for the target platform.
+
