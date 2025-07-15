@@ -1,10 +1,15 @@
 #pragma once
 
-#ifdef PMUGGDLL_EXPORTS
-#define GENERATE_API __declspec(dllexport)
+#if defined(_WIN32)
+  #ifdef PMUGGDLL_EXPORTS
+    #define GENERATE_API __declspec(dllexport)
+  #else
+    #define GENERATE_API __declspec(dllimport)
+  #endif
 #else
-#define GENERATE_API __declspec(dllimport)
+  #define GENERATE_API
 #endif
+
 #include <string>
 #include "../geometry/mesh.h"
 
