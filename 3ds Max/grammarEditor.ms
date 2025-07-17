@@ -18,61 +18,35 @@ rollout GrammarEditorRollout "Graph Grammar Generator" width:400 -- height:600
     local timerActive = false
     
     -- UI Elements
-    group "Status"
-    (
-        label lblStatus "No grammar loaded" height:20
-        label lblTimer "Time: 0.0s" height:20
-    )
+    label labelStatus "No grammar loaded" height:20
     
     group "Parameters"
     (
-        spinner spnSeed "Seed:" type:#integer range:[-999999, 999999, 0] width:80 across:2
+        spinner spnSeed "Seed:" type:#integer range:[-999999, 999999, 0] width:80 across:4
         spinner spnSizeX "Size X:" type:#float range:[0.1, 1000.0, 30.0] width:80
-        spinner spnSizeY "Size Y:" type:#float range:[0.1, 1000.0, 20.0] width:80 across:2
+        spinner spnSizeY "Size Y:" type:#float range:[0.1, 1000.0, 20.0] width:80
         spinner spnSizeZ "Size Z:" type:#float range:[0.1, 1000.0, 10.0] width:80
     )
     
     group "File Operations"
     (
-        button btnLoadGrammar "Load Grammar" width:120 height:25
+        button btnLoadGrammar "Load Grammar" width:120 height:25 across:2
         button btnLoadFolder "Load Folder" width:120 height:25
     )
     
     group "Generation Controls"
     (
-        button btnPlay "Play" width:60 height:25 enabled:false across:2
+        button btnPlay "Play" width:60 height:25 enabled:false across:4
         button btnStop "Stop" width:60 height:25 enabled:false
-        button btnReset "Reset" width:60 height:25 enabled:false across:2
+        button btnReset "Reset" width:60 height:25 enabled:false
         button btnStep "Step" width:60 height:25 enabled:false
-    )
-    
-    group "Info"
-    (
-        label lblIterationCount "Iterations: 0" height:20
-        label lblFileQueue "Files in queue: 0" height:20
     )
 	
     -- Helper Functions
     fn updateStatusDisplay =
     (
         local stepText = if maxIteration > 0 then "Step: " + iterationCount as string + " / " + maxIteration as string else "Step: " + iterationCount as string
-        local timerText = "Time: 0.0s"
-        
-        if timerActive then
-        (
-            local elapsed = (timestamp() - startTime) / 1000.0
-            timerText = "Time: " + (elapsed as string) + "s"
-            if iterationCount > 0 then
-            (
-                local msPerStep = (elapsed * 1000.0 / iterationCount) as string
-                timerText += " (" + msPerStep + " ms/step)"
-            )
-        )
-        
-        lblStatus.text = grammarName + " - " + stepText
-        lblTimer.text = timerText
-        lblIterationCount.text = "Iterations: " + iterationCount as string
-        lblFileQueue.text = "Files in queue: " + fileQueue.count as string
+        labelStatus.text = grammarName + " - " + stepText
     )
     
     -- Event Handlers
