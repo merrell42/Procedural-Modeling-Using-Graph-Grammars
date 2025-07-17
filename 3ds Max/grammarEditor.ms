@@ -190,7 +190,7 @@ rollout GrammarEditorRollout "Graph Grammar Generator" width:400 -- height:600
         local grammarDataPath = scenePath + "grammar data\\"
         
         -- If the grammar data folder exists in the scene directory, use it
-        if doesDirectoryExist grammarDataPath then
+        if doesFileExist grammarDataPath then
         (
             return grammarDataPath
         )
@@ -205,7 +205,7 @@ rollout GrammarEditorRollout "Graph Grammar Generator" width:400 -- height:600
         
         for path in possiblePaths do
         (
-            if doesDirectoryExist path then
+            if doesFileExist path then
             (
                 return path
             )
