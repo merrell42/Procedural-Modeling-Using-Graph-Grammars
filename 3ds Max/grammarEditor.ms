@@ -4,7 +4,7 @@
 
 -- DLL Function Declarations
 -- DLL path - adjust this path to match your system
-local dllPath = "C:\\PMUGG\\cpp_version\\x64\\Release\\pmugg dll.dll"
+dllPath = "C:\\PMUGG\\cpp_version\\x64\\Release\\pmugg dll.dll"
 
 -- Test DLL availability
 fn testDll = 
@@ -43,7 +43,7 @@ fn initialize filePath seed =
 )
 
 -- Reset the generation with a new seed
-fn reset seed = 
+fn resetFunc seed = 
 (
     try
     (
@@ -83,15 +83,15 @@ fn iterateToTime timeSeconds =
 )
 
 -- Set the size parameters
-fn setSize x y z = 
+fn setModelSize x y z = 
 (
     try
     (
-        dllCall dllPath "setSize" float:x float:y float:z
+        dllCall dllPath "setModelSize" float:x float:y float:z
     )
     catch
     (
-        format "Error calling setSize: %\n" (getCurrentException())
+        format "Error calling setModelSize: %\n" (getCurrentException())
     )
 )
 
@@ -100,6 +100,7 @@ fn getMesh =
 (
     try
     (
+		print "getMesh"
         local meshData = dllCall dllPath "getMesh"
         -- Convert the mesh data to a MaxScript-friendly format
         #(
@@ -216,7 +217,7 @@ rollout GrammarEditorRollout "Graph Grammar Generator" width:400 -- height:600
 	
     fn handleSizeChange =
     (
-        setSize sizeX sizeY sizeZ
+        setModelSize sizeX sizeY sizeZ
     )
     
     fn startAnimation =
@@ -248,7 +249,7 @@ rollout GrammarEditorRollout "Graph Grammar Generator" width:400 -- height:600
     
     fn resetGeneration =
     (
-        reset seed
+        resetFunc seed
         iterationCount = 0
         startTime = timestamp()
         timerActive = false
