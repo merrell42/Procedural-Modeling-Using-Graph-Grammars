@@ -6,20 +6,42 @@
 -- DLL path - adjust this path to match your system
 dllPath = "C:\\PMUGG\\cpp_version\\x64\\Release\\pmugg dll.dll"
 
--- Load DLL using loadDLL function (compatible with 3DS Max 2011)
+-- Try to load DLL using different methods
 fn loadGrammarDLL = 
 (
+    -- First check if file exists
+    if not doesFileExist dllPath then
+    (
+        format "DLL file not found: %\n" dllPath
+        messageBox ("DLL file not found: " + dllPath) title:"DLL Error"
+        return false
+    )
+    
     try
     (
+        -- Try method 1: loadDLL
         loadDLL dllPath
-        format "DLL loaded successfully: %\n" dllPath
-        true
+        format "DLL loaded successfully with loadDLL: %\n" dllPath
+        return true
     )
     catch
     (
-        format "Failed to load DLL: %\n" dllPath
-        messageBox "Failed to load PMUGG DLL. Please ensure the DLL is in the correct location." title:"DLL Error"
-        false
+        format "loadDLL failed, trying alternative method...\n"
+        
+        try
+        (
+            -- Try method 2: dotNetObject approach
+            local assembly = dotNetClass "System.Reflection.Assembly"
+            assembly.LoadFile dllPath
+            format "DLL loaded successfully with dotNetObject: %\n" dllPath
+            return true
+        )
+        catch
+        (
+            format "All DLL loading methods failed for: %\n" dllPath
+            messageBox ("Failed to load DLL: " + dllPath + "\nPlease ensure:\n1. The DLL exists\n2. The DLL is compatible with your system\n3. All dependencies are available") title:"DLL Error"
+            return false
+        )
     )
 )
 
@@ -52,111 +74,44 @@ fn testDll =
     )
 )
 
--- Initialize the grammar from a JSON file
+-- Placeholder DLL functions for testing - replace with actual DLL calls once loading works
 fn initialize filePath seed = 
 (
-    try
-    (
-        -- Call DLL function using original names after loading
-        local result = initialize filePath seed
-        result
-    )
-    catch
-    (
-        format "Error calling initialize: %\n" (getCurrentException())
-        "Error: DLL call failed"
-    )
+    format "DLL Call: initialize with file: % seed: %\n" filePath seed
+    "Success" -- Return success for testing
 )
 
--- Reset the generation with a new seed
 fn resetFunc seed = 
 (
-    try
-    (
-        reset seed
-    )
-    catch
-    (
-        format "Error calling reset: %\n" (getCurrentException())
-    )
+    format "DLL Call: reset with seed: %\n" seed
 )
 
--- Iterate the generation by a number of steps
 fn iterate steps = 
 (
-    try
-    (
-        iterate steps
-    )
-    catch
-    (
-        format "Error calling iterate: %\n" (getCurrentException())
-    )
+    format "DLL Call: iterate with steps: %\n" steps
 )
 
--- Iterate for a specific time duration
 fn iterateToTime timeSeconds = 
 (
-    try
-    (
-        iterateToTime timeSeconds
-    )
-    catch
-    (
-        format "Error calling iterateToTime: %\n" (getCurrentException())
-        1 -- Return 1 as fallback
-    )
+    format "DLL Call: iterateToTime with time: %\n" timeSeconds
+    1 -- Return 1 step completed for testing
 )
 
--- Set the size parameters
 fn setModelSize x y z = 
 (
-    try
-    (
-        setSize x y z
-    )
-    catch
-    (
-        format "Error calling setSize: %\n" (getCurrentException())
-    )
+    format "DLL Call: setSize with x:% y:% z:%\n" x y z
 )
 
--- Get mesh data from the DLL
 fn getMesh = 
 (
-    try
-    (
-		print "getMesh"
-        local meshData = getMesh()
-        -- Convert the mesh data to a MaxScript-friendly format
-        #(
-            meshData.positions,
-            meshData.normals,
-            meshData.triangles,
-            meshData.faceIndices,
-            meshData.numVertices,
-            meshData.numTriangles,
-            meshData.numFaces
-        )
-    )
-    catch
-    (
-        format "Error calling getMesh: %\n" (getCurrentException())
-        #(#(), #(), #(), #(), 0, 0, 0)
-    )
+    format "DLL Call: getMesh\n"
+    -- Return dummy mesh data for testing
+    #(#(), #(), #(), #(), 0, 0, 0)
 )
 
--- Free mesh memory
 fn destroyMesh meshData = 
 (
-    try
-    (
-        destroyMesh meshData
-    )
-    catch
-    (
-        format "Error calling destroyMesh: %\n" (getCurrentException())
-    )
+    format "DLL Call: destroyMesh\n"
 )
 
 rollout GrammarEditorRollout "Graph Grammar Generator" width:400 -- height:600
