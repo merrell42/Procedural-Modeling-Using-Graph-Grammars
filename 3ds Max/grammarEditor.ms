@@ -1,8 +1,5 @@
 -- Grammar Editor for 3DS Max
--- Based on Unity GrammarEditorWindow.cs
--- UI implementation without DLL integration
-
-rollout GrammarEditorRollout "Graph Grammar Generator" width:400 height:600
+rollout GrammarEditorRollout "Graph Grammar Generator" width:400 -- height:600
 (
     -- Constants
     local MAX_ITERATION = 200
@@ -49,23 +46,33 @@ rollout GrammarEditorRollout "Graph Grammar Generator" width:400 height:600
         button btnStep "Step" width:60 height:25 enabled:false
     )
     
-    group "Step Controls"
-    (
-        button btnStep1 "Step 1" width:60 height:25 enabled:false
-        button btnStep10 "Step 10" width:60 height:25 enabled:false
-        button btnStep100 "Step 100" width:60 height:25 enabled:false
-    )
-    
-    group "Animation Settings"
-    (
-        spinner spnMaxIteration "Max Iterations:" type:#integer range:[0, 10000, 200] width:100
-        spinner spnTimePerFrame "Time per Frame (s):" type:#float range:[0.01, 10.0, 0.1] width:100
-    )
-    
     group "Info"
     (
         label lblIterationCount "Iterations: 0" height:20
         label lblFileQueue "Files in queue: 0" height:20
+    )
+	
+    -- Helper Functions
+    fn updateStatusDisplay =
+    (
+        local stepText = if maxIteration > 0 then "Step: " + iterationCount as string + " / " + maxIteration as string else "Step: " + iterationCount as string
+        local timerText = "Time: 0.0s"
+        
+        if timerActive then
+        (
+            local elapsed = (timestamp() - startTime) / 1000.0
+            timerText = "Time: " + (elapsed as string) + "s"
+            if iterationCount > 0 then
+            (
+                local msPerStep = (elapsed * 1000.0 / iterationCount) as string
+                timerText += " (" + msPerStep + " ms/step)"
+            )
+        )
+        
+        lblStatus.text = grammarName + " - " + stepText
+        lblTimer.text = timerText
+        lblIterationCount.text = "Iterations: " + iterationCount as string
+        lblFileQueue.text = "Files in queue: " + fileQueue.count as string
     )
     
     -- Event Handlers
@@ -76,7 +83,6 @@ rollout GrammarEditorRollout "Graph Grammar Generator" width:400 height:600
         spnSizeX.value = sizeX
         spnSizeY.value = sizeY
         spnSizeZ.value = sizeZ
-        spnMaxIteration.value = maxIteration
         updateStatusDisplay()
     )
     
@@ -164,29 +170,6 @@ rollout GrammarEditorRollout "Graph Grammar Generator" width:400 height:600
     on btnStep100 pressed do
     (
         iterateSteps 100
-    )
-    
-    -- Helper Functions
-    fn updateStatusDisplay =
-    (
-        local stepText = if maxIteration > 0 then "Step: " + iterationCount as string + " / " + maxIteration as string else "Step: " + iterationCount as string
-        local timerText = "Time: 0.0s"
-        
-        if timerActive then
-        (
-            local elapsed = (timestamp() - startTime) / 1000.0
-            timerText = "Time: " + (elapsed as string) + "s"
-            if iterationCount > 0 then
-            (
-                local msPerStep = (elapsed * 1000.0 / iterationCount) as string
-                timerText += " (" + msPerStep + " ms/step)"
-            )
-        )
-        
-        lblStatus.text = grammarName + " - " + stepText
-        lblTimer.text = timerText
-        lblIterationCount.text = "Iterations: " + iterationCount as string
-        lblFileQueue.text = "Files in queue: " + fileQueue.count as string
     )
     
     fn handleSizeChange =
