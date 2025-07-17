@@ -1,4 +1,137 @@
 -- Grammar Editor for 3DS Max
+-- Based on Unity GrammarEditorWindow.cs
+-- UI implementation with DLL integration
+
+-- DLL Function Declarations
+-- DLL path - adjust this path to match your system
+local dllPath = "C:\\PMUGG\\cpp_version\\x64\\Release\\pmugg dll.dll"
+
+-- Test DLL availability
+fn testDll = 
+(
+    try
+    (
+        -- Test if DLL can be loaded by calling a simple function
+        local testResult = dllCall dllPath "initialize" string:"" string:"" integer:0 integer:0
+        format "DLL loaded successfully: %\n" dllPath
+        true
+    )
+    catch
+    (
+        format "Failed to load DLL: %\n" dllPath
+        messageBox "Failed to load PMUGG DLL. Please ensure the DLL is in the correct location." title:"DLL Error"
+        false
+    )
+)
+
+-- Initialize the grammar from a JSON file
+fn initialize filePath seed = 
+(
+    try
+    (
+        local result = ""
+        local resultLen = 100000
+        -- Call the DLL function using dllCall
+        dllCall dllPath "initialize" string:filePath string:result integer:resultLen integer:seed
+        result
+    )
+    catch
+    (
+        format "Error calling initialize: %\n" (getCurrentException())
+        "Error: DLL call failed"
+    )
+)
+
+-- Reset the generation with a new seed
+fn reset seed = 
+(
+    try
+    (
+        dllCall dllPath "reset" integer:seed
+    )
+    catch
+    (
+        format "Error calling reset: %\n" (getCurrentException())
+    )
+)
+
+-- Iterate the generation by a number of steps
+fn iterate steps = 
+(
+    try
+    (
+        dllCall dllPath "iterate" integer:steps
+    )
+    catch
+    (
+        format "Error calling iterate: %\n" (getCurrentException())
+    )
+)
+
+-- Iterate for a specific time duration
+fn iterateToTime timeSeconds = 
+(
+    try
+    (
+        dllCall dllPath "iterateToTime" float:timeSeconds
+    )
+    catch
+    (
+        format "Error calling iterateToTime: %\n" (getCurrentException())
+        1 -- Return 1 as fallback
+    )
+)
+
+-- Set the size parameters
+fn setSize x y z = 
+(
+    try
+    (
+        dllCall dllPath "setSize" float:x float:y float:z
+    )
+    catch
+    (
+        format "Error calling setSize: %\n" (getCurrentException())
+    )
+)
+
+-- Get mesh data from the DLL
+fn getMesh = 
+(
+    try
+    (
+        local meshData = dllCall dllPath "getMesh"
+        -- Convert the mesh data to a MaxScript-friendly format
+        #(
+            positions: meshData.positions,
+            normals: meshData.normals,
+            triangles: meshData.triangles,
+            faceIndices: meshData.faceIndices,
+            numVertices: meshData.numVertices,
+            numTriangles: meshData.numTriangles,
+            numFaces: meshData.numFaces
+        )
+    )
+    catch
+    (
+        format "Error calling getMesh: %\n" (getCurrentException())
+        #(positions:#(), normals:#(), triangles:#(), faceIndices:#(), numVertices:0, numTriangles:0, numFaces:0)
+    )
+)
+
+-- Free mesh memory
+fn destroyMesh meshData = 
+(
+    try
+    (
+        dllCall dllPath "destroyMesh" meshData
+    )
+    catch
+    (
+        format "Error calling destroyMesh: %\n" (getCurrentException())
+    )
+)
+
 rollout GrammarEditorRollout "Graph Grammar Generator" width:400 -- height:600
 (
     -- Constants
@@ -53,25 +186,25 @@ rollout GrammarEditorRollout "Graph Grammar Generator" width:400 -- height:600
     (
         -- Try to find the grammar data directory relative to the 3DS Max scene
         local scenePath = maxFilePath
-        local grammarDataPath = scenePath + "grammar data"
+        local grammarDataPath = scenePath + "grammar data\\"
         
         -- If the grammar data folder exists in the scene directory, use it
-        if doesFileExist grammarDataPath then
+        if doesDirectoryExist grammarDataPath then
         (
             return grammarDataPath
         )
         
         -- Fallback: try to find it in common locations
         local possiblePaths = #(
-            scenePath + "grammar data",
+            scenePath + "grammar data\\",
             scenePath + "..\\grammar data\\",
-            scenePath + "..\\..\\grammar data",
-            scenePath + "..\\..\\..\\grammar data"
+            scenePath + "..\\..\\grammar data\\",
+            scenePath + "..\\..\\..\\grammar data\\"
         )
         
         for path in possiblePaths do
         (
-            if doesFileExist path then
+            if doesDirectoryExist path then
             (
                 return path
             )
@@ -83,9 +216,7 @@ rollout GrammarEditorRollout "Graph Grammar Generator" width:400 -- height:600
 	
     fn handleSizeChange =
     (
-        -- TODO: Call DLL setSize function when implemented
-        -- setSize(sizeX, sizeY, sizeZ)
-        format "Size changed to: [%, %, %]\n" sizeX sizeY sizeZ
+        setSize sizeX sizeY sizeZ
     )
     
     fn startAnimation =
@@ -117,29 +248,25 @@ rollout GrammarEditorRollout "Graph Grammar Generator" width:400 -- height:600
     
     fn resetGeneration =
     (
-        -- TODO: Call DLL reset function when implemented
-        -- reset(seed)
+        reset seed
         iterationCount = 0
         startTime = timestamp()
         timerActive = false
         updateStatusDisplay()
-        format "Reset generation with seed: %\n" seed
     )
     
     fn iterateSteps steps =
     (
-        -- TODO: Call DLL iterate function when implemented
-        -- iterate(steps)
+        iterate steps
         iterationCount += steps
+        updateMesh()
         updateStatusDisplay()
-        format "Iterated % steps\n" steps
     )
     
     fn loadGrammarFile filePath =
     (
-        -- TODO: Call DLL initialize function when implemented
-        -- local result = initialize(filePath, seed)
-        -- if result == "Success" then
+        local result = initialize filePath seed
+        if result == "Success" then
         (
             grammarName = getFilenameFile filePath
             iterationCount = 0
@@ -149,11 +276,11 @@ rollout GrammarEditorRollout "Graph Grammar Generator" width:400 -- height:600
             updateStatusDisplay()
             format "Loaded grammar: %\n" grammarName
         )
-        -- else
-        -- (
-        --     grammarName = ""
-        --     format "Error loading grammar: %\n" result
-        -- )
+        else
+        (
+            grammarName = ""
+            format "Error loading grammar: %\n" result
+        )
     )
     
     fn loadGrammarFolder folderPath =
@@ -203,16 +330,71 @@ rollout GrammarEditorRollout "Graph Grammar Generator" width:400 -- height:600
             )
         )
         
-        -- TODO: Call DLL iterateToTime function when implemented
-        -- local stepsCompleted = iterateToTime(spnTimePerFrame.value)
-        local stepsCompleted = 1 -- Placeholder
+        local stepsCompleted = iterateToTime 0.1 -- Use 0.1 seconds per frame
         iterationCount += stepsCompleted
         
-        -- TODO: Call updateMesh function when implemented
-        -- updateMesh()
+        updateMesh()
         
         updateStatusDisplay()
         true
+    )
+    
+    fn updateMesh =
+    (
+        local meshData = getMesh()
+        
+        if meshData.numVertices > 0 then
+        (
+            -- Create or find the mesh object
+            local meshObj = getNodeByName "Generated Mesh"
+            if meshObj == undefined then
+            (
+                meshObj = Editable_Mesh()
+                meshObj.name = "Generated Mesh"
+            )
+            
+            -- Convert the mesh data to 3DS Max format
+            local vertices = #()
+            local normals = #()
+            local faces = #()
+            
+            -- Process vertices (switch Y and Z coordinates like in Unity)
+            for i = 1 to meshData.numVertices do
+            (
+                local posIndex = (i - 1) * 3 + 1
+                local x = meshData.positions[posIndex]
+                local y = meshData.positions[posIndex + 2] -- Z becomes Y
+                local z = meshData.positions[posIndex + 1] -- Y becomes Z
+                append vertices [x, y, z]
+                
+                local normIndex = (i - 1) * 3 + 1
+                local nx = meshData.normals[normIndex]
+                local ny = meshData.normals[normIndex + 2] -- Z becomes Y
+                local nz = meshData.normals[normIndex + 1] -- Y becomes Z
+                append normals [nx, ny, nz]
+            )
+            
+            -- Process faces
+            for i = 1 to meshData.numTriangles do
+            (
+                local faceIndex = (i - 1) * 3 + 1
+                local v1 = meshData.triangles[faceIndex] + 1 -- Convert to 1-based indexing
+                local v2 = meshData.triangles[faceIndex + 1] + 1
+                local v3 = meshData.triangles[faceIndex + 2] + 1
+                append faces [v1, v2, v3]
+            )
+            
+            -- Update the mesh
+            meshObj.mesh.vertices = vertices
+            meshObj.mesh.faces = faces
+            meshObj.mesh.normals = normals
+            
+            -- Free the mesh data
+            destroyMesh meshData
+            
+            -- Force viewport update
+            forceCompleteRedraw()
+        )
     )
     
     -- Event Handlers
@@ -229,8 +411,7 @@ rollout GrammarEditorRollout "Graph Grammar Generator" width:400 -- height:600
     on spnSeed changed val do
     (
         seed = val
-        -- TODO: Call DLL reset function when implemented
-        -- reset(seed)
+        reset seed
     )
     
     on spnSizeX changed val do
