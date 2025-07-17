@@ -104,19 +104,19 @@ fn getMesh =
         local meshData = dllCall dllPath "getMesh"
         -- Convert the mesh data to a MaxScript-friendly format
         #(
-            positions: meshData.positions,
-            normals: meshData.normals,
-            triangles: meshData.triangles,
-            faceIndices: meshData.faceIndices,
-            numVertices: meshData.numVertices,
-            numTriangles: meshData.numTriangles,
-            numFaces: meshData.numFaces
+            meshData.positions,
+            meshData.normals,
+            meshData.triangles,
+            meshData.faceIndices,
+            meshData.numVertices,
+            meshData.numTriangles,
+            meshData.numFaces
         )
     )
     catch
     (
         format "Error calling getMesh: %\n" (getCurrentException())
-        #(positions:#(), normals:#(), triangles:#(), faceIndices:#(), numVertices:0, numTriangles:0, numFaces:0)
+        #(#(), #(), #(), #(), 0, 0, 0)
     )
 )
 
@@ -344,7 +344,16 @@ rollout GrammarEditorRollout "Graph Grammar Generator" width:400 -- height:600
     (
         local meshData = getMesh()
         
-        if meshData.numVertices > 0 then
+        -- Copy data into local variables
+        local positions = meshData[1]
+        local normals = meshData[2]
+        local triangles = meshData[3]
+        local faceIndices = meshData[4]
+        local numVertices = meshData[5]
+        local numTriangles = meshData[6]
+        local numFaces = meshData[7]
+        
+        if numVertices > 0 then
         (
             -- Create or find the mesh object
             local meshObj = getNodeByName "Generated Mesh"
@@ -360,28 +369,28 @@ rollout GrammarEditorRollout "Graph Grammar Generator" width:400 -- height:600
             local faces = #()
             
             -- Process vertices (switch Y and Z coordinates like in Unity)
-            for i = 1 to meshData.numVertices do
+            for i = 1 to numVertices do
             (
                 local posIndex = (i - 1) * 3 + 1
-                local x = meshData.positions[posIndex]
-                local y = meshData.positions[posIndex + 2] -- Z becomes Y
-                local z = meshData.positions[posIndex + 1] -- Y becomes Z
+                local x = positions[posIndex]
+                local y = positions[posIndex + 2] -- Z becomes Y
+                local z = positions[posIndex + 1] -- Y becomes Z
                 append vertices [x, y, z]
                 
                 local normIndex = (i - 1) * 3 + 1
-                local nx = meshData.normals[normIndex]
-                local ny = meshData.normals[normIndex + 2] -- Z becomes Y
-                local nz = meshData.normals[normIndex + 1] -- Y becomes Z
+                local nx = normals[normIndex]
+                local ny = normals[normIndex + 2] -- Z becomes Y
+                local nz = normals[normIndex + 1] -- Y becomes Z
                 append normals [nx, ny, nz]
             )
             
             -- Process faces
-            for i = 1 to meshData.numTriangles do
+            for i = 1 to numTriangles do
             (
                 local faceIndex = (i - 1) * 3 + 1
-                local v1 = meshData.triangles[faceIndex] + 1 -- Convert to 1-based indexing
-                local v2 = meshData.triangles[faceIndex + 1] + 1
-                local v3 = meshData.triangles[faceIndex + 2] + 1
+                local v1 = triangles[faceIndex] + 1 -- Convert to 1-based indexing
+                local v2 = triangles[faceIndex + 1] + 1
+                local v3 = triangles[faceIndex + 2] + 1
                 append faces [v1, v2, v3]
             )
             
