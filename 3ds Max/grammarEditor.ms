@@ -12,7 +12,7 @@ fn testDll =
     try
     (
         -- Test if DLL can be loaded by calling a simple function
-        local testResult = dllCall dllPath "initialize" string:"" string:"" integer:0 integer:0
+        local testResult = dllCall dllPath "initialize" "" "" 0 0
         format "DLL loaded successfully: %\n" dllPath
         true
     )
@@ -32,7 +32,7 @@ fn initialize filePath seed =
         local result = ""
         local resultLen = 100000
         -- Call the DLL function using dllCall
-        dllCall dllPath "initialize" string:filePath string:result integer:resultLen integer:seed
+        dllCall dllPath "initialize" filePath result resultLen seed
         result
     )
     catch
@@ -47,7 +47,7 @@ fn resetFunc seed =
 (
     try
     (
-        dllCall dllPath "reset" integer:seed
+        dllCall dllPath "reset" seed
     )
     catch
     (
@@ -60,7 +60,7 @@ fn iterate steps =
 (
     try
     (
-        dllCall dllPath "iterate" integer:steps
+        dllCall dllPath "iterate" steps
     )
     catch
     (
@@ -73,7 +73,7 @@ fn iterateToTime timeSeconds =
 (
     try
     (
-        dllCall dllPath "iterateToTime" float:timeSeconds
+        dllCall dllPath "iterateToTime" timeSeconds
     )
     catch
     (
@@ -87,7 +87,7 @@ fn setModelSize x y z =
 (
     try
     (
-        dllCall dllPath "setModelSize" float:x float:y float:z
+        dllCall dllPath "setModelSize" x y z
     )
     catch
     (
