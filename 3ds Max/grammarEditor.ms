@@ -26,9 +26,9 @@ rollout GrammarEditorRollout "Graph Grammar Generator" width:400 -- height:600
     
     group "Parameters"
     (
-        spinner spnSeed "Seed:" type:#integer range:[-999999, 999999, 0] width:80
+        spinner spnSeed "Seed:" type:#integer range:[-999999, 999999, 0] width:80 across:2
         spinner spnSizeX "Size X:" type:#float range:[0.1, 1000.0, 30.0] width:80
-        spinner spnSizeY "Size Y:" type:#float range:[0.1, 1000.0, 20.0] width:80
+        spinner spnSizeY "Size Y:" type:#float range:[0.1, 1000.0, 20.0] width:80 across:2
         spinner spnSizeZ "Size Z:" type:#float range:[0.1, 1000.0, 10.0] width:80
     )
     
@@ -40,9 +40,9 @@ rollout GrammarEditorRollout "Graph Grammar Generator" width:400 -- height:600
     
     group "Generation Controls"
     (
-        button btnPlay "Play" width:60 height:25 enabled:false
+        button btnPlay "Play" width:60 height:25 enabled:false across:2
         button btnStop "Stop" width:60 height:25 enabled:false
-        button btnReset "Reset" width:60 height:25 enabled:false
+        button btnReset "Reset" width:60 height:25 enabled:false across:2
         button btnStep "Step" width:60 height:25 enabled:false
     )
     
