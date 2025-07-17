@@ -87,11 +87,11 @@ fn setModelSize x y z =
 (
     try
     (
-        dllCall dllPath "setModelSize" x y z
+        dllCall dllPath "setSize" x y z
     )
     catch
     (
-        format "Error calling setModelSize: %\n" (getCurrentException())
+        format "Error calling setSize: %\n" (getCurrentException())
     )
 )
 
@@ -412,7 +412,7 @@ rollout GrammarEditorRollout "Graph Grammar Generator" width:400 -- height:600
     on spnSeed changed val do
     (
         seed = val
-        reset seed
+        resetFunc seed
     )
     
     on spnSizeX changed val do
