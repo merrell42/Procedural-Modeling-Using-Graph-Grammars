@@ -6,13 +6,12 @@
 -- DLL path - adjust this path to match your system
 dllPath = "C:\\PMUGG\\cpp_version\\x64\\Release\\pmugg dll.dll"
 
--- Test DLL availability
-fn testDll = 
+-- Load DLL using loadDLL function (compatible with 3DS Max 2011)
+fn loadGrammarDLL = 
 (
     try
     (
-        -- Test if DLL can be loaded by calling a simple function
-        local testResult = callDll dllPath "initialize" "" "" 0 0
+        loadDLL dllPath
         format "DLL loaded successfully: %\n" dllPath
         true
     )
@@ -24,15 +23,42 @@ fn testDll =
     )
 )
 
+-- Unload DLL
+fn unloadGrammarDLL = 
+(
+    try
+    (
+        unloadDLL dllPath
+        format "DLL unloaded: %\n" dllPath
+    )
+    catch
+    (
+        format "Error unloading DLL: %\n" (getCurrentException())
+    )
+)
+
+-- Test DLL availability
+fn testDll = 
+(
+    if loadGrammarDLL() then
+    (
+        format "DLL loaded successfully: %\n" dllPath
+        true
+    )
+    else
+    (
+        messageBox "Failed to load PMUGG DLL. Please ensure the DLL is in the correct location." title:"DLL Error"
+        false
+    )
+)
+
 -- Initialize the grammar from a JSON file
 fn initialize filePath seed = 
 (
     try
     (
-        local result = ""
-        local resultLen = 100000
-        -- Call the DLL function using callDll
-        callDll dllPath "initialize" filePath result resultLen seed
+        -- Call DLL function using original names after loading
+        local result = initialize filePath seed
         result
     )
     catch
@@ -47,7 +73,7 @@ fn resetFunc seed =
 (
     try
     (
-        callDll dllPath "reset" seed
+        reset seed
     )
     catch
     (
@@ -60,7 +86,7 @@ fn iterate steps =
 (
     try
     (
-        callDll dllPath "iterate" steps
+        iterate steps
     )
     catch
     (
@@ -73,7 +99,7 @@ fn iterateToTime timeSeconds =
 (
     try
     (
-        callDll dllPath "iterateToTime" timeSeconds
+        iterateToTime timeSeconds
     )
     catch
     (
@@ -87,7 +113,7 @@ fn setModelSize x y z =
 (
     try
     (
-        callDll dllPath "setSize" x y z
+        setSize x y z
     )
     catch
     (
@@ -101,7 +127,7 @@ fn getMesh =
     try
     (
 		print "getMesh"
-        local meshData = callDll dllPath "getMesh"
+        local meshData = getMesh()
         -- Convert the mesh data to a MaxScript-friendly format
         #(
             meshData.positions,
@@ -125,7 +151,7 @@ fn destroyMesh meshData =
 (
     try
     (
-        callDll dllPath "destroyMesh" meshData
+        destroyMesh meshData
     )
     catch
     (
@@ -410,6 +436,9 @@ rollout GrammarEditorRollout "Graph Grammar Generator" width:400 -- height:600
     -- Event Handlers
     on GrammarEditorRollout open do
     (
+        -- Load the DLL first
+        loadGrammarDLL()
+        
         -- Initialize UI state
         spnSeed.value = seed
         spnSizeX.value = sizeX
@@ -501,6 +530,12 @@ rollout GrammarEditorRollout "Graph Grammar Generator" width:400 -- height:600
     on btnStep100 pressed do
     (
         iterateSteps 100
+    )
+    
+    on GrammarEditorRollout close do
+    (
+        -- Unload the DLL when closing
+        unloadGrammarDLL()
     )
 )
 
