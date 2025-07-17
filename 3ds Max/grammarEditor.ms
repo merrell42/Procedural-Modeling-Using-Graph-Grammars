@@ -12,7 +12,7 @@ fn testDll =
     try
     (
         -- Test if DLL can be loaded by calling a simple function
-        local testResult = dllCall dllPath "initialize" "" "" 0 0
+        local testResult = callDll dllPath "initialize" "" "" 0 0
         format "DLL loaded successfully: %\n" dllPath
         true
     )
@@ -31,8 +31,8 @@ fn initialize filePath seed =
     (
         local result = ""
         local resultLen = 100000
-        -- Call the DLL function using dllCall
-        dllCall dllPath "initialize" filePath result resultLen seed
+        -- Call the DLL function using callDll
+        callDll dllPath "initialize" filePath result resultLen seed
         result
     )
     catch
@@ -47,7 +47,7 @@ fn resetFunc seed =
 (
     try
     (
-        dllCall dllPath "reset" seed
+        callDll dllPath "reset" seed
     )
     catch
     (
@@ -60,7 +60,7 @@ fn iterate steps =
 (
     try
     (
-        dllCall dllPath "iterate" steps
+        callDll dllPath "iterate" steps
     )
     catch
     (
@@ -73,7 +73,7 @@ fn iterateToTime timeSeconds =
 (
     try
     (
-        dllCall dllPath "iterateToTime" timeSeconds
+        callDll dllPath "iterateToTime" timeSeconds
     )
     catch
     (
@@ -87,7 +87,7 @@ fn setModelSize x y z =
 (
     try
     (
-        dllCall dllPath "setSize" x y z
+        callDll dllPath "setSize" x y z
     )
     catch
     (
@@ -101,7 +101,7 @@ fn getMesh =
     try
     (
 		print "getMesh"
-        local meshData = dllCall dllPath "getMesh"
+        local meshData = callDll dllPath "getMesh"
         -- Convert the mesh data to a MaxScript-friendly format
         #(
             meshData.positions,
@@ -125,7 +125,7 @@ fn destroyMesh meshData =
 (
     try
     (
-        dllCall dllPath "destroyMesh" meshData
+        callDll dllPath "destroyMesh" meshData
     )
     catch
     (
