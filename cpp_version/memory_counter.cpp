@@ -2,7 +2,7 @@
 #include "memory_counter.h"
 
 // This is used to detect memory leaks. It's not necessary to always have it on.
-bool MemoryCounterEnabled = true;
+bool MemoryCounterEnabled = false;
 
 std::map<std::string, int> MemoryCounter::creationCounters = {};
 std::map<std::string, int> MemoryCounter::destructionCounters = {};
