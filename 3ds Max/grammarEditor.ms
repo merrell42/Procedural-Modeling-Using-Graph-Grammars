@@ -2,90 +2,81 @@
 -- Based on Unity GrammarEditorWindow.cs
 -- UI implementation with DLL integration
 
--- DLL Function Declarations
+-- DLL Function Declarations using externalFunction
 -- DLL path - adjust this path to match your system
 -- dllPath = "C:\\PMUGG\\cpp_version\\x64\\Release\\pmugg dll.dll"
 dllPath = "C:\\PMUGG\\cpp_version\\Win32\\Debug\\pmugg dll.dll"
--- dllPath = "C:\\PMUGG\\cpp_version\\Release\\pmugg dll.dll"
 
--- Try to load DLL using different methods
-fn loadGrammarDLL = 
-(
-    -- First check if file exists
-    if not doesFileExist dllPath then
-    (
-        format "DLL file not found: %\n" dllPath
-        messageBox ("DLL file not found: " + dllPath) title:"DLL Error"
-        return false
-    )
-    
-    try
-    (
-        -- Try method 1: loadDLL
-        loadDLL dllPath
-        format "DLL loaded successfully with loadDLL: %\n" dllPath
-        return true
-    )
-    catch
-    (
-        format "loadDLL failed, trying alternative method...\n"
-        
-        try
-        (
-            -- Try method 2: dotNetObject approach
-            local assembly = dotNetClass "System.Reflection.Assembly"
-            assembly.LoadFile dllPath
-            format "DLL loaded successfully with dotNetObject: %\n" dllPath
-            return true
-        )
-        catch
-        (
-            format "All DLL loading methods failed for: %\n" dllPath
-            messageBox ("Failed to load DLL: " + dllPath + "\nPlease ensure:\n1. The DLL exists\n2. The DLL is compatible with your system\n3. All dependencies are available") title:"DLL Error"
-            return false
-        )
-    )
-)
+-- External Function Declarations
+-- These match the exact signatures from your C++ DLL (generate.h/generate.cpp)
 
--- Unload DLL
-fn unloadGrammarDLL = 
-(
-    try
-    (
-        unloadDLL dllPath
-        format "DLL unloaded: %\n" dllPath
-    )
-    catch
-    (
-        format "Error unloading DLL: %\n" (getCurrentException())
-    )
-)
+-- Initialize function: takes file path, result buffer, buffer length, and seed
+externalFunction initialize #cstring filePath #cstring result #integer len #integer seed \
+    returns:#void library:dllPath
+
+-- Reset function: takes seed parameter  
+externalFunction resetGrammar #integer seed \
+    returns:#void library:dllPath
+
+-- Iterate function: takes number of steps
+externalFunction iterate #integer steps \
+    returns:#void library:dllPath
+
+-- Iterate to time function: takes time in seconds, returns steps completed
+externalFunction iterateToTime #float timeSeconds \
+    returns:#integer library:dllPath
+
+-- Get number of faces in current model
+externalFunction getNumFaces \
+    returns:#integer library:dllPath
+
+-- Set model size function: takes x, y, z dimensions
+externalFunction setModelSize #float x #float y #float z \
+    returns:#void library:dllPath
+
+-- Get mesh data function: returns MeshCpp struct
+-- Note: MeshCpp is a complex struct, MaxScript may have issues with this
+-- We'll need to handle this carefully or create wrapper functions in the DLL
+externalFunction getMesh \
+    returns:#unsupplied library:dllPath
+
+-- Destroy/cleanup mesh data - takes MeshCpp reference
+-- This might need special handling due to C++ reference parameter
+externalFunction destroyMesh #unsupplied meshData \
+    returns:#void library:dllPath
 
 -- Test DLL availability
 fn testDll = 
 (
-    if loadGrammarDLL() then
+    try
     (
-        format "DLL loaded successfully: %\n" dllPath
+        -- Try to call a simple function to test if DLL is accessible
+        local testResult = getNumFaces()
+        format "DLL test successful. Number of faces: %\n" testResult
         true
     )
-    else
+    catch
     (
-        messageBox "Failed to load PMUGG DLL. Please ensure the DLL is in the correct location." title:"DLL Error"
+        format "DLL test failed: %\n" (getCurrentException())
+        messageBox ("Failed to access PMUGG DLL functions. Please ensure:\n1. The DLL exists at: " + dllPath + "\n2. The DLL is compatible with 3ds Max 2011 (32-bit)\n3. All dependencies are available\n4. The exported function names match") title:"DLL Error"
         false
     )
 )
 
--- Placeholder DLL functions for testing - replace with actual DLL calls once loading works
-fn initialize filePath seed = 
+-- Wrapper functions for easier use
+fn loadGrammarFile filePath seedValue = 
 (
     try
     (
-        local result = ""
-        local resultLen = 100000
-        -- Call the DLL function using callDll
-        dllCall dllPath "initialize" filePath result resultLen seed
-        result
+        -- Create result buffer for the initialize function
+        local resultBuffer = ""
+        local bufferLength = 1000
+        
+        -- Call initialize with all required parameters
+        initialize filePath resultBuffer bufferLength seedValue
+        
+        format "Initialize result: %\n" resultBuffer
+        resultBuffer
     )
     catch
     (
@@ -96,35 +87,49 @@ fn initialize filePath seed =
 
 fn resetFunc seed = 
 (
-    format "DLL Call: reset with seed: %\n" seed
+    try
+    (
+        resetGrammar seed
+        format "Grammar reset with seed: %\n" seed
+    )
+    catch
+    (
+        format "Error calling resetGrammar: %\n" (getCurrentException())
+    )
 )
 
-fn iterate steps = 
-(
-    format "DLL Call: iterate with steps: %\n" steps
-)
-
-fn iterateToTime timeSeconds = 
-(
-    format "DLL Call: iterateToTime with time: %\n" timeSeconds
-    1 -- Return 1 step completed for testing
-)
-
-fn setModelSize x y z = 
-(
-    format "DLL Call: setSize with x:% y:% z:%\n" x y z
-)
-
+-- Simplified getMesh function 
+-- Note: The C++ getMesh() returns a complex MeshCpp struct with pointers
+-- This is difficult to handle directly in MaxScript. You may need to:
+-- 1. Add wrapper functions to your C++ DLL that return individual arrays
+-- 2. Or use a different approach to get mesh data
 fn getMesh = 
 (
-    format "DLL Call: getMesh\n"
-    -- Return dummy mesh data for testing
-    #(#(), #(), #(), #(), 0, 0, 0)
-)
-
-fn destroyMesh meshData = 
-(
-    format "DLL Call: destroyMesh\n"
+    try
+    (
+        local numFaces = getNumFaces()
+        
+        if numFaces == 0 then
+        (
+            format "No mesh data available\n"
+            return #(#(), #(), #(), #(), 0, 0, 0)
+        )
+        
+        -- WARNING: Calling getMesh() directly may cause issues because
+        -- it returns a C++ struct with pointers that MaxScript can't handle properly
+        format "Warning: getMesh() returns complex C++ struct - mesh display disabled\n"
+        format "Number of faces in current model: %\n" numFaces
+        
+        -- Return empty arrays for now to prevent crashes
+        -- You'll need to modify your C++ DLL to have MaxScript-friendly functions like:
+        -- getVertexCount(), getVertex(index), getTriangleCount(), getTriangle(index), etc.
+        return #(#(), #(), #(), #(), 0, 0, numFaces)
+    )
+    catch
+    (
+        format "Error getting mesh data: %\n" (getCurrentException())
+        return #(#(), #(), #(), #(), 0, 0, 0)
+    )
 )
 
 rollout GrammarEditorRollout "Graph Grammar Generator" width:400 -- height:600
@@ -258,10 +263,10 @@ rollout GrammarEditorRollout "Graph Grammar Generator" width:400 -- height:600
         updateStatusDisplay()
     )
     
-    fn loadGrammarFile filePath =
+    fn loadGrammarFileUI filePath =
     (
-        local result = initialize filePath seed
-        if result == "Success" then
+        local result = loadGrammarFile filePath seed
+        if result == "Success" or result != "Error: DLL call failed" then
         (
             grammarName = getFilenameFile filePath
             iterationCount = 0
@@ -300,7 +305,7 @@ rollout GrammarEditorRollout "Graph Grammar Generator" width:400 -- height:600
         )
         
         maxIteration = MAX_ITERATION
-        loadGrammarFile fileQueue[1]
+        loadGrammarFileUI fileQueue[1]
         deleteItem fileQueue 1
         startAnimation()
         true
@@ -315,7 +320,7 @@ rollout GrammarEditorRollout "Graph Grammar Generator" width:400 -- height:600
             if fileQueue.count > 0 then
             (
                 iterationCount = 0
-                loadGrammarFile fileQueue[1]
+                loadGrammarFileUI fileQueue[1]
                 deleteItem fileQueue 1
             )
             else
@@ -404,8 +409,8 @@ rollout GrammarEditorRollout "Graph Grammar Generator" width:400 -- height:600
     -- Event Handlers
     on GrammarEditorRollout open do
     (
-        -- Load the DLL first
-        loadGrammarDLL()
+        -- Test DLL availability
+        testDll()
         
         -- Initialize UI state
         spnSeed.value = seed
@@ -451,7 +456,7 @@ rollout GrammarEditorRollout "Graph Grammar Generator" width:400 -- height:600
         if filePath != undefined then
         (
             maxIteration = 0
-            loadGrammarFile filePath
+            loadGrammarFileUI filePath
         )
     )
     
@@ -502,8 +507,8 @@ rollout GrammarEditorRollout "Graph Grammar Generator" width:400 -- height:600
     
     on GrammarEditorRollout close do
     (
-        -- Unload the DLL when closing
-        unloadGrammarDLL()
+        -- Cleanup when closing
+        if isAnimating then stopAnimation()
     )
 )
 
