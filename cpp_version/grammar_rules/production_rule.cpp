@@ -12,6 +12,15 @@ ProductionRule::ProductionRule(
     ground(false),
     id(nextId++) {}
 
+ProductionRule::~ProductionRule() {
+    for (auto graph : startGraphs) {
+        delete graph;
+    }
+    for (auto graph : endGraphs) {
+        delete graph;
+    }
+}
+
 const vector<Graph*>& ProductionRule::getStartGraphs() const {
     return startGraphs;
 }

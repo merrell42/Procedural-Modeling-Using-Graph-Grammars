@@ -21,7 +21,7 @@ public:
         const vector<Graph*>& endGraphs
     );
     static ProductionRule* import(const Json& json, Primitives* shape);
-    ~ProductionRule() = default;
+    ~ProductionRule();
 
     // End graphs are the same as start graphs except the splices are removed.
     // The splices are not needed when creating the end graphs.

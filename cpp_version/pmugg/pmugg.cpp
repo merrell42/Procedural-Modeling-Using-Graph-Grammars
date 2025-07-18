@@ -19,7 +19,7 @@ using Json = nlohmann::json;
 int main() {
 	vector<string> filePaths = {
 		"../../grammar data/3D Complex Shapes/castle.json",
-		"../../grammar data/2D Basic Shapes/square hollow.json",
+		"../../grammar data/2D Basic Shapes/square filled.json",
 		"../../grammar data/3D Shapes/house1.json",
 		"../../grammar data/3D Shapes/docks.json",
 	};
@@ -28,6 +28,8 @@ int main() {
 	// Run the program for each file.
 	for (string filePath : filePaths) {
 		timer->reset();
+		MemoryCounter::reset();
+		
 		try {
 			// Import the grammar JSON file then iterate 100 steps.
 			Json parsed = readJsonFile(filePath, false);
@@ -38,11 +40,13 @@ int main() {
 			mutator->iterate(100);
 			cout << "Num Faces: " << model->getCurrent()->getFaceMap().size() << endl;
 			model->reset();
+			delete model;
+			delete grammar;
 		} catch (const exception& e) {
 			cout << "Error: " << e.what() << endl;
 		}
 
-		// Print memory leak and timing statistics before program exits.
+		// Print memory leak and timing statistics after each file.
 		MemoryCounter::printStats();
 		timer->printStats();
 	}

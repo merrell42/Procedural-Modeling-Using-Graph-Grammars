@@ -15,6 +15,20 @@ GraphGrammar::GraphGrammar() {
     grounded = false;
 }
 
+GraphGrammar::~GraphGrammar() {
+    delete emptyGraph;
+    for (auto rule : starterRules) {
+        delete rule;
+    }
+    for (auto rule : rules) {
+        delete rule;
+    }
+    for (auto rule : groundRules) {
+        delete rule;
+    }
+    delete primitives;
+}
+
 bool GraphGrammar::isGrounded() const {
     return grounded && groundRules.size() > 0;
 }

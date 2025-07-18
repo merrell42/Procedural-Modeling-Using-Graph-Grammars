@@ -28,7 +28,7 @@ struct Production {
 class GraphGrammar {
 public:
     GraphGrammar();
-    ~GraphGrammar() = default;
+    ~GraphGrammar();
     static GraphGrammar* import(const Json& json);
 
     // Get a production rule.
