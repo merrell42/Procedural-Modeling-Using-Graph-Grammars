@@ -4,7 +4,9 @@
 
 -- DLL Function Declarations
 -- DLL path - adjust this path to match your system
-dllPath = "C:\\PMUGG\\cpp_version\\x64\\Release\\pmugg dll.dll"
+-- dllPath = "C:\\PMUGG\\cpp_version\\x64\\Release\\pmugg dll.dll"
+dllPath = "C:\\PMUGG\\cpp_version\\Win32\\Debug\\pmugg dll.dll"
+-- dllPath = "C:\\PMUGG\\cpp_version\\Release\\pmugg dll.dll"
 
 -- Try to load DLL using different methods
 fn loadGrammarDLL = 
@@ -77,8 +79,19 @@ fn testDll =
 -- Placeholder DLL functions for testing - replace with actual DLL calls once loading works
 fn initialize filePath seed = 
 (
-    format "DLL Call: initialize with file: % seed: %\n" filePath seed
-    "Success" -- Return success for testing
+    try
+    (
+        local result = ""
+        local resultLen = 100000
+        -- Call the DLL function using callDll
+        dllCall dllPath "initialize" filePath result resultLen seed
+        result
+    )
+    catch
+    (
+        format "Error calling initialize: %\n" (getCurrentException())
+        "Error: DLL call failed"
+    )
 )
 
 fn resetFunc seed = 
