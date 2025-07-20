@@ -23,7 +23,7 @@
 static const FName GrammarEditorTabName("GrammarEditor");
 
 static const float AnimationInterval = 0.2f;
-static const int32 MaxIterationsPerFile = 50;
+static const int32 MaxIterationsPerFile = 200;
 
 void FGrammarEditorModule::StartupModule() {
 	if (FGrammarDLL::LoadDLL()) {
@@ -260,10 +260,15 @@ void FGrammarEditorModule::UpdateStatusText() {
 	if (StatusText.IsValid()) {
 		FString StatusString;
 		if (isProcessingFolder) {
-			StatusString = FString::Printf(TEXT("Processing: %s (%d/%d files, iteration %d/%d)"), 
-				*FPaths::GetBaseFilename(JsonFilesToProcess[CurrentFileIndex]),
-				CurrentFileIndex + 1, JsonFilesToProcess.Num(),
-				CurrentIteration + 1, MaxIterationsPerFile);
+			// Check if we're still within valid bounds.
+			if (CurrentFileIndex < JsonFilesToProcess.Num()) {
+				StatusString = FString::Printf(TEXT("Processing: %s (%d/%d files, iteration %d/%d)"), 
+					*FPaths::GetBaseFilename(JsonFilesToProcess[CurrentFileIndex]),
+					CurrentFileIndex + 1, JsonFilesToProcess.Num(),
+					CurrentIteration + 1, MaxIterationsPerFile);
+			} else {
+				StatusString = TEXT("");
+			}
 		} else {
 			if (CurrentIteration == 0) {
 				StatusString = FString::Printf(TEXT("%s"), *CurrentGrammarFile);
@@ -473,7 +478,7 @@ void FGrammarEditorModule::ProcessNextFileInFolder() {
 		// Finished processing all files.
 		isProcessingFolder = false;
 		if (StatusText.IsValid()) {
-			StatusText->SetText(LOCTEXT("FolderProcessingCompleteText", "Folder processing complete!"));
+			StatusText->SetText(FText::GetEmpty());
 		}
 		// Change Stop button back to Play.
 		if (PlayButtonText.IsValid()) {
