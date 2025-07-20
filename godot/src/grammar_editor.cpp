@@ -297,21 +297,28 @@ void GrammarEditor::update_mesh() {
 		return;
 	}
 
+	// Check if we have any submeshes with vertices.
+	bool has_vertices = false;
+	for (int submesh_index = 0; submesh_index < mesh.numSubmeshes; submesh_index++) {
+		if (mesh.submeshes[submesh_index].numVertices > 0 && mesh.submeshes[submesh_index].numTriangles > 0) {
+			has_vertices = true;
+			break;
+		}
+	}
+
 	// Remove mesh if empty. Godot does not support empty meshes.
-	if (mesh.numVertices == 0 || mesh.numTriangles == 0) {
+	if (!has_vertices) {
 		if (mesh_instance) {
 			mesh_instance->queue_free();
 			mesh_instance = nullptr;
 		}
 		
-		// Also remove edge lines only if there are no vertices
-		if (mesh.numVertices == 0) {
-			if (edge_lines_instance) {
-				edge_lines_instance->queue_free();
-				edge_lines_instance = nullptr;
-			}
-		    return;
+		// Also remove edge lines
+		if (edge_lines_instance) {
+			edge_lines_instance->queue_free();
+			edge_lines_instance = nullptr;
 		}
+		return;
 	}
 	
 	// Find existing mesh instance or create a new one.
@@ -322,49 +329,82 @@ void GrammarEditor::update_mesh() {
 		mesh_instance->set_owner(current_scene);
 	}
 
-	PackedVector3Array vertices;
-	PackedInt32Array indices;
-	PackedVector3Array normals;
-
-	// Switch Y and Z coordinates.
-	vertices.resize(mesh.numVertices);
-	for (int i = 0; i < mesh.numVertices; i++) {
-		vertices[i] = Vector3(mesh.positions[i * 3], mesh.positions[i * 3 + 2], mesh.positions[i * 3 + 1]);
-	}
-	normals.resize(mesh.numVertices);
-	for (int i = 0; i < mesh.numVertices; i++) {
-		normals[i] = Vector3(mesh.normals[i * 3], mesh.normals[i * 3 + 2], mesh.normals[i * 3 + 1]);
-	}
-
-	indices.resize(mesh.numTriangles * 3);
-	for (int i = 0; i < mesh.numTriangles; i++) {
-		// Reverse the orientation for each triangle.
-		indices[i * 3] = mesh.triangles[i * 3];
-		indices[i * 3 + 1] = mesh.triangles[i * 3 + 2];
-		indices[i * 3 + 2] = mesh.triangles[i * 3 + 1];
-	}
-
-	// Create edge lines.
-	PackedInt32Array face_indices;
-	face_indices.resize(mesh.numFaces);
-	for (int i = 0; i < mesh.numFaces; i++) {
-		face_indices[i] = mesh.faceIndices[i];
-	}
-	create_edge_lines(vertices, face_indices);
-    if (mesh.numVertices == 0 || mesh.numTriangles == 0) {
-        return;
-    }
-	
-	// Create the mesh surface.
-	Array arrays;
-	arrays.resize(Mesh::ARRAY_MAX);
-	arrays[Mesh::ARRAY_VERTEX] = vertices;
-	arrays[Mesh::ARRAY_INDEX] = indices;
-	arrays[Mesh::ARRAY_NORMAL] = normals;
-
+	// Create the array mesh.
 	Ref<ArrayMesh> array_mesh = memnew(ArrayMesh);
-	array_mesh->add_surface_from_arrays(Mesh::PRIMITIVE_TRIANGLES, arrays);
+	
+	// Process each submesh.
+	for (int submesh_index = 0; submesh_index < mesh.numSubmeshes; submesh_index++) {
+		SubmeshCpp submesh = mesh.submeshes[submesh_index];
+		
+		// Skip empty submeshes.
+		if (submesh.numVertices == 0 || submesh.numTriangles == 0) {
+			continue;
+		}
+
+		PackedVector3Array vertices;
+		PackedInt32Array indices;
+		PackedVector3Array normals;
+
+		// Switch Y and Z coordinates.
+		vertices.resize(submesh.numVertices);
+		for (int i = 0; i < submesh.numVertices; i++) {
+			vertices[i] = Vector3(submesh.positions[i * 3], submesh.positions[i * 3 + 2], submesh.positions[i * 3 + 1]);
+		}
+		normals.resize(submesh.numVertices);
+		for (int i = 0; i < submesh.numVertices; i++) {
+			normals[i] = Vector3(submesh.normals[i * 3], submesh.normals[i * 3 + 2], submesh.normals[i * 3 + 1]);
+		}
+
+		indices.resize(submesh.numTriangles * 3);
+		for (int i = 0; i < submesh.numTriangles; i++) {
+			// Reverse the orientation for each triangle.
+			indices[i * 3] = submesh.triangles[i * 3];
+			indices[i * 3 + 1] = submesh.triangles[i * 3 + 2];
+			indices[i * 3 + 2] = submesh.triangles[i * 3 + 1];
+		}
+
+		// Create the mesh surface for this submesh.
+		Array arrays;
+		arrays.resize(Mesh::ARRAY_MAX);
+		arrays[Mesh::ARRAY_VERTEX] = vertices;
+		arrays[Mesh::ARRAY_INDEX] = indices;
+		arrays[Mesh::ARRAY_NORMAL] = normals;
+
+		array_mesh->add_surface_from_arrays(Mesh::PRIMITIVE_TRIANGLES, arrays);
+		
+		// Create material for this submesh based on color.
+		Ref<StandardMaterial3D> material = memnew(StandardMaterial3D);
+		material->set_albedo(Color(submesh.red, submesh.green, submesh.blue, 1.0f));
+		array_mesh->surface_set_material(submesh_index, material);
+	}
+	
 	mesh_instance->set_mesh(array_mesh);
+	
+	// Create edge lines from the first submesh (for visualization).
+	if (mesh.numSubmeshes > 0) {
+		SubmeshCpp first_submesh = mesh.submeshes[0];
+		if (first_submesh.numVertices > 0) {
+			PackedVector3Array vertices;
+			PackedInt32Array face_indices;
+			
+			// Convert vertices for edge lines.
+			vertices.resize(first_submesh.numVertices);
+			for (int i = 0; i < first_submesh.numVertices; i++) {
+				vertices[i] = Vector3(first_submesh.positions[i * 3], first_submesh.positions[i * 3 + 2], first_submesh.positions[i * 3 + 1]);
+			}
+			
+			// Convert face indices for edge lines.
+			face_indices.resize(first_submesh.numFaces);
+			for (int i = 0; i < first_submesh.numFaces; i++) {
+				face_indices[i] = first_submesh.faceIndices[i];
+			}
+			
+			create_edge_lines(vertices, face_indices);
+		}
+	}
+	
+	// Clean up the mesh data.
+	destroyMesh(mesh);
 }
 
 void GrammarEditor::on_size_x_changed(String value) {
