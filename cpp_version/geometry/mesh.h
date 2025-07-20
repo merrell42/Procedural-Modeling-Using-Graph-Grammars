@@ -7,8 +7,8 @@ using namespace std;
 
 class Vec3;
 
-// This is for exporting the graph drawing. It is not used internally.
-struct MeshCpp {
+// A set of faces with the same material.
+struct SubmeshCpp {
     float* positions;
     float* normals;
     int* triangles;
@@ -16,13 +16,20 @@ struct MeshCpp {
     int numVertices;
     int numTriangles;
     int numFaces;
+    int materialIndex;
+};
+// This is for exporting the graph drawing. It is not used internally.
+struct MeshCpp {
+    SubmeshCpp* submeshes;
+    int numSubmeshes;
 };
 
-MeshCpp createMesh(
+SubmeshCpp createSubmesh(
     vector<Vec3> positions,
     vector<Vec3> normals,
     vector<int> triangles,
-    vector<int> faceIndices
+    vector<int> faceIndices,
+    int materialIndex
 );
 
 void freeMeshMemory(MeshCpp& mesh);

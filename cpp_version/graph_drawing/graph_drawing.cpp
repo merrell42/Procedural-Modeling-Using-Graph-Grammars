@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "graph_drawing.h"
 #include <fstream>
+#include <unordered_map>
 
 // This copies each item into the current model.
 // Each item is copied in the constructor of each item.
@@ -112,14 +113,43 @@ void GraphDrawing::save(string suffix) {
 }
 
 MeshCpp GraphDrawing::exportMesh() {
-	vector<Vec3> positions;
-	vector<Vec3> normals;
-	vector<int> triangles;
-	vector<int> faceIndices;
+	// Group faces by material.
+	unordered_map<string, vector<Face*>> materialGroups;
+	
 	for (const auto& [id, face] : faceMap) {
-		face->exportMesh(positions, normals, triangles, faceIndices);
+		const string material = face->getFaceType()->getMaterial();
+		materialGroups[material].push_back(face);
 	}
-	return createMesh(positions, normals, triangles, faceIndices);
+	
+	// Create the mesh structure
+	MeshCpp mesh;
+	mesh.numSubmeshes = (int)materialGroups.size();
+	mesh.submeshes = (SubmeshCpp*)malloc(mesh.numSubmeshes * sizeof(SubmeshCpp));
+	
+	// Create submeshes for each material group
+	int submeshIndex = 0;
+	for (const auto& [materialName, faces] : materialGroups) {
+		vector<Vec3> positions;
+		vector<Vec3> normals;
+		vector<int> triangles;
+		vector<int> faceIndices;
+		
+		// Export all faces with this material into a single submesh
+		for (Face* face : faces) {
+			face->exportMesh(positions, normals, triangles, faceIndices);
+		}
+		
+		// Create submesh for this material
+		if (!positions.empty()) {
+			mesh.submeshes[submeshIndex] = createSubmesh(positions, normals, triangles, faceIndices, submeshIndex);
+			submeshIndex++;
+		}
+	}
+	
+	// Update the actual number of submeshes created
+	mesh.numSubmeshes = submeshIndex;
+	
+	return mesh;
 }
 
 bool GraphDrawing::bspAddEdge(Edge* edge) {
