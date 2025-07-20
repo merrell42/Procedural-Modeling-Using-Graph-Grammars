@@ -12,6 +12,7 @@
 #include "MeshDescription.h"
 #include "StaticMeshAttributes.h"
 #include "Materials/Material.h"
+#include "Materials/MaterialInstanceDynamic.h"
 #include "UObject/ConstructorHelpers.h"
 #include "EngineUtils.h"
 #include "ProceduralMeshComponent.h"
@@ -189,77 +190,91 @@ void FGrammarDLL::UpdateMesh() {
     ULineBatchComponent* LineBatchComponent = NewObject<ULineBatchComponent>(MeshActor);
     LineBatchComponent->RegisterComponent();
     
-    // Prepare mesh data for procedural component.
-    TArray<FVector> Vertices;
-    TArray<int32> Triangles;
-    TArray<FVector> Normals;
-    TArray<FVector2D> UVs;
-    TArray<FColor> VertexColors;
-    TArray<FProcMeshTangent> Tangents;
-    
-    Vertices.Reserve(meshData.numVertices);
-    Triangles.Reserve(meshData.numTriangles * 3);
-    Normals.Reserve(meshData.numVertices);
-    UVs.Reserve(meshData.numVertices);
-    VertexColors.Reserve(meshData.numVertices);
-    Tangents.Reserve(meshData.numVertices);
-
-    for (int32 i = 0; i < meshData.numVertices; i++) {
-        FVector Position(
-            meshData.positions[i * 3] * 100.0f,
-            meshData.positions[i * 3 + 1] * 100.0f,
-            meshData.positions[i * 3 + 2] * 100.0f + 0.1f
-        );
-        Vertices.Add(Position);
-
-        FVector Normal(
-            meshData.normals[i * 3],
-            meshData.normals[i * 3 + 1],
-            meshData.normals[i * 3 + 2]
-        );
-        Normals.Add(Normal);
+    // Process each submesh
+    for (int32 submeshIndex = 0; submeshIndex < meshData.numSubmeshes; submeshIndex++) {
+        SubmeshCpp submesh = meshData.submeshes[submeshIndex];
         
-        UVs.Add(FVector2D(0, 0));
-        VertexColors.Add(FColor::White);
-        Tangents.Add(FProcMeshTangent(FVector(1, 0, 0), false));
-    }
-    
-    for (int32 i = 0; i < meshData.numTriangles; i++) {
-        int32 i0 = meshData.triangles[i * 3];
-        int32 i1 = meshData.triangles[i * 3 + 1];
-        int32 i2 = meshData.triangles[i * 3 + 2];
+        // Prepare mesh data for this submesh
+        TArray<FVector> Vertices;
+        TArray<int32> Triangles;
+        TArray<FVector> Normals;
+        TArray<FVector2D> UVs;
+        TArray<FColor> VertexColors;
+        TArray<FProcMeshTangent> Tangents;
         
-        // Validate indices.
-        if (i0 >= meshData.numVertices || i1 >= meshData.numVertices || i2 >= meshData.numVertices) {
-            continue;
+        Vertices.Reserve(submesh.numVertices);
+        Triangles.Reserve(submesh.numTriangles * 3);
+        Normals.Reserve(submesh.numVertices);
+        UVs.Reserve(submesh.numVertices);
+        VertexColors.Reserve(submesh.numVertices);
+        Tangents.Reserve(submesh.numVertices);
+
+        // Convert vertices and normals
+        for (int32 i = 0; i < submesh.numVertices; i++) {
+            FVector Position(
+                submesh.positions[i * 3] * 100.0f,
+                submesh.positions[i * 3 + 1] * 100.0f,
+                submesh.positions[i * 3 + 2] * 100.0f + 0.1f
+            );
+            Vertices.Add(Position);
+
+            FVector Normal(
+                submesh.normals[i * 3],
+                submesh.normals[i * 3 + 1],
+                submesh.normals[i * 3 + 2]
+            );
+            Normals.Add(Normal);
+            
+            UVs.Add(FVector2D(0, 0));
+            VertexColors.Add(FColor::White);
+            Tangents.Add(FProcMeshTangent(FVector(1, 0, 0), false));
         }
         
-        Triangles.Add(i0);
-        Triangles.Add(i1);
-        Triangles.Add(i2);
-    }
-    
-    // Create the procedural mesh section for faces.
-    ProcMeshComponent->CreateMeshSection(0, Vertices, Triangles, Normals, UVs, VertexColors, Tangents, true);
-    
-    // Set a basic material for faces.
-    UMaterial* DefaultMaterial = LoadObject<UMaterial>(nullptr, TEXT("/Engine/BasicShapes/BasicShapeMaterial"));
-    if (DefaultMaterial) {
-        ProcMeshComponent->SetMaterial(0, DefaultMaterial);
-    }
-    
-    // Generate edges from face indices and draw them using LineBatchComponent.
-    int32 startIndex = 0;
-    for (int32 i = 0; i < meshData.numFaces; i++) {
-        int32 endIndex = meshData.faceIndices[i];
-        
-        // Create edges for each face.
-        for (int32 j = startIndex; j < endIndex - 1; j++) {
-            DrawLine(LineBatchComponent, Vertices[j], Vertices[j + 1]);
+        // Convert triangles
+        for (int32 i = 0; i < submesh.numTriangles; i++) {
+            int32 i0 = submesh.triangles[i * 3];
+            int32 i1 = submesh.triangles[i * 3 + 1];
+            int32 i2 = submesh.triangles[i * 3 + 2];
+            
+            // Validate indices.
+            if (i0 >= submesh.numVertices || i1 >= submesh.numVertices || i2 >= submesh.numVertices) {
+                continue;
+            }
+            
+            Triangles.Add(i0);
+            Triangles.Add(i1);
+            Triangles.Add(i2);
         }
-        DrawLine(LineBatchComponent, Vertices[endIndex - 1], Vertices[startIndex]);
         
-        startIndex = endIndex;
+        // Create the procedural mesh section for this submesh
+        ProcMeshComponent->CreateMeshSection(submeshIndex, Vertices, Triangles, Normals, UVs, VertexColors, Tangents, true);
+        
+        // Create material for this submesh based on color
+        UMaterial* SubmeshMaterial = LoadObject<UMaterial>(nullptr, TEXT("/Engine/BasicShapes/BasicShapeMaterial"));
+        if (SubmeshMaterial) {
+            // Create a dynamic material instance to set the color
+            UMaterialInstanceDynamic* DynamicMaterial = UMaterialInstanceDynamic::Create(SubmeshMaterial, nullptr);
+            if (DynamicMaterial) {
+                DynamicMaterial->SetVectorParameterValue(TEXT("Color"), FLinearColor(submesh.red, submesh.green, submesh.blue, 1.0f));
+                ProcMeshComponent->SetMaterial(submeshIndex, DynamicMaterial);
+            } else {
+                ProcMeshComponent->SetMaterial(submeshIndex, SubmeshMaterial);
+            }
+        }
+        
+        // Generate edges from face indices and draw them using LineBatchComponent
+        int32 startIndex = 0;
+        for (int32 i = 0; i < submesh.numFaces; i++) {
+            int32 endIndex = submesh.faceIndices[i];
+            
+            // Create edges for each face
+            for (int32 j = startIndex; j < endIndex - 1; j++) {
+                DrawLine(LineBatchComponent, Vertices[j], Vertices[j + 1]);
+            }
+            DrawLine(LineBatchComponent, Vertices[endIndex - 1], Vertices[startIndex]);
+            
+            startIndex = endIndex;
+        }
     }
     
     // Clean up DLL memory.

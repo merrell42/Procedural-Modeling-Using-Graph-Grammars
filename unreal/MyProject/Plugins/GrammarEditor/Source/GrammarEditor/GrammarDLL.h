@@ -37,8 +37,8 @@ private:
     static void* DLLHandle;
     static bool isLoaded;
     
-    // Mesh structure matching the DLL
-    struct MeshCpp {
+    // Submesh structure matching the DLL
+    struct SubmeshCpp {
         float* positions;
         float* normals;
         int* triangles;
@@ -46,6 +46,15 @@ private:
         int numVertices;
         int numTriangles;
         int numFaces;
+        float red;
+        float green;
+        float blue;
+    };
+
+    // Mesh structure matching the DLL
+    struct MeshCpp {
+        SubmeshCpp* submeshes;
+        int numSubmeshes;
     };
 
     // Function pointers

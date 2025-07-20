@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "json_version_manager.h"
+#include "../geometry/vec3.h"
 
 void edgeTypesMigration1(Json& json) {
     for (auto& edgeType : json["edgeTypes"]) {
@@ -213,10 +214,43 @@ void jsonMigration1(Json& json) {
     vertexTypesMigration1(json["types"]);
 }
 
+Vec3 createColorForIndex(int index) {   
+    switch (index % 6) {
+        case 0: return Vec3(1.0, 1.0, 1.0);
+        case 1: return Vec3(0.75, 0.95, 1.0);
+        case 2: return Vec3(1.0, 0.75, 0.75);
+        case 3: return Vec3(0.75, 1.0, 0.75);
+        case 4: return Vec3(0.75, 1.0, 1.0);
+        case 5: return Vec3(1.0, 0.75, 1.0);
+        default: return Vec3(1.0, 1.0, 0.75);
+    }
+}
+
+void jsonMigration2(Json& json) {
+    // Go through each face type and create colors for them if no color is assigned.
+    if (json.contains("types") && json["types"].contains("faceTypes")) {
+        Json& faceTypes = json["types"]["faceTypes"];
+        int faceTypeIndex = 0;
+        
+        for (auto& faceType : faceTypes) {
+            if (!faceType.contains("color") || faceType["color"].is_null()) {
+                Vec3 color = createColorForIndex(faceTypeIndex);
+                Json colorJson;
+                colorJson["x"] = color.getX();
+                colorJson["y"] = color.getY();
+                colorJson["z"] = color.getZ();
+                faceType["color"] = colorJson;
+            }
+            faceTypeIndex++;
+        }
+    }
+}
+
 void registerJsonMigrations() {
     if (JsonVersionManager::isInitialized()) {
         return;
     }
     JsonVersionManager::registerUpdateFunction(jsonMigration1);
+    JsonVersionManager::registerUpdateFunction(jsonMigration2);
     JsonVersionManager::setInitialized(true);
 }

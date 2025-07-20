@@ -37,6 +37,10 @@ const Vec3& FaceType::getNormal() const {
     return normal;
 }
 
+const Vec3& FaceType::getColor() const {
+    return color;
+}
+
 int FaceType::getMaxDim() const {
     return maxDim;
 }

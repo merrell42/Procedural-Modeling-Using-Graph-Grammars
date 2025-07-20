@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "graph_drawing.h"
 #include <fstream>
+#include <unordered_map>
 
 // This copies each item into the current model.
 // Each item is copied in the constructor of each item.
@@ -112,14 +113,50 @@ void GraphDrawing::save(string suffix) {
 }
 
 MeshCpp GraphDrawing::exportMesh() {
-	vector<Vec3> positions;
-	vector<Vec3> normals;
-	vector<int> triangles;
-	vector<int> faceIndices;
+	unordered_map<string, vector<Face*>> materialGroups;
+
+	// Group faces according to their material or color.
 	for (const auto& [id, face] : faceMap) {
-		face->exportMesh(positions, normals, triangles, faceIndices);
+		const Vec3& color = face->getFaceType()->getColor();
+		string colorKey = "r:" + to_string(color.getX()) + ",g:" + to_string(color.getY()) + ",b:" + to_string(color.getZ());
+		materialGroups[colorKey].push_back(face);
 	}
-	return createMesh(positions, normals, triangles, faceIndices);
+	
+	// Create the mesh structure
+	MeshCpp mesh;
+	mesh.numSubmeshes = (int)materialGroups.size();
+	mesh.submeshes = (SubmeshCpp*)malloc(mesh.numSubmeshes * sizeof(SubmeshCpp));
+	
+	// Create submeshes for each material group
+	int submeshIndex = 0;
+	for (const auto& [materialName, faces] : materialGroups) {
+		vector<Vec3> positions;
+		vector<Vec3> normals;
+		vector<int> triangles;
+		vector<int> faceIndices;
+		for (Face* face : faces) {
+			face->exportMesh(positions, normals, triangles, faceIndices);
+		}
+		if (!positions.empty()) {
+			// Parse the color from the material name (which is actually a color key)
+			// Format: "r:1.0,g:0.0,b:0.0"
+			size_t redStart = materialName.find("r:") + 2;
+			size_t redEnd = materialName.find(',', redStart);
+			size_t greenStart = materialName.find("g:") + 2;
+			size_t greenEnd = materialName.find(',', greenStart);
+			size_t blueStart = materialName.find("b:") + 2;
+			
+			float r = stof(materialName.substr(redStart, redEnd - redStart));
+			float g = stof(materialName.substr(greenStart, greenEnd - greenStart));
+			float b = stof(materialName.substr(blueStart));
+			
+			mesh.submeshes[submeshIndex] = createSubmesh(positions, normals, triangles, faceIndices, r, g, b);
+			submeshIndex++;
+		}
+	}
+	mesh.numSubmeshes = submeshIndex;
+	
+	return mesh;
 }
 
 bool GraphDrawing::bspAddEdge(Edge* edge) {

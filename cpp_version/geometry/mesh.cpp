@@ -1,57 +1,72 @@
 #include "pch.h"
 #include "mesh.h"
 
-MeshCpp createMesh(
+SubmeshCpp createSubmesh(
     vector<Vec3> positions,
     vector<Vec3> normals,
     vector<int> triangles,
-    vector<int> faceIndices
+    vector<int> faceIndices,
+    float red,
+    float green,
+    float blue
 ) {
-    MeshCpp mesh;
-    mesh.positions = (float*)malloc(3 * positions.size() * sizeof(float));
-    mesh.normals = (float*)malloc(3 * normals.size() * sizeof(float));
-    mesh.triangles = (int*)malloc(triangles.size() * sizeof(int));
-    mesh.faceIndices = (int*)malloc(faceIndices.size() * sizeof(int));
+    SubmeshCpp submesh;
+    
+    submesh.positions = (float*)malloc(3 * positions.size() * sizeof(float));
+    submesh.normals = (float*)malloc(3 * normals.size() * sizeof(float));
+    submesh.triangles = (int*)malloc(triangles.size() * sizeof(int));
+    submesh.faceIndices = (int*)malloc(faceIndices.size() * sizeof(int));
+    
     for (int i = 0; i < positions.size(); i++) {
-        mesh.positions[3 * i + 0] = (float)positions[i].getX();
-        mesh.positions[3 * i + 1] = (float)positions[i].getY();
-        mesh.positions[3 * i + 2] = (float)positions[i].getZ();
+        submesh.positions[3 * i + 0] = (float)positions[i].getX();
+        submesh.positions[3 * i + 1] = (float)positions[i].getY();
+        submesh.positions[3 * i + 2] = (float)positions[i].getZ();
     }
     for (int i = 0; i < normals.size(); i++) {
-        mesh.normals[3 * i + 0] = (float)normals[i].getX();
-        mesh.normals[3 * i + 1] = (float)normals[i].getY();
-        mesh.normals[3 * i + 2] = (float)normals[i].getZ();
+        submesh.normals[3 * i + 0] = (float)normals[i].getX();
+        submesh.normals[3 * i + 1] = (float)normals[i].getY();
+        submesh.normals[3 * i + 2] = (float)normals[i].getZ();
     }
     for (int i = 0; i < triangles.size(); i++) {
-        mesh.triangles[i] = triangles[i];
+        submesh.triangles[i] = triangles[i];
     }
     for (int i = 0; i < faceIndices.size(); i++) {
-        mesh.faceIndices[i] = faceIndices[i];
+        submesh.faceIndices[i] = faceIndices[i];
     }
-    mesh.numVertices = (int)positions.size();
-    mesh.numTriangles = (int)triangles.size() / 3;
-    mesh.numFaces = (int)faceIndices.size();
-    return mesh;
+    
+    submesh.numVertices = (int)positions.size();
+    submesh.numTriangles = (int)triangles.size() / 3;
+    submesh.numFaces = (int)faceIndices.size();
+    submesh.red = red;
+    submesh.green = green;
+    submesh.blue = blue;
+    
+    return submesh;
 }
 
 void freeMeshMemory(MeshCpp& mesh) {
-    if (mesh.positions) {
-        free(mesh.positions);
-        mesh.positions = nullptr;
+    if (mesh.submeshes) {
+        for (int i = 0; i < mesh.numSubmeshes; i++) {
+            SubmeshCpp& submesh = mesh.submeshes[i];
+            if (submesh.positions) {
+                free(submesh.positions);
+                submesh.positions = nullptr;
+            }
+            if (submesh.normals) {
+                free(submesh.normals);
+                submesh.normals = nullptr;
+            }
+            if (submesh.triangles) {
+                free(submesh.triangles);
+                submesh.triangles = nullptr;
+            }
+            if (submesh.faceIndices) {
+                free(submesh.faceIndices);
+                submesh.faceIndices = nullptr;
+            }
+        }
+        free(mesh.submeshes);
+        mesh.submeshes = nullptr;
     }
-    if (mesh.normals) {
-        free(mesh.normals);
-        mesh.normals = nullptr;
-    }
-    if (mesh.triangles) {
-        free(mesh.triangles);
-        mesh.triangles = nullptr;
-    }
-    if (mesh.faceIndices) {
-        free(mesh.faceIndices);
-        mesh.faceIndices = nullptr;
-    }
-    mesh.numVertices = 0;
-    mesh.numTriangles = 0;
-    mesh.numFaces = 0;
+    mesh.numSubmeshes = 0;
 }

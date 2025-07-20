@@ -231,6 +231,9 @@ void Face::exportMesh(
     vector<int>& triangles,
     vector<int>& faceIndices
 ) const {
+    if (isHole()) {
+        return;
+    }
     int startIndex = (int)positions.size();
     auto facePositions = getPositions();
     positions.insert(positions.end(), facePositions.begin(), facePositions.end());
