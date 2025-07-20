@@ -12,6 +12,7 @@ public:
 
     const string& getMaterial() const;
     const Vec3& getNormal() const;
+    const Vec3& getColor() const;
     int getMaxDim() const;
 
     static FaceType* import(const Json& json);

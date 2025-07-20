@@ -113,12 +113,13 @@ void GraphDrawing::save(string suffix) {
 }
 
 MeshCpp GraphDrawing::exportMesh() {
-	// Group faces by material.
 	unordered_map<string, vector<Face*>> materialGroups;
-	
+
+	// Group faces according to their material or color.
 	for (const auto& [id, face] : faceMap) {
-		const string material = face->getFaceType()->getMaterial();
-		materialGroups[material].push_back(face);
+		const Vec3& color = face->getFaceType()->getColor();
+		string colorKey = "r:" + to_string(color.getX()) + ",g:" + to_string(color.getY()) + ",b:" + to_string(color.getZ());
+		materialGroups[colorKey].push_back(face);
 	}
 	
 	// Create the mesh structure
@@ -133,20 +134,26 @@ MeshCpp GraphDrawing::exportMesh() {
 		vector<Vec3> normals;
 		vector<int> triangles;
 		vector<int> faceIndices;
-		
-		// Export all faces with this material into a single submesh
 		for (Face* face : faces) {
 			face->exportMesh(positions, normals, triangles, faceIndices);
 		}
-		
-		// Create submesh for this material
 		if (!positions.empty()) {
-			mesh.submeshes[submeshIndex] = createSubmesh(positions, normals, triangles, faceIndices, submeshIndex);
+			// Parse the color from the material name (which is actually a color key)
+			// Format: "r:1.0,g:0.0,b:0.0"
+			size_t redStart = materialName.find("r:") + 2;
+			size_t redEnd = materialName.find(',', redStart);
+			size_t greenStart = materialName.find("g:") + 2;
+			size_t greenEnd = materialName.find(',', greenStart);
+			size_t blueStart = materialName.find("b:") + 2;
+			
+			float r = stof(materialName.substr(redStart, redEnd - redStart));
+			float g = stof(materialName.substr(greenStart, greenEnd - greenStart));
+			float b = stof(materialName.substr(blueStart));
+			
+			mesh.submeshes[submeshIndex] = createSubmesh(positions, normals, triangles, faceIndices, r, g, b);
 			submeshIndex++;
 		}
 	}
-	
-	// Update the actual number of submeshes created
 	mesh.numSubmeshes = submeshIndex;
 	
 	return mesh;

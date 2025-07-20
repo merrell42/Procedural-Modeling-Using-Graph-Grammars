@@ -6,7 +6,9 @@ SubmeshCpp createSubmesh(
     vector<Vec3> normals,
     vector<int> triangles,
     vector<int> faceIndices,
-    int materialIndex
+    float red,
+    float green,
+    float blue
 ) {
     SubmeshCpp submesh;
     
@@ -35,7 +37,9 @@ SubmeshCpp createSubmesh(
     submesh.numVertices = (int)positions.size();
     submesh.numTriangles = (int)triangles.size() / 3;
     submesh.numFaces = (int)faceIndices.size();
-    submesh.materialIndex = materialIndex;
+    submesh.red = red;
+    submesh.green = green;
+    submesh.blue = blue;
     
     return submesh;
 }
