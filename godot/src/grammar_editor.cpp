@@ -482,12 +482,6 @@ void GrammarEditor::load_file_from_folder(String file_path) {
 	iteration_count = 0;
 	update_iteration_display();
 	
-	// Initialize PMUGG with the selected file.
-	EditorInterface* editor_interface = EditorInterface::get_singleton();
-	if (!editor_interface) {
-		UtilityFunctions::print("No editor interface available");
-		return;
-	}
 
     // Initialize the grammar.
     const char* path_cstr = file_path.utf8().get_data();

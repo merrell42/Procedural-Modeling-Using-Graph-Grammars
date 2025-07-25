@@ -1,8 +1,8 @@
 #include "pch.h"
 #include "edge_type.h"
 #include "face_type.h"
-#include "..\graph\edge_settings.h"
-#include "..\util\util.h"
+#include "../graph/edge_settings.h"
+#include "../util/util.h"
 
 int EdgeType::nextId = 0;
 

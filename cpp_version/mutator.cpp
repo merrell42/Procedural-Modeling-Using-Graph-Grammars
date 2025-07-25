@@ -3,10 +3,10 @@
 #include <chrono>
 #include <fstream>
 #include "mutator.h"
-#include "../settings.h"
-#include "../util/util.h"
-#include "../grammar_rules/rule_applier_settings.h"
-#include "../grammar_rules/rule_applier.h"
+#include "settings.h"
+#include "util/util.h"
+#include "grammar_rules/rule_applier_settings.h"
+#include "grammar_rules/rule_applier.h"
 
 Mutator::Mutator(Model* model, GraphGrammar* grammar)
     : model(model)

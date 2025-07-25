@@ -9,14 +9,13 @@
 using namespace godot;
 
 void initialize_example_module(ModuleInitializationLevel p_level) {
-	// Register the editor plugin at editor level
 	if (p_level == MODULE_INITIALIZATION_LEVEL_EDITOR) {
 		ClassDB::register_class<GrammarEditor>();
 	}
 }
 
 void uninitialize_example_module(ModuleInitializationLevel p_level) {
-	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
+	if (p_level != MODULE_INITIALIZATION_LEVEL_EDITOR) {
 		return;
 	}
 }

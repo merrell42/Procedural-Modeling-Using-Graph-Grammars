@@ -25,6 +25,30 @@ if env["platform"] == "windows":
 
 sources = Glob("src/*.cpp")
 
+# On Linux, include PMUGG source files directly since we don't have a prebuilt library
+if env["platform"] == "linux":
+    # Add PMUGG source files
+    pmugg_sources = [
+        "../cpp_version/pmugg dll/generate.cpp",
+        "../cpp_version/mutator.cpp",
+        "../cpp_version/memory_counter.cpp",
+        "../cpp_version/settings.cpp",
+        "../cpp_version/graph_grammar.cpp",
+    ]
+    
+    # Add sources from subdirectories
+    pmugg_sources += Glob("../cpp_version/geometry/*.cpp")
+    pmugg_sources += Glob("../cpp_version/graph/*.cpp")
+    pmugg_sources += Glob("../cpp_version/graph_drawing/*.cpp")
+    pmugg_sources += Glob("../cpp_version/graph_morphism/*.cpp")
+    pmugg_sources += Glob("../cpp_version/grammar_rules/*.cpp")
+    pmugg_sources += Glob("../cpp_version/placements/*.cpp")
+    pmugg_sources += Glob("../cpp_version/primitives/*.cpp")
+    pmugg_sources += Glob("../cpp_version/util/*.cpp")
+    pmugg_sources += Glob("../cpp_version/json versioning/*.cpp")
+    
+    sources += pmugg_sources
+
 if env["platform"] == "macos":
     library = env.SharedLibrary(
         "demo/bin/libgdexample.{}.{}.framework/libgdexample.{}.{}".format(
