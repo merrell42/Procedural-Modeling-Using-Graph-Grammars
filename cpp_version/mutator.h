@@ -3,9 +3,9 @@
 #include <memory>
 #include <string>
 #include "graph_grammar.h"
-#include "../util/timer.h"
-#include "../graph_drawing/model.h"
-#include "../graph_morphism/morphism_finder.h"
+#include "util/timer.h"
+#include "graph_drawing/model.h"
+#include "graph_morphism/morphism_finder.h"
 
 class Classifier;
 class Timer;

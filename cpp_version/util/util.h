@@ -24,7 +24,7 @@ bool contains(const vector<T>& vec, const T& item) {
 
 // Generate a random number between 0 and 1. Like rand(), but it is deterministic.
 // When we rerun the program, the same random numbers are generated.
-double random();
+double randomValue();
 
 // Reset the random number generator to a specific seed.
 void resetRandom(int seed);

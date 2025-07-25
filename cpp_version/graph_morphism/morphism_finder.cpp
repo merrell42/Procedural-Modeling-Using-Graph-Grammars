@@ -381,7 +381,7 @@ Morphism* MorphismFinder::assignHalfEdge(HalfEdge* halfA, GraphHalfEdge* halfB, 
     bool isOnBoundary = vertexB->boundaryIndex() >= 0;
     auto vertexType = vertexB->getType();
     if (!isOnBoundary && vertexType->getSpliced() && !morphism->vertexBtoA[vIndexB]) {
-        halfA->getEdge()->fullSplit(random());
+        halfA->getEdge()->fullSplit(randomValue());
         nodesModified = true;
     }
 

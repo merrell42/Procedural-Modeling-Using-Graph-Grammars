@@ -4,7 +4,9 @@
 #include <iostream>
 #include <algorithm>
 #include "util.h"
+#ifdef PMUGG_CMDLINE
 #include "minmax.h"
+#endif
 
 Range::Range() : low(0), high(0), tileLength(0) {}
 

@@ -2,10 +2,10 @@
 #include <vector>
 #include <memory>
 #include <map>
-#include "../third_party/json.h"
-#include "../primitives/face_type.h"
-#include "../primitives/primitives.h"
-#include "../graph_morphism/morphism.h"
+#include "third_party/json.h"
+#include "primitives/face_type.h"
+#include "primitives/primitives.h"
+#include "graph_morphism/morphism.h"
 
 using Json = nlohmann::json;
 
