@@ -27,6 +27,9 @@ sources = Glob("src/*.cpp")
 
 # On Linux, include PMUGG source files directly since we don't have a prebuilt library
 if env["platform"] == "linux":
+    # Enable exceptions for PMUGG code
+    env.Append(CXXFLAGS=["-fexceptions"])
+    
     # Add PMUGG source files
     pmugg_sources = [
         "../cpp_version/pmugg dll/generate.cpp",

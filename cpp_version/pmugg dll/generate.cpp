@@ -19,6 +19,16 @@ using Json = nlohmann::json;
 Model* model;
 Mutator* mutator;
 
+// Cross-platform safe string copy
+void safeCopy(char* dest, int len, const char* src) {
+#ifdef _WIN32
+	strcpy_s(dest, len, src);
+#else
+	strncpy(dest, src, len - 1);
+	dest[len - 1] = '\0';
+#endif
+}
+
 // Initialize the model and mutator from the JSON file. Return messages in the result string.
 void initialize(const char* filePath, char* result, int len, int seed) {
 	resetRandom(seed);
@@ -28,15 +38,15 @@ void initialize(const char* filePath, char* result, int len, int seed) {
 		auto grammar = GraphGrammar::import(parsed);
 		model = new Model();
 		mutator = new Mutator(model, grammar);
-		strcpy_s(result, len, "Success");
+		safeCopy(result, len, "Success");
 	} catch (const Json::exception& e) {
 		string errorMsg = "Error: JSON parsing failed - ";
 		errorMsg += e.what();
-		strcpy_s(result, len, errorMsg.c_str());
+		safeCopy(result, len, errorMsg.c_str());
 	} catch (const runtime_error& e) {
 		string errorMsg = "Error: ";
 		errorMsg += e.what();
-		strcpy_s(result, len, errorMsg.c_str());
+		safeCopy(result, len, errorMsg.c_str());
 	}
 }
 

@@ -1,16 +1,22 @@
 #include "pch.h"
 #include "util.h"
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <random>
 #include <cmath>
+#ifdef PMUGG_CMDLINE
+#include "minmax.h"
+#endif
 #include <algorithm>
 #include <stdexcept>
 #include <vector>
-#include <iostream>
-#include "minmax.h"
 
 static int randomCount = 0;
 static int randomSeed = 42;
 
-double random() {
+double randomValue() {
     double x = (double)sin(randomSeed + randomCount) * (10000 + randomSeed);
     randomCount++;
     return x - floor(x);
@@ -22,7 +28,7 @@ void resetRandom(int seed) {
 }
 
 int Util::randomInt(int count) {
-    return static_cast<int>(random() * count);
+    return static_cast<int>(randomValue() * count);
 }
 
 int Util::maxDim(const Vec3& n) {
@@ -47,7 +53,7 @@ int Util::randomDistribution(const vector<double>& probabilityMass) {
     if (sum == 0.0) {
         return -1;
     }
-    double r = sum * random();
+    double r = sum * randomValue();
     int index = 0;
     while (index < sums.size() && r > sums[index]) {
         index++;
@@ -60,7 +66,7 @@ double Util::randomUniform(double lower, double upper) {
     if (lower > upper) {
         throw invalid_argument("Lower bound is greater than upper bound.");
     }
-    double s = random();
+    double s = randomValue();
     return s * (upper - lower) + lower;
 }
 

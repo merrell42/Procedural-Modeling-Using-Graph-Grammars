@@ -3,7 +3,9 @@
 #include <iostream>
 #include <iomanip>
 #include <algorithm>
+#ifdef PMUGG_CMDLINE
 #include "minmax.h"
+#endif
 
 Timer::Timer() = default;
 
