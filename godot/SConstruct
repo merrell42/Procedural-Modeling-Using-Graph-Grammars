@@ -53,6 +53,31 @@ if env["platform"] == "linux":
     sources += pmugg_sources
 
 if env["platform"] == "macos":
+    # Enable exceptions for PMUGG code
+    env.Append(CXXFLAGS=["-fexceptions"])
+
+    # Add PMUGG source files
+    pmugg_sources = [
+        "../cpp_version/pmugg dll/generate.cpp",
+        "../cpp_version/mutator.cpp",
+        "../cpp_version/memory_counter.cpp",
+        "../cpp_version/settings.cpp",
+        "../cpp_version/graph_grammar.cpp",
+    ]
+    
+    # Add sources from subdirectories
+    pmugg_sources += Glob("../cpp_version/geometry/*.cpp")
+    pmugg_sources += Glob("../cpp_version/graph/*.cpp")
+    pmugg_sources += Glob("../cpp_version/graph_drawing/*.cpp")
+    pmugg_sources += Glob("../cpp_version/graph_morphism/*.cpp")
+    pmugg_sources += Glob("../cpp_version/grammar_rules/*.cpp")
+    pmugg_sources += Glob("../cpp_version/placements/*.cpp")
+    pmugg_sources += Glob("../cpp_version/primitives/*.cpp")
+    pmugg_sources += Glob("../cpp_version/util/*.cpp")
+    pmugg_sources += Glob("../cpp_version/json versioning/*.cpp")
+    
+    sources += pmugg_sources
+
     library = env.SharedLibrary(
         "demo/bin/libgdexample.{}.{}.framework/libgdexample.{}.{}".format(
             env["platform"], env["target"], env["platform"], env["target"]
@@ -65,6 +90,7 @@ elif env["platform"] == "ios":
             "demo/bin/libgdexample.{}.{}.simulator.a".format(env["platform"], env["target"]),
             source=sources,
         )
+
     else:
         library = env.StaticLibrary(
             "demo/bin/libgdexample.{}.{}.a".format(env["platform"], env["target"]),

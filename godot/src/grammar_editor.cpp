@@ -201,7 +201,8 @@ void GrammarEditor::on_file_selected(String path) {
 	EditorInterface* editor_interface = EditorInterface::get_singleton();
 	if (editor_interface) {
 		// Initialize the grammar.
-		const char* path_cstr = path.utf8().get_data();
+		CharString char_str = path.utf8();
+		const char* path_cstr = char_str.get_data();
 		char result[1024];
 		get_current_values();
 		initialize(path_cstr, result, sizeof(result), seed_value);
