@@ -90,7 +90,6 @@ elif env["platform"] == "ios":
             "demo/bin/libgdexample.{}.{}.simulator.a".format(env["platform"], env["target"]),
             source=sources,
         )
-
     else:
         library = env.StaticLibrary(
             "demo/bin/libgdexample.{}.{}.a".format(env["platform"], env["target"]),
