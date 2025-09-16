@@ -4,46 +4,47 @@
 
 -- DLL Function Declarations using externalFunction
 -- DLL path - adjust this path to match your system
--- dllPath = "C:\\PMUGG\\cpp_version\\x64\\Release\\pmugg dll.dll"
-dllPath = "C:\\PMUGG\\cpp_version\\Win32\\Debug\\pmugg dll.dll"
+dllPath = "C:\\PMUGG\\cpp_version\\x64\\Release\\pmugg dll.dll"
+-- dllPath = "C:\\PMUGG\\cpp_version\\Win32\\Debug\\pmugg dll.dll"
 
 -- External Function Declarations
 -- These match the exact signatures from your C++ DLL (generate.h/generate.cpp)
 
 -- Initialize function: takes file path, result buffer, buffer length, and seed
-externalFunction initialize #cstring filePath #cstring result #integer len #integer seed \
-    returns:#void library:dllPath
+externalFunction initialize dllPath "initialize"
+-- externalFunction initialize #cstring filePath #integer seed \
+--    returns:#void library:dllPath
 
 -- Reset function: takes seed parameter  
-externalFunction resetGrammar #integer seed \
-    returns:#void library:dllPath
+-- externalFunction resetGrammar #integer seed \
+--     returns:#void library:dllPath
 
 -- Iterate function: takes number of steps
-externalFunction iterate #integer steps \
-    returns:#void library:dllPath
+-- externalFunction iterate #integer steps \
+--     returns:#void library:dllPath
 
 -- Iterate to time function: takes time in seconds, returns steps completed
-externalFunction iterateToTime #float timeSeconds \
-    returns:#integer library:dllPath
+-- externalFunction iterateToTime #float timeSeconds \
+--     returns:#integer library:dllPath
 
 -- Get number of faces in current model
-externalFunction getNumFaces \
-    returns:#integer library:dllPath
+--externalFunction getNumFaces \
+--    returns:#integer library:dllPath
 
 -- Set model size function: takes x, y, z dimensions
-externalFunction setModelSize #float x #float y #float z \
-    returns:#void library:dllPath
+-- externalFunction setModelSize #float x #float y #float z \
+--     returns:#void library:dllPath
 
 -- Get mesh data function: returns MeshCpp struct
 -- Note: MeshCpp is a complex struct, MaxScript may have issues with this
 -- We'll need to handle this carefully or create wrapper functions in the DLL
-externalFunction getMesh \
-    returns:#unsupplied library:dllPath
+-- externalFunction getMesh \
+--     returns:#unsupplied library:dllPath
 
 -- Destroy/cleanup mesh data - takes MeshCpp reference
 -- This might need special handling due to C++ reference parameter
-externalFunction destroyMesh #unsupplied meshData \
-    returns:#void library:dllPath
+-- externalFunction destroyMesh #unsupplied meshData \
+--     returns:#void library:dllPath
 
 -- Test DLL availability
 fn testDll = 
@@ -51,7 +52,7 @@ fn testDll =
     try
     (
         -- Try to call a simple function to test if DLL is accessible
-        local testResult = getNumFaces()
+        local testResult = getNumFaclkjes()
         format "DLL test successful. Number of faces: %\n" testResult
         true
     )
