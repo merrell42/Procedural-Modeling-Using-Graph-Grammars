@@ -4,7 +4,7 @@
 #include "primitives.h"
 #include "../util/util.h"
 
-VertexType::VertexType() : spliced(false) {
+VertexType::VertexType() : spliced(false), ruleGeneratorId(0) {
 }
 
 const vector<HalfEdgeType>& VertexType::getHalfEdgeTypes() const {
@@ -56,3 +56,37 @@ HalfEdgeType::HalfEdgeType(EdgeType* newEdge, bool newIsAtStart, const vector<in
     : dir()
     , edge(newEdge)
     , isAtStart(newIsAtStart) {}
+
+string VertexConnection::getId() const {
+    return edge->getRuleGeneratorId() + (isAtStart ? "S" : "E");
+}
+
+const vector<VertexConnection>& VertexType::getConnections() const {
+    return connections;
+}
+
+int VertexType::getRuleGeneratorId() const {
+    return ruleGeneratorId;
+}
+
+void VertexType::setRuleGeneratorId(int id) {
+    ruleGeneratorId = id;
+}
+
+VertexType* VertexType::importRuleGenerator(const Json& json, const map<string, EdgeType*>& eTypes) {
+    auto result = new VertexType();
+    result->spliced = json.value("spliced", false);
+    result->ruleGeneratorId = json.value("id", 0);
+    
+    for (const auto& connJson : json["connections"]) {
+        string edgeId = connJson["edge"].get<string>();
+        bool isAtStart = connJson["isAtStart"];
+        
+        auto it = eTypes.find(edgeId);
+        if (it != eTypes.end()) {
+            result->connections.push_back(VertexConnection(it->second, isAtStart));
+        }
+    }
+    
+    return result;
+}

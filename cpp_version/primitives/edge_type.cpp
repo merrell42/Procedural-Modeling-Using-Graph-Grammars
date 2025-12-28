@@ -1,8 +1,10 @@
 #include "pch.h"
 #include "edge_type.h"
 #include "face_type.h"
-#include "../graph/edge_settings.h"
-#include "../util/util.h"
+#include "..\graph\edge_settings.h"
+#include "..\util\util.h"
+#include <string>
+using namespace std;
 
 int EdgeType::nextId = 0;
 
@@ -14,7 +16,8 @@ EdgeType::EdgeType(const vector<FaceData>& fData, const Vec3& direction,
     , isRigid(options.count("isRigid") ? options.at("isRigid") : false)
     , isRigidTiled(options.count("isRigidTiled") ? options.at("isRigidTiled") : false)
     , spliced(false)
-    , id(nextId++) {}
+    , id(nextId++)
+    , ruleGeneratorId("") {}
 
 void EdgeType::setSpliced(bool newSpliced) {
     spliced = newSpliced;
@@ -78,4 +81,47 @@ bool EdgeType::getSpliced() const {
 
 int EdgeType::getId() const {
     return id;
+}
+
+const string& EdgeType::getRuleGeneratorId() const {
+    return ruleGeneratorId;
+}
+
+void EdgeType::setRuleGeneratorId(const string& id) {
+    ruleGeneratorId = id;
+}
+
+EdgeType* EdgeType::importRuleGenerator(const Json& json, const map<string, FaceType*>& fTypes) {
+    vector<FaceData> fData;
+    for (const auto& f : json["faceData"]) {
+        string faceTypeKey = f["type"].get<string>();
+        auto it = fTypes.find(faceTypeKey);
+        if (it != fTypes.end()) {
+            fData.push_back({
+                it->second,
+                f["onRight"]
+            });
+        }
+    }
+    
+    Vec3 direction = Vec3::import(json["dir"]);
+    
+    map<string, bool> options = {
+        {"isRigid", json.value("isRigid", false)},
+        {"isRigidTiled", json.value("isRigidTiled", false)}
+    };
+    
+    auto* result = new EdgeType(fData, direction, options);
+    
+    if (json.contains("edgeSettings") && !json["edgeSettings"].is_null()) {
+        result->edgeSettings = EdgeSettings::import(json["edgeSettings"]);
+    }
+    result->setSpliced(json.value("spliced", false));
+    
+    // Set RuleGenerator string id.
+    if (json.contains("id")) {
+        result->ruleGeneratorId = json["id"].get<string>();
+    }
+    
+    return result;
 }

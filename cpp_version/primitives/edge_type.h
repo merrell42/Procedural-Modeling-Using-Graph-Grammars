@@ -2,12 +2,14 @@
 #include <vector>
 #include <memory>
 #include <map>
+#include <string>
 #include "../geometry/vec3.h"
 #include "primitives.h"
 #include "../graph/edge_settings.h"
 #include "../third_party/json.h"
 
 using Json = nlohmann::json;
+using namespace std;
 
 class FaceType;
 class Primitives;
@@ -34,8 +36,13 @@ public:
     bool getSpliced() const;
     int getId() const;
 
+    // RuleGenerator support.
+    const string& getRuleGeneratorId() const;
+    void setRuleGeneratorId(const string& id);
+
     void setSpliced(bool newSpliced);
     bool extendable() const;
+    static EdgeType* importRuleGenerator(const Json& json, const map<string, FaceType*>& fTypes);
 
 private:
     vector<FaceData> faceData;
@@ -45,6 +52,8 @@ private:
     bool isRigidTiled;
     bool spliced;
     int id;
+    // RuleGenerator string id.
+    string ruleGeneratorId;
 
     static int nextId;
 };

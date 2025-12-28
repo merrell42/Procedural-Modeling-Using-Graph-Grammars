@@ -15,12 +15,19 @@ public:
     const Vec3& getColor() const;
     int getMaxDim() const;
 
+    // RuleGenerator support.
+    const string& getSignature() const;
+    void setRuleGeneratorData(const string& signature);
+
     static FaceType* import(const Json& json);
+    static FaceType* importRuleGenerator(const Json& json);
 
 private:
     string material;
     Vec3 normal;
     Vec3 color;
     int maxDim;
+    // RuleGenerator fields.
+    string signature;
 };
 
