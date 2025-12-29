@@ -6,16 +6,16 @@
 using namespace std;
 
 int VertexState::GetConnectionIndex(int connectionIndex) {
-	int n = (int)type->getConnections().size();
+	int n = (int)type->getHalfEdgeTypes().size();
 	return (connectionIndex - edge0 + n) % n;
 }
 
 string VertexState::GetConnectionId(int connectionIndex) {
-	return type->getConnections()[GetConnectionIndex(connectionIndex)].getId();
+	return type->getHalfEdgeTypes()[GetConnectionIndex(connectionIndex)].getId();
 }
 
 int VertexState::ReverseConnectionIndex(int connectionIndex) {
-	int n = (int)type->getConnections().size();
+	int n = (int)type->getHalfEdgeTypes().size();
 	return (connectionIndex + edge0) % n;
 }
 
@@ -24,7 +24,7 @@ TemplateMatcher::TemplateMatcher(GraphTemplate graphTemplate_, vector<VertexType
 	counter = 0;
 	for (int i = 0; i < vTypes.size(); i++) {
 		VertexType* vType = vTypes[i];
-		for (int j = 0; j < vType->getConnections().size(); j++) {
+		for (int j = 0; j < vType->getHalfEdgeTypes().size(); j++) {
 			states.push_back(VertexState(vType, i, j));
 		}
 	}
@@ -101,7 +101,7 @@ bool TemplateMatcher::propagate() {
 			for (int j = 0; j < numTypes; j++) {
 				if (rejectionStep[updateIndex][j] == -1) {
 					string connectionId = states[j].GetConnectionId(i);
-					string neighborId = VertexConnection::oppositeId(connectionId);
+					string neighborId = HalfEdgeType::oppositeId(connectionId);
 					neighborIds.insert(neighborId);
 				}
 			}
@@ -219,9 +219,9 @@ void TemplateMatcher::undoLastDecision() {
 	}
 }
 
-void TemplateMatcher::GetMatches(vector<json>& outputVector) {
+void TemplateMatcher::GetMatches(vector<Json>& outputVector) {
 	for (int i = 0; i < matchStates.size(); i++) {
-		json output;
+		Json output;
 
 		// Add the vertices.
 		auto match = matchStates[i];
@@ -232,7 +232,7 @@ void TemplateMatcher::GetMatches(vector<json>& outputVector) {
 		output["vertices"] = vertexIndices;
 
 		// Add the edges.
-		vector<json> allEdgeIndices;
+		vector<Json> allEdgeIndices;
 		for (int j = 0; j < graphTemplate.eConnections.size(); j++) {
 			auto brokenEdges = graphTemplate.brokenEdges;
 			auto it = std::find(brokenEdges.begin(), brokenEdges.end(), j);

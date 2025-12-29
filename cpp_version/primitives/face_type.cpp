@@ -44,32 +44,3 @@ const Vec3& FaceType::getColor() const {
 int FaceType::getMaxDim() const {
     return maxDim;
 }
-
-const string& FaceType::getSignature() const {
-    return signature;
-}
-
-void FaceType::setRuleGeneratorData(const string& sig) {
-    signature = sig;
-}
-
-FaceType* FaceType::importRuleGenerator(const Json& json) {
-    string material = "";
-    if (json.contains("material") && json["material"].is_string()) {
-        material = json["material"].get<string>();
-    }
-    auto normal = json.contains("normal") ?
-        Vec3::import(json["normal"]) : Vec3(0, 0, 1);
-    auto* result = new FaceType(material, normal);
-    
-    if (json.contains("color") && json["color"] != nullptr) {
-        result->color = Vec3::import(json["color"]);
-    }
-    
-    // Set RuleGenerator-specific data.
-    if (json.contains("signature")) {
-        result->signature = json["signature"].get<string>();
-    }
-    
-    return result;
-}

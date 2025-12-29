@@ -42,7 +42,6 @@ public:
 
     void setSpliced(bool newSpliced);
     bool extendable() const;
-    static EdgeType* importRuleGenerator(const Json& json, const map<string, FaceType*>& fTypes);
 
 private:
     vector<FaceData> faceData;

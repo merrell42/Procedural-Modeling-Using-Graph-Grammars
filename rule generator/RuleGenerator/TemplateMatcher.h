@@ -5,7 +5,7 @@
 #include "../../cpp_version/primitives/vertex_type.h"
 using namespace std;
 
-using json = nlohmann::json;
+using Json = nlohmann::json;
 
 class VertexState {
 public:
@@ -60,7 +60,7 @@ public:
 	TemplateMatcher(GraphTemplate graphTemplate_, vector<VertexType*> vTypes, bool excludeRepeats_);
 	void match();
 	// Add any matches to the output vector.
-	void GetMatches(vector<json>& outputVector);
+	void GetMatches(vector<Json>& outputVector);
 
 private:
 	void applyDecision();

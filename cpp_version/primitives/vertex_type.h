@@ -20,15 +20,8 @@ struct HalfEdgeType {
     Vec3 dir;
     EdgeType* edge;
     bool isAtStart;
-};
-
-// Connection between an edge and a vertex for RuleGenerator.
-struct VertexConnection {
-    EdgeType* edge;
-    bool isAtStart;
     
-    VertexConnection(EdgeType* e, bool atStart) : edge(e), isAtStart(atStart) {}
-    
+    // RuleGenerator support - get ID for half-edge matching.
     string getId() const;
     
     static string oppositeId(const string& id) {
@@ -43,10 +36,6 @@ struct VertexConnection {
         }
         return opposite;
     }
-    
-    bool Equals(const VertexConnection& other) const {
-        return edge == other.edge && isAtStart == other.isAtStart;
-    }
 };
 
 class VertexType {
@@ -54,7 +43,6 @@ public:
     VertexType();
     ~VertexType() = default;
     static VertexType* import(const Json& json, Primitives* shape);
-    static VertexType* importRuleGenerator(const Json& json, const map<string, EdgeType*>& eTypes);
 
     const vector<HalfEdgeType>& getHalfEdgeTypes() const;
     bool getSpliced() const;
@@ -63,7 +51,6 @@ public:
     void addHalfEdge(EdgeType* edge, bool isAtStart);
 
     // RuleGenerator support.
-    const vector<VertexConnection>& getConnections() const;
     int getRuleGeneratorId() const;
     void setRuleGeneratorId(int id);
 
@@ -71,7 +58,6 @@ private:
     vector<HalfEdgeType> halfEdgeTypes;
     bool spliced;
     // RuleGenerator fields.
-    vector<VertexConnection> connections;
     int ruleGeneratorId;
 };
 

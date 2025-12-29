@@ -29,7 +29,7 @@ GraphTemplate::GraphTemplate(
 }
 
 vector<GraphTemplate> GraphTemplate::DefaultTemplates() {
-	ifstream file("C:/model synthesis/model_synthesis_files/Grammar Editor/graphTemplates.txt");
+	ifstream file("../graph templates/graphTemplates.txt");
 	string content((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
 	file.close();
 

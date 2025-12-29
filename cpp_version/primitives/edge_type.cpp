@@ -90,38 +90,3 @@ const string& EdgeType::getRuleGeneratorId() const {
 void EdgeType::setRuleGeneratorId(const string& id) {
     ruleGeneratorId = id;
 }
-
-EdgeType* EdgeType::importRuleGenerator(const Json& json, const map<string, FaceType*>& fTypes) {
-    vector<FaceData> fData;
-    for (const auto& f : json["faceData"]) {
-        string faceTypeKey = f["type"].get<string>();
-        auto it = fTypes.find(faceTypeKey);
-        if (it != fTypes.end()) {
-            fData.push_back({
-                it->second,
-                f["onRight"]
-            });
-        }
-    }
-    
-    Vec3 direction = Vec3::import(json["dir"]);
-    
-    map<string, bool> options = {
-        {"isRigid", json.value("isRigid", false)},
-        {"isRigidTiled", json.value("isRigidTiled", false)}
-    };
-    
-    auto* result = new EdgeType(fData, direction, options);
-    
-    if (json.contains("edgeSettings") && !json["edgeSettings"].is_null()) {
-        result->edgeSettings = EdgeSettings::import(json["edgeSettings"]);
-    }
-    result->setSpliced(json.value("spliced", false));
-    
-    // Set RuleGenerator string id.
-    if (json.contains("id")) {
-        result->ruleGeneratorId = json["id"].get<string>();
-    }
-    
-    return result;
-}

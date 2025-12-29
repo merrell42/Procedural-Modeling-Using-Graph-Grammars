@@ -1,0 +1,10 @@
+1. Construct graph grammars from the templates.
+    a. Handle gluing vertices together.
+    b. Handle multiple possible combinations for each graph.
+    c. Remove duplicate combinations. The graph autoisomorphism problem.
+
+2. Create an editor for creating and modifying templates.
+
+3. Create a method of automatically extracting the primitives from OBJ files
+    a. Handle grounded objects.
+    b. Handle 2D objects.

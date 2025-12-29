@@ -167,6 +167,8 @@
     <ClInclude Include="..\..\cpp_version\primitives\primitives.h" />
     <ClInclude Include="..\..\cpp_version\primitives\vertex_type.h" />
     <ClInclude Include="..\..\cpp_version\util\util.h" />
+    <ClInclude Include="..\..\cpp_version\json versioning\read_json_file.h" />
+    <ClInclude Include="..\..\cpp_version\json versioning\json_version_manager.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="GraphTemplate.h" />
     <ClInclude Include="pch.h" />
@@ -188,6 +190,9 @@
     <ClCompile Include="..\..\cpp_version\primitives\primitives.cpp" />
     <ClCompile Include="..\..\cpp_version\primitives\vertex_type.cpp" />
     <ClCompile Include="..\..\cpp_version\util\util.cpp" />
+    <ClCompile Include="..\..\cpp_version\json versioning\read_json_file.cpp" />
+    <ClCompile Include="..\..\cpp_version\json versioning\json_version_manager.cpp" />
+    <ClCompile Include="..\..\cpp_version\json versioning\json_migrations.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="GraphTemplate.cpp" />
     <ClCompile Include="pch.cpp">

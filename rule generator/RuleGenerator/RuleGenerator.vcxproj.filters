@@ -42,6 +42,12 @@
     <ClInclude Include="..\..\cpp_version\primitives\vertex_type.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\cpp_version\json versioning\read_json_file.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cpp_version\json versioning\json_version_manager.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -72,6 +78,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\cpp_version\primitives\vertex_type.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp_version\json versioning\read_json_file.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp_version\json versioning\json_version_manager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp_version\json versioning\json_migrations.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

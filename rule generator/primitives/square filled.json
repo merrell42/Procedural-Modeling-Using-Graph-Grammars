@@ -1,0 +1,225 @@
+{
+  "name": "Square (Filled)",
+  "types": {
+    "dims": 2,
+    "edgeTypes": [
+      {
+        "dir": {
+          "x": 6.123233995736766e-17,
+          "y": 1,
+          "z": 0
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 1
+          },
+          {
+            "onRight": false,
+            "type": 0
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 1,
+          "y": 0,
+          "z": 0
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 1
+          },
+          {
+            "onRight": false,
+            "type": 0
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 6.123233995736766e-17,
+          "y": -1,
+          "z": 0
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 1
+          },
+          {
+            "onRight": false,
+            "type": 0
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": -1,
+          "y": 1.2246467991473532e-16,
+          "z": 0
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 1
+          },
+          {
+            "onRight": false,
+            "type": 0
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      }
+    ],
+    "faceTypes": [
+      {
+        "color": null,
+        "normal": {
+          "x": 0,
+          "y": 0,
+          "z": 1
+        }
+      },
+      {
+        "color": null,
+        "normal": {
+          "x": 0,
+          "y": 0,
+          "z": 1
+        }
+      }
+    ],
+    "vertexTypes": [
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 1,
+              "y": -1.2246467991473532e-16,
+              "z": 0
+            },
+            "edge": 3,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 6.123233995736766e-17,
+              "y": 1,
+              "z": 0
+            },
+            "edge": 0,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": -6.123233995736766e-17,
+              "y": -1,
+              "z": 0
+            },
+            "edge": 0,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 1,
+              "y": 0,
+              "z": 0
+            },
+            "edge": 1,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 6.123233995736766e-17,
+              "y": -1,
+              "z": 0
+            },
+            "edge": 2,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": -1,
+              "y": 0,
+              "z": 0
+            },
+            "edge": 1,
+            "isAtStart": false
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": -6.123233995736766e-17,
+              "y": 1,
+              "z": 0
+            },
+            "edge": 2,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": -1,
+              "y": 1.2246467991473532e-16,
+              "z": 0
+            },
+            "edge": 3,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      }
+    ]
+  },
+  "version": 1
+}
