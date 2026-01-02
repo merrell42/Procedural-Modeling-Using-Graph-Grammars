@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InputGraphTemplate Editor</title>
+    <link rel="stylesheet" href="graph_template_editor.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Graph Template Editor</h2>
+        <div class="global-actions">
+            <div class="control-panel">
+                <button id="clearAllBtn">Clear Templates</button>
+                <button id="exportAllBtn">Export Templates</button>
+                <button id="importAllBtn">Import Templates</button>
+                <input type="file" id="importAllFile" accept=".json" multiple style="display: none;">
+            </div>
+        </div>
+        
+        <div class="templates-container">
+            <div class="template-section">
+                <h2>Template 1</h2>
+                <div class="editor-section">
+                    <div class="canvas-container">
+                        <canvas id="canvas1"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="template-section">
+                <h2>Template 2</h2>
+                <div class="editor-section">
+                    <div class="canvas-container">
+                        <canvas id="canvas2"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="graph_template_editor.js"></script>
+</body>
+</html>
+
