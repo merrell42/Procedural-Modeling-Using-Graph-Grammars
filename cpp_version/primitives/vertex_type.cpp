@@ -4,7 +4,7 @@
 #include "primitives.h"
 #include "../util/util.h"
 
-VertexType::VertexType() : spliced(false) {
+VertexType::VertexType() : spliced(false), ruleGeneratorId(0) {
 }
 
 const vector<HalfEdgeType>& VertexType::getHalfEdgeTypes() const {
@@ -56,3 +56,15 @@ HalfEdgeType::HalfEdgeType(EdgeType* newEdge, bool newIsAtStart, const vector<in
     : dir()
     , edge(newEdge)
     , isAtStart(newIsAtStart) {}
+
+string HalfEdgeType::getId() const {
+    return edge->getRuleGeneratorId() + (isAtStart ? "S" : "E");
+}
+
+int VertexType::getRuleGeneratorId() const {
+    return ruleGeneratorId;
+}
+
+void VertexType::setRuleGeneratorId(int id) {
+    ruleGeneratorId = id;
+}

@@ -1,0 +1,199 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5;
+    overflow-x: hidden;
+}
+
+.container {
+    width: 100%;
+    max-width: 100vw;
+    margin: 0;
+    background-color: white;
+    padding: 10px;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+h1 {
+    margin: 10px 10px 10px 0;
+    color: #333;
+}
+
+.container > p {
+    margin: 5px 10px 10px 0;
+}
+
+.templates-container {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    margin-top: 10px;
+    width: 100%;
+    height: calc(100vh - 180px); /* Use full viewport height minus header */
+}
+
+.templates-container > .template-section {
+    flex: 1;
+    min-width: 0;
+}
+
+.global-actions {
+    margin: 10px 10px 10px 0;
+}
+
+.template-section {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.template-section h2 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #555;
+    font-size: 20px;
+}
+
+.editor-section {
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+    height: 100%;
+    min-height: 0;
+}
+
+.canvas-container {
+    width: 100%;
+    min-height: 0;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    position: relative;
+    display: block;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    height: calc(100% - 40px);
+}
+
+.canvas-container canvas {
+    display: block;
+    margin: 0;
+    padding: 0;
+}
+
+.canvas-container canvas {
+    display: block;
+}
+
+#canvas {
+    display: block;
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cline x1='10' y1='0' x2='10' y2='20' stroke='rgba(150,150,150,0.6)' stroke-width='1'/%3E%3Cline x1='0' y1='10' x2='20' y2='10' stroke='rgba(150,150,150,0.6)' stroke-width='1'/%3E%3C/svg%3E") 10 10, crosshair;
+}
+
+
+.control-panel {
+    padding: 15px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
+
+.control-panel h3 {
+    margin-top: 0;
+    font-size: 16px;
+    color: #555;
+}
+
+button {
+    background-color: white;
+    color: #0066FF;
+    border: 1px solid #0066FF;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    margin: 5px 5px 5px 0;
+}
+
+button:hover {
+    background-color: #E6F2FF;
+}
+
+button.danger {
+    background-color: #f44336;
+}
+
+button.danger:hover {
+    background-color: #da190b;
+}
+
+.vertex-list {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    background-color: white;
+}
+
+.vertex-item {
+    padding: 8px;
+    margin: 5px 0;
+    background-color: #e8f5e9;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.vertex-item:hover {
+    background-color: #c8e6c9;
+}
+
+.vertex-info {
+    font-size: 12px;
+    color: #666;
+}
+
+.json-output {
+    width: 100%;
+    height: 200px;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    resize: vertical;
+}
+
+
+#importFile {
+    display: none;
+}
+
+#numEdges {
+    width: 100%;
+    padding: 5px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+.vertex-item button {
+    padding: 5px 10px;
+    font-size: 12px;
+}
+
+.empty-vertex-message {
+    text-align: center;
+    color: #999;
+    padding: 20px;
+}
+

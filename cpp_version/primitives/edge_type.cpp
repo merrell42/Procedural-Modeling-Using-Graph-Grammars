@@ -1,8 +1,10 @@
 #include "pch.h"
 #include "edge_type.h"
 #include "face_type.h"
-#include "../graph/edge_settings.h"
-#include "../util/util.h"
+#include "..\graph\edge_settings.h"
+#include "..\util\util.h"
+#include <string>
+using namespace std;
 
 int EdgeType::nextId = 0;
 
@@ -14,7 +16,8 @@ EdgeType::EdgeType(const vector<FaceData>& fData, const Vec3& direction,
     , isRigid(options.count("isRigid") ? options.at("isRigid") : false)
     , isRigidTiled(options.count("isRigidTiled") ? options.at("isRigidTiled") : false)
     , spliced(false)
-    , id(nextId++) {}
+    , id(nextId++)
+    , ruleGeneratorId("") {}
 
 void EdgeType::setSpliced(bool newSpliced) {
     spliced = newSpliced;
@@ -78,4 +81,12 @@ bool EdgeType::getSpliced() const {
 
 int EdgeType::getId() const {
     return id;
+}
+
+const string& EdgeType::getRuleGeneratorId() const {
+    return ruleGeneratorId;
+}
+
+void EdgeType::setRuleGeneratorId(const string& id) {
+    ruleGeneratorId = id;
 }

@@ -1,0 +1,7 @@
+[
+{"comment": "five-sided building with flat top", "numEdges": 25, "vertices": [[11,0,4],[5,1,0],[1,7,2],[2,8,3],[4,3,13],[21,6,5,10],[6,19,9,7],[8,9,17,14],[23,10,11,12],[12,13,14,15],[24,15,16],[17,18,16],[20,18,19],[20,21,22],[22,23,24]], "brokenEdges": []},
+
+{"comment": "Two turns. Three parallel edges.", "numEdges": 10, "vertices": [[7,0,5],[8,1,6,0],[9,2,1],[2,9,3],[6,3,8,4],[5,4,7]], "brokenEdges": [7,8,9]},
+
+{"comment": "Two turns. Four parallel edges.", "numEdges": 14, "vertices": [[10,3,0],[0,1,10],[2,6,11,1],[11,4,2,3],[12,9,5,4],[5,7,12,6],[8,13,7],[13,8,9]], "brokenEdges": [10,11,12,13]}
+]
