@@ -170,7 +170,6 @@
     <ClInclude Include="..\..\cpp_version\json versioning\read_json_file.h" />
     <ClInclude Include="..\..\cpp_version\json versioning\json_version_manager.h" />
     <ClInclude Include="framework.h" />
-    <ClInclude Include="GraphTemplate.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="RuleGenerator.h" />
     <ClInclude Include="TemplateGraph.h" />
@@ -195,7 +194,6 @@
     <ClCompile Include="..\..\cpp_version\json versioning\json_version_manager.cpp" />
     <ClCompile Include="..\..\cpp_version\json versioning\json_migrations.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="GraphTemplate.cpp" />
     <ClCompile Include="TemplateGraph.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

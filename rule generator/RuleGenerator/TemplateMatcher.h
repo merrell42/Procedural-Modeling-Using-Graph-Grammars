@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include "GraphTemplate.h"
+#include "TemplateGraph.h"
 #include "json.h"
 #include "../../cpp_version/primitives/vertex_type.h"
 using namespace std;
@@ -43,7 +43,9 @@ public:
 	// If each vertex is in the updateQueue.
 	bool* inQueue;
 	vector<int> updateQueue;
-	GraphTemplate graphTemplate;
+	TemplateGraph templateGraph;
+	// Edge connections: which vertices are connected to each edge.
+	vector<vector<int>> eConnections;
 	int numPos;
 	int numTypes;
 	// Our current position within the vertices.
@@ -57,7 +59,7 @@ public:
 	// Exclude any rules that use the same vertex types.
 	bool excludeRepeats;
 
-	TemplateMatcher(GraphTemplate graphTemplate_, vector<VertexType*> vTypes, bool excludeRepeats_);
+	TemplateMatcher(TemplateGraph templateGraph_, vector<VertexType*> vTypes, bool excludeRepeats_);
 	void match();
 	// Add any matches to the output vector.
 	void GetMatches(vector<Json>& outputVector);
@@ -69,4 +71,5 @@ private:
 	bool findNextChoice();
 	void undoLastDecision();
 	void reject(int pos, int type);
+	int ConnectionIndex(int vertexIndex, int edgeIndex, int excludeIndex);
 };

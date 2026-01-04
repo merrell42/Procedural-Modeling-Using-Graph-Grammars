@@ -19,7 +19,7 @@ int VertexState::ReverseConnectionIndex(int connectionIndex) {
 	return (connectionIndex + edge0) % n;
 }
 
-TemplateMatcher::TemplateMatcher(GraphTemplate graphTemplate_, vector<VertexType*> vTypes, bool excludeRepeats_) : graphTemplate(graphTemplate_) {
+TemplateMatcher::TemplateMatcher(TemplateGraph templateGraph_, vector<VertexType*> vTypes, bool excludeRepeats_) : templateGraph(templateGraph_) {
 	excludeRepeats = excludeRepeats_;
 	counter = 0;
 	for (int i = 0; i < vTypes.size(); i++) {
@@ -29,7 +29,19 @@ TemplateMatcher::TemplateMatcher(GraphTemplate graphTemplate_, vector<VertexType
 		}
 	}
 	numTypes = (int)states.size();
-	numPos = (int)graphTemplate.vConnections.size();
+	numPos = (int)templateGraph.vertices.size();
+
+	// Build eConnections from vertices.
+	for (int i = 0; i < templateGraph.numEdges; i++) {
+		eConnections.push_back(vector<int>());
+	}
+	for (int i = 0; i < templateGraph.vertices.size(); i++) {
+		auto connections = templateGraph.vertices[i].connections;
+		for (int j = 0; j < connections.size(); j++) {
+			int edgeIndex = connections[j];
+			eConnections[edgeIndex].push_back(i);
+		}
+	}
 
 	// -1 means not rejected.
 	inQueue = new bool[numPos];
@@ -89,12 +101,23 @@ void TemplateMatcher::applyDecision() {
 	}
 }
 
+int TemplateMatcher::ConnectionIndex(int vertexIndex, int edgeIndex, int excludeIndex) {
+	auto nConnections = templateGraph.vertices[vertexIndex].connections;
+	for (int i = 0; i < nConnections.size(); i++) {
+		if (nConnections[i] == edgeIndex && i != excludeIndex) {
+			return i;
+		}
+	}
+	cout << "Connection not found." << endl;
+	return -1;
+}
+
 bool TemplateMatcher::propagate() {
 	while (updateQueue.size() > 0) {
 		int updateIndex = updateQueue[0];
 		updateQueue.erase(updateQueue.begin());
 		inQueue[updateIndex] = false;
-		auto vConnections = graphTemplate.vConnections[updateIndex];
+		auto vConnections = templateGraph.vertices[updateIndex].connections;
 		set<string> neighborIds;
 		for (int i = 0; i < vConnections.size(); i++) {
 			neighborIds.clear();
@@ -107,17 +130,17 @@ bool TemplateMatcher::propagate() {
 			}
 
 			int vConnection = vConnections[i];
-			auto eConnections = graphTemplate.eConnections[vConnection];
-			int neighbor = (eConnections[0] == updateIndex) ? eConnections[1] : eConnections[0];
+			auto edgeConnections = eConnections[vConnection];
+			int neighbor = (edgeConnections[0] == updateIndex) ? edgeConnections[1] : edgeConnections[0];
 			int excludeIndex = -1;
 			// When the neighbor is the same as the current vertex, we have the same edge repeated
-			// twice. This can happen when broken edges. Exclude the current edge. Switch to the other one.
+			// twice. Exclude the current edge. Switch to the other one.
 			if (updateIndex == neighbor) {
 				excludeIndex = i;
 			}
 
 			bool hasMatch = false;
-			int cIndex = graphTemplate.ConnectionIndex(neighbor, vConnection, excludeIndex);
+			int cIndex = ConnectionIndex(neighbor, vConnection, excludeIndex);
 			for (int j = 0; j < numTypes; j++) {
 				if (rejectionStep[neighbor][j] == -1) {
 					string connectionId = states[j].GetConnectionId(cIndex);
@@ -227,25 +250,32 @@ void TemplateMatcher::GetMatches(vector<Json>& outputVector) {
 		auto match = matchStates[i];
 		vector<int> vertexIndices;
 		for (int j = 0; j < match.size(); j++) {
+			if (!templateGraph.vertices[j].boundaryId.empty()) {
+				continue;
+			}
 			vertexIndices.push_back(states[match[j]].typeIndex);
 		}
 		output["vertices"] = vertexIndices;
 
 		// Add the edges.
 		vector<Json> allEdgeIndices;
-		for (int j = 0; j < graphTemplate.eConnections.size(); j++) {
-			auto brokenEdges = graphTemplate.brokenEdges;
-			auto it = std::find(brokenEdges.begin(), brokenEdges.end(), j);
-			// Skip the broken edges.
-			if (it != brokenEdges.end()) {
+		for (int j = 0; j < eConnections.size(); j++) {
+			auto vIndices = eConnections[j];
+			bool skipEdge = false;
+			for (int k = 0; k < vIndices.size(); k++) {
+				if (!templateGraph.vertices[vIndices[k]].boundaryId.empty()) {
+					skipEdge = true;
+					break;
+				}
+			}
+			if (skipEdge) {
 				continue;
 			}
 
 			vector<int> edgeIndices;
-			auto vIndices = graphTemplate.eConnections[j];
 			for (int k = 0; k < vIndices.size(); k++) {
 				int vIndex = vIndices[k];
-				int cIndex = graphTemplate.ConnectionIndex(vIndex, j, -1);
+				int cIndex = ConnectionIndex(vIndex, j, -1);
 				edgeIndices.push_back(vIndex);
 				edgeIndices.push_back(states[match[vIndex]].GetConnectionIndex(cIndex));
 			}
