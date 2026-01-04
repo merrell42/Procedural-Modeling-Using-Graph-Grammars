@@ -37,6 +37,11 @@ class TemplateEditor {
         this.handleCanvasMouseLeave = this.handleCanvasMouseLeave.bind(this);
     }
     
+    // Generate a unique boundary ID.
+    generateboundaryId() {
+        return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    }
+    
     // Initialize canvas.
     init() {
         // Make canvas responsive to fit container.
@@ -89,18 +94,19 @@ class TemplateEditor {
         return null;
     }
     
-    // Update onBoundary property for a specific vertex based on connection count.
+    // Update boundaryId property for a specific vertex based on connection count.
     updateOnBoundaryForVertex(vertex) {
-        const wasBoundary = vertex.onBoundary;
-        vertex.onBoundary = vertex.connections.length === 1;
+        const wasBoundary = vertex.boundaryId !== '';
+        const shouldBeBoundary = vertex.connections.length === 1;
         
-        // If onBoundary changed, add or remove vertex in other template.
-        if (!wasBoundary && vertex.onBoundary) {
-            // Changed from false to true - add vertex in other template.
-            this.addBoundaryVertexInOtherTemplate(vertex.position);
-        } else if (wasBoundary && !vertex.onBoundary) {
-            // Changed from true to false - delete vertex in other template.
-            this.removeBoundaryVertexInOtherTemplate(vertex.position);
+        if (shouldBeBoundary && !wasBoundary) {
+            // Changed from false to true - create unique ID and add vertex in other template.
+            vertex.boundaryId = this.generateboundaryId();
+            this.addBoundaryVertexInOtherTemplate(vertex.position, vertex.boundaryId);
+        } else if (!shouldBeBoundary && wasBoundary) {
+            // Changed from true to false - remove vertex in other template and clear ID.
+            this.removeBoundaryVertexInOtherTemplate(vertex.boundaryId);
+            vertex.boundaryId = '';
         }
     }
     
@@ -194,7 +200,7 @@ class TemplateEditor {
         this.drawVertices();
     }
     
-    // Handle canvas double-click to toggle onBoundary.
+    // Handle canvas double-click to toggle boundaryId.
     handleCanvasDoubleClick(event) {
         // Clear any pending single click.
         if (this.clickTimeout) {
@@ -211,24 +217,22 @@ class TemplateEditor {
         
         if (vertexIndex !== null) {
             const vertex = this.graphTemplate.vertices[vertexIndex];
-            const wasBoundary = vertex.onBoundary;
+            const wasBoundary = vertex.boundaryId !== '';
             const position = { x: vertex.position.x, y: vertex.position.y };
             
-            // Toggle onBoundary.
-            if (vertex.onBoundary) {
-                // Set to false.
-                vertex.onBoundary = false;
+            // Toggle boundaryId.
+            if (wasBoundary) {
+                // Set to empty string.
+                this.removeBoundaryVertexInOtherTemplate(vertex.boundaryId);
+                vertex.boundaryId = '';
                 this.updateDisplay();
-                
-                // Remove boundary vertex at same position in other template.
-                this.removeBoundaryVertexInOtherTemplate(position);
             } else if (vertex.connections.length === 1) {
                 // Only allow setting to true if vertex has exactly one edge.
-                vertex.onBoundary = true;
+                vertex.boundaryId = this.generateboundaryId();
                 this.updateDisplay();
                 
                 // Add boundary vertex at same position in other template.
-                this.addBoundaryVertexInOtherTemplate(position);
+                this.addBoundaryVertexInOtherTemplate(position, vertex.boundaryId);
             } else {
             }
         }
@@ -324,7 +328,7 @@ class TemplateEditor {
                 // Not in edge creation mode - add new vertex.
                 const vertex = {
                     connections: [],
-                    onBoundary: false,
+                    boundaryId: '',
                     position: { x: x, y: y }
                 };
                 
@@ -334,7 +338,7 @@ class TemplateEditor {
                 // In edge creation mode - add vertex and connect it to selected vertex.
                 const newVertex = {
                     connections: [],
-                    onBoundary: false,
+                    boundaryId: '',
                     position: { x: x, y: y }
                 };
                 const newVertexIndex = this.graphTemplate.vertices.length;
@@ -406,7 +410,7 @@ class TemplateEditor {
             } else if (index === this.hoveredVertexIndex) {
                 fillColor = '#BB66FF'; // Brighter purple-blue for hovered.
                 strokeColor = '#9933FF';
-            } else if (vertex.onBoundary) {
+            } else if (vertex.boundaryId !== '') {
                 fillColor = 'white'; // White for boundary vertices.
                 strokeColor = VERTEX_BORDER_COLOR;
             }
@@ -491,8 +495,8 @@ class TemplateEditor {
         return null;
     }
     
-    // Add boundary vertex in other template when onBoundary changes from false to true.
-    addBoundaryVertexInOtherTemplate(position) {
+    // Add boundary vertex in other template when boundaryId changes from empty to non-empty.
+    addBoundaryVertexInOtherTemplate(position, boundaryId) {
         if (!window.editor1 || !window.editor2) return;
         
         const otherEditor = this.templateId === 1 ? window.editor2 : window.editor1;
@@ -501,26 +505,26 @@ class TemplateEditor {
         const norm = this.canvasToNormalized(position.x, position.y);
         const otherPosition = this.normalizedToCanvas(norm.x, norm.y, otherEditor.canvas);
         
-        // Add new boundary vertex at same relative position in other canvas.
+        // Add new boundary vertex at same relative position in other canvas with the same boundaryId.
         const newVertex = {
             connections: [],
-            onBoundary: true,
+            boundaryId: boundaryId,
             position: { x: otherPosition.x, y: otherPosition.y }
         };
         otherEditor.graphTemplate.vertices.push(newVertex);
         otherEditor.updateDisplay();
     }
     
-    // Remove boundary vertex from other template when onBoundary changes from true to false.
-    removeBoundaryVertexInOtherTemplate(position) {
+    // Remove boundary vertex from other template when boundaryId changes from non-empty to empty.
+    removeBoundaryVertexInOtherTemplate(boundaryId) {
         if (!window.editor1 || !window.editor2) return;
         
         const otherEditor = this.templateId === 1 ? window.editor2 : window.editor1;
         
-        // Find vertex at same relative position in other template.
-        const vertexIndex = this.findVertexAtPosition(otherEditor, position.x, position.y);
+        // Find vertex with the same boundaryId in other template.
+        const vertexIndex = otherEditor.graphTemplate.vertices.findIndex(v => v.boundaryId === boundaryId);
         
-        if (vertexIndex !== null) {
+        if (vertexIndex !== -1) {
             // Delete the vertex.
             otherEditor.graphTemplate.vertices.splice(vertexIndex, 1);
             if (otherEditor.selectedVertexIndex === vertexIndex) {
@@ -540,7 +544,7 @@ class TemplateEditor {
                 // Ensure all required fields exist.
                 return {
                     connections: Array.isArray(v.connections) ? v.connections : [],
-                    onBoundary: typeof v.onBoundary === 'boolean' ? v.onBoundary : false,
+                    boundaryId: boundaryId,
                     position: v.position && typeof v.position.x === 'number' && typeof v.position.y === 'number'
                         ? { x: v.position.x, y: v.position.y }
                         : { x: 100 + index * 50, y: 100 } // Default position if missing.

@@ -1,11 +1,12 @@
 #include "pch.h"
 #include "RuleGenerator.h"
-#include "GraphTemplate.h"
+#include "TemplateGraph.h"
 #include "TemplateMatcher.h"
 #include "json.h"
 #include <vector>
 #include <fstream>
 #include <map>
+#include <iostream>
 #include "../../cpp_version/primitives/primitives.h"
 
 using Json = nlohmann::json;
@@ -56,18 +57,22 @@ void GenerateRules(const char* input_cstr, char* output, int maxLength) {
 		vTypes.push_back(vType);
 	}
 
-	auto templates = GraphTemplate::DefaultTemplates();
-	vector<Json> outputVector;
-	for (int i = 0; i < templates.size(); i++) {
+	auto templateGraphSets = importTemplateGraphs("../graph templates/graph_templates.json");
+	for (int i = 0; i < templateGraphSets.size(); i++) {
+		if (templateGraphSets[i].graphs.size() == 0) {
+			continue;
+		}
+		vector<Json> outputVector;
 		const bool excludeRepeats = false; // parsed["excludeRepeats"]);
-		TemplateMatcher matcher(templates[i], vTypes, excludeRepeats);
+		TemplateMatcher matcher(templateGraphSets[i].graphs[0], vTypes, excludeRepeats);
 		matcher.match();
 		matcher.GetMatches(outputVector);
+		cout << "--------------------------------" << endl;
+		// cout << outputVector << endl;
 	}
 
-	cout << outputVector << endl;
-	parsed["matches"] = outputVector;
-	writeStringToFile("../../generatedRules.js", "ms.generatedRules = " + parsed.dump() + ";");
+	// parsed["matches"] = outputVector;
+	// writeStringToFile("../../generatedRules.js", "ms.generatedRules = " + parsed.dump() + ";");
 
 	/*
 	Json outputs;
