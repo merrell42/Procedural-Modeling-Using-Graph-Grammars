@@ -173,6 +173,7 @@
     <ClInclude Include="GraphTemplate.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="RuleGenerator.h" />
+    <ClInclude Include="TemplateGraph.h" />
     <ClInclude Include="TemplateMatcher.h" />
   </ItemGroup>
   <ItemGroup>
@@ -195,6 +196,7 @@
     <ClCompile Include="..\..\cpp_version\json versioning\json_migrations.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="GraphTemplate.cpp" />
+    <ClCompile Include="TemplateGraph.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

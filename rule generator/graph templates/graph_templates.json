@@ -1,0 +1,79 @@
+[
+	{
+		"comment": "Two turns to line",
+		"graphs": [
+		  {
+			"vertices": [
+			  {
+				"connections": [
+				  0
+				],
+				"boundaryId": "yum7v9nbjtgvmphwudwyln",
+				"position": {
+				  "x": 260,
+				  "y": 149.1875
+				}
+			  },
+			  {
+				"connections": [
+				  1,
+				  0
+				],
+				"boundaryId": "",
+				"position": {
+				  "x": 455,
+				  "y": 155.1875
+				}
+			  },
+			  {
+				"connections": [
+				  1,
+				  2
+				],
+				"boundaryId": "",
+				"position": {
+				  "x": 424,
+				  "y": 383.1875
+				}
+			  },
+			  {
+				"connections": [
+				  2
+				],
+				"boundaryId": "2hixiphr7r6htvwfplogfr",
+				"position": {
+				  "x": 657,
+				  "y": 375.1875
+				}
+			  }
+			],
+			"numEdges": 3
+		  },
+		  {
+			"vertices": [
+			  {
+				"connections": [
+				  0
+				],
+				"boundaryId": "yum7v9nbjtgvmphwudwyln",
+				"position": {
+				  "x": 260,
+				  "y": 149.1875
+				}
+			  },
+			  {
+				"connections": [
+				  0
+				],
+				"boundaryId": "2hixiphr7r6htvwfplogfr",
+				"position": {
+				  "x": 657,
+				  "y": 375.1875
+				}
+			  }
+			],
+			"numEdges": 1
+		  }
+		]
+	}
+]

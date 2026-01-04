@@ -1,11 +1,13 @@
 #include "pch.h"
 #include "RuleGenerator.h"
 #include "GraphTemplate.h"
+#include "TemplateGraph.h"
 #include "TemplateMatcher.h"
 #include "json.h"
 #include <vector>
 #include <fstream>
 #include <map>
+#include <iostream>
 #include "../../cpp_version/primitives/primitives.h"
 
 using Json = nlohmann::json;
@@ -56,6 +58,7 @@ void GenerateRules(const char* input_cstr, char* output, int maxLength) {
 		vTypes.push_back(vType);
 	}
 
+	importTemplateGraphs("../graph templates/graph_templates.json");
 	auto templates = GraphTemplate::DefaultTemplates();
 	vector<Json> outputVector;
 	for (int i = 0; i < templates.size(); i++) {
