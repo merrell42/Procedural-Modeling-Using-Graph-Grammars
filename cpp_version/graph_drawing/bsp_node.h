@@ -32,6 +32,15 @@ class BspNode {
 		void removeEdge(Edge* edge);
 		void removeFace(Face* face);
 
+		// Read-only accessors for external traversal (collision-BSP construction).
+		// Added so consumers outside pmugg can walk the tree without taking a
+		// copy of the underlying graph drawing.
+		int getParentId() const { return parentId; }
+		int getAboveId()  const { return aboveId; }
+		int getBelowId()  const { return belowId; }
+		const Plane* getPlanePtr() const { return plane; }
+		const vector<int>& getFaceIds() const { return faceIds; }
+
 	private:
 		Model* model;
 		Plane* plane;
