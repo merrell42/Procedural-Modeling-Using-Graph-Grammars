@@ -81,7 +81,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>"$(ProjectDir)"</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>"$(ProjectDir)";".."</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -98,7 +98,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>"$(ProjectDir)"</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>"$(ProjectDir)";".."</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -114,7 +114,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>"$(ProjectDir)"</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>"$(ProjectDir)";".."</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -132,7 +132,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>"$(ProjectDir)"</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>"$(ProjectDir)";".."</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -175,6 +175,12 @@
     <ClCompile Include="..\json versioning\json_version_manager.cpp" />
     <ClCompile Include="..\json versioning\read_json_file.cpp" />
     <ClCompile Include="..\memory_counter.cpp" />
+    <ClCompile Include="..\mesh_extraction\half_edge_mesh.cpp" />
+    <ClCompile Include="..\mesh_extraction\obj_loader.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\mesh_extraction\seed_grammar_writer.cpp" />
+    <ClCompile Include="..\mesh_extraction\type_extractor.cpp" />
     <ClCompile Include="..\mutator.cpp" />
     <ClCompile Include="..\node_stats.cpp" />
     <ClCompile Include="..\optimizer.cpp" />
@@ -232,6 +238,10 @@
     <ClInclude Include="..\json versioning\json_version_manager.h" />
     <ClInclude Include="..\json versioning\read_json_file.h" />
     <ClInclude Include="..\memory_counter.h" />
+    <ClInclude Include="..\mesh_extraction\half_edge_mesh.h" />
+    <ClInclude Include="..\mesh_extraction\obj_loader.h" />
+    <ClInclude Include="..\mesh_extraction\seed_grammar_writer.h" />
+    <ClInclude Include="..\mesh_extraction\type_extractor.h" />
     <ClInclude Include="..\mutator.h" />
     <ClInclude Include="..\node_stats.h" />
     <ClInclude Include="..\optimizer.h" />
@@ -244,6 +254,7 @@
     <ClInclude Include="..\primitives\vertex_type.h" />
     <ClInclude Include="..\settings.h" />
     <ClInclude Include="..\third_party\json.h" />
+    <ClInclude Include="..\third_party\tinyobjloader\tiny_obj_loader.h" />
     <ClInclude Include="..\util\binary_stream.h" />
     <ClInclude Include="..\util\matrix.h" />
     <ClInclude Include="..\util\range.h" />

@@ -1,0 +1,29 @@
+# Closed unit cube centered at the origin. 8 vertices, 6 quad faces, all
+# CCW-wound when viewed from outside the cube. Single material 'solid'.
+# Used as the smoke-test input for mesh_extraction -> seed grammar.
+
+mtllib cube.mtl
+o cube
+
+v -0.5 -0.5 -0.5
+v  0.5 -0.5 -0.5
+v  0.5  0.5 -0.5
+v -0.5  0.5 -0.5
+v -0.5 -0.5  0.5
+v  0.5 -0.5  0.5
+v  0.5  0.5  0.5
+v -0.5  0.5  0.5
+
+usemtl solid
+# back (-Z)
+f 4 3 2 1
+# front (+Z)
+f 5 6 7 8
+# left (-X)
+f 1 5 8 4
+# right (+X)
+f 2 3 7 6
+# bottom (-Y)
+f 1 2 6 5
+# top (+Y)
+f 4 8 7 3
