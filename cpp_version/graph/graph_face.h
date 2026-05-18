@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <iosfwd>
 #include "../third_party/json.h"
 #include "../primitives/face_type.h"
 
@@ -13,6 +14,7 @@ class GraphFace {
 public:
     GraphFace();
     void import(const Json& json);
+    void binaryDeserialize(std::istream& in);
 
     GraphHalfEdge* getOuterComponent() const;
     Graph* getGraph() const;

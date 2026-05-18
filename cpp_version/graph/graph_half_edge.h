@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include <iosfwd>
 #include "../third_party/json.h"
 
 using Json = nlohmann::json;
@@ -16,6 +17,7 @@ public:
     explicit GraphHalfEdge(bool forward);
     ~GraphHalfEdge() = default;
     void import(const Json& json);
+    void binaryDeserialize(std::istream& in);
 
     bool getForward() const;
     GraphVertex* getVertex() const;

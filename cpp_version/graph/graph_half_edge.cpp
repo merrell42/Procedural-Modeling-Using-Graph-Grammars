@@ -5,6 +5,7 @@
 #include "graph_half_edge.h"
 #include "graph_vertex.h"
 #include "../util/util.h"
+#include "../util/binary_stream.h"
 
 GraphHalfEdge::GraphHalfEdge(bool forward)
     : forward(forward)
@@ -94,6 +95,23 @@ void GraphHalfEdge::import(const Json& json) {
     prev = graph->getHalfEdge(json["prev"]);
     next = graph->getHalfEdge(json["next"]);
     face = graph->getFaces()[json["face"]];
+}
+
+
+void GraphHalfEdge::binaryDeserialize(std::istream& in) {
+    forward      = bsRead<uint8_t>(in) != 0;
+    vertexIndex  = bsRead<int32_t>(in);
+    edgeIndex    = bsRead<int32_t>(in);
+    int32_t vi   = bsRead<int32_t>(in);
+    int32_t ei   = bsRead<int32_t>(in);
+    int32_t pi   = bsRead<int32_t>(in);
+    int32_t ni   = bsRead<int32_t>(in);
+    int32_t fi   = bsRead<int32_t>(in);
+    vertex = graph->getVertices()[vi];
+    edge   = graph->getEdge(ei);
+    prev   = graph->getHalfEdge(pi);
+    next   = graph->getHalfEdge(ni);
+    face   = graph->getFaces()[fi];
 }
 
 

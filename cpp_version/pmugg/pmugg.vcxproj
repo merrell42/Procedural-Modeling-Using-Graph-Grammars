@@ -240,6 +240,7 @@
     <ClInclude Include="..\primitives\vertex_type.h" />
     <ClInclude Include="..\settings.h" />
     <ClInclude Include="..\third_party\json.h" />
+    <ClInclude Include="..\util\binary_stream.h" />
     <ClInclude Include="..\util\matrix.h" />
     <ClInclude Include="..\util\range.h" />
     <ClInclude Include="..\util\timer.h" />

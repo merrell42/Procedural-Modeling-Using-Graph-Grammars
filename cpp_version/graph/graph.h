@@ -1,6 +1,8 @@
 #pragma once
 #include <vector>
 #include <memory>
+#include <iosfwd>
+#include <atomic>
 #include "../geometry/vec3.h"
 #include "graph_vertex.h"
 #include "graph_edge.h"
@@ -24,6 +26,7 @@ public:
     ~Graph();
     // Import a graph from a JSON object.
     static Graph* import(const Json& json, Primitives* shape = nullptr);
+    static Graph* binaryDeserialize(std::istream& in, Primitives* shape);
 
     const vector<GraphVertex*>& getVertices() const;
     const vector<GraphEdge*>& getEdges() const;
@@ -61,6 +64,6 @@ private:
     vector<GraphFace*> bFaces;
     int id;
 
-    static int nextId;
+    static std::atomic<int> nextId;
 };
 

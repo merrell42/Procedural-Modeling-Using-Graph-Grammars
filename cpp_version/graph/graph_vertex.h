@@ -1,6 +1,8 @@
 #pragma once
 #include <vector>
 #include <memory>
+#include <iosfwd>
+#include <atomic>
 #include "../primitives/vertex_type.h"
 #include "../third_party/json.h"
 #include <iostream>
@@ -19,6 +21,7 @@ public:
     GraphVertex();
     ~GraphVertex() = default;
     void import(const Json& json);
+    void binaryDeserialize(std::istream& in);
 
     const vector<GraphHalfEdge*>& getHalfEdges() const { return halfEdges; }
     VertexType* getType();
@@ -42,6 +45,6 @@ private:
     Graph* graph;
     int id;
 
-    static int nextId;
+    static std::atomic<int> nextId;
 };
 

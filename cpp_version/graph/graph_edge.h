@@ -1,6 +1,8 @@
 #pragma once
 #include <vector>
 #include <memory>
+#include <iosfwd>
+#include <atomic>
 #include "../third_party/json.h"
 
 using Json = nlohmann::json;
@@ -15,6 +17,7 @@ public:
     GraphEdge();
     ~GraphEdge() = default;
     void import(const Json& json);
+    void binaryDeserialize(std::istream& in);
 
     const vector<vector<GraphHalfEdge*>>& getHalfEdges() const;
     EdgeType* getType() const;
@@ -31,5 +34,5 @@ private:
     Graph* graph;
     int id;
 
-    static int nextId;
+    static std::atomic<int> nextId;
 };

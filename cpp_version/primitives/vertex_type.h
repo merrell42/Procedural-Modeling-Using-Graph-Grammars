@@ -1,4 +1,5 @@
 #pragma once
+#include <iosfwd>
 #include "../geometry/vec2.h"
 #include "edge_type.h"
 #include "primitives.h"
@@ -43,6 +44,7 @@ public:
     VertexType();
     ~VertexType() = default;
     static VertexType* import(const Json& json, Primitives* shape);
+    static VertexType* binaryDeserialize(std::istream& in, Primitives* shape);
 
     const vector<HalfEdgeType>& getHalfEdgeTypes() const;
     bool getSpliced() const;

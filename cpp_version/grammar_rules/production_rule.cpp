@@ -1,8 +1,10 @@
 #include "pch.h"
+#include <atomic>
 #include "production_rule.h"
 #include "../graph/graph.h"
+#include "../util/binary_stream.h"
 
-int ProductionRule::nextId = 0;
+std::atomic<int> ProductionRule::nextId{0};
 
 ProductionRule::ProductionRule(
     const vector<Graph*>& startGraphs,
@@ -35,6 +37,21 @@ bool ProductionRule::isGround() const {
 
 int ProductionRule::getId() const {
     return id;
+}
+
+ProductionRule* ProductionRule::binaryDeserialize(std::istream& in, Primitives* shape) {
+    bool ground = bsRead<uint8_t>(in) != 0;
+    int32_t n   = bsRead<int32_t>(in);
+    vector<Graph*> startGraphs, endGraphs;
+    startGraphs.reserve(n);
+    endGraphs.reserve(n);
+    for (int32_t i = 0; i < n; i++) {
+        startGraphs.push_back(Graph::binaryDeserialize(in, shape));
+        endGraphs.push_back(Graph::binaryDeserialize(in, shape));
+    }
+    auto* result = new ProductionRule(startGraphs, endGraphs);
+    result->ground = ground;
+    return result;
 }
 
 ProductionRule* ProductionRule::import(const Json& json, Primitives* shape) {
