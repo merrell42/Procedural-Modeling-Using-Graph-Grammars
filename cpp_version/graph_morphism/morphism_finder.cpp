@@ -10,8 +10,6 @@
 #include "../settings.h"
 #include "../util/util.h"
 
-map<int, VertexType*> MorphismFinder::splicedVertexTypes;
-
 MorphismFinder::MorphismFinder(Model* model, bool groundEnabled)
     : model(model)
     , nodesModified(false)
@@ -35,7 +33,7 @@ Morphism* MorphismFinder::findMorphism(Graph* graphB) {
 
     bool isOnBoundary = verticesB[index1]->boundaryIndex() >= 0;
     auto* vertexType = verticesB[index1]->getType();
-    auto vertexMap = model->getCurrent()->getVertexMap();
+    const auto& vertexMap = model->getCurrent()->getVertexMap();
     int N = (int)vertexMap.size();
     if (N == 0) {
         return nullptr;
@@ -107,7 +105,7 @@ Face* MorphismFinder::findFace(FaceType* faceType) {
     // The "Prefer Ground" setting biases the face selection to prefer picking the ground plane.
     // We pick the ground plane with the given probability.
     if (groundEnabled) {
-        auto faces = model->getCurrent()->getFaceMap();
+        const auto& faces = model->getCurrent()->getFaceMap();
         if (!faces.empty()) {
             // Get the current ground face. It is the first face in faceMap.
             Face* currentGroundFace = faces.begin()->second;
@@ -121,7 +119,7 @@ Face* MorphismFinder::findFace(FaceType* faceType) {
     }
 
     // This could be made more efficient, but this doesn't take much of the computation time.
-    auto facesA = model->getCurrent()->getFaceMap();
+    const auto& facesA = model->getCurrent()->getFaceMap();
     vector<Face*> facesVec;
     for (const auto& [_, face] : facesA) {
         facesVec.push_back(face);
@@ -158,7 +156,7 @@ Morphism* MorphismFinder::findStarterMorphism(Graph* graphB) {
         return state->getMorphism();
     }
 
-    auto faceMap = model->getCurrent()->getFaceMap();
+    const auto& faceMap = model->getCurrent()->getFaceMap();
     if (!groundEnabled || faceMap.empty()) {
         return state->getMorphism();
     }
@@ -296,8 +294,8 @@ Morphism* MorphismFinder::matchSplicedHalfEdge(
     const Vec3 startPos = vertexA->getPosition();
     FaceGroup* groupA = matchHalfA->getFace()->getGroup();
     HalfEdge* intersectedHalf = nullptr;
+    const auto& faceMap = model->getCurrent()->getFaceMap();
     while (attempts < spliceRayAttempts && !intersectedHalf) {
-        auto faceMap = model->getCurrent()->getFaceMap();
         intersectedHalf = castSeriesOfRays(halfB, startPos, groupA, faceMap, maxDim);
         attempts++;
     }
