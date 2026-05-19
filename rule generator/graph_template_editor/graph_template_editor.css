@@ -38,6 +38,17 @@ h1 {
     height: calc(100vh - 180px); /* Use full viewport height minus header */
 }
 
+button:disabled {
+    color: #999;
+    border-color: #ccc;
+    cursor: not-allowed;
+    background-color: #f9f9f9;
+}
+
+button:disabled:hover {
+    background-color: #f9f9f9;
+}
+
 .templates-container > .template-section {
     flex: 1;
     min-width: 0;

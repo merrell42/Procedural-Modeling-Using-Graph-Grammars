@@ -5,6 +5,83 @@ const VERTEX_BORDER_COLOR = '#1976D2';
 const PREVIEW_COLOR = 'rgba(33, 150, 243, 0.3)';
 const PREVIEW_BORDER_COLOR = 'rgba(25, 118, 210, 0.4)';
 
+// Undo/redo history. A single global stack captures snapshots of *both*
+// editors plus their selection, since boundary edits mutate both canvases
+// atomically.
+const History = {
+    past: [],
+    future: [],
+    cap: 100,
+    suspended: false,
+
+    snapshot() {
+        return {
+            e1: structuredClone(window.editor1.graphTemplate),
+            e2: structuredClone(window.editor2.graphTemplate),
+            sel1: window.editor1.selectedVertexIndex,
+            sel2: window.editor2.selectedVertexIndex,
+        };
+    },
+
+    // Call BEFORE a mutation. Duplicates on no-op clicks are harmless.
+    commit() {
+        if (this.suspended) return;
+        if (!window.editor1 || !window.editor2) return;
+        this.past.push(this.snapshot());
+        if (this.past.length > this.cap) this.past.shift();
+        this.future.length = 0;
+        updateHistoryButtons();
+    },
+
+    undo() {
+        if (this.past.length === 0) return;
+        this.future.push(this.snapshot());
+        this.applySnapshot(this.past.pop());
+        updateHistoryButtons();
+    },
+
+    redo() {
+        if (this.future.length === 0) return;
+        this.past.push(this.snapshot());
+        this.applySnapshot(this.future.pop());
+        updateHistoryButtons();
+    },
+
+    applySnapshot(snap) {
+        this.suspended = true;
+        try {
+            window.editor1.graphTemplate = structuredClone(snap.e1);
+            window.editor2.graphTemplate = structuredClone(snap.e2);
+            window.editor1.selectedVertexIndex = clampSelection(snap.sel1, snap.e1.vertices.length);
+            window.editor2.selectedVertexIndex = clampSelection(snap.sel2, snap.e2.vertices.length);
+            window.editor1.updateDisplay();
+            window.editor2.updateDisplay();
+        } finally {
+            this.suspended = false;
+        }
+    },
+};
+
+function clampSelection(sel, n) {
+    if (sel === null || sel === undefined) return null;
+    return sel >= 0 && sel < n ? sel : null;
+}
+
+function updateHistoryButtons() {
+    const undoBtn = document.getElementById('undoBtn');
+    const redoBtn = document.getElementById('redoBtn');
+    if (undoBtn) undoBtn.disabled = History.past.length === 0;
+    if (redoBtn) redoBtn.disabled = History.future.length === 0;
+}
+
+function isTypingInTextInput(el) {
+    if (!el) return false;
+    const tag = el.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA') return true;
+    if (el.isContentEditable) return true;
+    return false;
+}
+
 // TemplateEditor class to manage a single graph template.
 class TemplateEditor {
     constructor(templateId) {
@@ -219,7 +296,9 @@ class TemplateEditor {
             const vertex = this.graphTemplate.vertices[vertexIndex];
             const wasBoundary = vertex.boundaryId !== '';
             const position = { x: vertex.position.x, y: vertex.position.y };
-            
+            // Snapshot before mutating; boundary toggles touch the other editor too.
+            History.commit();
+
             // Toggle boundaryId.
             if (wasBoundary) {
                 // Set to empty string.
@@ -279,6 +358,10 @@ class TemplateEditor {
     
     // Process the actual click action.
     processCanvasClick(x, y) {
+        // Snapshot before any potential mutation. Pure-deselect clicks will
+        // produce a no-op duplicate snapshot, which is harmless.
+        History.commit();
+
         // Check if clicking on a vertex.
         const vertexIndex = this.findVertexAt(x, y);
         
@@ -582,8 +665,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const exportAllBtn = document.getElementById('exportAllBtn');
     const importAllBtn = document.getElementById('importAllBtn');
     const importAllFile = document.getElementById('importAllFile');
-    
+    const undoBtn = document.getElementById('undoBtn');
+    const redoBtn = document.getElementById('redoBtn');
+
     clearAllBtn.addEventListener('click', () => {
+        History.commit();
         editor1.graphTemplate.vertices = [];
         editor1.graphTemplate.numEdges = 0;
         editor1.selectedVertexIndex = null;
@@ -617,7 +703,9 @@ document.addEventListener('DOMContentLoaded', () => {
     importAllFile.addEventListener('change', (event) => {
         const files = Array.from(event.target.files);
         if (files.length === 0) return;
-        
+
+        History.commit();
+
         // If single file, check if it's an array of templates.
         if (files.length === 1) {
             const reader = new FileReader();
@@ -669,7 +757,27 @@ document.addEventListener('DOMContentLoaded', () => {
             };
             reader1.readAsText(files[0]);
         }
-        
+
         importAllFile.value = '';
     });
+
+    // Undo / redo buttons.
+    undoBtn.addEventListener('click', () => History.undo());
+    redoBtn.addEventListener('click', () => History.redo());
+
+    // Keyboard shortcuts for undo/redo. Skip when typing in an input.
+    window.addEventListener('keydown', (event) => {
+        if (isTypingInTextInput(event.target)) return;
+        if (!event.ctrlKey && !event.metaKey) return;
+        const key = event.key.toLowerCase();
+        if (key === 'z' && !event.shiftKey) {
+            event.preventDefault();
+            History.undo();
+        } else if ((key === 'z' && event.shiftKey) || key === 'y') {
+            event.preventDefault();
+            History.redo();
+        }
+    });
+
+    updateHistoryButtons();
 });
