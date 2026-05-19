@@ -31,8 +31,9 @@ namespace Grammar {
         // name of the plugin's dynamic library.
         const string pmuggDll = "pmugg release.dll";
 #endif  
+        // Must match cpp_version/geometry/mesh.h (SubmeshCpp, MeshCpp).
         [StructLayout(LayoutKind.Sequential)]
-        public struct MeshDLL {
+        private struct SubmeshCpp {
             public IntPtr positions;
             public IntPtr normals;
             public IntPtr triangles;
@@ -40,13 +41,24 @@ namespace Grammar {
             public int numVertices;
             public int numTriangles;
             public int numFaces;
+            public float red;
+            public float green;
+            public float blue;
         }
 
-        [DllImport(pmuggDll, CallingConvention = CallingConvention.Cdecl)]
-        private static extern MeshDLL getMesh();
+        [StructLayout(LayoutKind.Sequential)]
+        private struct MeshCpp {
+            public IntPtr submeshes;
+            public int numSubmeshes;
+        }
+
+        private const int MaxMeshElementCount = 5_000_000;
 
         [DllImport(pmuggDll, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void destroyMesh(ref MeshDLL mesh);
+        private static extern MeshCpp getMesh();
+
+        [DllImport(pmuggDll, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void destroyMesh(ref MeshCpp mesh);
 
         [DllImport(pmuggDll, CallingConvention = CallingConvention.Cdecl)]
         private static extern void initialize(string filePath, StringBuilder result, int len, int seed);
@@ -79,13 +91,7 @@ namespace Grammar {
         private Vector3 previousSize;
         private System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
 
-        // Reusable arrays to prevent garbage collection pressure
-        private float[] positionsArray;
-        private float[] normalsArray;
-        private int[] trianglesArray;
-        private int[] faceIndicesArray;
-        private Vector3[] verticesArray;
-        private Vector3[] normalsVectorArray;
+        private Material[] lastMeshMaterials;
 
         private void HandleSizeChange() {
             setSize(size.x, size.y, size.z);
@@ -130,113 +136,182 @@ namespace Grammar {
             Repaint();
         }
 
-        private void UpdateMesh() {
-            MeshDLL inputMesh = getMesh();
-            Mesh outputMesh = new Mesh();
+        private static bool IsValidSubmeshCount(int count) {
+            return count > 0 && count <= 1024;
+        }
 
-            int numVertices = inputMesh.numVertices;
-            int numTriangles = inputMesh.numTriangles;
-            int numFaces = inputMesh.numFaces;
+        private static bool IsValidSubmesh(SubmeshCpp submesh) {
+            if (submesh.numVertices <= 0 || submesh.numTriangles <= 0) {
+                return false;
+            }
+            if (submesh.numVertices > MaxMeshElementCount || submesh.numTriangles > MaxMeshElementCount) {
+                return false;
+            }
+            if (submesh.positions == IntPtr.Zero || submesh.triangles == IntPtr.Zero) {
+                return false;
+            }
+            if (submesh.numFaces < 0 || submesh.numFaces > MaxMeshElementCount) {
+                return false;
+            }
+            if (submesh.numFaces > 0 && submesh.faceIndices == IntPtr.Zero) {
+                return false;
+            }
+            return true;
+        }
 
-            // Marshal the positions array
-            if (positionsArray == null || positionsArray.Length < numVertices * 3) {
-                positionsArray = new float[numVertices * 3];
-            } else {
-                Array.Clear(positionsArray, 0, positionsArray.Length);
-            }
-            Marshal.Copy(inputMesh.positions, positionsArray, 0, numVertices * 3);
-            
-            if (normalsArray == null || normalsArray.Length < numVertices * 3) {
-                normalsArray = new float[numVertices * 3];
-            } else {
-                Array.Clear(normalsArray, 0, normalsArray.Length);
-            }
-            Marshal.Copy(inputMesh.normals, normalsArray, 0, numVertices * 3);
-            
-            if (faceIndicesArray == null || faceIndicesArray.Length < numFaces) {
-                faceIndicesArray = new int[numFaces];
-            } else {
-                Array.Clear(faceIndicesArray, 0, faceIndicesArray.Length);
-            }
-            Marshal.Copy(inputMesh.faceIndices, faceIndicesArray, 0, numFaces);
+        private static Vector3 ToUnityPosition(float[] positions, int vertexIndex) {
+            int i = vertexIndex * 3;
+            return new Vector3(positions[i], positions[i + 2], positions[i + 1]);
+        }
 
-            if (verticesArray == null || verticesArray.Length < numVertices) {
-                verticesArray = new Vector3[numVertices];
-            } else {
-                Array.Clear(verticesArray, 0, verticesArray.Length);
-            }
-            if (normalsVectorArray == null || normalsVectorArray.Length < numVertices) {
-                normalsVectorArray = new Vector3[numVertices];
-            } else {
-                Array.Clear(normalsVectorArray, 0, normalsVectorArray.Length);
-            }
-            for (int i = 0; i < numVertices; i++) {
-                // Switch the y and z coordinates.
-                verticesArray[i] = new Vector3(positionsArray[3 * i], positionsArray[3 * i + 2], positionsArray[3 * i + 1]);
-                normalsVectorArray[i] = new Vector3(normalsArray[3 * i], normalsArray[3 * i + 2], normalsArray[3 * i + 1]);
-            }
-            outputMesh.vertices = verticesArray;
-            outputMesh.normals = normalsVectorArray;
+        private static Vector3 ToUnityNormal(float[] normals, int vertexIndex) {
+            int i = vertexIndex * 3;
+            return new Vector3(normals[i], normals[i + 2], normals[i + 1]);
+        }
 
-            // Marshal the triangles array
-            if (trianglesArray == null || trianglesArray.Length < 3 * numTriangles) {
-                trianglesArray = new int[3 * numTriangles];
-            } else {
-                Array.Clear(trianglesArray, 0, trianglesArray.Length);
+        private static Material CreateSubmeshMaterial(SubmeshCpp submesh) {
+            var material = new Material(Shader.Find("Standard"));
+            material.color = new Color(submesh.red, submesh.green, submesh.blue, 1.0f);
+            return material;
+        }
+
+        private void DestroyMeshMaterials() {
+            if (lastMeshMaterials == null) {
+                return;
             }
-            Marshal.Copy(inputMesh.triangles, trianglesArray, 0, 3 * numTriangles);
-            outputMesh.triangles = trianglesArray;
+            foreach (Material material in lastMeshMaterials) {
+                if (material != null) {
+                    DestroyImmediate(material);
+                }
+            }
+            lastMeshMaterials = null;
+        }
 
-            // Free the C++ memory after copying all data
-            destroyMesh(ref inputMesh);
+        private void ClearGeneratedObjects() {
+            GameObject linesContainer = GameObject.Find("Generated Lines");
+            if (linesContainer != null) {
+                DestroyImmediate(linesContainer);
+            }
 
-            // outputMesh.RecalculateNormals(); 
-            // outputMesh.RecalculateBounds();
-
-            // Check if there's an existing mesh GameObject
             GameObject gameObject = GameObject.Find("Generated Mesh");
             if (gameObject == null) {
-                // Create a new GameObject if one doesn't exist
-                gameObject = new GameObject("Generated Mesh");                    
-                MeshFilter meshFilter = gameObject.AddComponent<MeshFilter>();
-                MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();
-                var material = AssetDatabase.LoadAssetAtPath<Material>("Assets/Default.mat");
-                if (material == null) {
-                    // Fallback to creating a default material
-                    material = new Material(Shader.Find("Standard"));
-                }
-                meshRenderer.material = material;
+                return;
             }
-            
-            // Clean up the old mesh before assigning the new one
-            MeshFilter existingMeshFilter = gameObject.GetComponent<MeshFilter>();
-            if (existingMeshFilter.sharedMesh != null) {
-                // Destroy the old mesh to free memory
-                if (Application.isPlaying) {
-                    Destroy(existingMeshFilter.sharedMesh);
-                } else {
-                    DestroyImmediate(existingMeshFilter.sharedMesh);
+
+            MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>();
+            if (meshFilter != null && meshFilter.sharedMesh != null) {
+                DestroyImmediate(meshFilter.sharedMesh);
+            }
+
+            DestroyImmediate(gameObject);
+        }
+
+        private void UpdateMesh() {
+            MeshCpp meshData = getMesh();
+
+            var vertices = new List<Vector3>();
+            var normals = new List<Vector3>();
+            var submeshTriangleLists = new List<int[]>();
+            var materials = new List<Material>();
+            Vector3[] edgeVertices = null;
+            int[] edgeFaceIndices = null;
+
+            if (meshData.submeshes != IntPtr.Zero && IsValidSubmeshCount(meshData.numSubmeshes)) {
+                int submeshStructSize = Marshal.SizeOf<SubmeshCpp>();
+                for (int submeshIndex = 0; submeshIndex < meshData.numSubmeshes; submeshIndex++) {
+                    IntPtr submeshPtr = IntPtr.Add(meshData.submeshes, submeshIndex * submeshStructSize);
+                    SubmeshCpp submesh = Marshal.PtrToStructure<SubmeshCpp>(submeshPtr);
+                    if (!IsValidSubmesh(submesh)) {
+                        continue;
+                    }
+
+                    int vertexOffset = vertices.Count;
+                    var positions = new float[submesh.numVertices * 3];
+                    Marshal.Copy(submesh.positions, positions, 0, positions.Length);
+
+                    if (submesh.normals != IntPtr.Zero) {
+                        var normalValues = new float[submesh.numVertices * 3];
+                        Marshal.Copy(submesh.normals, normalValues, 0, normalValues.Length);
+                        for (int i = 0; i < submesh.numVertices; i++) {
+                            vertices.Add(ToUnityPosition(positions, i));
+                            normals.Add(ToUnityNormal(normalValues, i));
+                        }
+                    } else {
+                        for (int i = 0; i < submesh.numVertices; i++) {
+                            vertices.Add(ToUnityPosition(positions, i));
+                            normals.Add(Vector3.up);
+                        }
+                    }
+
+                    var triangleValues = new int[submesh.numTriangles * 3];
+                    Marshal.Copy(submesh.triangles, triangleValues, 0, triangleValues.Length);
+                    for (int i = 0; i < triangleValues.Length; i++) {
+                        triangleValues[i] += vertexOffset;
+                    }
+                    submeshTriangleLists.Add(triangleValues);
+                    materials.Add(CreateSubmeshMaterial(submesh));
+
+                    if (edgeVertices == null && submesh.numFaces > 0) {
+                        edgeVertices = new Vector3[submesh.numVertices];
+                        for (int i = 0; i < submesh.numVertices; i++) {
+                            edgeVertices[i] = ToUnityPosition(positions, i);
+                        }
+                        edgeFaceIndices = new int[submesh.numFaces];
+                        Marshal.Copy(submesh.faceIndices, edgeFaceIndices, 0, submesh.numFaces);
+                    }
                 }
             }
-            
-            // Update the mesh
-            existingMeshFilter.sharedMesh = outputMesh;
+
+            destroyMesh(ref meshData);
+
+            if (vertices.Count == 0 || submeshTriangleLists.Count == 0) {
+                DestroyMeshMaterials();
+                ClearGeneratedObjects();
+                return;
+            }
+
+            Mesh outputMesh = new Mesh();
+            if (vertices.Count > 65535) {
+                outputMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+            }
+            outputMesh.SetVertices(vertices);
+            outputMesh.SetNormals(normals);
+            outputMesh.subMeshCount = submeshTriangleLists.Count;
+            for (int submeshIndex = 0; submeshIndex < submeshTriangleLists.Count; submeshIndex++) {
+                outputMesh.SetTriangles(submeshTriangleLists[submeshIndex], submeshIndex);
+            }
+            outputMesh.RecalculateBounds();
+
+            GameObject gameObject = GameObject.Find("Generated Mesh");
+            if (gameObject == null) {
+                gameObject = new GameObject("Generated Mesh");
+                gameObject.AddComponent<MeshFilter>();
+                gameObject.AddComponent<MeshRenderer>();
+            }
+
+            MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>();
+            MeshRenderer meshRenderer = gameObject.GetComponent<MeshRenderer>();
+
+            if (meshFilter.sharedMesh != null) {
+                DestroyImmediate(meshFilter.sharedMesh);
+            }
+
+            DestroyMeshMaterials();
+            lastMeshMaterials = materials.ToArray();
+            meshFilter.sharedMesh = outputMesh;
+            meshRenderer.sharedMaterials = lastMeshMaterials;
+
             Selection.activeGameObject = gameObject;
-            
+
             var creator = FindFirstObjectByType<GrammarCreator>();
             if (creator) {
                 gameObject.transform.parent = creator.transform;
             }
-            
-            int[] faceIndices = new int[numFaces];
-            for (int i = 0; i < numFaces; i++) {
-                faceIndices[i] = faceIndicesArray[i];
+
+            if (edgeVertices != null && edgeFaceIndices != null) {
+                DrawEdgeLines(edgeVertices, edgeFaceIndices);
             }
-            // Call the function to draw lines
-            DrawEdgeLines(verticesArray, faceIndices);
-            
-            // Force Garbage Collection every 20 iterations to prevent memory buildup.
-            // Not sure how helpful this is.
+
             if (iterationCount % 20 == 0) {
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
