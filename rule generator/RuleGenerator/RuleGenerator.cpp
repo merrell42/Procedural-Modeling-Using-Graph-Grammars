@@ -33,6 +33,7 @@ void GenerateRules(const char* input_cstr, char* output, int maxLength) {
 	// Set ruleGeneratorId on edges if present in JSON, otherwise generate from index.
 	// Access nested structure: parsed["types"]["edgeTypes"].
 	Json types = parsed["types"];
+	vector<EdgeType*> eTypes;
 	for (size_t i = 0; i < primitives->edgeTypes.size(); i++) {
 		EdgeType* eType = primitives->edgeTypes[i];
 		if (types["edgeTypes"].size() > i && types["edgeTypes"][i].contains("id")) {
@@ -41,6 +42,7 @@ void GenerateRules(const char* input_cstr, char* output, int maxLength) {
 			// Generate ID from index if not present in JSON.
 			eType->setRuleGeneratorId("edge" + to_string(i));
 		}
+		eTypes.push_back(eType);
 	}
 	
 	// Set ruleGeneratorId on vertices if present in JSON.
@@ -64,7 +66,7 @@ void GenerateRules(const char* input_cstr, char* output, int maxLength) {
 		}
 		vector<Json> outputVector;
 		const bool excludeRepeats = false; // parsed["excludeRepeats"]);
-		TemplateMatcher matcher(templateGraphSets[i].graphs[0], vTypes, excludeRepeats);
+		TemplateMatcher matcher(templateGraphSets[i].graphs[0], vTypes, eTypes, excludeRepeats);
 		matcher.match();
 		matcher.GetMatches(outputVector);
 		cout << "--------------------------------" << endl;

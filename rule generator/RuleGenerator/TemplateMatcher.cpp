@@ -19,7 +19,7 @@ int VertexState::ReverseConnectionIndex(int connectionIndex) {
 	return (connectionIndex + edge0) % n;
 }
 
-TemplateMatcher::TemplateMatcher(TemplateGraph templateGraph_, vector<VertexType*> vTypes, bool excludeRepeats_) : templateGraph(templateGraph_) {
+TemplateMatcher::TemplateMatcher(TemplateGraph templateGraph_, vector<VertexType*> vTypes, vector<EdgeType*> eTypes, bool excludeRepeats_) : templateGraph(templateGraph_) {
 	excludeRepeats = excludeRepeats_;
 	counter = 0;
 	for (int i = 0; i < vTypes.size(); i++) {
@@ -28,8 +28,8 @@ TemplateMatcher::TemplateMatcher(TemplateGraph templateGraph_, vector<VertexType
 			states.push_back(VertexState(vType, i, j));
 		}
 	}
-	numTypes = (int)states.size();
-	numPos = (int)templateGraph.vertices.size();
+	numStates = (int)states.size();
+	numVertices = (int)templateGraph.vertices.size();
 
 	// Build eConnections from vertices.
 	for (int i = 0; i < templateGraph.numEdges; i++) {
@@ -44,24 +44,27 @@ TemplateMatcher::TemplateMatcher(TemplateGraph templateGraph_, vector<VertexType
 	}
 
 	// -1 means not rejected.
-	inQueue = new bool[numPos];
-	for (int i = 0; i < numPos; i++) {
+	inQueue = new bool[numVertices];
+	for (int i = 0; i < numVertices; i++) {
 		inQueue[i] = false;
 		vector <int> rejectionStepTemp;
-		for (int j = 0; j < numTypes; j++) {
+		bool onBoundary = IsOnBoundary(i);
+		// int vertexStates = onBoundary ? eTypes.size() : numStates;
+		int vertexStates = numStates;
+		for (int j = 0; j < vertexStates; j++) {
 			rejectionStepTemp.push_back(-1);
 		}
 		rejectionStep.push_back(rejectionStepTemp);
 	}
-	vIndex = 0;
+	vIndex = -1;
+}
+
+bool TemplateMatcher::IsOnBoundary(int vertexIndex) {
+	return !templateGraph.vertices[vertexIndex].boundaryId.empty();
 }
 
 void TemplateMatcher::match() {
-	Decision decison0(0);
-	for (int j = 0; j < numTypes; j++) {
-		decison0.choices.push_back(j);
-	}
-	decisions.push_back(decison0);
+	findNextChoice();
 	while (decisions.size() > 0) {
 		counter++;
 		applyDecision();
@@ -74,7 +77,7 @@ void TemplateMatcher::match() {
 		}
 		else {
 			updateQueue.clear();
-			for (int j = 0; j < numPos; j++) {
+			for (int j = 0; j < numVertices; j++) {
 				inQueue[j] = false;
 			}
 			undoLastDecision();
@@ -94,8 +97,9 @@ void TemplateMatcher::applyDecision() {
 	Decision decision = decisions.back();
 	int choice = decision.choices[0];
 
-	for (int i = 0; i < numTypes; i++) {
-		if (i != choice && rejectionStep[vIndex][i] < 0) {
+	auto vRejectionStep = rejectionStep[vIndex];
+	for (int i = 0; i < vRejectionStep.size(); i++) {
+		if (i != choice && vRejectionStep[i] < 0) {
 			reject(vIndex, i);
 		}
 	}
@@ -121,7 +125,7 @@ bool TemplateMatcher::propagate() {
 		set<string> neighborIds;
 		for (int i = 0; i < vConnections.size(); i++) {
 			neighborIds.clear();
-			for (int j = 0; j < numTypes; j++) {
+			for (int j = 0; j < numStates; j++) {
 				if (rejectionStep[updateIndex][j] == -1) {
 					string connectionId = states[j].GetConnectionId(i);
 					string neighborId = HalfEdgeType::oppositeId(connectionId);
@@ -141,7 +145,7 @@ bool TemplateMatcher::propagate() {
 
 			bool hasMatch = false;
 			int cIndex = ConnectionIndex(neighbor, vConnection, excludeIndex);
-			for (int j = 0; j < numTypes; j++) {
+			for (int j = 0; j < numStates; j++) {
 				if (rejectionStep[neighbor][j] == -1) {
 					string connectionId = states[j].GetConnectionId(cIndex);
 					auto it = neighborIds.find(connectionId);
@@ -163,7 +167,7 @@ bool TemplateMatcher::propagate() {
 
 vector<int> TemplateMatcher::findChoices() {
 	vector<int> choices;
-	for (int i = 0; i < numTypes; i++) {
+	for (int i = 0; i < numStates; i++) {
 		if (rejectionStep[vIndex][i] < 0) {
 			choices.push_back(i);
 		}
@@ -174,11 +178,11 @@ vector<int> TemplateMatcher::findChoices() {
 bool TemplateMatcher::findNextChoice() {
 	while (true) {
 		vIndex++;
-		if (vIndex >= numPos) {
+		if (vIndex >= numVertices) {
 			vector<int> newMatchTypes;
 			vector<int> newMatchStates;
-			for (int i = 0; i < numPos; i++) {
-				for (int j = 0; j < numTypes; j++) {
+			for (int i = 0; i < numVertices; i++) {
+				for (int j = 0; j < numStates; j++) {
 					if (rejectionStep[i][j] == -1) {
 						newMatchTypes.push_back(states[j].type->getRuleGeneratorId());
 						newMatchStates.push_back(j);
@@ -190,7 +194,7 @@ bool TemplateMatcher::findNextChoice() {
 			if (excludeRepeats) {
 				for (int i = 0; i < matchTypes.size() && !exists; i++) {
 					bool sameMatch = true;
-					for (int j = 0; j < numPos; j++) {
+					for (int j = 0; j < numVertices; j++) {
 						if (newMatchTypes[j] != matchTypes[i][j]) {
 							sameMatch = false;
 						}
@@ -203,7 +207,7 @@ bool TemplateMatcher::findNextChoice() {
 			if (!exists) {
 				matchTypes.push_back(newMatchTypes);
 				matchStates.push_back(newMatchStates);
-				for (int i = 0; i < numPos; i++) {
+				for (int i = 0; i < numVertices; i++) {
 					cout << newMatchStates[i] << " ";
 				}
 				cout << endl;
@@ -227,8 +231,8 @@ void TemplateMatcher::undoLastDecision() {
 	if (n == 0) {
 		return;
 	}
-	for (int i = 0; i < numPos; i++) {
-		for (int j = 0; j < numTypes; j++) {
+	for (int i = 0; i < numVertices; i++) {
+		for (int j = 0; j < numStates; j++) {
 			if (rejectionStep[i][j] >= n) {
 				rejectionStep[i][j] = -1;
 			}
@@ -250,9 +254,9 @@ void TemplateMatcher::GetMatches(vector<Json>& outputVector) {
 		auto match = matchStates[i];
 		vector<int> vertexIndices;
 		for (int j = 0; j < match.size(); j++) {
-			if (!templateGraph.vertices[j].boundaryId.empty()) {
+			/* if (!templateGraph.vertices[j].boundaryId.empty()) {
 				continue;
-			}
+			} */
 			vertexIndices.push_back(states[match[j]].typeIndex);
 		}
 		output["vertices"] = vertexIndices;
@@ -261,16 +265,11 @@ void TemplateMatcher::GetMatches(vector<Json>& outputVector) {
 		vector<Json> allEdgeIndices;
 		for (int j = 0; j < eConnections.size(); j++) {
 			auto vIndices = eConnections[j];
-			bool skipEdge = false;
-			for (int k = 0; k < vIndices.size(); k++) {
+			/* for (int k = 0; k < vIndices.size(); k++) {
 				if (!templateGraph.vertices[vIndices[k]].boundaryId.empty()) {
-					skipEdge = true;
-					break;
+					continue;
 				}
-			}
-			if (skipEdge) {
-				continue;
-			}
+			} */
 
 			vector<int> edgeIndices;
 			for (int k = 0; k < vIndices.size(); k++) {

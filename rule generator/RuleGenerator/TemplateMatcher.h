@@ -33,7 +33,7 @@ public:
 
 class TemplateMatcher {
 public:
-	// The possible states at each vertex.
+	// The possible states at each vertex. Represents a vertex type and an orientation.
 	vector<VertexState> states;
 	// The list of decisions.
 	vector<Decision> decisions;
@@ -46,8 +46,8 @@ public:
 	TemplateGraph templateGraph;
 	// Edge connections: which vertices are connected to each edge.
 	vector<vector<int>> eConnections;
-	int numPos;
-	int numTypes;
+	int numVertices;
+	int numStates;
 	// Our current position within the vertices.
 	int vIndex;
 	// For debugging.
@@ -59,7 +59,7 @@ public:
 	// Exclude any rules that use the same vertex types.
 	bool excludeRepeats;
 
-	TemplateMatcher(TemplateGraph templateGraph_, vector<VertexType*> vTypes, bool excludeRepeats_);
+	TemplateMatcher(TemplateGraph templateGraph_, vector<VertexType*> vTypes, vector<EdgeType*> eTypes, bool excludeRepeats_);
 	void match();
 	// Add any matches to the output vector.
 	void GetMatches(vector<Json>& outputVector);
@@ -72,4 +72,5 @@ private:
 	void undoLastDecision();
 	void reject(int pos, int type);
 	int ConnectionIndex(int vertexIndex, int edgeIndex, int excludeIndex);
+	bool IsOnBoundary(int vertexIndex);
 };
