@@ -26,11 +26,17 @@ Json globalSettings = {
     {"Mutator Effort Limit", 20},
     {"Prefer Ground", 0.9f},
     {"Empty Border", true},
-    // Optimizer Metropolis temperature. At Beta=0 the acceptance probability
-    // is exp(0)=1, so `Optimizer::isAccepted` always returns true and the
-    // run is bit-identical to the pre-optimizer always-accept path. Override
-    // per-grammar (e.g. Beta=1) to enable cost-driven mutation rejection.
-    {"Beta", 0},
+    // Optimizer Metropolis temperature. exp(Beta * cost-delta) is the
+    // acceptance probability — Beta=0 is always-accept (bit-identical to
+    // the pre-optimizer behavior), Beta=1 is strong rejection. The default
+    // Beta=0.01 is the local min on the bundled corpus: enough rejection
+    // to visibly shape output (Square Filled 4 -> 30 faces, Docks
+    // 163 -> 232) while keeping the cost-machinery + reject deep-copy
+    // overhead to ~14% wall-clock vs always-accept. Higher Beta values
+    // increase rejection rate but pay more reject deep-copy cost; lower
+    // Beta accepts more bad mutations and lets the algorithm wander into
+    // expensive states. Override per-grammar via the grammar JSON.
+    {"Beta", 0.01},
     {"Snapping Effort Limit", 100},
     {"Bad Vertex", 10},
     {"HalfEdge Conflict", 1},
