@@ -30,9 +30,7 @@ private:
 
     bool applyProduction(Production production);
 
-    // Exponential moving average of success rate per rule type
-    // (starter / removal / normal). Drives the probability weights in
-    // mutate() so rule types that frequently succeed get tried first.
+    // EMA of success rate per rule type (starter / removal / normal).
     double successRate[3] = {1.0, 1.0, 1.0};
 };
 

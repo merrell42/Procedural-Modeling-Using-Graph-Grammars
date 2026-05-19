@@ -61,6 +61,7 @@ Json globalSettings = {
     {"Max Connectors", 100},
     {"Winding Enabled", true},
     {"Stubs Enabled", false},
+    {"Adaptive Rule Weights", true},
     {"Match Backwards", true},
     {"Use Chain Map", false},
     {"Monotonic", true},

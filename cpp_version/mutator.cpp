@@ -45,11 +45,11 @@ void Mutator::iterate(int steps) {
 }
 
 void Mutator::mutate() {
-    // The probability of picking a particular production rule, weighted by
-    // recent success rate per type (an EMA updated below). The "* 10" on
-    // the normal-rule slot preserves the original heavy weighting toward
-    // normal productions over starter/removal rules.
-    vector<double> probabilities = { successRate[0], successRate[1], successRate[2] * 10 };
+    // Weighted toward normal productions.
+    bool adaptive = globalSettings["Adaptive Rule Weights"].get<bool>();
+    vector<double> probabilities = adaptive
+        ? vector<double>{ successRate[0], successRate[1], successRate[2] * 10 }
+        : vector<double>{ 1, 1, 10 };
     bool done = false;
 
     while (!done) {
@@ -71,12 +71,13 @@ void Mutator::mutate() {
         }
         bool success = applyProduction(production);
 
-        // Update the per-rule-type EMA. alpha=0.1 is a slow-moving average
-        // so transient failure clusters don't starve a rule type entirely;
-        // the 0.01 floor prevents weights from decaying past usefulness.
-        constexpr double alpha = 0.1;
-        successRate[ruleType] = alpha * (success ? 1.0 : 0.0) + (1.0 - alpha) * successRate[ruleType];
-        if (successRate[ruleType] < 0.01) successRate[ruleType] = 0.01;
+        if (adaptive) {
+            constexpr double alpha = 0.1;
+            successRate[ruleType] = alpha * (success ? 1.0 : 0.0) + (1.0 - alpha) * successRate[ruleType];
+            if (successRate[ruleType] < 0.01) {
+                successRate[ruleType] = 0.01;
+            }
+        }
 
         if (success) {
             return;
