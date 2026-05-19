@@ -1,44 +1,43 @@
+#include "pch.h"
+#define NOMINMAX
 #include "optimizer.h"
 #include "settings.h"
+#include "graph_drawing/vertex.h"
+#include "primitives/vertex_type.h"
+#include "util/util.h"
 #include <stdexcept>
-
-// TODO: Use this code. It is not used yet.
 
 namespace ms {
 
 bool Optimizer::detailedCost = false;
-constexpr double Optimizer::costScale;  // Definition of static constexpr member
+constexpr double Optimizer::costScale;
 
-Optimizer::Optimizer(const NodeStats& nodeStats) 
+Optimizer::Optimizer(const NodeStats& nodeStats)
     : nodeStats(nodeStats) {
     prevCost = computeCost();
 }
 
-Cost Optimizer::computeCost() {
+Optimizer::Cost Optimizer::computeCost() {
     Cost cost;
-
-    // Compute line distance from the change
-    double prevLogLineDistances = prevCost.logLineDistances;
-    cost.logLineDistances = prevLogLineDistances + nodeStats.getCostChange().lineDistance;
+    cost.logLineDistances =
+        prevCost.logLineDistances + nodeStats.getCostChange().lineDistance;
     cost.reject = nodeStats.getCostChange().reject;
 
-    int numLines = nodeStats.getCount().line;
-    double desiredLines = GlobalSettings::get("Desired Lines");
-    double desiredCost = GlobalSettings::get("Desired Lines Cost");
-    cost.desiredLines = desiredCost * std::max((desiredLines - numLines) / desiredLines, -1.0);
+    int numLines = nodeStats.getLineCount();
+    double desiredLines = globalSettings["Desired Lines"].get<double>();
+    double desiredCost = globalSettings["Desired Lines Cost"].get<double>();
+    cost.desiredLines =
+        desiredCost * std::max((desiredLines - numLines) / desiredLines, -1.0);
 
-    double desiredVertexWeight = GlobalSettings::get("Desired Vertex Weight");
-    double desirabilitySum = 0;
-    
-    for (const auto& vertex : nodeStats.getVertices()) {
-        if (auto decoration = vertex.getState().getType().getDecoration()) {
-            desirabilitySum -= decoration.getDesirability();
-        }
+    double desiredVertexWeight = globalSettings["Desired Vertex Weight"].get<double>();
+    double desirabilitySum = 0.0;
+    for (auto* vertex : nodeStats.getVertices()) {
+        desirabilitySum -= vertex->getType()->desirability;
     }
     cost.desiredVertex = desiredVertexWeight * desirabilitySum;
 
-    cost.sum = costScale * (cost.logLineDistances + cost.reject + 
-                           cost.desiredLines + cost.desiredVertex);
+    cost.sum = costScale * (cost.logLineDistances + cost.reject +
+                            cost.desiredLines + cost.desiredVertex);
     return cost;
 }
 
@@ -47,10 +46,18 @@ void Optimizer::accept(const Cost& cost) {
 }
 
 bool Optimizer::isAccepted(const Cost& cost) {
+    double beta = globalSettings["Beta"].get<double>();
+    // Short-circuit at Beta=0: acceptance probability is exp(0)=1 so the
+    // draw is meaningless. Skipping `randomValue()` here keeps the RNG
+    // state lock-step with the pre-optimizer always-accept path, so older
+    // grammars that haven't been tuned for the optimizer stay bit-identical.
+    if (beta == 0.0) {
+        prevCost = cost;
+        return true;
+    }
     double difference = prevCost.sum - cost.sum;
-    double prob = std::exp(GlobalSettings::get("Beta") * difference);
-    
-    if (static_cast<double>(std::rand()) / RAND_MAX < prob) {
+    double prob = std::exp(beta * difference);
+    if (randomValue() < prob) {
         prevCost = cost;
         return true;
     }

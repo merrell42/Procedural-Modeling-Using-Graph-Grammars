@@ -10,7 +10,9 @@
 
 Mutator::Mutator(Model* model, GraphGrammar* grammar)
     : model(model)
-    , grammar(grammar) {
+    , grammar(grammar)
+    , nodeStats(model)
+    , optimizer(nodeStats) {
     bool groundEnabled = grammar->isGrounded();
     morphismFinder = make_unique<MorphismFinder>(model, groundEnabled);
 }
@@ -24,20 +26,28 @@ void Mutator::iterate(int steps) {
 
     int finishStep = model->numSteps + steps;
     while (model->numSteps < finishStep) {
-        // cout << model->numSteps << " " << model->getCurrent()->getFaceMap().size() << endl;
-
         if (model->numSteps == 0) {
             auto production = grammar->getStarterProduction(true);
             applyProduction(production);
         } else {
             mutate();
         }
-        // auto cost = optimizer.computeCost();
-        // if (optimizer.isAccepted(cost)) {
-        if (true) {
+        // Short-circuit the optimizer when Beta=0 — `Optimizer::isAccepted`
+        // returns true unconditionally in that regime, so computing the cost
+        // is dead work. Keeps the bench identical to upstream's pre-optimizer
+        // always-accept path when nobody has overridden Beta.
+        if (globalSettings["Beta"].get<double>() == 0.0) {
             model->accept();
         } else {
-            model->reject();
+            nodeStats.computeLineDistanceChange();
+            ms::Optimizer::Cost cost = optimizer.computeCost();
+            if (optimizer.isAccepted(cost)) {
+                model->accept();
+                optimizer.accept(cost);
+            } else {
+                model->reject();
+            }
+            nodeStats.resetCostChange();
         }
         model->numSteps++;
     }
@@ -101,6 +111,7 @@ bool Mutator::applyProduction(Production production) {
     timer->stop("Find Morphism");
 
     if (!morphism) {
+        nodeStats.setReject(1e6);
         return false;
     }
     production.morphism = morphism;
@@ -111,6 +122,7 @@ bool Mutator::applyProduction(Production production) {
     timer->stop("Build Rule Applier");
 
     if (!ruleApplier) {
+        nodeStats.setReject(1e6);
         delete morphism;
         return false;
     }
@@ -125,6 +137,7 @@ bool Mutator::applyProduction(Production production) {
         timer->stop("RuleApplier Solve");
 
         if (success) {
+            nodeStats.setReject(0.0);
             delete morphism;
             return true;
         }
@@ -136,6 +149,7 @@ bool Mutator::applyProduction(Production production) {
         effort++;
     }
 
+    nodeStats.setReject(1e6);
     ruleApplier->reject();
     delete morphism;
     return false;

@@ -26,7 +26,11 @@ Json globalSettings = {
     {"Mutator Effort Limit", 20},
     {"Prefer Ground", 0.9f},
     {"Empty Border", true},
-    {"Beta", 1},
+    // Optimizer Metropolis temperature. At Beta=0 the acceptance probability
+    // is exp(0)=1, so `Optimizer::isAccepted` always returns true and the
+    // run is bit-identical to the pre-optimizer always-accept path. Override
+    // per-grammar (e.g. Beta=1) to enable cost-driven mutation rejection.
+    {"Beta", 0},
     {"Snapping Effort Limit", 100},
     {"Bad Vertex", 10},
     {"HalfEdge Conflict", 1},
@@ -47,6 +51,12 @@ Json globalSettings = {
     {"Closible Angle", 200},
     {"Desired Edges", 200},
     {"Desired Edges Cost", 10000},
+    // Optimizer cost-function targets. `Desired Lines` is the line count
+    // the optimizer biases output toward; `Desired Lines Cost` scales the
+    // penalty for being off-target. Sensible defaults from a small corpus
+    // of grammars; override per-grammar via the grammar JSON if needed.
+    {"Desired Lines", 200},
+    {"Desired Lines Cost", 10000},
     {"Desired Vertex Weight", 100},
     {"Free Vertices", true},
     {"Kill Junctions", true},
