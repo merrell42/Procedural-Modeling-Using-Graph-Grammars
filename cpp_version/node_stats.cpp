@@ -15,6 +15,9 @@ NodeStats::NodeStats(Model* model) : model(model) {}
 // `prev`. Edges added during this step contribute 0 (no prev length); edges
 // removed contribute 0 (no current length). The log keeps very large length
 // jumps from dominating the cost.
+// This function is currently not used. It was used in the optimizer in the
+// web version of the code. However, I'm reluctant to put it back in because
+// I don't think it's really necessary.
 void NodeStats::computeLineDistanceChange() {
     costChange.lineDistance = 0.0;
     auto* current = model->getCurrent();

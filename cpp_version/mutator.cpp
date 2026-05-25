@@ -39,7 +39,6 @@ void Mutator::iterate(int steps) {
         if (globalSettings["Beta"].get<double>() == 0.0) {
             model->accept();
         } else {
-            nodeStats.computeLineDistanceChange();
             ms::Optimizer::Cost cost = optimizer.computeCost();
             if (optimizer.isAccepted(cost)) {
                 model->accept();
