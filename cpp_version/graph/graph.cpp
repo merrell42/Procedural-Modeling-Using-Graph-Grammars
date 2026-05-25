@@ -6,9 +6,11 @@
 #include "graph_half_edge.h"
 #include "graph_vertex.h"
 #include "../graph_drawing/face.h"
+#include "../primitives/primitives.h"
 #include "../util/util.h"
+#include "../util/binary_stream.h"
 
-int Graph::nextId = 0;
+std::atomic<int> Graph::nextId{0};
 
 Graph::Graph() : id(nextId++) {
     MemoryCounter::creation("Graph");
@@ -118,6 +120,70 @@ Graph* Graph::import(const Json& json, Primitives* shape) {
             auto bFace = hIndex >= 0 ? result->getFaces()[hIndex] : nullptr;
             result->bFaces.push_back(bFace);
         }
+    }
+
+    return result;
+}
+
+Graph* Graph::binaryDeserialize(std::istream& in, Primitives* shape) {
+    auto* result = new Graph();
+
+    int32_t vCount  = bsRead<int32_t>(in);
+    int32_t eCount  = bsRead<int32_t>(in);
+    int32_t heCount = bsRead<int32_t>(in);
+    int32_t fCount  = bsRead<int32_t>(in);
+
+    // Allocate all elements first (mirrors Graph::import).
+    for (int32_t i = 0; i < vCount;  i++) (new GraphVertex())->connectGraph(result);
+    for (int32_t i = 0; i < eCount;  i++) (new GraphEdge())->connectGraph(result);
+    for (int32_t i = 0; i < heCount; i++) (new GraphHalfEdge(true))->connectGraph(result);
+    for (int32_t i = 0; i < fCount;  i++) (new GraphFace())->connectGraph(result);
+
+    // Vertex fill-in: halfEdge slots + type.
+    auto* edgeVertex = new VertexType(); // shared placeholder for "edge kind" vertices
+    for (int32_t i = 0; i < vCount; i++) {
+        result->vertices[i]->binaryDeserialize(in);
+        int32_t typeIdx = bsRead<int32_t>(in);
+        result->vertices[i]->setType(typeIdx >= 0 ? shape->vertexTypes[typeIdx] : edgeVertex);
+    }
+
+    // Edge fill-in: halfEdge 2D array + type.
+    for (int32_t i = 0; i < eCount; i++) {
+        result->edges[i]->binaryDeserialize(in);
+        result->edges[i]->setType(shape->edgeTypes[bsRead<int32_t>(in)]);
+    }
+
+    // HalfEdge fill-in.
+    for (int32_t i = 0; i < heCount; i++) {
+        result->halfEdges[i]->binaryDeserialize(in);
+    }
+
+    // Face fill-in: outerComponent + type.
+    for (int32_t i = 0; i < fCount; i++) {
+        result->faces[i]->binaryDeserialize(in);
+        result->faces[i]->setType(shape->faceTypes[bsRead<int32_t>(in)]);
+    }
+
+    // Boundary collections.
+    int32_t bvCount = bsRead<int32_t>(in);
+    result->bVertices.reserve(bvCount);
+    for (int32_t i = 0; i < bvCount; i++) {
+        int32_t idx = bsRead<int32_t>(in);
+        result->bVertices.push_back(idx >= 0 ? result->vertices[idx] : nullptr);
+    }
+
+    int32_t bhCount = bsRead<int32_t>(in);
+    result->bHalfEdges.reserve(bhCount);
+    for (int32_t i = 0; i < bhCount; i++) {
+        int32_t idx = bsRead<int32_t>(in);
+        result->bHalfEdges.push_back(idx >= 0 ? result->halfEdges[idx] : nullptr);
+    }
+
+    int32_t bfCount = bsRead<int32_t>(in);
+    result->bFaces.reserve(bfCount);
+    for (int32_t i = 0; i < bfCount; i++) {
+        int32_t idx = bsRead<int32_t>(in);
+        result->bFaces.push_back(idx >= 0 ? result->faces[idx] : nullptr);
     }
 
     return result;

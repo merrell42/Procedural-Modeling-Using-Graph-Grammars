@@ -3,8 +3,9 @@
 #include "graph.h"
 #include "graph_half_edge.h"
 #include "../util/util.h"
+#include "../util/binary_stream.h"
 
-int GraphVertex::nextId = 0;
+std::atomic<int> GraphVertex::nextId{0};
 
 GraphVertex::GraphVertex()
     : graph(nullptr)
@@ -58,6 +59,17 @@ void GraphVertex::import(const Json& json) {
             int idx = index.get<int>();
             halfEdges.push_back(idx >= 0 ? graphHalfEdges[idx] : nullptr);
         }
+    }
+}
+
+void GraphVertex::binaryDeserialize(std::istream& in) {
+    halfEdges.clear();
+    auto& graphHalfEdges = graph->getHalfEdges();
+    int32_t n = bsRead<int32_t>(in);
+    halfEdges.reserve(n);
+    for (int32_t i = 0; i < n; i++) {
+        int32_t idx = bsRead<int32_t>(in);
+        halfEdges.push_back(idx >= 0 ? graphHalfEdges[idx] : nullptr);
     }
 }
 

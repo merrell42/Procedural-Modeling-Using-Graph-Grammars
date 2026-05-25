@@ -2,6 +2,7 @@
 #include <vector>
 #include <memory>
 #include <map>
+#include <iosfwd>
 #include "third_party/json.h"
 #include "primitives/face_type.h"
 #include "primitives/primitives.h"
@@ -30,6 +31,12 @@ public:
     GraphGrammar();
     ~GraphGrammar();
     static GraphGrammar* import(const Json& json);
+
+    // Serialize the whole grammar (primitives + rules + emptyGraph) to a binary stream.
+    // The output of serialize() can be replayed by deserialize() to obtain an
+    // equivalent GraphGrammar without re-parsing JSON. Suitable for on-disk caches.
+    void serialize(std::ostream& out) const;
+    static GraphGrammar* deserialize(std::istream& in);
 
     // Get a production rule.
     Production getProduction();

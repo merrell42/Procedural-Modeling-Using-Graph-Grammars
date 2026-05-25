@@ -21,6 +21,10 @@ public:
     bool getBool(const string& name) const;
     string getString(const string& name) const;
 
+    const map<string, double>& getDoubleProperties() const { return doubleProperties; }
+    const map<string, bool>&   getBoolProperties()   const { return boolProperties; }
+    const map<string, string>& getStringProperties() const { return stringProperties; }
+
 private:
     map<string, double> doubleProperties;
     map<string, bool> boolProperties;

@@ -3,6 +3,7 @@
 #include "graph_half_edge.h"
 #include "graph.h"
 #include "../geometry/vec3.h"
+#include "../util/binary_stream.h"
 
 GraphFace::GraphFace() 
     : outerComponent(nullptr)
@@ -74,6 +75,11 @@ void GraphFace::replaceHalfEdge(GraphHalfEdge* a, GraphHalfEdge* b) {
 
 bool GraphFace::isLoopy() const {
     return outerComponent->isLoopy();
+}
+
+void GraphFace::binaryDeserialize(std::istream& in) {
+    int32_t idx = bsRead<int32_t>(in);
+    outerComponent = idx >= 0 ? graph->getHalfEdges()[idx] : nullptr;
 }
 
 void GraphFace::setType(FaceType* newType) {

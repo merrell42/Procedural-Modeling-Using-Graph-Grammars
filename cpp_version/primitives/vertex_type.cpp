@@ -3,6 +3,7 @@
 #include "edge_type.h"
 #include "primitives.h"
 #include "../util/util.h"
+#include "../util/binary_stream.h"
 
 VertexType::VertexType() : spliced(false), ruleGeneratorId(0) {
 }
@@ -67,4 +68,23 @@ int VertexType::getRuleGeneratorId() const {
 
 void VertexType::setRuleGeneratorId(int id) {
     ruleGeneratorId = id;
+}
+
+VertexType* VertexType::binaryDeserialize(std::istream& in, Primitives* shape) {
+    auto* result = new VertexType();
+    result->spliced         = bsRead<uint8_t>(in) != 0;
+    result->ruleGeneratorId = bsRead<int32_t>(in);
+    int32_t hetCount = bsRead<int32_t>(in);
+    result->halfEdgeTypes.reserve(hetCount);
+    for (int32_t i = 0; i < hetCount; i++) {
+        int32_t etIdx  = bsRead<int32_t>(in);
+        bool isAtStart = bsRead<uint8_t>(in) != 0;
+        Vec3 dir       = bsReadVec3(in);
+        HalfEdgeType het;
+        het.edge      = shape->edgeTypes[etIdx];
+        het.isAtStart = isAtStart;
+        het.dir       = dir;
+        result->halfEdgeTypes.push_back(het);
+    }
+    return result;
 }

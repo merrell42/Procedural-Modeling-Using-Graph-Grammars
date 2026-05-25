@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <string>
+#include <iosfwd>
 #include "../geometry/vec3.h"
 
 class View;
@@ -16,6 +17,7 @@ public:
     int getMaxDim() const;
 
     static FaceType* import(const Json& json);
+    static FaceType* binaryDeserialize(std::istream& in);
 
 private:
     string material;

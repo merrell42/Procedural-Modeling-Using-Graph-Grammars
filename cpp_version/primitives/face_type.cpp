@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "face_type.h"
 #include "../util/util.h"
+#include "../util/binary_stream.h"
 #include "../geometry/vec2.h"
 #define _USE_MATH_DEFINES
 #include <cmath>
@@ -26,6 +27,15 @@ FaceType* FaceType::import(const Json& json) {
         result->color = Vec3::import(json["color"]);
     }
     
+    return result;
+}
+
+FaceType* FaceType::binaryDeserialize(std::istream& in) {
+    string material = bsReadStr(in);
+    Vec3 normal = bsReadVec3(in);
+    Vec3 color = bsReadVec3(in);
+    auto* result = new FaceType(material, normal);
+    result->color = color;
     return result;
 }
 

@@ -3,6 +3,8 @@
 #include <memory>
 #include <map>
 #include <string>
+#include <iosfwd>
+#include <atomic>
 #include "../geometry/vec3.h"
 #include "primitives.h"
 #include "../graph/edge_settings.h"
@@ -28,11 +30,13 @@ public:
                const map<string, bool>& options = {});
     ~EdgeType() = default;
     static EdgeType* import(const Json& json, Primitives* shape);
+    static EdgeType* binaryDeserialize(std::istream& in, Primitives* shape);
 
     const vector<FaceData>& getFaceData() const;
     const Vec3& getDir() const;
     EdgeSettings* getEdgeSettings() const;
     bool getIsRigid() const;
+    bool getIsRigidTiled() const;
     bool getSpliced() const;
     int getId() const;
 
@@ -54,6 +58,6 @@ private:
     // RuleGenerator string id.
     string ruleGeneratorId;
 
-    static int nextId;
+    static std::atomic<int> nextId;
 };
 

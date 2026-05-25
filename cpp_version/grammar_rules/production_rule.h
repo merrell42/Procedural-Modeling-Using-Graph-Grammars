@@ -1,6 +1,8 @@
 #pragma once
 #include <vector>
 #include <memory>
+#include <iosfwd>
+#include <atomic>
 #include "../third_party/json.h"
 
 using Json = nlohmann::json;
@@ -21,6 +23,7 @@ public:
         const vector<Graph*>& endGraphs
     );
     static ProductionRule* import(const Json& json, Primitives* shape);
+    static ProductionRule* binaryDeserialize(std::istream& in, Primitives* shape);
     ~ProductionRule();
 
     // End graphs are the same as start graphs except the splices are removed.
@@ -36,6 +39,6 @@ private:
     bool ground;
     int id;
 
-    static int nextId;
+    static std::atomic<int> nextId;
 };
 

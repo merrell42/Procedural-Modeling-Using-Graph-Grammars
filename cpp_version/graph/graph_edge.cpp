@@ -3,8 +3,9 @@
 #include "graph_edge.h"
 #include "graph_half_edge.h"
 #include "../util/util.h"
+#include "../util/binary_stream.h"
 
-int GraphEdge::nextId = 0;
+std::atomic<int> GraphEdge::nextId{0};
 
 GraphEdge::GraphEdge()
     : type(nullptr)
@@ -71,6 +72,22 @@ void GraphEdge::import(const Json& json) {
             }
             halfEdges.push_back(halfArray);
         }
+    }
+}
+
+void GraphEdge::binaryDeserialize(std::istream& in) {
+    halfEdges.clear();
+    auto& graphHalfEdges = graph->getHalfEdges();
+    int32_t outerCount = bsRead<int32_t>(in);
+    halfEdges.reserve(outerCount);
+    for (int32_t i = 0; i < outerCount; i++) {
+        int32_t innerCount = bsRead<int32_t>(in);
+        vector<GraphHalfEdge*> inner;
+        inner.reserve(innerCount);
+        for (int32_t j = 0; j < innerCount; j++) {
+            inner.push_back(graphHalfEdges[bsRead<int32_t>(in)]);
+        }
+        halfEdges.push_back(std::move(inner));
     }
 }
 

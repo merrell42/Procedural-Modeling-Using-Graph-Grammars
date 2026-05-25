@@ -39,6 +39,9 @@
     <ClInclude Include="..\graph_drawing\vertex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\util\binary_stream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="..\util\range.h">
       <Filter>Header Files</Filter>
     </ClInclude>
