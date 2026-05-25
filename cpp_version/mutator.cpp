@@ -45,9 +45,11 @@ void Mutator::iterate(int steps) {
 }
 
 void Mutator::mutate() {
-    // The probability of picking a particular production rule.
-    // This is weighted towards normal production rules instead of starter and removal rules.
-    vector<double> probabilities = {1, 1, 10};
+    // Weighted toward normal productions.
+    bool adaptive = globalSettings["Adaptive Rule Weights"].get<bool>();
+    vector<double> probabilities = adaptive
+        ? vector<double>{ successRate[0], successRate[1], successRate[2] * 10 }
+        : vector<double>{ 1, 1, 10 };
     bool done = false;
 
     while (!done) {
@@ -68,6 +70,15 @@ void Mutator::mutate() {
                 break;
         }
         bool success = applyProduction(production);
+
+        if (adaptive) {
+            constexpr double alpha = 0.1;
+            successRate[ruleType] = alpha * (success ? 1.0 : 0.0) + (1.0 - alpha) * successRate[ruleType];
+            if (successRate[ruleType] < 0.01) {
+                successRate[ruleType] = 0.01;
+            }
+        }
+
         if (success) {
             return;
         } else {

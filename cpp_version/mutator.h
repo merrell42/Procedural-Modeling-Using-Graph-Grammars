@@ -29,5 +29,8 @@ private:
     unique_ptr<MorphismFinder> morphismFinder;
 
     bool applyProduction(Production production);
+
+    // EMA of success rate per rule type (starter / removal / normal).
+    double successRate[3] = {1.0, 1.0, 1.0};
 };
 
