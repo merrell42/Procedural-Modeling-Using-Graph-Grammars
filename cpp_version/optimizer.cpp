@@ -1,5 +1,8 @@
 #include "pch.h"
 #include "optimizer.h"
+#ifdef _CONSOLE
+#include "minmax.h"
+#endif
 #include "settings.h"
 #include "graph_drawing/vertex.h"
 #include "primitives/vertex_type.h"
