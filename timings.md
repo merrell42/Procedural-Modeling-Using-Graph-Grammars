@@ -2,7 +2,7 @@
 
 As we make changes to the code, we should measure the timings to understand how any new code improves or degrades the speed of the model generation.
 
-I have measured the following timings on my machine in Unity for each of the following folder on May 25, 2026 2:00 PM MST. (I realize this is a crude imperfect way of doing things, but at least it's a start.)
+I have measured the following timings on my machine in Unity for each of the following folders on May 25, 2026 2:00 PM MST. (I realize this is a crude imperfect way of doing things, but at least it's a start.)
 
 | Folder            | Time (s) |
 | ----------------- | -------- |
