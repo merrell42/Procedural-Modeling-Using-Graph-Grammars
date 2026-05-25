@@ -32,6 +32,12 @@ class BspNode {
 		void removeEdge(Edge* edge);
 		void removeFace(Face* face);
 
+		int getParentId() const { return parentId; }
+		int getAboveId()  const { return aboveId; }
+		int getBelowId()  const { return belowId; }
+		const Plane* getPlanePtr() const { return plane; }
+		const vector<int>& getFaceIds() const { return faceIds; }
+
 	private:
 		Model* model;
 		Plane* plane;
