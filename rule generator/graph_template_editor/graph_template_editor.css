@@ -35,7 +35,55 @@ h1 {
     gap: 10px;
     margin-top: 10px;
     width: 100%;
-    height: calc(100vh - 180px); /* Use full viewport height minus header */
+    height: calc(100vh - 260px); /* Use full viewport height minus header */
+}
+
+.library-panel {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 0 0 0;
+    border-top: 1px solid #eee;
+    margin-top: 4px;
+}
+
+.library-label {
+    font-weight: bold;
+    color: #555;
+}
+
+.library-status {
+    font-family: 'Courier New', monospace;
+    color: #555;
+    padding: 0 6px;
+}
+
+.library-comment-label {
+    color: #555;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.library-comment-label input[type="text"] {
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    width: 260px;
+}
+
+button:disabled {
+    color: #999;
+    border-color: #ccc;
+    cursor: not-allowed;
+    background-color: #f9f9f9;
+}
+
+button:disabled:hover {
+    background-color: #f9f9f9;
 }
 
 .templates-container > .template-section {

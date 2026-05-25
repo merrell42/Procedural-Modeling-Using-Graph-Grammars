@@ -12,9 +12,24 @@
         <div class="global-actions">
             <div class="control-panel">
                 <button id="clearAllBtn">Clear Templates</button>
-                <button id="exportAllBtn">Export Templates</button>
+                <button id="exportAllBtn">Export Library</button>
+                <button id="exportPairBtn">Export current pair</button>
                 <button id="importAllBtn">Import Templates</button>
+                <button id="undoBtn" disabled>Undo</button>
+                <button id="redoBtn" disabled>Redo</button>
                 <input type="file" id="importAllFile" accept=".json" multiple style="display: none;">
+            </div>
+            <div class="library-panel">
+                <span class="library-label">Library:</span>
+                <button id="libPrevBtn" disabled>&lt; Prev</button>
+                <button id="libNextBtn" disabled>Next &gt;</button>
+                <span id="libStatus" class="library-status">Empty</span>
+                <label class="library-comment-label">Comment:
+                    <input type="text" id="libComment" placeholder="(no entry active)" disabled>
+                </label>
+                <button id="libSaveBtn">Save entry</button>
+                <button id="libNewBtn">New entry</button>
+                <button id="libDeleteBtn" disabled>Delete entry</button>
             </div>
         </div>
         
