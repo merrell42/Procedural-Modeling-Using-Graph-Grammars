@@ -3,7 +3,7 @@
 #include <iostream>
 #include <iomanip>
 #include <algorithm>
-#ifdef PMUGG_CMDLINE
+#ifdef _CONSOLE
 #include "minmax.h"
 #endif
 

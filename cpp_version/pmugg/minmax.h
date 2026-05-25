@@ -1,7 +1,7 @@
 #pragma once
 
-// We have different min and max functions for the command line version and
-// the DLL version to fix some compiling issues.
+// Console (pmugg): use these wrappers so std::min/max are safe without Windows.h.
+// DLL (pmugg dll): use bare min()/max() — Windows.h macros apply via pch.
 int min(int a, int b);
 float min(float a, float b);
 double min(double a, double b);

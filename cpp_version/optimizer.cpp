@@ -29,7 +29,7 @@ Optimizer::Cost Optimizer::computeCost() {
     double desiredLines = globalSettings["Desired Lines"].get<double>();
     double desiredCost = globalSettings["Desired Lines Cost"].get<double>();
     cost.desiredLines =
-        desiredCost * std::max((desiredLines - numLines) / desiredLines, -1.0);
+        desiredCost * max((desiredLines - numLines) / desiredLines, -1.0);
 
     double desiredVertexWeight = globalSettings["Desired Vertex Weight"].get<double>();
     double desirabilitySum = 0.0;
