@@ -56,6 +56,12 @@ public:
     int getRuleGeneratorId() const;
     void setRuleGeneratorId(int id);
 
+    // Per-vertex-type bias consumed by the optimizer's cost function. A
+    // positive value makes configurations containing this vertex type
+    // cheaper (more desirable); a negative value makes them more expensive.
+    // Loaded from the `desirability` JSON field on a vertex type, default 0.0.
+    double desirability = 0.0;
+
 private:
     vector<HalfEdgeType> halfEdgeTypes;
     bool spliced;

@@ -18,6 +18,10 @@ class Model {
 		void reset();
 
 		GraphDrawing* getCurrent();
+		// Returns the snapshot of the previous accepted graph drawing — used
+		// by the optimizer's cost machinery to diff edge lengths against the
+		// state before the current step's mutation.
+		GraphDrawing* getPrev();
 		int newId();
 		int numSteps;
 

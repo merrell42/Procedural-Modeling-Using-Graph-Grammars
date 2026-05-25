@@ -6,6 +6,8 @@
 #include "util/timer.h"
 #include "graph_drawing/model.h"
 #include "graph_morphism/morphism_finder.h"
+#include "node_stats.h"
+#include "optimizer.h"
 
 class Classifier;
 class Timer;
@@ -27,6 +29,8 @@ private:
     Model* model;
     GraphGrammar* grammar;
     unique_ptr<MorphismFinder> morphismFinder;
+    ms::NodeStats nodeStats;
+    ms::Optimizer optimizer;
 
     bool applyProduction(Production production);
 

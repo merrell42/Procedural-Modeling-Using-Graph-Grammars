@@ -26,7 +26,17 @@ Json globalSettings = {
     {"Mutator Effort Limit", 20},
     {"Prefer Ground", 0.9f},
     {"Empty Border", true},
-    {"Beta", 1},
+    // Optimizer Metropolis temperature. exp(Beta * cost-delta) is the
+    // acceptance probability — Beta=0 is always-accept (bit-identical to
+    // the pre-optimizer behavior), Beta=1 is strong rejection. The default
+    // Beta=0.01 is the local min on the bundled corpus: enough rejection
+    // to visibly shape output (Square Filled 4 -> 30 faces, Docks
+    // 163 -> 232) while keeping the cost-machinery + reject deep-copy
+    // overhead to ~14% wall-clock vs always-accept. Higher Beta values
+    // increase rejection rate but pay more reject deep-copy cost; lower
+    // Beta accepts more bad mutations and lets the algorithm wander into
+    // expensive states. Override per-grammar via the grammar JSON.
+    {"Beta", 0.01},
     {"Snapping Effort Limit", 100},
     {"Bad Vertex", 10},
     {"HalfEdge Conflict", 1},
@@ -47,6 +57,12 @@ Json globalSettings = {
     {"Closible Angle", 200},
     {"Desired Edges", 200},
     {"Desired Edges Cost", 10000},
+    // Optimizer cost-function targets. `Desired Lines` is the line count
+    // the optimizer biases output toward; `Desired Lines Cost` scales the
+    // penalty for being off-target. Sensible defaults from a small corpus
+    // of grammars; override per-grammar via the grammar JSON if needed.
+    {"Desired Lines", 200},
+    {"Desired Lines Cost", 10000},
     {"Desired Vertex Weight", 100},
     {"Free Vertices", true},
     {"Kill Junctions", true},

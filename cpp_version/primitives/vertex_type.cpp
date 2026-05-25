@@ -34,10 +34,13 @@ void VertexType::addHalfEdge(EdgeType* edge, bool isAtStart) {
     halfEdgeTypes.push_back(halfEdgeType);
 }
 
-VertexType* VertexType::import(const Json& json, Primitives* shape) {    
+VertexType* VertexType::import(const Json& json, Primitives* shape) {
     auto result = new VertexType();
     bool spliced = json["spliced"];
     result->spliced = spliced;
+    if (json.contains("desirability")) {
+        result->desirability = json["desirability"].get<double>();
+    }
 
     for (const auto& halfEdgeTypeJson : json["halfEdgeTypes"]) {
         HalfEdgeType halfEdgeType;

@@ -47,3 +47,7 @@ int Model::newId() {
 GraphDrawing* Model::getCurrent() {
 	return current;
 }
+
+GraphDrawing* Model::getPrev() {
+	return prev;
+}
