@@ -91,11 +91,23 @@ EdgeType* EdgeType::binaryDeserialize(std::istream& in, Primitives* shape) {
         result->edgeSettings = new EdgeSettings();
         int32_t n;
         n = bsRead<int32_t>(in);
-        for (int32_t i = 0; i < n; i++) { auto k = bsReadStr(in); double v = bsRead<double>(in); result->edgeSettings->set(k, v); }
+        for (int32_t i = 0; i < n; i++) {
+            auto k = bsReadStr(in);
+            double v = bsRead<double>(in);
+            result->edgeSettings->set(k, v);
+        }
         n = bsRead<int32_t>(in);
-        for (int32_t i = 0; i < n; i++) { auto k = bsReadStr(in); bool v = bsRead<uint8_t>(in) != 0; result->edgeSettings->set(k, v); }
+        for (int32_t i = 0; i < n; i++) {
+            auto k = bsReadStr(in);
+            bool v = bsRead<uint8_t>(in) != 0;
+            result->edgeSettings->set(k, v);
+        }
         n = bsRead<int32_t>(in);
-        for (int32_t i = 0; i < n; i++) { auto k = bsReadStr(in); auto v = bsReadStr(in); result->edgeSettings->set(k, v); }
+        for (int32_t i = 0; i < n; i++) {
+            auto k = bsReadStr(in);
+            auto v = bsReadStr(in);
+            result->edgeSettings->set(k, v);
+        }
     }
 
     return result;
