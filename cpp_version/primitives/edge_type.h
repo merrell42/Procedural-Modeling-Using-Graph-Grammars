@@ -1,7 +1,6 @@
 #pragma once
 #include <vector>
 #include <memory>
-#include <map>
 #include <string>
 #include <iosfwd>
 #include <atomic>
@@ -26,8 +25,7 @@ struct FaceData {
 // Contains a direction and an array of face types.
 class EdgeType {
 public:
-    EdgeType(const vector<FaceData>& faceData, const Vec3& dir, 
-               const map<string, bool>& options = {});
+    EdgeType(const vector<FaceData>& faceData, const Vec3& dir, bool isRigid = false);
     ~EdgeType() = default;
     static EdgeType* import(const Json& json, Primitives* shape);
     static EdgeType* binaryDeserialize(std::istream& in, Primitives* shape);
@@ -36,7 +34,6 @@ public:
     const Vec3& getDir() const;
     EdgeSettings* getEdgeSettings() const;
     bool getIsRigid() const;
-    bool getIsRigidTiled() const;
     bool getSpliced() const;
     int getId() const;
 
@@ -52,7 +49,6 @@ private:
     Vec3 dir;
     EdgeSettings* edgeSettings;
     bool isRigid;
-    bool isRigidTiled;
     bool spliced;
     int id;
     // RuleGenerator string id.

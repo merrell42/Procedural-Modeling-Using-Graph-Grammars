@@ -26,7 +26,6 @@
           }
         ],
         "isRigid": false,
-        "isRigidTiled": false,
         "spliced": false
       },
       {
@@ -52,7 +51,6 @@
           }
         ],
         "isRigid": false,
-        "isRigidTiled": false,
         "spliced": false
       },
       {
@@ -78,7 +76,6 @@
           }
         ],
         "isRigid": false,
-        "isRigidTiled": false,
         "spliced": false
       },
       {
@@ -104,7 +101,6 @@
           }
         ],
         "isRigid": false,
-        "isRigidTiled": false,
         "spliced": false
       }
     ],

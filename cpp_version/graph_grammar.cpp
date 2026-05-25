@@ -202,9 +202,8 @@ void serializePrimitives(std::ostream& out, const Primitives* p) {
     bsWrite<int32_t>(out, (int32_t)p->edgeTypes.size());
     for (const auto* et : p->edgeTypes) {
         bsWriteVec3(out, et->getDir());
-        bsWrite<uint8_t>(out, et->getIsRigid()       ? 1 : 0);
-        bsWrite<uint8_t>(out, et->getIsRigidTiled()  ? 1 : 0);
-        bsWrite<uint8_t>(out, et->getSpliced()       ? 1 : 0);
+        bsWrite<uint8_t>(out, et->getIsRigid() ? 1 : 0);
+        bsWrite<uint8_t>(out, et->getSpliced() ? 1 : 0);
         bsWriteStr(out, et->getRuleGeneratorId());
 
         const auto& fd = et->getFaceData();

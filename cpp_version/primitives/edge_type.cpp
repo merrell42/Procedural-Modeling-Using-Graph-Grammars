@@ -10,13 +10,11 @@ using namespace std;
 
 std::atomic<int> EdgeType::nextId{0};
 
-EdgeType::EdgeType(const vector<FaceData>& fData, const Vec3& direction,
-                       const map<string, bool>& options)
+EdgeType::EdgeType(const vector<FaceData>& fData, const Vec3& direction, bool rigid)
     : faceData(fData)
     , dir(direction)
     , edgeSettings(nullptr)
-    , isRigid(options.count("isRigid") ? options.at("isRigid") : false)
-    , isRigidTiled(options.count("isRigidTiled") ? options.at("isRigidTiled") : false)
+    , isRigid(rigid)
     , spliced(false)
     , id(nextId++)
     , ruleGeneratorId("") {}
@@ -29,7 +27,7 @@ void EdgeType::setSpliced(bool newSpliced) {
 }
 
 bool EdgeType::extendable() const {
-    return !isRigid || isRigidTiled;
+    return !isRigid;
 }
 
 EdgeType* EdgeType::import(const Json& json, Primitives* shape) {
@@ -43,12 +41,7 @@ EdgeType* EdgeType::import(const Json& json, Primitives* shape) {
     
     Vec3 direction = Vec3::import(json["dir"]);
     
-    map<string, bool> options = {
-        {"isRigid", json["isRigid"]},
-        {"isRigidTiled", json["isRigidTiled"]}
-    };
-    
-    auto* result = new EdgeType(fData, direction, options);
+    auto* result = new EdgeType(fData, direction, json["isRigid"]);
 
     // TODO: Edge Settings are often repeated. Save one copy and use an index to it.
     if (json.contains("edgeSettings") && !json["edgeSettings"].is_null()) {
@@ -63,9 +56,8 @@ EdgeType* EdgeType::import(const Json& json, Primitives* shape) {
 
 EdgeType* EdgeType::binaryDeserialize(std::istream& in, Primitives* shape) {
     Vec3 dir = bsReadVec3(in);
-    bool isRigid      = bsRead<uint8_t>(in) != 0;
-    bool isRigidTiled = bsRead<uint8_t>(in) != 0;
-    bool spliced      = bsRead<uint8_t>(in) != 0;
+    bool isRigid = bsRead<uint8_t>(in) != 0;
+    bool spliced = bsRead<uint8_t>(in) != 0;
     string ruleGenId  = bsReadStr(in);
 
     int32_t fdCount = bsRead<int32_t>(in);
@@ -77,8 +69,7 @@ EdgeType* EdgeType::binaryDeserialize(std::istream& in, Primitives* shape) {
         fData.push_back({ shape->faceTypes[ftIdx], onRight });
     }
 
-    map<string, bool> options = { {"isRigid", isRigid}, {"isRigidTiled", isRigidTiled} };
-    auto* result = new EdgeType(fData, dir, options);
+    auto* result = new EdgeType(fData, dir, isRigid);
     result->ruleGeneratorId = ruleGenId;
 
     if (spliced) {
@@ -127,10 +118,6 @@ EdgeSettings* EdgeType::getEdgeSettings() const {
 
 bool EdgeType::getIsRigid() const {
     return isRigid;
-}
-
-bool EdgeType::getIsRigidTiled() const {
-    return isRigidTiled;
 }
 
 bool EdgeType::getSpliced() const {

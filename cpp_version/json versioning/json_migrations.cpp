@@ -7,7 +7,7 @@ void edgeTypesMigration1(Json& json) {
         Json newEdgeType;
         // Only keep specified fields
         const vector<string> allowedFields = {
-            "faceData", "dir", "isRigid", "isRigidTiled", "spliced"
+            "faceData", "dir", "isRigid", "spliced"
         };
         
         for (const auto& field : allowedFields) {
