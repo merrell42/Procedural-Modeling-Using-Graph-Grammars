@@ -121,7 +121,7 @@ bool extractTypes(const HalfEdgeMesh&         mesh,
                   std::string*                error) {
     out = {};
 
-    // --- Step 3: face types ------------------------------------------------
+    // --- Face types ------------------------------------------------
     out.faceTypeOfFace.resize(mesh.faces.size(), -1);
     std::unordered_map<FaceTypeKey, int, FaceTypeKeyHash> faceTypeMap;
     for (size_t fi = 0; fi < mesh.faces.size(); ++fi) {
@@ -143,7 +143,7 @@ bool extractTypes(const HalfEdgeMesh&         mesh,
         out.faceTypeOfFace[fi] = idx;
     }
 
-    // --- Step 4: edge types ------------------------------------------------
+    // --- Edge types ------------------------------------------------
     out.edgeTypeOfEdge.resize(mesh.edges.size(), -1);
     std::unordered_map<EdgeTypeKey, int, EdgeTypeKeyHash> edgeTypeMap;
     for (size_t ei = 0; ei < mesh.edges.size(); ++ei) {
@@ -179,7 +179,7 @@ bool extractTypes(const HalfEdgeMesh&         mesh,
         out.edgeTypeOfEdge[ei] = idx;
     }
 
-    // --- Step 5: vertex types (Phase A) ------------------------------------
+    // --- Vertex types ------------------------------------------------
     // For each input vertex, walk the fan and collect (edgeType, isAtStart).
     // isAtStart = true iff this half-edge is the canonical (halfA) direction
     // of its edge — equivalent to "the half-edge starts at this vertex in the

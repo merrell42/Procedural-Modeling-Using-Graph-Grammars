@@ -1,6 +1,6 @@
 #pragma once
-// Half-edge representation derived from an ObjMesh. Steps 2-5 of the plan
-// (volume labels, face/edge/vertex type derivation) all walk this structure.
+// Half-edge representation derived from an ObjMesh.
+// Volume labels, face/edge/vertex type derivation all walk this structure.
 // Geometry only — no pmugg types yet.
 //
 // We use a local Vec3d here instead of pmugg's geometry/vec3.h because this
@@ -58,7 +58,7 @@ struct HalfEdgeMesh {
 // (a face with < 3 corners, a non-manifold edge with 3+ incident faces, etc.).
 // On failure, `error` describes the first problem encountered.
 //
-// Volume assignment (step 2 of the plan):
+// Volume assignment:
 //   - If `useGroupAsVolume` is true and the input has >1 distinct group, each
 //     group gets its own volumeId (the group's interior). The ambient region
 //     gets volumeId 0.

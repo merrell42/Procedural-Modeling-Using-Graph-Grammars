@@ -1,5 +1,4 @@
 #include "pch.h"
-#define NOMINMAX
 #include "optimizer.h"
 #include "settings.h"
 #include "graph_drawing/vertex.h"

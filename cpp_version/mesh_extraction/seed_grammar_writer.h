@@ -1,7 +1,7 @@
 #pragma once
-// Steps 6-7 of MESH_TO_PRIMITIVES_PLAN.md: serialize the half-edge mesh and
-// its extracted types as a pmugg grammar JSON containing a single starter
-// rule that emits the seed shape from the empty graph.
+// Serialize the half-edge mesh and its extracted types as a pmugg
+// grammar JSON containing a single starter rule that emits the
+// seed shape from the empty graph.
 //
 // The output is loadable by GraphGrammar::import() — i.e. it round-trips
 // through loadGrammarCached() and can be passed to runGrammarEngine().
