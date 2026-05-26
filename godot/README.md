@@ -23,6 +23,8 @@ clone the submodule with the following command:
   ```bash
   git submodule update --init --recursive
   ```
+**Note**
+You first need to compile the cpp_version sln `pmugg.slm` in visual studio to generate the necessary .dll files for the plugin to work.
 
 2. **Build the Plugin**
    ```bash
@@ -103,4 +105,3 @@ godot/
 - Use "Step" to iterate one step at a time.
 
 **Note**: This plugin is compiled for Windows x64 platforms. For other platforms, the C++ backend would need to be recompiled for the target platform.
-
