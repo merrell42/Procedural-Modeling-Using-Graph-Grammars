@@ -21,6 +21,9 @@
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="RoundtripCommand.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="RuleGenerator.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
@@ -63,6 +66,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RoundtripCommand.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\cpp_version\graph\edge_settings.cpp">

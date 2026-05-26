@@ -15,8 +15,12 @@ TemplateVertex TemplateVertex::import(const Json& j) {
     }
     if (j.contains("position") && j["position"].is_object()) {
         const auto& p = j["position"];
-        if (p.contains("x") && p["x"].is_number()) v.posX = p["x"].get<double>();
-        if (p.contains("y") && p["y"].is_number()) v.posY = p["y"].get<double>();
+        if (p.contains("x") && p["x"].is_number()) {
+            v.posX = p["x"].get<double>();
+        }
+        if (p.contains("y") && p["y"].is_number()) {
+            v.posY = p["y"].get<double>();
+        }
     }
     return v;
 }
@@ -32,7 +36,9 @@ Json TemplateVertex::toJson() const {
 TemplateGraph TemplateGraph::import(const Json& j) {
     TemplateGraph g;
     if (j.contains("vertices") && j["vertices"].is_array()) {
-        for (const auto& v : j["vertices"]) g.vertices.push_back(TemplateVertex::import(v));
+        for (const auto& v : j["vertices"]) {
+            g.vertices.push_back(TemplateVertex::import(v));
+        }
     }
     if (j.contains("numEdges") && j["numEdges"].is_number_integer()) {
         g.numEdges = j["numEdges"].get<int>();

@@ -1,8 +1,5 @@
 #pragma once
-// Step 3 of RULE_GENERATOR_PLAN.md: data structures for graph templates.
-// Upstream RuleGenerator.cpp references this header but the file is missing
-// from the public repo. Reconstructed from TemplateMatcher.cpp usage and the
-// shape of `graph templates/graph_templates.json`.
+// The Graph Template Data Structure.
 
 #include <string>
 #include <vector>
@@ -29,27 +26,27 @@ struct TemplateVertex {
     double posY = 0.0;
 
     static TemplateVertex import(const Json& j);
-    Json                  toJson() const;
+    Json toJson() const;
 };
 
 // One graph in a template set (left or right side of a production rule).
 struct TemplateGraph {
     std::vector<TemplateVertex> vertices;
-    int                         numEdges = 0;
+    int numEdges = 0;
 
     static TemplateGraph import(const Json& j);
-    Json                 toJson() const;
+    Json toJson() const;
 };
 
 // One entry in the library file: a comment + the graphs that form a rule.
-// The shipped graph_templates.json uses exactly two graphs per entry
-// (start side, end side). We store an N-vector for forward-compat.
+// Usually there are just two graphs per entry (start side, end side).
+// We store an N-vector for forward-compatibility.
 struct TemplateGraphSet {
-    std::string                comment;
+    std::string comment;
     std::vector<TemplateGraph> graphs;
 
     static TemplateGraphSet import(const Json& j);
-    Json                    toJson() const;
+    Json toJson() const;
 };
 
 // Reads the library JSON at `path` and returns every entry. Throws on I/O or
@@ -59,5 +56,4 @@ std::vector<TemplateGraphSet> importTemplateGraphs(const std::string& path);
 
 // Symmetric writer. Serializes `sets` as a JSON array, two-space indented.
 // Returns false on I/O failure.
-bool exportTemplateGraphs(const std::string& path,
-                          const std::vector<TemplateGraphSet>& sets);
+bool exportTemplateGraphs(const std::string& path, const std::vector<TemplateGraphSet>& sets);
