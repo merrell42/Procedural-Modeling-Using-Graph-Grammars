@@ -1,6 +1,8 @@
 #include "pch.h"
-#define NOMINMAX
 #include "optimizer.h"
+#ifdef _CONSOLE
+#include "minmax.h"
+#endif
 #include "settings.h"
 #include "graph_drawing/vertex.h"
 #include "primitives/vertex_type.h"
@@ -27,7 +29,7 @@ Optimizer::Cost Optimizer::computeCost() {
     double desiredLines = globalSettings["Desired Lines"].get<double>();
     double desiredCost = globalSettings["Desired Lines Cost"].get<double>();
     cost.desiredLines =
-        desiredCost * std::max((desiredLines - numLines) / desiredLines, -1.0);
+        desiredCost * max((desiredLines - numLines) / desiredLines, -1.0);
 
     double desiredVertexWeight = globalSettings["Desired Vertex Weight"].get<double>();
     double desirabilitySum = 0.0;

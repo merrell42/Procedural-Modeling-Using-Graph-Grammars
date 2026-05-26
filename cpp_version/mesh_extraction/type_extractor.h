@@ -1,10 +1,9 @@
 #pragma once
-// Steps 3-5 of MESH_TO_PRIMITIVES_PLAN.md: turn a half-edge mesh into the
-// primitive type vectors that a pmugg grammar needs — face types, edge types,
-// vertex types — plus per-element indices into those vectors.
+// Turn a half-edge mesh into the primitive type vectors that a pmugg grammar needs —
+// face types, edge types, vertex types — plus per-element indices into those vectors.
 //
 // Outputs here are the canonical mesh→primitives schema in our own structs.
-// Step 7 (seed_grammar_writer) turns this into pmugg-loadable JSON.
+// seed_grammar_writer turns this into pmugg-loadable JSON.
 
 #include "mesh_extraction/half_edge_mesh.h"
 
@@ -14,7 +13,7 @@
 namespace mesh_extraction {
 
 struct ExtractedTypes {
-    // ----- Face types (step 3). One per unique (material, volAbove, volBelow,
+    // Face types. One per unique (material, volAbove, volBelow,
     // normal_quantized). Identity preserves face-label semantics from §3.3
     // and the 3D extension from §7 (volume labels) of Merrell 2023.
     struct FaceType {
@@ -26,7 +25,7 @@ struct ExtractedTypes {
     std::vector<FaceType> faceTypes;
     std::vector<int>      faceTypeOfFace;       // [faceIdx] = faceType index
 
-    // ----- Edge types (step 4). One per unique (faceL, faceR, dir_quantized).
+    // Edge types. One per unique (faceL, faceR, dir_quantized).
     // `dir` is the unit vector from the canonical halfA's origin to its dest.
     // `faceData[0]` is the face on the LEFT of `dir` (halfA's face) with
     // onRight=false; `faceData[1]` is the RIGHT face (halfB's face) with
@@ -42,7 +41,7 @@ struct ExtractedTypes {
     std::vector<EdgeType> edgeTypes;
     std::vector<int>      edgeTypeOfEdge;       // [edgeIdx] = edgeType index
 
-    // ----- Vertex types (step 5, Phase A). One per unique canonical σ — the
+    // Vertex types. One per unique canonical σ — the
     // cyclic CCW sequence of incident (edgeType, isAtStart) pairs around a
     // vertex. We pick the lexicographically smallest rotation as the canonical
     // form. This is the closed-manifold simplification of the paper's σ
@@ -58,7 +57,7 @@ struct ExtractedTypes {
     std::vector<int>        vertexTypeOfVertex;  // [vertIdx] = vertexType index
 
     // ----- Per-original-halfedge index into vertexType.halfEdgeTypes. Used
-    // by step 6 (seed graph) to wire half-edge → vertex slot correctly.
+    // by seed graph to wire half-edge → vertex slot correctly.
     std::vector<int> halfEdgeSlotInVertex;
 };
 

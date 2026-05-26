@@ -6,7 +6,7 @@
 #include <string>
 #include <random>
 #include <cmath>
-#ifdef PMUGG_CMDLINE
+#ifdef _CONSOLE
 #include "minmax.h"
 #endif
 #include <algorithm>

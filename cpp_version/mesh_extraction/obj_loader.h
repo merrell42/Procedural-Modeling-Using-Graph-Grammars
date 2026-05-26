@@ -1,6 +1,6 @@
 #pragma once
-// Step 2.3.1 of MESH_TO_PRIMITIVES_PLAN.md: minimal .obj loader on top of
-// tinyobjloader. The smoke-test consumer only reads counts; the struct is
+// minimal .obj loader on top of tinyobjloader.
+// The smoke-test consumer only reads counts; the struct is
 // shaped to grow into the later type-derivation steps (vertex/edge/face
 // type buckets need the per-face material, group, and corner indices).
 

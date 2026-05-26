@@ -4,7 +4,7 @@
 #include <iostream>
 #include <algorithm>
 #include "util.h"
-#ifdef PMUGG_CMDLINE
+#ifdef _CONSOLE
 #include "minmax.h"
 #endif
 

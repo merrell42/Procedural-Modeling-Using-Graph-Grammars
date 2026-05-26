@@ -46,7 +46,7 @@ bool buildHalfEdgeMesh(const ObjMesh& obj,
     out.numVertices = (int)obj.vertices.size();
     out.vertexHalves.resize(obj.vertices.size());
 
-    // --- Volume label assignment (step 2 of the plan). ----------------------
+    // --- Volume label assignment ----------------------
     // Map OBJ group name → volume id. The empty group counts as one volume.
     std::unordered_map<std::string, int> groupToVol;
     if (useGroupAsVolume) {
