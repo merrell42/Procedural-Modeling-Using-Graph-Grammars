@@ -1,4 +1,5 @@
 #include "pch.h"
+#include <mutex>
 #include "json_version_manager.h"
 #include "../geometry/vec3.h"
 
@@ -247,10 +248,10 @@ void jsonMigration2(Json& json) {
 }
 
 void registerJsonMigrations() {
-    if (JsonVersionManager::isInitialized()) {
-        return;
-    }
-    JsonVersionManager::registerUpdateFunction(jsonMigration1);
-    JsonVersionManager::registerUpdateFunction(jsonMigration2);
-    JsonVersionManager::setInitialized(true);
+    static std::once_flag flag;
+    std::call_once(flag, []() {
+        JsonVersionManager::registerUpdateFunction(jsonMigration1);
+        JsonVersionManager::registerUpdateFunction(jsonMigration2);
+        JsonVersionManager::setInitialized(true);
+    });
 }

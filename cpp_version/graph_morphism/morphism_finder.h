@@ -65,8 +65,5 @@ private:
     static void findFirstIntersection(Face* faceA, const Vec3& p0, const Vec3& p1, const Vec2& dir2, IntersectResult& nearestIntersect, int maxDim);
 
     // static void addOuterFaces(Morphism* map, Graph* graphB);
-
-    // Cache for spliced vertex types.
-    static map<int, VertexType*> splicedVertexTypes;
 };
 
