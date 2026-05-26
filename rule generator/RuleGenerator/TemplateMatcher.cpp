@@ -203,11 +203,11 @@ bool TemplateMatcher::findNextChoice() {
 			if (!exists) {
 				matchTypes.push_back(newMatchTypes);
 				matchStates.push_back(newMatchStates);
-				for (int i = 0; i < numPos; i++) {
+				/* for (int i = 0; i < numPos; i++) {
 					cout << newMatchStates[i] << " ";
 				}
 				cout << endl;
-				std::cout << "Accepted " << counter << std::endl;
+				std::cout << "Accepted " << counter << std::endl; */
 				// TODO: Accept the solution.
 			}
 			return false;

@@ -1,4 +1,9 @@
 #pragma once
+
 #include <string>
 
-void GenerateRules(const char* input, char* output, int maxLength);
+int GenerateRules(
+    const std::string& primitivesPath,
+    const std::string& templatesPath,
+    const std::string& outputPath
+);

@@ -2,83 +2,97 @@
 #include "RuleGenerator.h"
 #include "TemplateGraph.h"
 #include "TemplateMatcher.h"
-#include "json.h"
-#include <vector>
-#include <fstream>
-#include <map>
-#include <iostream>
+#include "../../cpp_version/json versioning/read_json_file.h"
 #include "../../cpp_version/primitives/primitives.h"
+#include "../../cpp_version/primitives/vertex_type.h"
+#include "../../cpp_version/primitives/edge_type.h"
+
+#include <fstream>
+#include <iostream>
+#include <string>
+#include <vector>
 
 using Json = nlohmann::json;
 using namespace std;
 
 void writeStringToFile(const string& filename, const string& content) {
 	ofstream file(filename);
-
-	if (file.is_open()) {
-		file << content;
-		file.close();
+	if (!file) {
+		throw runtime_error("cannot write " + filename);
 	}
+	file << content;
 }
 
-void GenerateRules(const char* input_cstr, char* output, int maxLength) {
-	string input(input_cstr);
-
-	Json parsed = Json::parse(input);
-
-	// Import using the same Primitives::import as PMUGG.
-	// The JSON structure has "types" nested, similar to graph grammars.
-	Primitives* primitives = Primitives::import(parsed["types"]);
-	
-	// Set ruleGeneratorId on edges if present in JSON, otherwise generate from index.
-	// Access nested structure: parsed["types"]["edgeTypes"].
-	Json types = parsed["types"];
-	for (size_t i = 0; i < primitives->edgeTypes.size(); i++) {
-		EdgeType* eType = primitives->edgeTypes[i];
-		if (types["edgeTypes"].size() > i && types["edgeTypes"][i].contains("id")) {
-			eType->setRuleGeneratorId(types["edgeTypes"][i]["id"].get<string>());
-		} else {
-			// Generate ID from index if not present in JSON.
-			eType->setRuleGeneratorId("edge" + to_string(i));
-		}
-	}
-	
-	// Set ruleGeneratorId on vertices if present in JSON.
-	// Access nested structure: parsed["types"]["vertexTypes"].
-	vector<VertexType*> vTypes;
-	for (size_t i = 0; i < primitives->vertexTypes.size(); i++) {
-		VertexType* vType = primitives->vertexTypes[i];
+int GenerateRules(
+	const string& primitivesPath,
+    const string& templatesPath,
+    const string& outputPath
+) {
+	try {
+		Json parsed = readJsonFile(primitivesPath);
+		Primitives* primitives = Primitives::import(parsed["types"]);
 		
-		// Set ruleGeneratorId if present in JSON.
-		if (types["vertexTypes"].size() > i && types["vertexTypes"][i].contains("id")) {
-			vType->setRuleGeneratorId(types["vertexTypes"][i]["id"].get<int>());
+		// Set ruleGeneratorId on edges if present in JSON, otherwise generate from index.
+		Json types = parsed["types"];
+		for (size_t i = 0; i < primitives->edgeTypes.size(); i++) {
+			EdgeType* eType = primitives->edgeTypes[i];
+			if (types["edgeTypes"].size() > i && types["edgeTypes"][i].contains("id")) {
+				eType->setRuleGeneratorId(types["edgeTypes"][i]["id"].get<string>());
+			} else {
+				// Generate ID from index if not present in JSON.
+				eType->setRuleGeneratorId("edge" + to_string(i));
+			}
 		}
 		
-		vTypes.push_back(vType);
-	}
-
-	auto templateGraphSets = importTemplateGraphs("../graph templates/graph_templates.json");
-	for (int i = 0; i < templateGraphSets.size(); i++) {
-		if (templateGraphSets[i].graphs.size() == 0) {
-			continue;
+		// Set ruleGeneratorId on vertices if present in JSON.
+		vector<VertexType*> vTypes;
+		for (size_t i = 0; i < primitives->vertexTypes.size(); i++) {
+			VertexType* vType = primitives->vertexTypes[i];
+			
+			// Set ruleGeneratorId if present in JSON.
+			if (types["vertexTypes"].size() > i && types["vertexTypes"][i].contains("id")) {
+				vType->setRuleGeneratorId(types["vertexTypes"][i]["id"].get<int>());
+			}
+			
+			vTypes.push_back(vType);
 		}
-		vector<Json> outputVector;
-		const bool excludeRepeats = false; // parsed["excludeRepeats"]);
-		TemplateMatcher matcher(templateGraphSets[i].graphs[0], vTypes, excludeRepeats);
-		matcher.match();
-		matcher.GetMatches(outputVector);
-		cout << "--------------------------------" << endl;
-		// cout << outputVector << endl;
+
+		auto templateGraphSets = importTemplateGraphs(templatesPath);
+		cout << "match:\n"
+			<< "  primitives: " << primitivesPath << "\n"
+			<< "  library   : " << templatesPath << "\n"
+			<< "  entries   : " << templateGraphSets.size() << "\n";
+
+		size_t totalMatches = 0;
+		for (size_t i = 0; i < templateGraphSets.size(); i++) {
+			cout << "  [" << i << "] \"" << templateGraphSets[i].comment << "\"  ";
+			if (templateGraphSets[i].graphs.empty()) {
+				cout << "skipped (empty graphs)\n";
+				continue;
+			}
+			vector<Json> matches;
+			const bool excludeRepeats = false; // parsed["excludeRepeats"]);
+			TemplateMatcher matcher(templateGraphSets[i].graphs[0], vTypes, excludeRepeats);
+			matcher.match();
+			matcher.GetMatches(matches);
+			cout << "matches=" << matches.size() << "\n";
+			totalMatches += matches.size();
+		}
+		cout << "  total     : " << totalMatches << " match(es) across "
+			<< templateGraphSets.size() << " entries" << endl;
+
+		// parsed["matches"] = outputVector;
+		// writeStringToFile("../../generatedRules.js", "ms.generatedRules = " + parsed.dump() + ";");
+
+		/*
+		Json outputs;
+		outputs["matches"] = outputVector;
+		string outputTemp = outputs.dump();
+		strcpy_s(output, maxLength, outputTemp.c_str());
+		*/
+		return 0;
+	} catch (const exception& e) {
+		cerr << "Error: " << e.what() << endl;
+		return 1;
 	}
-
-	// parsed["matches"] = outputVector;
-	// writeStringToFile("../../generatedRules.js", "ms.generatedRules = " + parsed.dump() + ";");
-
-	/*
-	Json outputs;
-	outputs["matches"] = outputVector;
-	string outputTemp = outputs.dump();
-	strcpy_s(output, maxLength, outputTemp.c_str());
-	*/
-	strcpy_s(output, maxLength, "Done");
 }
