@@ -66,6 +66,9 @@ State& TemplateMatcher::getState(int vIndex, int stateIndex) {
 }
 
 void TemplateMatcher::match() {
+	if (numTemplateVertices == 0) {
+		return;
+	}
 	Decision decison0(0);
 	int numStates = numStatesAtVertex(0);
 	for (int j = 0; j < numStates; j++) {

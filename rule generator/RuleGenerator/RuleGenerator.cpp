@@ -68,17 +68,20 @@ int GenerateRules(
 		size_t totalMatches = 0;
 		for (size_t i = 0; i < templateGraphSets.size(); i++) {
 			cout << "  [" << i << "] \"" << templateGraphSets[i].comment << "\"  ";
-			if (templateGraphSets[i].graphs.empty()) {
-				cout << "skipped (empty graphs)\n";
+			int numGraphs = templateGraphSets[i].graphs.size();
+			if (numGraphs <= 1) {
+				cout << "skipped (two or more graphs required)\n";
 				continue;
 			}
-			vector<Json> matches;
-			const bool excludeRepeats = false; // parsed["excludeRepeats"]);
-			TemplateMatcher matcher(templateGraphSets[i].graphs[0], vTypes, eTypes, excludeRepeats);
-			matcher.match();
-			matcher.GetMatches(matches);
-			cout << "matches=" << matches.size() << "\n";
-			totalMatches += matches.size();
+			for (int j = 0; j < numGraphs; j++) {
+				vector<Json> matches;
+				const bool excludeRepeats = false; // parsed["excludeRepeats"]);
+				TemplateMatcher matcher(templateGraphSets[i].graphs[j], vTypes, eTypes, excludeRepeats);
+				matcher.match();
+				matcher.GetMatches(matches);
+				cout << "matches=" << matches.size() << "\n";
+				totalMatches += matches.size();
+			}
 		}
 		cout << "  total     : " << totalMatches << " match(es) across "
 			<< templateGraphSets.size() << " entries" << endl;
