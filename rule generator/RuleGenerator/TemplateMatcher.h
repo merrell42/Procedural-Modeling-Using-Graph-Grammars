@@ -63,4 +63,5 @@ private:
 	int ConnectionIndex(int vertexIndex, int edgeIndex, int excludeIndex);
 	int numStatesAtVertex(int vIndex);
 	State& getState(int vIndex, int stateIndex);
+	void acceptMatch();
 };

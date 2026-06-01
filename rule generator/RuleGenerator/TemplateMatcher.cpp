@@ -185,40 +185,44 @@ vector<int> TemplateMatcher::findChoices() {
 	return choices;
 }
 
+void TemplateMatcher::acceptMatch() {
+	vector<int> newMatchTypes;
+	vector<int> newMatchStates;
+	for (int i = 0; i < numTemplateVertices; i++) {
+		int numStates = numStatesAtVertex(i);
+		for (int j = 0; j < numStates; j++) {
+			if (rejectionStep[i][j] == -1) {
+				newMatchTypes.push_back(getState(i, j).getRuleGeneratorId());
+				newMatchStates.push_back(j);
+			}
+		}
+	}
+	sort(newMatchTypes.begin(), newMatchTypes.end());
+	bool included = true;
+	if (excludeRepeats) {
+		for (int i = 0; i < matchTypes.size() && included; i++) {
+			bool sameMatch = true;
+			for (int j = 0; j < numTemplateVertices; j++) {
+				if (newMatchTypes[j] != matchTypes[i][j]) {
+					sameMatch = false;
+				}
+			}
+			if (sameMatch) {
+				included = false;
+			}
+		}
+	}
+	if (included) {
+		matchTypes.push_back(newMatchTypes);
+		matchStates.push_back(newMatchStates);
+	}
+}
+
 bool TemplateMatcher::findNextChoice() {
 	while (true) {
 		vIndex++;
 		if (vIndex >= numTemplateVertices) {
-			vector<int> newMatchTypes;
-			vector<int> newMatchStates;
-			for (int i = 0; i < numTemplateVertices; i++) {
-				int numStates = numStatesAtVertex(i);
-				for (int j = 0; j < numStates; j++) {
-					if (rejectionStep[i][j] == -1) {
-						newMatchTypes.push_back(getState(i, j).getRuleGeneratorId());
-						newMatchStates.push_back(j);
-					}
-				}
-			}
-			sort(newMatchTypes.begin(), newMatchTypes.end());
-			bool included = true;
-			if (excludeRepeats) {
-				for (int i = 0; i < matchTypes.size() && included; i++) {
-					bool sameMatch = true;
-					for (int j = 0; j < numTemplateVertices; j++) {
-						if (newMatchTypes[j] != matchTypes[i][j]) {
-							sameMatch = false;
-						}
-					}
-					if (sameMatch) {
-						included = false;
-					}
-				}
-			}
-			if (included) {
-				matchTypes.push_back(newMatchTypes);
-				matchStates.push_back(newMatchStates);
-			}
+			acceptMatch();
 			return false;
 		}
 		auto choices = findChoices();
