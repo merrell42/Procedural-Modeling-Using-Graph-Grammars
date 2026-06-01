@@ -26,7 +26,7 @@ TemplateMatcher::TemplateMatcher(
 		edgeStates.push_back(EdgeState(id + "E"));
 	}
 	numVertexStates = (int)vertexStates.size();
-	numEdgeStates = (int)eTypes.size();
+	numEdgeStates = (int)edgeStates.size();
 	numTemplateVertices = (int)templateGraph.vertices.size();
 
 	// Build eConnections from vertices.
@@ -258,18 +258,18 @@ void TemplateMatcher::GetMatches(vector<Json>& outputVector) {
 
 		// Add the vertices.
 		auto match = matchStates[i];
-		vector<int> vertexIndices;
+		// vector<int> vertexIndices;
 		cout << "Match " << i << ": ";
 		for (int j = 0; j < match.size(); j++) {
 			auto& state = getState(j, match[j]);
-			cout << state.getTypeIndex() << "(" << match[j] << ") ";
+			cout << state.getName() << "(" << match[j] << ") ";
 			if (!templateGraph.vertices[j].boundaryId.empty()) {
 				continue;
 			}
-			vertexIndices.push_back(state.getTypeIndex());
+			// vertexIndices.push_back(state.getTypeIndex());
 		}
 		cout << endl;
-		output["vertices"] = vertexIndices;
+		// output["vertices"] = vertexIndices;
 
 		// Add the edges.
 		/* vector<Json> allEdgeIndices;
