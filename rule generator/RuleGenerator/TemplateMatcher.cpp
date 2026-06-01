@@ -27,7 +27,7 @@ TemplateMatcher::TemplateMatcher(
 	}
 	numVertexStates = (int)vertexStates.size();
 	numEdgeStates = (int)eTypes.size();
-	numPos = (int)templateGraph.vertices.size();
+	numTemplateVertices = (int)templateGraph.vertices.size();
 
 	// Build eConnections from vertices.
 	for (int i = 0; i < templateGraph.numEdges; i++) {
@@ -42,21 +42,33 @@ TemplateMatcher::TemplateMatcher(
 	}
 
 	// -1 means not rejected.
-	inQueue = new bool[numPos];
-	for (int i = 0; i < numPos; i++) {
+	inQueue = new bool[numTemplateVertices];
+	for (int i = 0; i < numTemplateVertices; i++) {
 		inQueue[i] = false;
-		vector <int> rejectionStepTemp;
-		for (int j = 0; j < numVertexStates; j++) {
-			rejectionStepTemp.push_back(-1);
+		vector <int> rejectStepOneVertex;
+		int numStates = numStatesAtVertex(i);
+		for (int j = 0; j < numStates; j++) {
+			rejectStepOneVertex.push_back(-1);
 		}
-		rejectionStep.push_back(rejectionStepTemp);
+		rejectionStep.push_back(rejectStepOneVertex);
 	}
 	vIndex = 0;
 }
 
+int TemplateMatcher::numStatesAtVertex(int vIndex) {
+	return templateGraph.vertices[vIndex].boundaryId.empty() ? numVertexStates : numEdgeStates;
+}
+
+State& TemplateMatcher::getState(int vIndex, int stateIndex) {
+	return templateGraph.vertices[vIndex].boundaryId.empty()
+		? static_cast<State&>(vertexStates[stateIndex])
+		: static_cast<State&>(edgeStates[stateIndex]);
+}
+
 void TemplateMatcher::match() {
 	Decision decison0(0);
-	for (int j = 0; j < numVertexStates; j++) {
+	int numStates = numStatesAtVertex(0);
+	for (int j = 0; j < numStates; j++) {
 		decison0.choices.push_back(j);
 	}
 	decisions.push_back(decison0);
@@ -72,7 +84,7 @@ void TemplateMatcher::match() {
 		}
 		else {
 			updateQueue.clear();
-			for (int j = 0; j < numPos; j++) {
+			for (int j = 0; j < numTemplateVertices; j++) {
 				inQueue[j] = false;
 			}
 			undoLastDecision();
@@ -92,7 +104,8 @@ void TemplateMatcher::applyDecision() {
 	Decision decision = decisions.back();
 	int choice = decision.choices[0];
 
-	for (int i = 0; i < numVertexStates; i++) {
+	int numStates = numStatesAtVertex(vIndex);
+	for (int i = 0; i < numStates; i++) {
 		if (i != choice && rejectionStep[vIndex][i] < 0) {
 			reject(vIndex, i);
 		}
@@ -119,9 +132,10 @@ bool TemplateMatcher::propagate() {
 		set<string> neighborIds;
 		for (int i = 0; i < vConnections.size(); i++) {
 			neighborIds.clear();
-			for (int j = 0; j < numVertexStates; j++) {
+			int numStates = numStatesAtVertex(updateIndex);
+			for (int j = 0; j < numStates; j++) {
 				if (rejectionStep[updateIndex][j] == -1) {
-					string connectionId = vertexStates[j].GetConnectionId(i);
+					string connectionId = getState(updateIndex, j).GetConnectionId(i);
 					string neighborId = HalfEdgeType::oppositeId(connectionId);
 					neighborIds.insert(neighborId);
 				}
@@ -139,9 +153,10 @@ bool TemplateMatcher::propagate() {
 
 			bool hasMatch = false;
 			int cIndex = ConnectionIndex(neighbor, vConnection, excludeIndex);
-			for (int j = 0; j < numVertexStates; j++) {
+			int neighborStates = numStatesAtVertex(neighbor);
+			for (int j = 0; j < neighborStates; j++) {
 				if (rejectionStep[neighbor][j] == -1) {
-					string connectionId = vertexStates[j].GetConnectionId(cIndex);
+					string connectionId = getState(neighbor, j).GetConnectionId(cIndex);
 					auto it = neighborIds.find(connectionId);
 					if (it != neighborIds.end()) {
 						hasMatch = true;
@@ -161,7 +176,8 @@ bool TemplateMatcher::propagate() {
 
 vector<int> TemplateMatcher::findChoices() {
 	vector<int> choices;
-	for (int i = 0; i < numVertexStates; i++) {
+	int numStates = numStatesAtVertex(vIndex);
+	for (int i = 0; i < numStates; i++) {
 		if (rejectionStep[vIndex][i] < 0) {
 			choices.push_back(i);
 		}
@@ -172,13 +188,14 @@ vector<int> TemplateMatcher::findChoices() {
 bool TemplateMatcher::findNextChoice() {
 	while (true) {
 		vIndex++;
-		if (vIndex >= numPos) {
+		if (vIndex >= numTemplateVertices) {
 			vector<int> newMatchTypes;
 			vector<int> newMatchStates;
-			for (int i = 0; i < numPos; i++) {
-				for (int j = 0; j < numVertexStates; j++) {
+			for (int i = 0; i < numTemplateVertices; i++) {
+				int numStates = numStatesAtVertex(i);
+				for (int j = 0; j < numStates; j++) {
 					if (rejectionStep[i][j] == -1) {
-						newMatchTypes.push_back(vertexStates[j].getRuleGeneratorId());
+						newMatchTypes.push_back(getState(i, j).getRuleGeneratorId());
 						newMatchStates.push_back(j);
 					}
 				}
@@ -188,7 +205,7 @@ bool TemplateMatcher::findNextChoice() {
 			if (excludeRepeats) {
 				for (int i = 0; i < matchTypes.size() && included; i++) {
 					bool sameMatch = true;
-					for (int j = 0; j < numPos; j++) {
+					for (int j = 0; j < numTemplateVertices; j++) {
 						if (newMatchTypes[j] != matchTypes[i][j]) {
 							sameMatch = false;
 						}
@@ -219,8 +236,9 @@ void TemplateMatcher::undoLastDecision() {
 	if (n == 0) {
 		return;
 	}
-	for (int i = 0; i < numPos; i++) {
-		for (int j = 0; j < numVertexStates; j++) {
+	for (int i = 0; i < numTemplateVertices; i++) {
+		int numStates = numStatesAtVertex(i);
+		for (int j = 0; j < numStates; j++) {
 			if (rejectionStep[i][j] >= n) {
 				rejectionStep[i][j] = -1;
 			}
@@ -243,11 +261,12 @@ void TemplateMatcher::GetMatches(vector<Json>& outputVector) {
 		vector<int> vertexIndices;
 		cout << "Match " << i << ": ";
 		for (int j = 0; j < match.size(); j++) {
-			cout << vertexStates[match[j]].getTypeIndex() << "(" << match[j] << ") ";
+			auto& state = getState(j, match[j]);
+			cout << state.getTypeIndex() << "(" << match[j] << ") ";
 			if (!templateGraph.vertices[j].boundaryId.empty()) {
 				continue;
 			}
-			vertexIndices.push_back(vertexStates[match[j]].getTypeIndex());
+			vertexIndices.push_back(state.getTypeIndex());
 		}
 		cout << endl;
 		output["vertices"] = vertexIndices;

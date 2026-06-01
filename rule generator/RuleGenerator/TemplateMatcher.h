@@ -34,7 +34,7 @@ public:
 	TemplateGraph templateGraph;
 	// Edge connections: which vertices are connected to each edge.
 	vector<vector<int>> eConnections;
-	int numPos;
+	int numTemplateVertices;
 	int numVertexStates;
 	int numEdgeStates;
 	// Our current position within the vertices.
@@ -61,4 +61,6 @@ private:
 	void undoLastDecision();
 	void reject(int pos, int type);
 	int ConnectionIndex(int vertexIndex, int edgeIndex, int excludeIndex);
+	int numStatesAtVertex(int vIndex);
+	State& getState(int vIndex, int stateIndex);
 };
