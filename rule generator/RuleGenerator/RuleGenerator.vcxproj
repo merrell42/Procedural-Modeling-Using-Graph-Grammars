@@ -173,6 +173,7 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="RoundtripCommand.h" />
     <ClInclude Include="RuleGenerator.h" />
+    <ClInclude Include="State.h" />
     <ClInclude Include="TemplateGraph.h" />
     <ClInclude Include="TemplateMatcher.h" />
   </ItemGroup>
@@ -204,6 +205,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="RuleGenerator.cpp" />
+    <ClCompile Include="State.cpp" />
     <ClCompile Include="TemplateMatcher.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

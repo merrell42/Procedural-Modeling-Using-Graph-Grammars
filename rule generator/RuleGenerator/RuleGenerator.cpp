@@ -34,6 +34,7 @@ int GenerateRules(
 		
 		// Set ruleGeneratorId on edges if present in JSON, otherwise generate from index.
 		Json types = parsed["types"];
+		vector<EdgeType*> eTypes;
 		for (size_t i = 0; i < primitives->edgeTypes.size(); i++) {
 			EdgeType* eType = primitives->edgeTypes[i];
 			if (types["edgeTypes"].size() > i && types["edgeTypes"][i].contains("id")) {
@@ -42,6 +43,7 @@ int GenerateRules(
 				// Generate ID from index if not present in JSON.
 				eType->setRuleGeneratorId("edge" + to_string(i));
 			}
+			eTypes.push_back(eType);
 		}
 		
 		// Set ruleGeneratorId on vertices if present in JSON.
@@ -72,7 +74,7 @@ int GenerateRules(
 			}
 			vector<Json> matches;
 			const bool excludeRepeats = false; // parsed["excludeRepeats"]);
-			TemplateMatcher matcher(templateGraphSets[i].graphs[0], vTypes, excludeRepeats);
+			TemplateMatcher matcher(templateGraphSets[i].graphs[0], vTypes, eTypes, excludeRepeats);
 			matcher.match();
 			matcher.GetMatches(matches);
 			cout << "matches=" << matches.size() << "\n";

@@ -3,24 +3,10 @@
 #include "TemplateGraph.h"
 #include "json.h"
 #include "../../cpp_version/primitives/vertex_type.h"
+#include "State.h"
 using namespace std;
 
 using Json = nlohmann::json;
-
-class VertexState {
-public:
-	VertexType* type;
-	int typeIndex;
-	// The orientation of the vertex. Which edge in the template is first.
-	int edge0;
-	VertexState(VertexType* type_, int typeIndex_, int edge0_) : type(type_), typeIndex(typeIndex_), edge0(edge0_) { }
-	// Get the edge signature for a given connection.
-	string GetConnectionId(int connectionIndex);
-	// Adjust connection index based on edge0.
-	int GetConnectionIndex(int connectionIndex);
-	// Adjust connection index based on edge0.
-	int ReverseConnectionIndex(int connectionIndex);
-};
 
 class Decision {
 public:
@@ -34,7 +20,9 @@ public:
 class TemplateMatcher {
 public:
 	// The possible states at each vertex.
-	vector<VertexState> states;
+	vector<VertexState> vertexStates;
+	// The possible states at each edge.
+	vector<EdgeState> edgeStates;
 	// The list of decisions.
 	vector<Decision> decisions;
 	// Records the step in the decision process where the state was rejected.
@@ -47,7 +35,8 @@ public:
 	// Edge connections: which vertices are connected to each edge.
 	vector<vector<int>> eConnections;
 	int numPos;
-	int numTypes;
+	int numVertexStates;
+	int numEdgeStates;
 	// Our current position within the vertices.
 	int vIndex;
 	// For debugging.
@@ -59,7 +48,7 @@ public:
 	// Exclude any rules that use the same vertex types.
 	bool excludeRepeats;
 
-	TemplateMatcher(TemplateGraph templateGraph_, vector<VertexType*> vTypes, bool excludeRepeats_);
+	TemplateMatcher(TemplateGraph templateGraph_, vector<VertexType*> vTypes, vector<EdgeType*> eTypes, bool excludeRepeats_);
 	void match();
 	// Add any matches to the output vector.
 	void GetMatches(vector<Json>& outputVector);

@@ -30,8 +30,7 @@ struct HalfEdgeType {
         if (opposite.length() > 0) {
             if (opposite[opposite.length() - 1] == 'S') {
                 opposite[opposite.length() - 1] = 'E';
-            }
-            else if (opposite[opposite.length() - 1] == 'E') {
+            } else if (opposite[opposite.length() - 1] == 'E') {
                 opposite[opposite.length() - 1] = 'S';
             }
         }
