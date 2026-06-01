@@ -184,9 +184,9 @@ bool TemplateMatcher::findNextChoice() {
 				}
 			}
 			sort(newMatchTypes.begin(), newMatchTypes.end());
-			bool exists = false;
+			bool included = true;
 			if (excludeRepeats) {
-				for (int i = 0; i < matchTypes.size() && !exists; i++) {
+				for (int i = 0; i < matchTypes.size() && included; i++) {
 					bool sameMatch = true;
 					for (int j = 0; j < numPos; j++) {
 						if (newMatchTypes[j] != matchTypes[i][j]) {
@@ -194,11 +194,11 @@ bool TemplateMatcher::findNextChoice() {
 						}
 					}
 					if (sameMatch) {
-						exists = true;
+						included = false;
 					}
 				}
 			}
-			if (!exists) {
+			if (included) {
 				matchTypes.push_back(newMatchTypes);
 				matchStates.push_back(newMatchStates);
 			}
