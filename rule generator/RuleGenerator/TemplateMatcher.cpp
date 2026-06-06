@@ -8,10 +8,8 @@ using namespace std;
 TemplateMatcher::TemplateMatcher(
 	TemplateGraph templateGraph_,
 	vector<VertexType*> vTypes,
-	vector<EdgeType*> eTypes,
-	bool excludeRepeats_
+	vector<EdgeType*> eTypes
 ) : templateGraph(templateGraph_) {
-	excludeRepeats = excludeRepeats_;
 	counter = 0;
 	for (int i = 0; i < vTypes.size(); i++) {
 		VertexType* vType = vTypes[i];
@@ -67,7 +65,7 @@ State& TemplateMatcher::getState(int vIndex, int stateIndex) {
 
 void TemplateMatcher::match() {
 	if (numTemplateVertices == 0) {
-		matchStates.push_back({});
+		graphStates.push_back({});
 		return;
 	}
 	Decision decison0(0);
@@ -190,17 +188,22 @@ vector<int> TemplateMatcher::findChoices() {
 }
 
 void TemplateMatcher::acceptMatch() {
-	vector<int> newMatchTypes;
+	// vector<int> newMatchTypes;
 	vector<int> newMatchStates;
 	for (int i = 0; i < numTemplateVertices; i++) {
 		int numStates = numStatesAtVertex(i);
 		for (int j = 0; j < numStates; j++) {
 			if (rejectionStep[i][j] == -1) {
-				newMatchTypes.push_back(getState(i, j).getRuleGeneratorId());
+				// newMatchTypes.push_back(getState(i, j).getRuleGeneratorId());
 				newMatchStates.push_back(j);
 			}
 		}
 	}
+
+	// This was a simple way of excluding repeated graphs by looking at their types.
+	// But we should do something more sophisticated where we traverse the graph and
+	// make sure they are the same.
+	/*
 	sort(newMatchTypes.begin(), newMatchTypes.end());
 	bool included = true;
 	if (excludeRepeats) {
@@ -215,11 +218,8 @@ void TemplateMatcher::acceptMatch() {
 				included = false;
 			}
 		}
-	}
-	if (included) {
-		matchTypes.push_back(newMatchTypes);
-		matchStates.push_back(newMatchStates);
-	}
+	} */
+	graphStates.push_back(newMatchStates);
 }
 
 bool TemplateMatcher::findNextChoice() {
@@ -257,54 +257,5 @@ void TemplateMatcher::undoLastDecision() {
 	if (decisions.back().choices.size() == 0) {
 		decisions.pop_back();
 		undoLastDecision();
-	}
-}
-
-void TemplateMatcher::GetMatches(vector<Json>& outputVector) {
-	for (int i = 0; i < matchStates.size(); i++) {
-		Json output;
-
-		// Add the vertices.
-		auto match = matchStates[i];
-		// vector<int> vertexIndices;
-		cout << "Match " << i << ": ";
-		for (int j = 0; j < match.size(); j++) {
-			auto& state = getState(j, match[j]);
-			if (templateGraph.vertices[j].boundaryId.empty()) {
-				continue;
-			}
-			cout << templateGraph.vertices[j].boundaryId << " " << state.getName() << "(" << match[j] << ") ";
-			// vertexIndices.push_back(state.getTypeIndex());
-		}
-		cout << endl;
-		// output["vertices"] = vertexIndices;
-
-		// Add the edges.
-		/* vector<Json> allEdgeIndices;
-		for (int j = 0; j < eConnections.size(); j++) {
-			auto vIndices = eConnections[j];
-			bool skipEdge = false;
-			for (int k = 0; k < vIndices.size(); k++) {
-				if (!templateGraph.vertices[vIndices[k]].boundaryId.empty()) {
-					skipEdge = true;
-					break;
-				}
-			}
-			if (skipEdge) {
-				continue;
-			}
-
-			vector<int> edgeIndices;
-			for (int k = 0; k < vIndices.size(); k++) {
-				int vIndex = vIndices[k];
-				int cIndex = ConnectionIndex(vIndex, j, -1);
-				edgeIndices.push_back(vIndex);
-				edgeIndices.push_back(states[match[vIndex]].GetConnectionIndex(cIndex));
-			}
-			allEdgeIndices.push_back(edgeIndices);
-		}
-		output["edges"] = allEdgeIndices; */
-
-		outputVector.push_back(output);
 	}
 }

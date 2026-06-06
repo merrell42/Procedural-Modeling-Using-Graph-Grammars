@@ -41,17 +41,11 @@ public:
 	int vIndex;
 	// For debugging.
 	int counter;
-	// A list of the sorted match types.
-	vector<vector<int>> matchTypes;
-	// A list of the match states.
-	vector<vector<int>> matchStates;
-	// Exclude any rules that use the same vertex types.
-	bool excludeRepeats;
+	// For each graph that match the template, this lists the state of each vertex.
+	vector<vector<int>> graphStates;
 
-	TemplateMatcher(TemplateGraph templateGraph_, vector<VertexType*> vTypes, vector<EdgeType*> eTypes, bool excludeRepeats_);
+	TemplateMatcher(TemplateGraph templateGraph_, vector<VertexType*> vTypes, vector<EdgeType*> eTypes);
 	void match();
-	// Add any matches to the output vector.
-	void GetMatches(vector<Json>& outputVector);
 
 private:
 	void applyDecision();

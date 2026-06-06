@@ -34,7 +34,7 @@ vector<string> collectBoundaryIds(const TemplateGraph& graph) {
 	return boundaryIds;
 }
 
-vector<vector<int>> findBoundaryMatchStates(
+vector<vector<int>> findBoundaryStates(
 	const TemplateMatcher& matcher,
 	const vector<string>& boundaryIds
 ) {
@@ -53,45 +53,45 @@ vector<vector<int>> findBoundaryMatchStates(
 		vertexIndices.push_back(vertexIndex);
 	}
 
-	vector<vector<int>> allMatchStates;
-	for (const auto& match : matcher.matchStates) {
-		vector<int> matchStates;
-		matchStates.reserve(n);
+	vector<vector<int>> allBoundaryStates;
+	for (const auto& graphStates : matcher.graphStates) {
+		vector<int> boundaryStates;
+		boundaryStates.reserve(n);
 		for (int vertexIndex : vertexIndices) {
-			matchStates.push_back(match[vertexIndex]);
+			boundaryStates.push_back(graphStates[vertexIndex]);
 		}
-		allMatchStates.push_back(matchStates);
+		allBoundaryStates.push_back(boundaryStates);
 	}
-	return allMatchStates;
+	return allBoundaryStates;
 }
 
-void printAllMatchStates(const vector<vector<int>>& allMatchStates) {
-	for (size_t m = 0; m < allMatchStates.size(); m++) {
-		cout << "      match " << m << ": [";
-		for (size_t b = 0; b < allMatchStates[m].size(); b++) {
+void printBoundaryStates(const vector<vector<int>>& boundaryStates) {
+	for (size_t m = 0; m < boundaryStates.size(); m++) {
+		cout << "      boundary " << m << ": [";
+		for (size_t b = 0; b < boundaryStates[m].size(); b++) {
 			if (b > 0) {
 				cout << ", ";
 			}
-			cout << allMatchStates[m][b];
+			cout << boundaryStates[m][b];
 		}
 		cout << "]\n";
 	}
 }
 
-// A group of matches that have the same boundary states.
-struct MatchGroup {
+// A group of graphs that have the same boundary.
+struct GraphGroup {
 	// Boundary states for each boundary ID.
 	vector<int> boundaryStates;
-	// The matches that have these boundary states per graph.
-	vector<vector<int>> matches;
+	// The indices of the graph states within each matcher that share these boundary states.
+	vector<vector<int>> graphIndices;
 };
 
-// Group matches by their boundary states.
-vector<MatchGroup> groupMatches(
-	// boundary states per graph per match per boundary ID.
+// Group graph states by their boundary states.
+vector<GraphGroup> groupGraphs(
+	// boundary states per graph per graph state per boundary ID.
 	const vector<vector<vector<int>>>& boundaryStates
 ) {
-	vector<MatchGroup> groups;
+	vector<GraphGroup> groups;
 	int numGraphs = (int)boundaryStates.size();
 	for (int g = 0; g < numGraphs; g++) {
 		for (int m = 0; m < (int)boundaryStates[g].size(); m++) {
@@ -106,36 +106,38 @@ vector<MatchGroup> groupMatches(
 			}
 			// If no such group exists, create it.
 			if (groupIndex == -1) {
-				MatchGroup group;
+				GraphGroup group;
 				group.boundaryStates = states;
-				group.matches.assign(numGraphs, {});
+				group.graphIndices.assign(numGraphs, {});
 				groupIndex = (int)groups.size();
 				groups.push_back(std::move(group));
 			}
-			// Add the match to the group.
-			groups[groupIndex].matches[g].push_back(m);
+			// Add the index to the group.
+			groups[groupIndex].graphIndices[g].push_back(m);
 		}
 	}
 	return groups;
 }
 
-vector<MatchGroup> filterMatchGroupsToMultiGraphOnly(vector<MatchGroup> groups) {
+// Every grammar rule must have a left graph and a right graph.
+// Filter out any groups that do not have graphs for multiple graph templates.
+vector<GraphGroup> filterEmptyGraphGroups(vector<GraphGroup> groups) {
 	groups.erase(
-		remove_if(groups.begin(), groups.end(), [](const MatchGroup& group) {
-			int graphsWithMatches = 0;
-			for (const vector<int>& graphMatches : group.matches) {
-				if (!graphMatches.empty()) {
-					graphsWithMatches++;
+		remove_if(groups.begin(), groups.end(), [](const GraphGroup& group) {
+			int templatesWithMatches = 0;
+			for (const vector<int>& graphIndices : group.graphIndices) {
+				if (!graphIndices.empty()) {
+					templatesWithMatches++;
 				}
 			}
-			return graphsWithMatches < 2;
+			return templatesWithMatches < 2;
 		}),
 		groups.end()
 	);
 	return groups;
 }
 
-void printMatchGroups(const vector<MatchGroup>& groups) {
+void printGraphGroups(const vector<GraphGroup>& groups) {
 	for (size_t k = 0; k < groups.size(); k++) {
 		const auto& group = groups[k];
 		cout << "      states [";
@@ -146,13 +148,13 @@ void printMatchGroups(const vector<MatchGroup>& groups) {
 			cout << group.boundaryStates[b];
 		}
 		cout << "]\n";
-		for (size_t g = 0; g < group.matches.size(); g++) {
+		for (size_t g = 0; g < group.graphIndices.size(); g++) {
 			cout << "        graph " << g << " matches [";
-			for (size_t m = 0; m < group.matches[g].size(); m++) {
+			for (size_t m = 0; m < group.graphIndices[g].size(); m++) {
 				if (m > 0) {
 					cout << ", ";
 				}
-				cout << group.matches[g][m];
+				cout << group.graphIndices[g][m];
 			}
 			cout << "]\n";
 		}
@@ -201,35 +203,30 @@ int GenerateRules(
 			<< "  library   : " << templatesPath << "\n"
 			<< "  entries   : " << templateGraphSets.size() << "\n";
 
-		const bool excludeRepeats = false; // parsed["excludeRepeats"]);
 		size_t totalMatches = 0;
 		for (size_t i = 0; i < templateGraphSets.size(); i++) {
 			cout << "  [" << i << "] \"" << templateGraphSets[i].comment << "\"  ";
 			int numGraphs = (int)templateGraphSets[i].graphs.size();
 			vector<TemplateMatcher> matchers;
-			for (int j = 0; j < numGraphs; j++) {
-				matchers.push_back(TemplateMatcher(templateGraphSets[i].graphs[j], vTypes, eTypes, excludeRepeats));
-			}
 			if (numGraphs <= 1) {
 				cout << "skipped (two or more graphs required)\n";
 				continue;
 			}
+			for (int j = 0; j < numGraphs; j++) {
+				matchers.push_back(TemplateMatcher(templateGraphSets[i].graphs[j], vTypes, eTypes));
+			}
 			vector<vector<vector<int>>> allBoundaryStates;
 			vector<string> boundaryIds = collectBoundaryIds(templateGraphSets[i].graphs[0]);
 			for (int j = 0; j < numGraphs; j++) {
-				vector<Json> matches;
 				matchers[j].match();
-				auto boundaryStates = findBoundaryMatchStates(matchers[j], boundaryIds);
+				auto boundaryStates = findBoundaryStates(matchers[j], boundaryIds);
 				allBoundaryStates.push_back(boundaryStates);
-				cout << "    graph " << j << " allMatchStates:\n";
-				printAllMatchStates(boundaryStates);
-				matchers[j].GetMatches(matches);
-				cout << "matches=" << matches.size() << "\n";
-				totalMatches += matches.size();
+				cout << "    graph " << j << " allBoundaryStates:\n";
+				printBoundaryStates(boundaryStates);
 			}
-			auto matchGroups = filterMatchGroupsToMultiGraphOnly(groupMatches(allBoundaryStates));
+			auto GraphGroups = filterEmptyGraphGroups(groupGraphs(allBoundaryStates));
 			cout << "    boundary state groups across graphs:\n";
-			printMatchGroups(matchGroups);
+			printGraphGroups(GraphGroups);
 		}
 		cout << "  total     : " << totalMatches << " match(es) across "
 			<< templateGraphSets.size() << " entries" << endl;
