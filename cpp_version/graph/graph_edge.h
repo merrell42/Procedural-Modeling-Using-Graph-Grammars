@@ -25,6 +25,8 @@ public:
 
     // Connect the graph and edge together.
     GraphEdge* connectGraph(Graph* graph);
+    void addHalfEdge(GraphHalfEdge* half, int index);
+    void removeHalfEdge(GraphHalfEdge* half, int index);
     // Merge two colinear edges into one.
     void merge(GraphEdge* edgeB, bool mergeForward);
 

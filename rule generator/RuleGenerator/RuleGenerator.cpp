@@ -138,14 +138,18 @@ vector<GraphGroup> filterEmptyGraphGroups(vector<GraphGroup> groups) {
 	return groups;
 }
 
-void exportGroups(const vector<GraphGroup>& groups, const vector<TemplateMatcher>& matchers) {
+void exportGroups(
+	const vector<GraphGroup>& groups,
+	const vector<TemplateMatcher>& matchers,
+	Primitives* primitives
+) {
 	for (const auto& group : groups) {
 		// Assumes there are only two graphs in the template set.
 		const int leftIndex = group.graphIndices[0][0];
 		const int rightIndex = group.graphIndices[1][0];
 		auto leftValues = matchers[0].getGraphValues(leftIndex);
 		auto rightValues = matchers[1].getGraphValues(rightIndex);
-		RuleExporter::exportRule(leftValues, rightValues);
+		RuleExporter::exportRule(leftValues, rightValues, primitives);
 	}
 }
 
@@ -237,7 +241,7 @@ int GenerateRules(
 				printBoundaryValues(boundaryValues);
 			}
 			auto graphGroups = filterEmptyGraphGroups(groupGraphs(allBoundaryValues));
-			exportGroups(graphGroups, matchers);
+			exportGroups(graphGroups, matchers, primitives);
 			cout << "    boundary state groups across graphs:\n";
 			printGraphGroups(graphGroups);
 		}

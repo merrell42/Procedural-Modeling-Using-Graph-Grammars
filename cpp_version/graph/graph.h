@@ -52,6 +52,10 @@ public:
     void removeFace(GraphFace* face);
     void removeSplices();
 
+    Graph* copy() const;
+    void merge(Graph* other);
+    void setBVertices(const vector<GraphVertex*>& verts);
+
 private:
     vector<GraphVertex*> vertices;
     vector<GraphEdge*> edges;

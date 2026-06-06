@@ -34,6 +34,8 @@ public:
 
     GraphHalfEdge* connectGraph(Graph* newGraph);
     void connectVertex(GraphVertex* v, int index);
+    void connectEdge(GraphEdge* e, int index);
+    void disconnectEdge();
     void disconnect();
     void connectNext(GraphHalfEdge* next);
     void setPrev(GraphHalfEdge* p);

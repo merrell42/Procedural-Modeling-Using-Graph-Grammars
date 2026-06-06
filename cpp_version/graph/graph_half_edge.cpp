@@ -34,6 +34,20 @@ void GraphHalfEdge::connectVertex(GraphVertex* v, int index) {
     vertex->setHalfEdge(this, index);
 }
 
+void GraphHalfEdge::connectEdge(GraphEdge* e, int index) {
+    edge = e;
+    edgeIndex = index;
+    e->addHalfEdge(this, index);
+}
+
+void GraphHalfEdge::disconnectEdge() {
+    if (edge) {
+        edge->removeHalfEdge(this, edgeIndex);
+        edge = nullptr;
+        edgeIndex = -1;
+    }
+}
+
 void GraphHalfEdge::disconnect() {
     if (next) {
         next->setPrev(nullptr);
@@ -43,7 +57,9 @@ void GraphHalfEdge::disconnect() {
 
 void GraphHalfEdge::connectNext(GraphHalfEdge* n) {
     next = n;
-    n->setPrev(this);
+    if (n) {
+        n->setPrev(this);
+    }
 }
 
 void GraphHalfEdge::setPrev(GraphHalfEdge* p) {

@@ -266,10 +266,8 @@ GraphValues TemplateMatcher::getGraphValues(int graphIndex) const {
 	// Add the vertices.
 	auto vertexValue = vertexValues[graphIndex];
 	for (int j = 0; j < vertexValue.size(); j++) {
-		if (!templateGraph.vertices[j].boundaryId.empty()) {
-			auto& state = getState(j, vertexValue[j]);
-			graphValues.vertexValues.push_back(state.getTypeIndex());
-		}
+		auto& state = getState(j, vertexValue[j]);
+		graphValues.vertexValues.push_back(state.getTypeIndex());
 	}
 
 	// Add the edges.

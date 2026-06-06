@@ -270,3 +270,123 @@ GraphHalfEdge* Graph::getHalfEdge(int index) const {
 int Graph::getId() const {
     return id;
 }
+
+template <typename T>
+T* remap(const vector<T*>& srcList, const vector<T*>& dstList, T* item) {
+    if (!item) {
+        return nullptr;
+    }
+    int idx = indexOf(srcList, item);
+    if (idx < 0) {
+        throw runtime_error("Graph::copy: element not found");
+    }
+    return dstList[idx];
+}
+
+Graph* Graph::copy() const {
+    auto* dst = new Graph();
+
+    vector<GraphVertex*> dstVertices(vertices.size());
+    vector<GraphEdge*> dstEdges(edges.size());
+    vector<GraphHalfEdge*> dstHalfEdges(halfEdges.size());
+    vector<GraphFace*> dstFaces(faces.size());
+
+    for (size_t i = 0; i < vertices.size(); i++) {
+        auto* v = (new GraphVertex())->connectGraph(dst);
+        v->setType(vertices[i]->getType());
+        dstVertices[i] = v;
+    }
+    for (size_t i = 0; i < edges.size(); i++) {
+        auto* e = (new GraphEdge())->connectGraph(dst);
+        e->setType(edges[i]->getType());
+        dstEdges[i] = e;
+    }
+    for (size_t i = 0; i < halfEdges.size(); i++) {
+        dstHalfEdges[i] = (new GraphHalfEdge(halfEdges[i]->getForward()))->connectGraph(dst);
+    }
+    for (size_t i = 0; i < faces.size(); i++) {
+        auto* f = (new GraphFace())->connectGraph(dst);
+        f->setType(faces[i]->getType());
+        dstFaces[i] = f;
+    }
+
+    for (size_t i = 0; i < vertices.size(); i++) {
+        const auto& srcHEs = vertices[i]->getHalfEdges();
+        for (size_t j = 0; j < srcHEs.size(); j++) {
+            if (srcHEs[j]) {
+                dstVertices[i]->setHalfEdge(
+                    remap(halfEdges, dstHalfEdges, srcHEs[j]),
+                    (int)j
+                );
+            }
+        }
+    }
+
+    for (size_t i = 0; i < halfEdges.size(); i++) {
+        auto* src = halfEdges[i];
+        auto* dstH = dstHalfEdges[i];
+        dstH->connectVertex(
+            remap(vertices, dstVertices, src->getVertex()),
+            src->getVertexIndex()
+        );
+        if (src->getEdge()) {
+            dstH->connectEdge(
+                remap(edges, dstEdges, src->getEdge()),
+                src->getEdgeIndex()
+            );
+        }
+        dstH->setPrev(remap(halfEdges, dstHalfEdges, src->getPrev()));
+        dstH->connectNext(remap(halfEdges, dstHalfEdges, src->getNext()));
+        dstH->setFace(remap(faces, dstFaces, src->getFace()));
+    }
+
+    for (size_t i = 0; i < faces.size(); i++) {
+        dstFaces[i]->setOuterComponent(
+            remap(halfEdges, dstHalfEdges, faces[i]->getOuterComponent())
+        );
+    }
+
+    for (auto* bv : bVertices) {
+        dst->bVertices.push_back(remap(vertices, dstVertices, bv));
+    }
+    for (auto* bh : bHalfEdges) {
+        dst->bHalfEdges.push_back(remap(halfEdges, dstHalfEdges, bh));
+    }
+    for (auto* bf : bFaces) {
+        dst->bFaces.push_back(remap(faces, dstFaces, bf));
+    }
+
+    return dst;
+}
+
+void Graph::setBVertices(const vector<GraphVertex*>& verts) {
+    bVertices = verts;
+}
+
+void Graph::merge(Graph* other) {
+    if (!other || other == this) {
+        return;
+    }
+    for (auto* v : other->vertices) {
+        v->connectGraph(this);
+    }
+    for (auto* e : other->edges) {
+        e->connectGraph(this);
+    }
+    for (auto* h : other->halfEdges) {
+        h->connectGraph(this);
+    }
+    for (auto* f : other->faces) {
+        f->connectGraph(this);
+    }
+    bVertices.insert(bVertices.end(), other->bVertices.begin(), other->bVertices.end());
+    bHalfEdges.insert(bHalfEdges.end(), other->bHalfEdges.begin(), other->bHalfEdges.end());
+    bFaces.insert(bFaces.end(), other->bFaces.begin(), other->bFaces.end());
+    other->vertices.clear();
+    other->edges.clear();
+    other->halfEdges.clear();
+    other->faces.clear();
+    other->bVertices.clear();
+    other->bHalfEdges.clear();
+    other->bFaces.clear();
+}

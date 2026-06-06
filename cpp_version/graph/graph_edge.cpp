@@ -26,6 +26,21 @@ GraphEdge* GraphEdge::connectGraph(Graph* newGraph) {
     return this;
 }
 
+void GraphEdge::addHalfEdge(GraphHalfEdge* half, int index) {
+    if (index >= (int)halfEdges.size()) {
+        halfEdges.resize(index + 1);
+    }
+    halfEdges[index] = { half };
+}
+
+void GraphEdge::removeHalfEdge(GraphHalfEdge* half, int index) {
+    if (index >= 0 && index < (int)halfEdges.size() && !halfEdges[index].empty()) {
+        if (halfEdges[index][0] == half) {
+            halfEdges[index][0] = nullptr;
+        }
+    }
+}
+
 // Merge two colinear edges into one.
 void GraphEdge::merge(GraphEdge* edgeB, bool mergeForward) {
     auto* interior = graph;

@@ -73,6 +73,23 @@ void GraphFace::replaceHalfEdge(GraphHalfEdge* a, GraphHalfEdge* b) {
     b->setFace(this);
 }
 
+void GraphFace::mergeInto(GraphFace* other) {
+    if (!other || other == this) {
+        return;
+    }
+    auto halfEdges = getConnectedHalfEdges(other->getOuterComponent());
+    for (auto* half : halfEdges) {
+        half->setFace(this);
+    }
+}
+
+void GraphFace::setOuterComponent(GraphHalfEdge* half) {
+    outerComponent = half;
+    if (half) {
+        half->setFace(this);
+    }
+}
+
 bool GraphFace::isLoopy() const {
     return outerComponent->isLoopy();
 }
