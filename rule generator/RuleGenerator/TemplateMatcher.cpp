@@ -67,6 +67,7 @@ State& TemplateMatcher::getState(int vIndex, int stateIndex) {
 
 void TemplateMatcher::match() {
 	if (numTemplateVertices == 0) {
+		matchStates.push_back({});
 		return;
 	}
 	Decision decison0(0);
@@ -269,10 +270,10 @@ void TemplateMatcher::GetMatches(vector<Json>& outputVector) {
 		cout << "Match " << i << ": ";
 		for (int j = 0; j < match.size(); j++) {
 			auto& state = getState(j, match[j]);
-			cout << state.getName() << "(" << match[j] << ") ";
-			if (!templateGraph.vertices[j].boundaryId.empty()) {
+			if (templateGraph.vertices[j].boundaryId.empty()) {
 				continue;
 			}
+			cout << templateGraph.vertices[j].boundaryId << " " << state.getName() << "(" << match[j] << ") ";
 			// vertexIndices.push_back(state.getTypeIndex());
 		}
 		cout << endl;
