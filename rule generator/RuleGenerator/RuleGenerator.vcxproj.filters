@@ -24,6 +24,9 @@
     <ClInclude Include="RoundtripCommand.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="RuleExporter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="RuleGenerator.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
@@ -57,6 +60,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RuleExporter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RuleGenerator.cpp">

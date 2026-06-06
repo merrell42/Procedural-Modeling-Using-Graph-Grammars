@@ -57,15 +57,15 @@ int TemplateMatcher::numStatesAtVertex(int vIndex) {
 	return templateGraph.vertices[vIndex].boundaryId.empty() ? numVertexStates : numEdgeStates;
 }
 
-State& TemplateMatcher::getState(int vIndex, int stateIndex) {
+const State& TemplateMatcher::getState(int vIndex, int stateIndex) const {
 	return templateGraph.vertices[vIndex].boundaryId.empty()
-		? static_cast<State&>(vertexStates[stateIndex])
-		: static_cast<State&>(edgeStates[stateIndex]);
+		? static_cast<const State&>(vertexStates[stateIndex])
+		: static_cast<const State&>(edgeStates[stateIndex]);
 }
 
 void TemplateMatcher::match() {
 	if (numTemplateVertices == 0) {
-		graphStates.push_back({});
+		vertexValues.push_back({});
 		return;
 	}
 	Decision decison0(0);
@@ -114,7 +114,7 @@ void TemplateMatcher::applyDecision() {
 	}
 }
 
-int TemplateMatcher::ConnectionIndex(int vertexIndex, int edgeIndex, int excludeIndex) {
+int TemplateMatcher::ConnectionIndex(int vertexIndex, int edgeIndex, int excludeIndex) const {
 	auto nConnections = templateGraph.vertices[vertexIndex].connections;
 	for (int i = 0; i < nConnections.size(); i++) {
 		if (nConnections[i] == edgeIndex && i != excludeIndex) {
@@ -189,13 +189,13 @@ vector<int> TemplateMatcher::findChoices() {
 
 void TemplateMatcher::acceptMatch() {
 	// vector<int> newMatchTypes;
-	vector<int> newMatchStates;
+	vector<int> newGraphStates;
 	for (int i = 0; i < numTemplateVertices; i++) {
 		int numStates = numStatesAtVertex(i);
 		for (int j = 0; j < numStates; j++) {
 			if (rejectionStep[i][j] == -1) {
 				// newMatchTypes.push_back(getState(i, j).getRuleGeneratorId());
-				newMatchStates.push_back(j);
+				newGraphStates.push_back(j);
 			}
 		}
 	}
@@ -219,7 +219,7 @@ void TemplateMatcher::acceptMatch() {
 			}
 		}
 	} */
-	graphStates.push_back(newMatchStates);
+	vertexValues.push_back(newGraphStates);
 }
 
 bool TemplateMatcher::findNextChoice() {
@@ -258,4 +258,40 @@ void TemplateMatcher::undoLastDecision() {
 		decisions.pop_back();
 		undoLastDecision();
 	}
+}
+
+GraphValues TemplateMatcher::getGraphValues(int graphIndex) const {
+	GraphValues graphValues;
+
+	// Add the vertices.
+	auto vertexValue = vertexValues[graphIndex];
+	for (int j = 0; j < vertexValue.size(); j++) {
+		if (!templateGraph.vertices[j].boundaryId.empty()) {
+			auto& state = getState(j, vertexValue[j]);
+			graphValues.vertexValues.push_back(state.getTypeIndex());
+		}
+	}
+
+	// Add the edges.
+	for (int j = 0; j < eConnections.size(); j++) {
+		auto vIndices = eConnections[j];
+		bool skipEdge = false;
+		for (int k = 0; k < vIndices.size(); k++) {
+			if (!templateGraph.vertices[vIndices[k]].boundaryId.empty()) {
+				skipEdge = true;
+				break;
+			}
+		}
+		if (skipEdge) {
+			continue;
+		}
+
+		for (int k = 0; k < vIndices.size(); k++) {
+			int vIndex = vIndices[k];
+			int cIndex = ConnectionIndex(vIndex, j, -1);
+			graphValues.edgeValues.push_back(vIndex);
+			graphValues.edgeValues.push_back(vertexStates[vertexValue[vIndex]].GetConnectionIndex(cIndex));
+		}
+	}
+	return graphValues;
 }

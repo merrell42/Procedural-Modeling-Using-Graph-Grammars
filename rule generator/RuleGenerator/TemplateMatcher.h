@@ -8,6 +8,12 @@ using namespace std;
 
 using Json = nlohmann::json;
 
+class GraphValues {
+public:
+	vector<int> vertexValues;
+	vector<int> edgeValues;
+};
+
 class Decision {
 public:
 	// A list of possible choices.
@@ -41,11 +47,13 @@ public:
 	int vIndex;
 	// For debugging.
 	int counter;
-	// For each graph that match the template, this lists the state of each vertex.
-	vector<vector<int>> graphStates;
+	// For each graph that matches the template, this lists the value of each vertex.
+	// Each value is the index of the vertex state.
+	vector<vector<int>> vertexValues;
 
 	TemplateMatcher(TemplateGraph templateGraph_, vector<VertexType*> vTypes, vector<EdgeType*> eTypes);
 	void match();
+	GraphValues getGraphValues(int graphIndex) const;
 
 private:
 	void applyDecision();
@@ -54,8 +62,8 @@ private:
 	bool findNextChoice();
 	void undoLastDecision();
 	void reject(int pos, int type);
-	int ConnectionIndex(int vertexIndex, int edgeIndex, int excludeIndex);
+	int ConnectionIndex(int vertexIndex, int edgeIndex, int excludeIndex) const;
 	int numStatesAtVertex(int vIndex);
-	State& getState(int vIndex, int stateIndex);
+	const State& getState(int vIndex, int stateIndex) const;
 	void acceptMatch();
 };

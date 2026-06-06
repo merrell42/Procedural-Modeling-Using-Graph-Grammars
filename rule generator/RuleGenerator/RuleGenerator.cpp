@@ -2,6 +2,7 @@
 #include "RuleGenerator.h"
 #include "TemplateGraph.h"
 #include "TemplateMatcher.h"
+#include "RuleExporter.h"
 #include "../../cpp_version/json versioning/read_json_file.h"
 #include "../../cpp_version/primitives/primitives.h"
 #include "../../cpp_version/primitives/vertex_type.h"
@@ -34,7 +35,7 @@ vector<string> collectBoundaryIds(const TemplateGraph& graph) {
 	return boundaryIds;
 }
 
-vector<vector<int>> findBoundaryStates(
+vector<vector<int>> findBoundaryValues(
 	const TemplateMatcher& matcher,
 	const vector<string>& boundaryIds
 ) {
@@ -53,26 +54,26 @@ vector<vector<int>> findBoundaryStates(
 		vertexIndices.push_back(vertexIndex);
 	}
 
-	vector<vector<int>> allBoundaryStates;
-	for (const auto& graphStates : matcher.graphStates) {
-		vector<int> boundaryStates;
-		boundaryStates.reserve(n);
+	vector<vector<int>> allBoundaryValues;
+	for (const auto& vertexValues : matcher.vertexValues) {
+		vector<int> boundaryValues;
+		boundaryValues.reserve(n);
 		for (int vertexIndex : vertexIndices) {
-			boundaryStates.push_back(graphStates[vertexIndex]);
+			boundaryValues.push_back(vertexValues[vertexIndex]);
 		}
-		allBoundaryStates.push_back(boundaryStates);
+		allBoundaryValues.push_back(boundaryValues);
 	}
-	return allBoundaryStates;
+	return allBoundaryValues;
 }
 
-void printBoundaryStates(const vector<vector<int>>& boundaryStates) {
-	for (size_t m = 0; m < boundaryStates.size(); m++) {
+void printBoundaryValues(const vector<vector<int>>& boundaryValues) {
+	for (size_t m = 0; m < boundaryValues.size(); m++) {
 		cout << "      boundary " << m << ": [";
-		for (size_t b = 0; b < boundaryStates[m].size(); b++) {
+		for (size_t b = 0; b < boundaryValues[m].size(); b++) {
 			if (b > 0) {
 				cout << ", ";
 			}
-			cout << boundaryStates[m][b];
+			cout << boundaryValues[m][b];
 		}
 		cout << "]\n";
 	}
@@ -80,26 +81,26 @@ void printBoundaryStates(const vector<vector<int>>& boundaryStates) {
 
 // A group of graphs that have the same boundary.
 struct GraphGroup {
-	// Boundary states for each boundary ID.
-	vector<int> boundaryStates;
-	// The indices of the graph states within each matcher that share these boundary states.
+	// Boundary values for each boundary ID.
+	vector<int> boundaryValues;
+	// The indices of the graph values within each matcher that share these boundary values.
 	vector<vector<int>> graphIndices;
 };
 
-// Group graph states by their boundary states.
+// Group graph values by their boundary values.
 vector<GraphGroup> groupGraphs(
-	// boundary states per graph per graph state per boundary ID.
-	const vector<vector<vector<int>>>& boundaryStates
+	// boundary values per graph per graph state per boundary ID.
+	const vector<vector<vector<int>>>& boundaryValues
 ) {
 	vector<GraphGroup> groups;
-	int numGraphs = (int)boundaryStates.size();
+	int numGraphs = (int)boundaryValues.size();
 	for (int g = 0; g < numGraphs; g++) {
-		for (int m = 0; m < (int)boundaryStates[g].size(); m++) {
-			const vector<int>& states = boundaryStates[g][m];
+		for (int m = 0; m < (int)boundaryValues[g].size(); m++) {
+			const vector<int>& values = boundaryValues[g][m];
 			int groupIndex = -1;
-			// Search for a group with the same boundary states.
+			// Search for a group with the same boundary values.
 			for (int j = 0; j < (int)groups.size(); j++) {
-				if (groups[j].boundaryStates == states) {
+				if (groups[j].boundaryValues == values) {
 					groupIndex = j;
 					break;
 				}
@@ -107,7 +108,7 @@ vector<GraphGroup> groupGraphs(
 			// If no such group exists, create it.
 			if (groupIndex == -1) {
 				GraphGroup group;
-				group.boundaryStates = states;
+				group.boundaryValues = values;
 				group.graphIndices.assign(numGraphs, {});
 				groupIndex = (int)groups.size();
 				groups.push_back(std::move(group));
@@ -137,15 +138,26 @@ vector<GraphGroup> filterEmptyGraphGroups(vector<GraphGroup> groups) {
 	return groups;
 }
 
+void exportGroups(const vector<GraphGroup>& groups, const vector<TemplateMatcher>& matchers) {
+	for (const auto& group : groups) {
+		// Assumes there are only two graphs in the template set.
+		const int leftIndex = group.graphIndices[0][0];
+		const int rightIndex = group.graphIndices[1][0];
+		auto leftValues = matchers[0].getGraphValues(leftIndex);
+		auto rightValues = matchers[1].getGraphValues(rightIndex);
+		RuleExporter::exportRule(leftValues, rightValues);
+	}
+}
+
 void printGraphGroups(const vector<GraphGroup>& groups) {
 	for (size_t k = 0; k < groups.size(); k++) {
 		const auto& group = groups[k];
-		cout << "      states [";
-		for (size_t b = 0; b < group.boundaryStates.size(); b++) {
+		cout << "      values [";
+		for (size_t b = 0; b < group.boundaryValues.size(); b++) {
 			if (b > 0) {
 				cout << ", ";
 			}
-			cout << group.boundaryStates[b];
+			cout << group.boundaryValues[b];
 		}
 		cout << "]\n";
 		for (size_t g = 0; g < group.graphIndices.size(); g++) {
@@ -215,21 +227,22 @@ int GenerateRules(
 			for (int j = 0; j < numGraphs; j++) {
 				matchers.push_back(TemplateMatcher(templateGraphSets[i].graphs[j], vTypes, eTypes));
 			}
-			vector<vector<vector<int>>> allBoundaryStates;
+			vector<vector<vector<int>>> allBoundaryValues;
 			vector<string> boundaryIds = collectBoundaryIds(templateGraphSets[i].graphs[0]);
 			for (int j = 0; j < numGraphs; j++) {
 				matchers[j].match();
-				auto boundaryStates = findBoundaryStates(matchers[j], boundaryIds);
-				allBoundaryStates.push_back(boundaryStates);
-				cout << "    graph " << j << " allBoundaryStates:\n";
-				printBoundaryStates(boundaryStates);
+				auto boundaryValues = findBoundaryValues(matchers[j], boundaryIds);
+				allBoundaryValues.push_back(boundaryValues);
+				cout << "    graph " << j << " allBoundaryValues:\n";
+				printBoundaryValues(boundaryValues);
 			}
-			auto GraphGroups = filterEmptyGraphGroups(groupGraphs(allBoundaryStates));
+			auto graphGroups = filterEmptyGraphGroups(groupGraphs(allBoundaryValues));
+			exportGroups(graphGroups, matchers);
 			cout << "    boundary state groups across graphs:\n";
-			printGraphGroups(GraphGroups);
+			printGraphGroups(graphGroups);
 		}
 		cout << "  total     : " << totalMatches << " match(es) across "
-			<< templateGraphSets.size() << " entries" << endl;
+			 << templateGraphSets.size() << " entries" << endl;
 		return 0;
 	} catch (const exception& e) {
 		cerr << "Error: " << e.what() << endl;
