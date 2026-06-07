@@ -20,8 +20,8 @@ TemplateMatcher::TemplateMatcher(
 	for (int i = 0; i < eTypes.size(); i++) {
 		EdgeType* eType = eTypes[i];
 		string id = eType->getRuleGeneratorId();
-		edgeStates.push_back(EdgeState(id + "S"));
-		edgeStates.push_back(EdgeState(id + "E"));
+		edgeStates.push_back(EdgeState(id + "S", i, 0));
+		edgeStates.push_back(EdgeState(id + "E", i, 1));
 	}
 	numVertexStates = (int)vertexStates.size();
 	numEdgeStates = (int)edgeStates.size();
@@ -265,31 +265,36 @@ GraphValues TemplateMatcher::getGraphValues(int graphIndex) const {
 
 	// Add the vertices.
 	auto vertexValue = vertexValues[graphIndex];
-	for (int j = 0; j < vertexValue.size(); j++) {
-		auto& state = getState(j, vertexValue[j]);
-		graphValues.vertexValues.push_back(state.getTypeIndex());
+	vector<int> templateToMatch(templateGraph.vertices.size(), -1);
+
+	for (int j = 0; j < (int)vertexValue.size(); j++) {
+		templateToMatch[j] = (int)graphValues.vertices.size();
+		graphValues.vertices.push_back(getState(j, vertexValue[j]).getTypeValue());
+		const bool onBoundary = !templateGraph.vertices[j].boundaryId.empty();
+		graphValues.vertexOnBoundary.push_back(onBoundary);
 	}
 
-	// Add the edges.
-	for (int j = 0; j < eConnections.size(); j++) {
+	for (int j = 0; j < (int)eConnections.size(); j++) {
 		auto vIndices = eConnections[j];
-		bool skipEdge = false;
-		for (int k = 0; k < vIndices.size(); k++) {
-			if (!templateGraph.vertices[vIndices[k]].boundaryId.empty()) {
-				skipEdge = true;
-				break;
-			}
+		// Skip boundary edges unless both vertices are boundary. It's a single edge.
+		if (vIndices.size() != 2) {
+			cout << "Edge should have 2 vertices." << endl;
+			continue;
 		}
-		if (skipEdge) {
+		bool onBoundary0 = !templateGraph.vertices[vIndices[0]].boundaryId.empty();
+		bool onBoundary1 = !templateGraph.vertices[vIndices[1]].boundaryId.empty();
+		if (onBoundary0 != onBoundary1) {
 			continue;
 		}
 
-		for (int k = 0; k < vIndices.size(); k++) {
-			int vIndex = vIndices[k];
+		array<int, 4> edge{};
+		size_t edgeIndex = 0;
+		for (int vIndex : vIndices) {
 			int cIndex = ConnectionIndex(vIndex, j, -1);
-			graphValues.edgeValues.push_back(vIndex);
-			graphValues.edgeValues.push_back(vertexStates[vertexValue[vIndex]].GetConnectionIndex(cIndex));
+			edge[edgeIndex++] = templateToMatch[vIndex];
+			edge[edgeIndex++] = getState(vIndex, vertexValue[vIndex]).GetConnectionIndex(cIndex);
 		}
+		graphValues.edges.push_back(edge);
 	}
 	return graphValues;
 }
