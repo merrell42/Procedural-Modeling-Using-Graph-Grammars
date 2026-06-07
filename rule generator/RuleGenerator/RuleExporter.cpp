@@ -280,11 +280,22 @@ pair<unique_ptr<Graph>, GlueTrack> copyAndGlue(
 Graph* createVertexGraph(VertexType* vType) {
 	auto* graph = new Graph();
 	const auto& halfEdgeTypes = vType->getHalfEdgeTypes();
-	unordered_map<FaceType*, FaceBuildInfo> faceInfos;
+	unordered_map<int, FaceBuildInfo> faceInfos;
 	vector<GraphVertex*> bVertices;
 	GraphVertex* center = nullptr;
 
-	for (const auto& connection : halfEdgeTypes) {
+	const size_t connectionCount = halfEdgeTypes.size();
+	vector<vector<int>> connectionFaceIds(connectionCount);
+	for (size_t i = 0; i < connectionCount; i++) {
+		vector<int> faceIds = { (int)i, (int)((i + 1) % connectionCount) };
+		if (!halfEdgeTypes[i].isAtStart) {
+			reverse(faceIds.begin(), faceIds.end());
+		}
+		connectionFaceIds[i] = std::move(faceIds);
+	}
+
+	for (size_t connIndex = 0; connIndex < connectionCount; connIndex++) {
+		const auto& connection = halfEdgeTypes[connIndex];
 		EdgeType* edgeType = connection.edge;
 		bool isAtStart = connection.isAtStart;
 
@@ -308,8 +319,14 @@ Graph* createVertexGraph(VertexType* vType) {
 			half->connectEdge(graphEdge, (int)faceIndex);
 
 			int position = faceDatum.onRight ^ isAtStart;
-			auto& faceInfo = faceInfos[faceDatum.type];
-			faceInfo.type = faceDatum.type;
+			int faceId = connectionFaceIds[connIndex][faceIndex];
+			auto& faceInfo = faceInfos[faceId];
+			if (!faceInfo.type) {
+				faceInfo.type = faceDatum.type;
+			}
+			if (faceInfo.hEdges[position]) {
+				throw runtime_error("createVertexGraph: multiple faces with the same ID within a primitive");
+			}
 			faceInfo.hEdges[position] = half;
 
 			if (position == 0) {
