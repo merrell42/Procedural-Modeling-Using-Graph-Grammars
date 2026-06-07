@@ -177,17 +177,17 @@ GraphHalfEdge* glueHalfEdges(GraphHalfEdge* half0, GraphHalfEdge* half1, Graph* 
 	return replacement;
 }
 
-GlueTrack glueBVertices(
-	GraphVertex* bVertexA,
-	GraphVertex* bVertexB,
+GlueTrack glueVertices(
+	GraphVertex* vertexA,
+	GraphVertex* vertexB,
 	Graph* netA,
 	Graph* netB,
 	const vector<GraphVertex*>& bVerticesA,
 	const vector<GraphVertex*>& bVerticesB,
 	bool loopGluing
 ) {
-	auto* halfA = firstHalfEdge(bVertexA);
-	auto* halfB = firstHalfEdge(bVertexB);
+	auto* halfA = firstHalfEdge(vertexA);
+	auto* halfB = firstHalfEdge(vertexB);
 	if (!halfA || !halfB) {
 		throw runtime_error("glueBVertices: boundary vertex has no half-edge");
 	}
@@ -197,6 +197,9 @@ GlueTrack glueBVertices(
 
 	auto halfEdgesA = edgeA->getHalfEdges();
 	auto halfEdgesB = edgeB->getHalfEdges();
+	// Copy before merge: netA->merge clears netB's bVertices vector.
+	vector<GraphVertex*> savedBVerticesA(bVerticesA.begin(), bVerticesA.end());
+	vector<GraphVertex*> savedBVerticesB(bVerticesB.begin(), bVerticesB.end());
 
 	if (!loopGluing) {
 		netA->merge(netB);
@@ -212,7 +215,7 @@ GlueTrack glueBVertices(
 	netA->removeEdge(edgeB);
 
 	for (size_t i = 0; i < halfEdgesA.size(); i++) {
-		bool aOnBoundary = halfEdgesA[i][0] && halfEdgesA[i][0]->getVertex() == bVertexA;
+		bool aOnBoundary = halfEdgesA[i][0] && halfEdgesA[i][0]->getVertex() == vertexA;
 		auto* half0 = aOnBoundary ? halfEdgesB[i][0] : halfEdgesA[i][0];
 		auto* half1 = aOnBoundary ? halfEdgesA[i][0] : halfEdgesB[i][0];
 		if (half0 && half1) {
@@ -222,17 +225,17 @@ GlueTrack glueBVertices(
 		}
 	}
 
-	netA->removeVertex(bVertexA);
-	netA->removeVertex(bVertexB);
+	netA->removeVertex(vertexA);
+	netA->removeVertex(vertexB);
 	refreshBVertices(netA);
 	// purgeInvalidFaces(netA);
 
 	const auto& newBVertices = netA->getBVertices();
 	GlueTrack track;
-	for (auto* a : bVerticesA) {
+	for (auto* a : savedBVerticesA) {
 		track.aDest.push_back(indexOf(newBVertices, a));
 	}
-	for (auto* b : bVerticesB) {
+	for (auto* b : savedBVerticesB) {
 		track.bDest.push_back(indexOf(newBVertices, b));
 	}
 	return track;
@@ -248,7 +251,7 @@ pair<unique_ptr<Graph>, GlueTrack> copyAndGlue(
 	if (loopGluing) {
 		auto copyA = unique_ptr<Graph>(graphA.copy());
 		const auto& copyBVertices = copyA->getBVertices();
-		auto track = glueBVertices(
+		auto track = glueVertices(
 			copyBVertices[bVertexIndexA],
 			copyBVertices[bVertexIndexB],
 			copyA.get(),
@@ -262,7 +265,7 @@ pair<unique_ptr<Graph>, GlueTrack> copyAndGlue(
 
 	auto copyA = unique_ptr<Graph>(graphA.copy());
 	auto copyB = unique_ptr<Graph>(graphB.copy());
-	auto track = glueBVertices(
+	auto track = glueVertices(
 		copyA->getBVertices()[bVertexIndexA],
 		copyB->getBVertices()[bVertexIndexB],
 		copyA.get(),
@@ -401,12 +404,21 @@ PrimitiveGraphs createPrimitiveGraphs(Primitives* primitives) {
 	return result;
 }
 
+Graph* releaseInstance(vector<unique_ptr<Graph>>& instances, Graph* graph) {
+	for (auto& instance : instances) {
+		if (instance.get() == graph) {
+			return instance.release();
+		}
+	}
+	throw runtime_error("buildGraphFromValues: result not owned by instances");
+}
+
 Graph* buildGraphFromValues(
 	const GraphValues& graphValues,
 	const PrimitiveGraphs& graphs
 ) {
-	if (graphValues.edges.empty() && graphValues.vertices.size() == 1) {
-		return getPrimitiveGraph(graphValues, 0, graphs)->copy();
+	if (graphValues.edges.empty() && graphValues.vertices.size() == 0) {
+		return new Graph();
 	}
 
 	vector<unique_ptr<Graph>> instances;
@@ -434,6 +446,10 @@ Graph* buildGraphFromValues(
 
 	vector<array<int, 4>> edgeQueue = graphValues.edges;
 	Graph* finalResult = nullptr;
+
+	if (edgeQueue.empty()) {
+		return instances[0].release();
+	}
 
 	while (!edgeQueue.empty()) {
 		vector<array<int, 4>> nextQueue;
@@ -514,7 +530,7 @@ Graph* buildGraphFromValues(
 	if (!finalResult) {
 		throw runtime_error("buildGraphFromValues: no result");
 	}
-	return finalResult->copy();
+	return releaseInstance(instances, finalResult);
 }
 
 void RuleExporter::exportRule(
