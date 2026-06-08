@@ -300,7 +300,9 @@ Graph* createVertexGraph(VertexType* vType) {
 		const auto& faceData = edgeType->getFaceData();
 		for (size_t faceIndex = 0; faceIndex < faceData.size(); faceIndex++) {
 			const auto& faceDatum = faceData[faceIndex];
-			bool forward = !faceDatum.onRight;
+			// Match ms.endpoint.oriented / ms.graphEndpoint.oriented:
+			// forward = onRight XOR (isAtStart ? 0 : 1)
+			bool forward = faceDatum.onRight ^ !isAtStart;
 			auto* half = (new GraphHalfEdge(forward))->connectGraph(graph);
 			half->connectEdge(graphEdge, (int)faceIndex);
 
@@ -362,13 +364,14 @@ Graph* createEdgeGraph(EdgeType* eType) {
 	for (size_t faceIndex = 0; faceIndex < faceData.size(); faceIndex++) {
 		const auto& faceDatum = faceData[faceIndex];
 		bool onRight = faceDatum.onRight;
-		bool forward = !onRight;
+		bool start0 = !onRight;
+		// hStart attaches to the start endpoint (bVertex0 when start0).
+		bool forward = onRight ^ !start0;
 
 		auto* hStart = (new GraphHalfEdge(forward))->connectGraph(graph);
 		auto* hEnd = (new GraphHalfEdge(false))->connectGraph(graph);
 		hStart->connectEdge(graphEdge, (int)faceIndex);
 
-		bool start0 = !onRight;
 		hStart->connectVertex(start0 ? bVertex0 : bVertex1, -1);
 		hEnd->connectVertex(start0 ? bVertex1 : bVertex0, -1);
 
