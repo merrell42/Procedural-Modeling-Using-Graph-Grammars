@@ -22,6 +22,7 @@ public:
     ~GraphVertex() = default;
     void import(const Json& json);
     void binaryDeserialize(std::istream& in);
+    Json exportJson(const vector<GraphHalfEdge*>& graphHalfEdges) const;
 
     const vector<GraphHalfEdge*>& getHalfEdges() const { return halfEdges; }
     VertexType* getType();

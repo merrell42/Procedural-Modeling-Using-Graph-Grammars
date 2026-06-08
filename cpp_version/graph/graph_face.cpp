@@ -4,6 +4,7 @@
 #include "graph.h"
 #include "../geometry/vec3.h"
 #include "../util/binary_stream.h"
+#include "../util/util.h"
 
 GraphFace::GraphFace() 
     : outerComponent(nullptr)
@@ -40,6 +41,13 @@ void GraphFace::import(const Json & json) {
     // }
 }
 
+Json GraphFace::exportJson(const vector<GraphHalfEdge*>& graphHalfEdges) const {
+    Json json;
+    json["outerComponent"] = outerComponent ?
+        indexOf(graphHalfEdges, outerComponent) : -1;
+    return json;
+}
+
 // Get the connected half-edges on a face.
 // Continue until the path ends or the path loops.
 vector<GraphHalfEdge*> GraphFace::getConnectedHalfEdges(const GraphHalfEdge* start) {
@@ -71,6 +79,23 @@ void GraphFace::replaceHalfEdge(GraphHalfEdge* a, GraphHalfEdge* b) {
         }
     } */
     b->setFace(this);
+}
+
+void GraphFace::mergeInto(GraphFace* other) {
+    if (!other || other == this) {
+        return;
+    }
+    auto halfEdges = getConnectedHalfEdges(other->getOuterComponent());
+    for (auto* half : halfEdges) {
+        half->setFace(this);
+    }
+}
+
+void GraphFace::setOuterComponent(GraphHalfEdge* half) {
+    outerComponent = half;
+    if (half) {
+        half->setFace(this);
+    }
 }
 
 bool GraphFace::isLoopy() const {

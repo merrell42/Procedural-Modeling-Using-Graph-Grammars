@@ -34,6 +34,20 @@ void GraphHalfEdge::connectVertex(GraphVertex* v, int index) {
     vertex->setHalfEdge(this, index);
 }
 
+void GraphHalfEdge::connectEdge(GraphEdge* e, int index) {
+    edge = e;
+    edgeIndex = index;
+    e->addHalfEdge(this, index);
+}
+
+void GraphHalfEdge::disconnectEdge() {
+    if (edge) {
+        edge->removeHalfEdge(this, edgeIndex);
+        edge = nullptr;
+        edgeIndex = -1;
+    }
+}
+
 void GraphHalfEdge::disconnect() {
     if (next) {
         next->setPrev(nullptr);
@@ -43,7 +57,9 @@ void GraphHalfEdge::disconnect() {
 
 void GraphHalfEdge::connectNext(GraphHalfEdge* n) {
     next = n;
-    n->setPrev(this);
+    if (n) {
+        n->setPrev(this);
+    }
 }
 
 void GraphHalfEdge::setPrev(GraphHalfEdge* p) {
@@ -95,6 +111,23 @@ void GraphHalfEdge::import(const Json& json) {
     prev = graph->getHalfEdge(json["prev"]);
     next = graph->getHalfEdge(json["next"]);
     face = graph->getFaces()[json["face"]];
+}
+
+Json GraphHalfEdge::exportJson(const Graph* graph) const {
+    const auto& vertices = graph->getVertices();
+    const auto& edges = graph->getEdges();
+    const auto& halfEdges = graph->getHalfEdges();
+    const auto& faces = graph->getFaces();
+    Json json;
+    json["forward"] = forward;
+    json["edgeIndex"] = edgeIndex;
+    json["vertexIndex"] = vertexIndex;
+    json["vertex"] = vertex ? indexOf(vertices, vertex) : -1;
+    json["edge"] = edge ? indexOf(edges, edge) : -1;
+    json["prev"] = prev ? indexOf(halfEdges, prev) : -1;
+    json["next"] = next ? indexOf(halfEdges, next) : -1;
+    json["face"] = face ? indexOf(faces, face) : -1;
+    return json;
 }
 
 

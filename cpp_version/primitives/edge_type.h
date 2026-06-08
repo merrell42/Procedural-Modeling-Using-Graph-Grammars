@@ -29,6 +29,7 @@ public:
     ~EdgeType() = default;
     static EdgeType* import(const Json& json, Primitives* shape);
     static EdgeType* binaryDeserialize(std::istream& in, Primitives* shape);
+    Json exportJson(const Primitives* shape) const;
 
     const vector<FaceData>& getFaceData() const;
     const Vec3& getDir() const;

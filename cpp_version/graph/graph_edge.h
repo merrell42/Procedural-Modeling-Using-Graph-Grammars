@@ -18,6 +18,7 @@ public:
     ~GraphEdge() = default;
     void import(const Json& json);
     void binaryDeserialize(std::istream& in);
+    Json exportJson(const vector<GraphHalfEdge*>& graphHalfEdges) const;
 
     const vector<vector<GraphHalfEdge*>>& getHalfEdges() const;
     EdgeType* getType() const;
@@ -25,6 +26,8 @@ public:
 
     // Connect the graph and edge together.
     GraphEdge* connectGraph(Graph* graph);
+    void addHalfEdge(GraphHalfEdge* half, int index);
+    void removeHalfEdge(GraphHalfEdge* half, int index);
     // Merge two colinear edges into one.
     void merge(GraphEdge* edgeB, bool mergeForward);
 

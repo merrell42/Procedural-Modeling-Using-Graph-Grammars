@@ -25,4 +25,8 @@ void JsonVersionManager::updateToLatest(Json& json) {
         currentVersion++;
         json["version"] = currentVersion;
     }
-} 
+}
+
+int JsonVersionManager::getLatestVersion() {
+    return (int)versionUpdates.size();
+}

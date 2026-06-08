@@ -91,3 +91,23 @@ VertexType* VertexType::binaryDeserialize(std::istream& in, Primitives* shape) {
     }
     return result;
 }
+
+Json VertexType::exportJson(const Primitives* shape) const {
+    Json json;
+    json["spliced"] = spliced;
+    if (desirability != 0.0) {
+        json["desirability"] = desirability;
+    }
+    Json halfEdgeTypesJson = Json::array();
+    for (const auto& halfEdgeType : halfEdgeTypes) {
+        Json halfEdgeTypeJson;
+        halfEdgeTypeJson["edge"] = indexOf(shape->edgeTypes, halfEdgeType.edge);
+        halfEdgeTypeJson["isAtStart"] = halfEdgeType.isAtStart;
+        if (!spliced) {
+            halfEdgeTypeJson["dir"] = halfEdgeType.dir.exportJson();
+        }
+        halfEdgeTypesJson.push_back(std::move(halfEdgeTypeJson));
+    }
+    json["halfEdgeTypes"] = halfEdgeTypesJson;
+    return json;
+}

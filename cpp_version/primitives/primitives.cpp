@@ -41,3 +41,24 @@ Primitives* Primitives::import(const Json& json) {
 
     return primitives;
 }
+
+Json Primitives::exportJson() const {
+    Json json;
+    json["dims"] = dims;
+    Json faceTypesJson = Json::array();
+    for (const auto* faceType : faceTypes) {
+        faceTypesJson.push_back(faceType->exportJson());
+    }
+    json["faceTypes"] = faceTypesJson;
+    Json edgeTypesJson = Json::array();
+    for (const auto* edgeType : edgeTypes) {
+        edgeTypesJson.push_back(edgeType->exportJson(this));
+    }
+    json["edgeTypes"] = edgeTypesJson;
+    Json vertexTypesJson = Json::array();
+    for (const auto* vertexType : vertexTypes) {
+        vertexTypesJson.push_back(vertexType->exportJson(this));
+    }
+    json["vertexTypes"] = vertexTypesJson;
+    return json;
+}

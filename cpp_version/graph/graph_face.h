@@ -15,6 +15,7 @@ public:
     GraphFace();
     void import(const Json& json);
     void binaryDeserialize(std::istream& in);
+    Json exportJson(const vector<GraphHalfEdge*>& graphHalfEdges) const;
 
     GraphHalfEdge* getOuterComponent() const;
     Graph* getGraph() const;
@@ -22,10 +23,12 @@ public:
     
     GraphFace* connectGraph(Graph* graph);
     void setType(FaceType* newType);
+    void setOuterComponent(GraphHalfEdge* half);
     
     static vector<GraphHalfEdge*> getConnectedHalfEdges(const GraphHalfEdge* start);
     vector<GraphHalfEdge*> getOuterHalfEdges() const;
     void replaceHalfEdge(GraphHalfEdge* a, GraphHalfEdge* b);
+    void mergeInto(GraphFace* other);
     bool isLoopy() const;
 
 private:

@@ -1,8 +1,6 @@
 @echo off
-set "DEBUG_TARGET_PATH_UNITY=..\unity pmugg\My project\Assets\Plugins\pmugg debug.dll"
-set "RELEASE_TARGET_PATH_UNITY=..\unity pmugg\My project\Assets\Plugins\pmugg release.dll"
-set "DEBUG_TARGET_PATH_UNITY2=..\unity pmugg\Assets\Plugins\pmugg debug.dll"
-set "RELEASE_TARGET_PATH_UNITY2=..\unity pmugg\Assets\Plugins\pmugg release.dll"
+set "DEBUG_TARGET_PATH_UNITY=..\unity pmugg\Assets\Plugins\pmugg debug.dll"
+set "RELEASE_TARGET_PATH_UNITY=..\unity pmugg\Assets\Plugins\pmugg release.dll"
 set "RELEASE_TARGET_PATH_GODOT=..\godot\demo\bin\pmugg dll.dll"
 
 set "DEBUG_TARGET_PATH_UNREAL=..\unreal\MyProject\Plugins\GrammarEditor\Binaries\Win64\pmugg debug.dll"
@@ -24,15 +22,6 @@ if exist "%DEBUG_PATH%" (
     )
     echo Debug DLL copied to Unity successfully.
 
-    echo Copying Debug DLL to Unity2...
-    :COPY_LOOP_DEBUG_UNITY2
-    copy "%DEBUG_PATH%" "%DEBUG_TARGET_PATH_UNITY2%" > nul 2>&1
-    if errorlevel 1 (
-        timeout /t 1 > nul
-        goto COPY_LOOP_DEBUG_UNITY2
-    )
-    echo Debug DLL copied to Unity2 successfully.
-
     echo Copying Debug DLL to Unreal...
     :COPY_LOOP_DEBUG_UNREAL
     copy "%DEBUG_PATH%" "%DEBUG_TARGET_PATH_UNREAL%" > nul 2>&1
@@ -52,15 +41,6 @@ if exist "%RELEASE_PATH%" (
         goto COPY_LOOP_RELEASE_UNITY
     )
     echo Release DLL copied to Unity successfully.
-
-    echo Copying Release DLL to Unity2...
-    :COPY_LOOP_RELEASE_UNITY2
-    copy "%RELEASE_PATH%" "%RELEASE_TARGET_PATH_UNITY2%" > nul 2>&1
-    if errorlevel 1 (
-        timeout /t 1 > nul
-        goto COPY_LOOP_RELEASE_UNITY2
-    )
-    echo Release DLL copied to Unity2 successfully.
 
     echo Copying Release DLL to Godot...
     :COPY_LOOP_RELEASE_GODOT

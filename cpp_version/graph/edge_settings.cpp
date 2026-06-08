@@ -57,3 +57,17 @@ EdgeSettings* EdgeSettings::import(Json json) {
     return edgesettings;
 }
 
+Json EdgeSettings::exportJson() const {
+    Json json;
+    for (const auto& [key, val] : doubleProperties) {
+        json[key] = val;
+    }
+    for (const auto& [key, val] : boolProperties) {
+        json[key] = val;
+    }
+    for (const auto& [key, val] : stringProperties) {
+        json[key] = val;
+    }
+    return json;
+}
+

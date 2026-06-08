@@ -62,6 +62,16 @@ void GraphVertex::import(const Json& json) {
     }
 }
 
+Json GraphVertex::exportJson(const vector<GraphHalfEdge*>& graphHalfEdges) const {
+    Json json;
+    Json halfEdgesJson = Json::array();
+    for (auto* half : halfEdges) {
+        halfEdgesJson.push_back(half ? indexOf(graphHalfEdges, half) : -1);
+    }
+    json["halfEdges"] = halfEdgesJson;
+    return json;
+}
+
 void GraphVertex::binaryDeserialize(std::istream& in) {
     halfEdges.clear();
     auto& graphHalfEdges = graph->getHalfEdges();

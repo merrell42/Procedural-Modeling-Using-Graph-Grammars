@@ -57,6 +57,9 @@
     <ClInclude Include="..\..\cpp_version\json versioning\json_version_manager.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\cpp_version\grammar_rules\production_rule.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -81,6 +84,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\cpp_version\graph\edge_settings.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp_version\grammar_rules\production_rule.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\cpp_version\primitives\edge_type.cpp">

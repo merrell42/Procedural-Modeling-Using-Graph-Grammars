@@ -18,6 +18,7 @@ public:
     ~GraphHalfEdge() = default;
     void import(const Json& json);
     void binaryDeserialize(std::istream& in);
+    Json exportJson(const Graph* graph) const;
 
     bool getForward() const;
     GraphVertex* getVertex() const;
@@ -34,6 +35,8 @@ public:
 
     GraphHalfEdge* connectGraph(Graph* newGraph);
     void connectVertex(GraphVertex* v, int index);
+    void connectEdge(GraphEdge* e, int index);
+    void disconnectEdge();
     void disconnect();
     void connectNext(GraphHalfEdge* next);
     void setPrev(GraphHalfEdge* p);

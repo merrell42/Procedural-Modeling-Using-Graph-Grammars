@@ -1,4 +1,5 @@
 #pragma once
+#include <array>
 #include <vector>
 #include "TemplateGraph.h"
 #include "json.h"
@@ -8,10 +9,12 @@ using namespace std;
 
 using Json = nlohmann::json;
 
+// Mirrors json.matches[i] from ms.networkHierarchy.partialImport.
 class GraphValues {
 public:
-	vector<int> vertexValues;
-	vector<int> edgeValues;
+	vector<int> vertices;
+	vector<bool> vertexOnBoundary;
+	vector<array<int, 4>> edges;
 };
 
 class Decision {

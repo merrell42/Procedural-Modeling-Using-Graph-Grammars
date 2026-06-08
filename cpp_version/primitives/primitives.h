@@ -19,6 +19,7 @@ public:
             const string& xml,
             int dims);
     static Primitives* import(const Json& json);
+    Json exportJson() const;
 
     vector<VertexType*> vertexTypes;
     vector<EdgeType*> edgeTypes;

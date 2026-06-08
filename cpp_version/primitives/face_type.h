@@ -18,6 +18,7 @@ public:
 
     static FaceType* import(const Json& json);
     static FaceType* binaryDeserialize(std::istream& in);
+    Json exportJson() const;
 
 private:
     string material;

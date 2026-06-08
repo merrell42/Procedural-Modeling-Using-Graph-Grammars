@@ -44,6 +44,7 @@ public:
     ~VertexType() = default;
     static VertexType* import(const Json& json, Primitives* shape);
     static VertexType* binaryDeserialize(std::istream& in, Primitives* shape);
+    Json exportJson(const Primitives* shape) const;
 
     const vector<HalfEdgeType>& getHalfEdgeTypes() const;
     bool getSpliced() const;

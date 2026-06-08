@@ -24,11 +24,15 @@ int main(int argc, char** argv) {
 	}
 
 	vector<string> filePaths = {
+		// "../../grammar data/2D Basic Shapes/square hollow.json",
+		"../../rule generator/generatedRules.json",
+	};
+	/* vector<string> filePaths = {
 		"../../grammar data/3D Complex Shapes/castle.json",
 		"../../grammar data/2D Basic Shapes/square filled.json",
 		"../../grammar data/3D Shapes/house1.json",
 		"../../grammar data/3D Shapes/docks.json",
-	};
+	}; */
 	resetRandom(2);
 
 	// Run the program for each file.

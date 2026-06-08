@@ -26,6 +26,21 @@ GraphEdge* GraphEdge::connectGraph(Graph* newGraph) {
     return this;
 }
 
+void GraphEdge::addHalfEdge(GraphHalfEdge* half, int index) {
+    if (index >= (int)halfEdges.size()) {
+        halfEdges.resize(index + 1);
+    }
+    halfEdges[index] = { half };
+}
+
+void GraphEdge::removeHalfEdge(GraphHalfEdge* half, int index) {
+    if (index >= 0 && index < (int)halfEdges.size() && !halfEdges[index].empty()) {
+        if (halfEdges[index][0] == half) {
+            halfEdges[index][0] = nullptr;
+        }
+    }
+}
+
 // Merge two colinear edges into one.
 void GraphEdge::merge(GraphEdge* edgeB, bool mergeForward) {
     auto* interior = graph;
@@ -73,6 +88,20 @@ void GraphEdge::import(const Json& json) {
             halfEdges.push_back(halfArray);
         }
     }
+}
+
+Json GraphEdge::exportJson(const vector<GraphHalfEdge*>& graphHalfEdges) const {
+    Json json;
+    Json halfEdgesJson = Json::array();
+    for (const auto& halfArray : halfEdges) {
+        Json arrayJson = Json::array();
+        for (auto* half : halfArray) {
+            arrayJson.push_back(half ? indexOf(graphHalfEdges, half) : -1);
+        }
+        halfEdgesJson.push_back(std::move(arrayJson));
+    }
+    json["halfEdges"] = halfEdgesJson;
+    return json;
 }
 
 void GraphEdge::binaryDeserialize(std::istream& in) {

@@ -161,11 +161,18 @@
   <ItemGroup>
     <ClInclude Include="..\..\cpp_version\geometry\vec2.h" />
     <ClInclude Include="..\..\cpp_version\geometry\vec3.h" />
+    <ClInclude Include="..\..\cpp_version\graph\graph.h" />
+    <ClInclude Include="..\..\cpp_version\graph\graph_edge.h" />
+    <ClInclude Include="..\..\cpp_version\graph\graph_face.h" />
+    <ClInclude Include="..\..\cpp_version\graph\graph_half_edge.h" />
+    <ClInclude Include="..\..\cpp_version\graph\graph_vertex.h" />
     <ClInclude Include="..\..\cpp_version\memory_counter.h" />
     <ClInclude Include="..\..\cpp_version\primitives\edge_type.h" />
     <ClInclude Include="..\..\cpp_version\primitives\face_type.h" />
     <ClInclude Include="..\..\cpp_version\primitives\primitives.h" />
     <ClInclude Include="..\..\cpp_version\primitives\vertex_type.h" />
+    <ClInclude Include="..\..\cpp_version\graph_grammar.h" />
+    <ClInclude Include="..\..\cpp_version\grammar_rules\production_rule.h" />
     <ClInclude Include="..\..\cpp_version\util\util.h" />
     <ClInclude Include="..\..\cpp_version\json versioning\read_json_file.h" />
     <ClInclude Include="..\..\cpp_version\json versioning\json_version_manager.h" />
@@ -188,6 +195,43 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\..\cpp_version\graph\graph.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp_version\graph\graph_edge.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp_version\graph\graph_face.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp_version\graph\graph_half_edge.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp_version\graph\graph_vertex.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp_version\graph_grammar.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp_version\grammar_rules\production_rule.cpp" />
     <ClCompile Include="..\..\cpp_version\primitives\edge_type.cpp" />
     <ClCompile Include="..\..\cpp_version\primitives\face_type.cpp" />
     <ClCompile Include="..\..\cpp_version\primitives\primitives.cpp" />

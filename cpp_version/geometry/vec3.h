@@ -32,6 +32,7 @@ public:
     Vec3 copy() const;
     Vec2 dropDim(int dim) const;
     static Vec3 import(const Json & json);
+    Json exportJson() const;
 
     static Vec3 lerp(const Vec3& start, const Vec3& end, double s);
 
