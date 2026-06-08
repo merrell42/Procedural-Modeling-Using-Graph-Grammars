@@ -29,8 +29,13 @@ struct Production {
 class GraphGrammar {
 public:
     GraphGrammar();
+    explicit GraphGrammar(Primitives* primitives);
     ~GraphGrammar();
     static GraphGrammar* import(const Json& json);
+
+    // Add a production rule. Takes ownership of the rule.
+    void addRule(ProductionRule* rule);
+    void addStarterRule(ProductionRule* rule);
 
     // Serialize the whole grammar (primitives + rules + emptyGraph) to a binary stream.
     // The output of serialize() can be replayed by deserialize() to obtain an

@@ -171,6 +171,8 @@
     <ClInclude Include="..\..\cpp_version\primitives\face_type.h" />
     <ClInclude Include="..\..\cpp_version\primitives\primitives.h" />
     <ClInclude Include="..\..\cpp_version\primitives\vertex_type.h" />
+    <ClInclude Include="..\..\cpp_version\graph_grammar.h" />
+    <ClInclude Include="..\..\cpp_version\grammar_rules\production_rule.h" />
     <ClInclude Include="..\..\cpp_version\util\util.h" />
     <ClInclude Include="..\..\cpp_version\json versioning\read_json_file.h" />
     <ClInclude Include="..\..\cpp_version\json versioning\json_version_manager.h" />
@@ -223,6 +225,13 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\..\cpp_version\graph_grammar.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp_version\grammar_rules\production_rule.cpp" />
     <ClCompile Include="..\..\cpp_version\primitives\edge_type.cpp" />
     <ClCompile Include="..\..\cpp_version\primitives\face_type.cpp" />
     <ClCompile Include="..\..\cpp_version\primitives\primitives.cpp" />

@@ -3,6 +3,8 @@
 
 #include "../../cpp_version/graph/graph.h"
 #include "../../cpp_version/util/util.h"
+#include "../../cpp_version/graph_grammar.h"
+#include "../../cpp_version/grammar_rules/production_rule.h"
 
 #include <algorithm>
 #include <iostream>
@@ -106,21 +108,6 @@ void removeHalfEdge(GraphHalfEdge* half, Graph* graph) {
 		}
 	}
 }
-
-/* void purgeInvalidFaces(Graph* graph) {
-	const auto& halfEdges = graph->getHalfEdges();
-	unordered_set<GraphHalfEdge*> halfSet(halfEdges.begin(), halfEdges.end());
-	vector<GraphFace*> toRemove;
-	for (auto* face : graph->getFaces()) {
-		auto* outer = face->getOuterComponent();
-		if (!outer || !halfSet.count(outer)) {
-			toRemove.push_back(face);
-		}
-	}
-	for (auto* face : toRemove) {
-		graph->removeFace(face);
-	}
-} */
 
 GraphHalfEdge* glueHalfEdges(GraphHalfEdge* half0, GraphHalfEdge* half1, Graph* graph) {
 	if (half0 == half1) {
@@ -228,7 +215,6 @@ GlueTrack glueVertices(
 	netA->removeVertex(vertexA);
 	netA->removeVertex(vertexB);
 	refreshBVertices(netA);
-	// purgeInvalidFaces(netA);
 
 	const auto& newBVertices = netA->getBVertices();
 	GlueTrack track;
@@ -551,6 +537,7 @@ Graph* buildGraphFromValues(
 }
 
 void RuleExporter::exportRule(
+	GraphGrammar* grammar,
 	const GraphValues& leftValues,
 	const GraphValues& rightValues,
 	Primitives* primitives
@@ -560,15 +547,28 @@ void RuleExporter::exportRule(
 	try {
 		Graph* leftGraph = buildGraphFromValues(leftValues, primitiveGraphs);
 		Graph* rightGraph = buildGraphFromValues(rightValues, primitiveGraphs);
+		const int numLeftVertices = (int)leftGraph->getVertices().size();
+		const int numLeftEdges = (int)leftGraph->getEdges().size();
+		const int numRightVertices = (int)rightGraph->getVertices().size();
+		const int numRightEdges = (int)rightGraph->getEdges().size();
+		const bool leftEmpty = numLeftVertices == 0 && numLeftEdges == 0;
+		const bool rightEmpty = numRightVertices == 0 && numRightEdges == 0;
+		vector<Graph*> graphs = { leftGraph, rightGraph };
+		// TODO: Handle rules with splices in them.
+		ProductionRule* rule = new ProductionRule(graphs);
+		if (leftEmpty || rightEmpty) {
+			grammar->addStarterRule(rule);
+		} else {
+			grammar->addRule(rule);
+		}
 
-		cout << "    exported rule: left graph ("
-			<< leftGraph->getVertices().size() << " vertices, "
-			<< leftGraph->getEdges().size() << " edges), right graph ("
-			<< rightGraph->getVertices().size() << " vertices, "
-			<< rightGraph->getEdges().size() << " edges)\n";
-
-		delete leftGraph;
-		delete rightGraph;
+		cout << "    exported "
+			<< (leftEmpty || rightEmpty ? "starter" : "normal")
+			<< " rule: left graph ("
+			<< numLeftVertices << " vertices, "
+			<< numLeftEdges << " edges), right graph ("
+			<< numRightVertices << " vertices, "
+			<< numRightEdges << " edges)\n";
 	} catch (const exception& e) {
 		cerr << "    export failed: " << e.what() << "\n";
 	}

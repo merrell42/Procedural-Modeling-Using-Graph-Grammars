@@ -22,6 +22,20 @@ GraphGrammar::GraphGrammar() {
     grounded = false;
 }
 
+GraphGrammar::GraphGrammar(Primitives* primitives_) {
+    primitives = primitives_;
+    emptyGraph = new Graph();
+    grounded = false;
+}
+
+void GraphGrammar::addRule(ProductionRule* rule) {
+    rules.push_back(rule);
+}
+
+void GraphGrammar::addStarterRule(ProductionRule* rule) {
+    starterRules.push_back(rule);
+}
+
 GraphGrammar::~GraphGrammar() {
     delete emptyGraph;
     for (auto rule : starterRules) {

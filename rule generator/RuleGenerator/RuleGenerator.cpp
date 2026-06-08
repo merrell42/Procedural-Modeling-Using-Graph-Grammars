@@ -7,6 +7,7 @@
 #include "../../cpp_version/primitives/primitives.h"
 #include "../../cpp_version/primitives/vertex_type.h"
 #include "../../cpp_version/primitives/edge_type.h"
+#include "../../cpp_version/graph_grammar.h"
 
 #include <algorithm>
 #include <fstream>
@@ -139,6 +140,7 @@ vector<GraphGroup> filterEmptyGraphGroups(vector<GraphGroup> groups) {
 }
 
 void exportGroups(
+	GraphGrammar& grammar,
 	const vector<GraphGroup>& groups,
 	const vector<TemplateMatcher>& matchers,
 	Primitives* primitives
@@ -149,7 +151,7 @@ void exportGroups(
 		const int rightIndex = group.graphIndices[1][0];
 		auto leftValues = matchers[0].getGraphValues(leftIndex);
 		auto rightValues = matchers[1].getGraphValues(rightIndex);
-		RuleExporter::exportRule(leftValues, rightValues, primitives);
+		RuleExporter::exportRule(&grammar, leftValues, rightValues, primitives);
 	}
 }
 
@@ -185,6 +187,7 @@ int GenerateRules(
 	try {
 		Json parsed = readJsonFile(primitivesPath);
 		Primitives* primitives = Primitives::import(parsed["types"]);
+		GraphGrammar grammar(primitives);
 		
 		// Set ruleGeneratorId on edges if present in JSON, otherwise generate from index.
 		Json types = parsed["types"];
@@ -241,8 +244,8 @@ int GenerateRules(
 				printBoundaryValues(boundaryValues);
 			}
 			auto graphGroups = filterEmptyGraphGroups(groupGraphs(allBoundaryValues));
-			exportGroups(graphGroups, matchers, primitives);
-			cout << "    boundary state groups across graphs:\n";
+			exportGroups(grammar, graphGroups, matchers, primitives);
+			cout << "    boundary values groups across graphs:\n";
 			printGraphGroups(graphGroups);
 		}
 		cout << "  total     : " << totalMatches << " match(es) across "

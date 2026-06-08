@@ -18,10 +18,8 @@ struct OrderInfo;
 // graph boundary and can be switched out for each other.
 class ProductionRule {
 public:
-    explicit ProductionRule(
-        const vector<Graph*>& startGraphs,
-        const vector<Graph*>& endGraphs
-    );
+    explicit ProductionRule(const vector<Graph*>& startGraphs);
+    explicit ProductionRule(const vector<Graph*>& startGraphs, const vector<Graph*>& endGraphs);
     static ProductionRule* import(const Json& json, Primitives* shape);
     static ProductionRule* binaryDeserialize(std::istream& in, Primitives* shape);
     ~ProductionRule();
