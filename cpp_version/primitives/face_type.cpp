@@ -54,3 +54,11 @@ const Vec3& FaceType::getColor() const {
 int FaceType::getMaxDim() const {
     return maxDim;
 }
+
+Json FaceType::exportJson() const {
+    Json json;
+    json["material"] = material;
+    json["normal"] = normal.exportJson();
+    json["color"] = color.exportJson();
+    return json;
+}

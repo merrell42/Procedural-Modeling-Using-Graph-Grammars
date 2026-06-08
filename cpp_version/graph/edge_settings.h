@@ -13,6 +13,7 @@ class EdgeSettings {
 public:
     EdgeSettings();
     static EdgeSettings* import(Json json);
+    Json exportJson() const;
 
     void set(const string& name, double value);
     void set(const string& name, bool value);

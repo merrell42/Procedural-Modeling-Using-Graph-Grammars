@@ -23,6 +23,9 @@ public:
 
     // Update JSON from its current version to the latest version.
     static void updateToLatest(Json& json);
+
+    // Number of registered migrations; equals the latest schema version number.
+    static int getLatestVersion();
     
 private:
     // List of functions that update the JSON to the next version.

@@ -250,6 +250,8 @@ int GenerateRules(
 		}
 		cout << "  total     : " << totalMatches << " match(es) across "
 			 << templateGraphSets.size() << " entries" << endl;
+		writeStringToFile(outputPath, grammar.exportJson().dump(2));
+		cout << "  output    : " << outputPath << "\n";
 		return 0;
 	} catch (const exception& e) {
 		cerr << "Error: " << e.what() << endl;

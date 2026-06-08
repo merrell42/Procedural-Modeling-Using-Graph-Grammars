@@ -127,3 +127,11 @@ Vec3 Vec3::import(const Json& json) {
     }
 }
 
+Json Vec3::exportJson() const {
+    Json json;
+    json["x"] = x;
+    json["y"] = y;
+    json["z"] = z;
+    return json;
+}
+

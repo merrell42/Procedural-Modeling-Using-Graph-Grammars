@@ -26,7 +26,9 @@ public:
     ~Graph();
     // Import a graph from a JSON object.
     static Graph* import(const Json& json, Primitives* shape = nullptr);
+    // static Graph* createEmpty(Primitives* shape);
     static Graph* binaryDeserialize(std::istream& in, Primitives* shape);
+    Json exportJson(const Primitives* shape) const;
 
     const vector<GraphVertex*>& getVertices() const;
     const vector<GraphEdge*>& getEdges() const;

@@ -4,6 +4,7 @@
 #include "graph.h"
 #include "../geometry/vec3.h"
 #include "../util/binary_stream.h"
+#include "../util/util.h"
 
 GraphFace::GraphFace() 
     : outerComponent(nullptr)
@@ -38,6 +39,13 @@ void GraphFace::import(const Json & json) {
     //    // Create a lambda to mimic the getDir behavior
     //    innerComponents.push_back(new GraphHalfEdge(dir));
     // }
+}
+
+Json GraphFace::exportJson(const vector<GraphHalfEdge*>& graphHalfEdges) const {
+    Json json;
+    json["outerComponent"] = outerComponent ?
+        indexOf(graphHalfEdges, outerComponent) : -1;
+    return json;
 }
 
 // Get the connected half-edges on a face.

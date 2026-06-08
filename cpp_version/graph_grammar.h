@@ -29,9 +29,10 @@ struct Production {
 class GraphGrammar {
 public:
     GraphGrammar();
-    explicit GraphGrammar(Primitives* primitives);
+    GraphGrammar(Primitives* primitives);
     ~GraphGrammar();
     static GraphGrammar* import(const Json& json);
+    Json exportJson() const;
 
     // Add a production rule. Takes ownership of the rule.
     void addRule(ProductionRule* rule);

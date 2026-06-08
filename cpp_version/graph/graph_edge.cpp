@@ -90,6 +90,20 @@ void GraphEdge::import(const Json& json) {
     }
 }
 
+Json GraphEdge::exportJson(const vector<GraphHalfEdge*>& graphHalfEdges) const {
+    Json json;
+    Json halfEdgesJson = Json::array();
+    for (const auto& halfArray : halfEdges) {
+        Json arrayJson = Json::array();
+        for (auto* half : halfArray) {
+            arrayJson.push_back(half ? indexOf(graphHalfEdges, half) : -1);
+        }
+        halfEdgesJson.push_back(std::move(arrayJson));
+    }
+    json["halfEdges"] = halfEdgesJson;
+    return json;
+}
+
 void GraphEdge::binaryDeserialize(std::istream& in) {
     halfEdges.clear();
     auto& graphHalfEdges = graph->getHalfEdges();

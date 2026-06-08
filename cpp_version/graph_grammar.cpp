@@ -13,6 +13,8 @@
 #include "settings.h"
 #include "util/util.h"
 #include "util/binary_stream.h"
+#include "json versioning/json_version_manager.h"
+#include "json versioning/json_migrations.h"
 #include <algorithm>
 #include <unordered_map>
 
@@ -24,16 +26,9 @@ GraphGrammar::GraphGrammar() {
 
 GraphGrammar::GraphGrammar(Primitives* primitives_) {
     primitives = primitives_;
+    // emptyGraph = Graph::createEmpty(primitives_);
     emptyGraph = new Graph();
     grounded = false;
-}
-
-void GraphGrammar::addRule(ProductionRule* rule) {
-    rules.push_back(rule);
-}
-
-void GraphGrammar::addStarterRule(ProductionRule* rule) {
-    starterRules.push_back(rule);
 }
 
 GraphGrammar::~GraphGrammar() {
@@ -52,6 +47,14 @@ GraphGrammar::~GraphGrammar() {
 
 bool GraphGrammar::isGrounded() const {
     return grounded && groundRules.size() > 0;
+}
+
+void GraphGrammar::addRule(ProductionRule* rule) {
+    rules.push_back(rule);
+}
+
+void GraphGrammar::addStarterRule(ProductionRule* rule) {
+    starterRules.push_back(rule);
 }
 
 // Randomly pick one of the normal production rules.
@@ -131,6 +134,35 @@ GraphGrammar* GraphGrammar::import(const Json& json) {
     grammar->emptyGraph = Graph::import(json["emptyGraph"], grammar->primitives);
 
     return grammar;
+}
+
+Json GraphGrammar::exportJson() const {
+    Json json;
+    registerJsonMigrations();
+    json["version"] = JsonVersionManager::getLatestVersion();
+    
+    Json rulesJson = Json::array();
+    for (const auto* rule : rules) {
+        rulesJson.push_back(rule->exportJson(primitives));
+    }
+    json["rules"] = rulesJson;
+
+    Json starterRulesJson = Json::array();
+    for (const auto* rule : starterRules) {
+        starterRulesJson.push_back(rule->exportJson(primitives));
+    }
+    json["starterRules"] = starterRulesJson;
+
+    Json groundRulesJson = Json::array();
+    for (const auto* rule : groundRules) {
+        groundRulesJson.push_back(rule->exportJson(primitives));
+    }
+    json["groundRules"] = groundRulesJson;
+
+    json["types"] = primitives->exportJson();
+    json["grounded"] = grounded;
+    json["emptyGraph"] = emptyGraph->exportJson(primitives);
+    return json;
 }
 
 // ---------------------------------------------------------------------------

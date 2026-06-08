@@ -125,6 +125,96 @@ Graph* Graph::import(const Json& json, Primitives* shape) {
     return result;
 }
 
+// TODO: We may need to set the type to the outer component type.
+/* Graph* Graph::createEmpty(Primitives* shape) {
+    auto* result = new Graph();
+    if (shape && !shape->faceTypes.empty()) {
+        auto* face = (new GraphFace())->connectGraph(result);
+        face->setType(shape->faceTypes[0]);
+    }
+    return result;
+} */
+
+Json Graph::exportJson(const Primitives* shape) const {
+    Json interior;
+    Json verticesJson = Json::array();
+    for (auto* vertex : vertices) {
+        verticesJson.push_back(vertex->exportJson(halfEdges));
+    }
+    Json edgesJson = Json::array();
+    for (auto* edge : edges) {
+        edgesJson.push_back(edge->exportJson(halfEdges));
+    }
+    Json halfEdgesJson = Json::array();
+    for (auto* half : halfEdges) {
+        halfEdgesJson.push_back(half->exportJson(this));
+    }
+    Json facesJson = Json::array();
+    for (auto* face : faces) {
+        facesJson.push_back(face->exportJson(halfEdges));
+    }
+    interior["vertices"] = verticesJson;
+    interior["edges"] = edgesJson;
+    interior["halfEdges"] = halfEdgesJson;
+    interior["faces"] = facesJson;
+
+    Json vertexTypesJson = Json::array();
+    for (auto* vertex : vertices) {
+        Json vertexTypeJson;
+        int typeIndex = indexOf(shape->vertexTypes, vertex->getType());
+        if (typeIndex >= 0) {
+            vertexTypeJson["kind"] = "v";
+            vertexTypeJson["type"] = typeIndex;
+        } else {
+            vertexTypeJson["kind"] = "e";
+            int edgeTypeIndex = 0;
+            if (auto* edge = vertex->interiorEdge()) {
+                edgeTypeIndex = indexOf(shape->edgeTypes, edge->getType());
+                if (edgeTypeIndex < 0) {
+                    edgeTypeIndex = 0;
+                }
+            }
+            vertexTypeJson["type"] = edgeTypeIndex;
+        }
+        vertexTypesJson.push_back(std::move(vertexTypeJson));
+    }
+
+    Json edgeTypesJson = Json::array();
+    for (auto* edge : edges) {
+        edgeTypesJson.push_back(indexOf(shape->edgeTypes, edge->getType()));
+    }
+
+    Json faceTypesJson = Json::array();
+    for (auto* face : faces) {
+        faceTypesJson.push_back(indexOf(shape->faceTypes, face->getType()));
+    }
+
+    Json morphism;
+    Json morphismHalfs = Json::array();
+    for (auto* half : bHalfEdges) {
+        morphismHalfs.push_back(half ? indexOf(halfEdges, half) : -1);
+    }
+    Json morphismVertices = Json::array();
+    for (auto* vertex : bVertices) {
+        morphismVertices.push_back(vertex ? indexOf(vertices, vertex) : -1);
+    }
+    Json morphismFaces = Json::array();
+    for (auto* face : bFaces) {
+        morphismFaces.push_back(face ? indexOf(faces, face) : -1);
+    }
+    morphism["halfs"] = morphismHalfs;
+    morphism["vertices"] = morphismVertices;
+    morphism["faces"] = morphismFaces;
+
+    Json result;
+    result["interior"] = interior;
+    result["vertexTypes"] = vertexTypesJson;
+    result["edgeTypes"] = edgeTypesJson;
+    result["faceTypes"] = faceTypesJson;
+    result["morphism"] = morphism;
+    return result;
+}
+
 Graph* Graph::binaryDeserialize(std::istream& in, Primitives* shape) {
     auto* result = new Graph();
 

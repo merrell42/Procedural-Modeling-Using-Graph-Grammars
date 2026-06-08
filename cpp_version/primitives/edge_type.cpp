@@ -135,3 +135,24 @@ const string& EdgeType::getRuleGeneratorId() const {
 void EdgeType::setRuleGeneratorId(const string& id) {
     ruleGeneratorId = id;
 }
+
+Json EdgeType::exportJson(const Primitives* shape) const {
+    Json json;
+    Json faceDataJson = Json::array();
+    for (const auto& faceDatum : faceData) {
+        Json faceDatumJson;
+        faceDatumJson["type"] = indexOf(shape->faceTypes, faceDatum.type);
+        faceDatumJson["onRight"] = faceDatum.onRight;
+        faceDataJson.push_back(std::move(faceDatumJson));
+    }
+    json["faceData"] = faceDataJson;
+    json["dir"] = dir.exportJson();
+    json["isRigid"] = isRigid;
+    json["spliced"] = spliced;
+    if (edgeSettings) {
+        json["edgeSettings"] = edgeSettings->exportJson();
+    } else {
+        json["edgeSettings"] = nullptr;
+    }
+    return json;
+}

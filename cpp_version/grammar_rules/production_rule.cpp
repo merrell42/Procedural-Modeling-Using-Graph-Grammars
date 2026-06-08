@@ -87,3 +87,14 @@ ProductionRule* ProductionRule::import(const Json& json, Primitives* shape) {
     result->ground = json["ground"];
     return result;
 }
+
+Json ProductionRule::exportJson(const Primitives* shape) const {
+    Json json;
+    json["ground"] = ground;
+    Json graphsJson = Json::array();
+    for (auto* graph : startGraphs) {
+        graphsJson.push_back(graph->exportJson(shape));
+    }
+    json["n"] = graphsJson;
+    return json;
+}

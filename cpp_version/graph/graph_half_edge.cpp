@@ -113,6 +113,23 @@ void GraphHalfEdge::import(const Json& json) {
     face = graph->getFaces()[json["face"]];
 }
 
+Json GraphHalfEdge::exportJson(const Graph* graph) const {
+    const auto& vertices = graph->getVertices();
+    const auto& edges = graph->getEdges();
+    const auto& halfEdges = graph->getHalfEdges();
+    const auto& faces = graph->getFaces();
+    Json json;
+    json["forward"] = forward;
+    json["edgeIndex"] = edgeIndex;
+    json["vertexIndex"] = vertexIndex;
+    json["vertex"] = vertex ? indexOf(vertices, vertex) : -1;
+    json["edge"] = edge ? indexOf(edges, edge) : -1;
+    json["prev"] = prev ? indexOf(halfEdges, prev) : -1;
+    json["next"] = next ? indexOf(halfEdges, next) : -1;
+    json["face"] = face ? indexOf(faces, face) : -1;
+    return json;
+}
+
 
 void GraphHalfEdge::binaryDeserialize(std::istream& in) {
     forward      = bsRead<uint8_t>(in) != 0;

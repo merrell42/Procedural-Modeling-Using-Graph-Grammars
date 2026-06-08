@@ -421,6 +421,7 @@ Graph* buildGraphFromValues(
 	const PrimitiveGraphs& graphs
 ) {
 	if (graphValues.edges.empty() && graphValues.vertices.size() == 0) {
+		// return Graph::createEmpty(primitives);
 		return new Graph();
 	}
 
@@ -553,7 +554,10 @@ void RuleExporter::exportRule(
 		const int numRightEdges = (int)rightGraph->getEdges().size();
 		const bool leftEmpty = numLeftVertices == 0 && numLeftEdges == 0;
 		const bool rightEmpty = numRightVertices == 0 && numRightEdges == 0;
-		vector<Graph*> graphs = { leftGraph, rightGraph };
+        // If a graph is empty, it should go first.
+		vector<Graph*> graphs = rightEmpty
+			? vector<Graph*>{ rightGraph, leftGraph }
+			: vector<Graph*>{ leftGraph, rightGraph };
 		// TODO: Handle rules with splices in them.
 		ProductionRule* rule = new ProductionRule(graphs);
 		if (leftEmpty || rightEmpty) {

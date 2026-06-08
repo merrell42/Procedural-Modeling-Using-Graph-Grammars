@@ -22,6 +22,7 @@ public:
     explicit ProductionRule(const vector<Graph*>& startGraphs, const vector<Graph*>& endGraphs);
     static ProductionRule* import(const Json& json, Primitives* shape);
     static ProductionRule* binaryDeserialize(std::istream& in, Primitives* shape);
+    Json exportJson(const Primitives* shape) const;
     ~ProductionRule();
 
     // End graphs are the same as start graphs except the splices are removed.

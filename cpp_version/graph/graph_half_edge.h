@@ -18,6 +18,7 @@ public:
     ~GraphHalfEdge() = default;
     void import(const Json& json);
     void binaryDeserialize(std::istream& in);
+    Json exportJson(const Graph* graph) const;
 
     bool getForward() const;
     GraphVertex* getVertex() const;

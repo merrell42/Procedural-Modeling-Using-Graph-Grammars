@@ -15,6 +15,7 @@ public:
     GraphFace();
     void import(const Json& json);
     void binaryDeserialize(std::istream& in);
+    Json exportJson(const vector<GraphHalfEdge*>& graphHalfEdges) const;
 
     GraphHalfEdge* getOuterComponent() const;
     Graph* getGraph() const;
