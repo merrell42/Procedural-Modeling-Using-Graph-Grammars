@@ -23,6 +23,7 @@ class VertexState : public State {
 		int getRuleGeneratorId() const override { return type->getRuleGeneratorId(); }
 		string getName() const override { return to_string(typeValue); }
 		int getTypeValue() const override { return typeValue; }
+		VertexType* getType() const { return type; }
 		// Adjust connection index based on edge0.
 		int GetConnectionIndex(int connectionIndex) const override;
 	private:

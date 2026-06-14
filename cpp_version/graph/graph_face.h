@@ -27,6 +27,8 @@ public:
     
     static vector<GraphHalfEdge*> getConnectedHalfEdges(const GraphHalfEdge* start);
     vector<GraphHalfEdge*> getOuterHalfEdges() const;
+    // The cumulative sum of positive minus negative turns around the face.
+    int computeTurns() const;
     void replaceHalfEdge(GraphHalfEdge* a, GraphHalfEdge* b);
     void mergeInto(GraphFace* other);
     bool isLoopy() const;

@@ -5,6 +5,9 @@
 #include "../geometry/vec3.h"
 #include "../util/binary_stream.h"
 #include "../util/util.h"
+#include <algorithm>
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 GraphFace::GraphFace() 
     : outerComponent(nullptr)
@@ -65,6 +68,36 @@ vector<GraphHalfEdge*> GraphFace::getOuterHalfEdges() const {
         return getConnectedHalfEdges(outerComponent);
     }
     return vector<GraphHalfEdge*>();
+}
+
+int GraphFace::computeTurns() const {
+    GraphHalfEdge* halfEdge = outerComponent;
+    if (!halfEdge) {
+        return 0;
+    }
+    vector<GraphHalfEdge*> faceHalfs = getConnectedHalfEdges(halfEdge);
+    bool looped = faceHalfs.back()->getNext() == faceHalfs.front();
+    if (!looped) {
+        faceHalfs.pop_back();
+    }
+    vector<double> angles;
+    angles.reserve(faceHalfs.size());
+    for (auto* half : faceHalfs) {
+        angles.push_back(half->getAngle());
+    }
+    reverse(angles.begin(), angles.end());
+    auto oppositeAngle = [](double angle) {
+        return Util::fixAngle(angle + M_PI);
+    };
+    for (auto& angle : angles) {
+        angle = oppositeAngle(angle);
+    }
+    if (!looped) {
+        angles.insert(angles.begin(), oppositeAngle(angles[0]));
+    } else {
+        angles.push_back(angles[0]);
+    }
+    return Util::wedgeTurns(angles);
 }
 
 // Replace half-edge a with b.

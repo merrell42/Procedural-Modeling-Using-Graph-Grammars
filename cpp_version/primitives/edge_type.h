@@ -33,6 +33,7 @@ public:
 
     const vector<FaceData>& getFaceData() const;
     const Vec3& getDir() const;
+    double getAngle() const;
     EdgeSettings* getEdgeSettings() const;
     bool getIsRigid() const;
     bool getSpliced() const;

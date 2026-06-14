@@ -44,9 +44,17 @@ TemplateMatcher::TemplateMatcher(
 	for (int i = 0; i < numTemplateVertices; i++) {
 		inQueue[i] = false;
 		vector <int> rejectStepOneVertex;
+		const auto& templateVertex = templateGraph.vertices[i];
+		const int numConnections = (int)templateVertex.connections.size();
+		const bool onBoundary = !templateVertex.boundaryId.empty();
 		int numStates = numStatesAtVertex(i);
 		for (int j = 0; j < numStates; j++) {
-			rejectStepOneVertex.push_back(-1);
+			int rejectAt = -1;
+			// Immediately reject any state that does not have the correct number of edges.
+			if (!onBoundary && vertexStates[j].getType()->getHalfEdgeTypes().size() != numConnections) {
+				rejectAt = 0;
+			}
+			rejectStepOneVertex.push_back(rejectAt);
 		}
 		rejectionStep.push_back(rejectStepOneVertex);
 	}
