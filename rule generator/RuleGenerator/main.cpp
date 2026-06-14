@@ -28,6 +28,10 @@ using namespace std;
 
 namespace {
 
+
+// constexpr const char* kDefaultLibrary = "../graph templates/graph_template_diagonal.json";
+// constexpr const char* kDefaultPrimitives = "../primitives/diagonal box.json";
+
 constexpr const char* kDefaultLibrary = "../graph templates/graph_templates.json";
 constexpr const char* kDefaultPrimitives = "../primitives/square hollow.json";
 constexpr const char* kDefaultOutput = "../generatedRules.json";

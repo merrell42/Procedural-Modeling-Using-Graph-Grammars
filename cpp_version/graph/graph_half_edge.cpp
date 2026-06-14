@@ -6,6 +6,8 @@
 #include "graph_vertex.h"
 #include "../util/util.h"
 #include "../util/binary_stream.h"
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 GraphHalfEdge::GraphHalfEdge(bool forward)
     : forward(forward)
@@ -100,6 +102,14 @@ Vec3 GraphHalfEdge::getDir() const {
         return dir.scale(-1);
     }
     return dir;
+}
+
+double GraphHalfEdge::getAngle() const {
+    if (!edge || !edge->getType()) {
+        return 0;
+    }
+    double angle = edge->getType()->getAngle();
+    return Util::fixAngle(angle + edgeIndex * M_PI);
 }
 
 void GraphHalfEdge::import(const Json& json) {

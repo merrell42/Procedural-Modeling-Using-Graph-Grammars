@@ -32,6 +32,7 @@ public:
     bool isSpliced() const;
     bool isLoopy() const;
     Vec3 getDir() const;
+    double getAngle() const;
 
     GraphHalfEdge* connectGraph(Graph* newGraph);
     void connectVertex(GraphVertex* v, int index);

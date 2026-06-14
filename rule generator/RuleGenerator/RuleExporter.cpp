@@ -560,6 +560,31 @@ Graph* buildGraphFromValues(
 	return releaseInstance(instances, finalResult);
 }
 
+bool loopsAreValid(Graph* graph) {
+	bool hasOuterLoop = false;
+	for (int i = 0; i < graph->getFaces().size(); i++) {
+		auto* face = graph->getFaces()[i];
+		if (face->isLoopy()) {
+			int turns = face->computeTurns();
+			// An outer loop has 1 turn, an inner loop has -1 turn.
+			bool isOuterLoop = (turns == 1);
+			bool isInnerLoop = (turns == -1);
+			if (!isOuterLoop && !isInnerLoop) {
+				// Any other number of turns is invalid.
+				return false;
+			}
+			// There can be many inner loops, but only one outer loop.
+			if (isOuterLoop) {
+				if (hasOuterLoop) {
+					return false;
+				}
+				hasOuterLoop = true;
+			}
+		}
+	}
+	return true;
+}
+
 void RuleExporter::exportRule(
 	GraphGrammar* grammar,
 	const GraphValues& leftValues,
@@ -571,6 +596,10 @@ void RuleExporter::exportRule(
 	try {
 		Graph* leftGraph = buildGraphFromValues(leftValues, primitiveGraphs);
 		Graph* rightGraph = buildGraphFromValues(rightValues, primitiveGraphs);
+		if (!loopsAreValid(leftGraph) || !loopsAreValid(rightGraph)) {
+			return;
+		}
+
 		const int numLeftVertices = (int)leftGraph->getVertices().size();
 		const int numLeftEdges = (int)leftGraph->getEdges().size();
 		const int numRightVertices = (int)rightGraph->getVertices().size();

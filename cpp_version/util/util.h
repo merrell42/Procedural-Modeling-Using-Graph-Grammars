@@ -68,4 +68,8 @@ public:
 
     // Pick a random number between two values.
     static double randomUniform(double lower, double upper);
+
+    static double fixAngle(double angle);
+    static int angleWedges(double prev, double next);
+    static int wedgeTurns(const vector<double>& angles);
 };
