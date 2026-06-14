@@ -54,11 +54,8 @@ void updateBoundaryVertices(Graph* graph) {
 	graph->setBVertices(bVertices);
 }
 
-GraphHalfEdge* boundaryHalfForBVertex(GraphVertex* bVertex) {
-	if (!bVertex) {
-		return nullptr;
-	}
-	for (auto* half : bVertex->getHalfEdges()) {
+GraphHalfEdge* findBoundaryHalfEdge(const vector<GraphHalfEdge*>& halfEdges) {
+	for (auto* half : halfEdges) {
 		if (half && !half->getEdge()) {
 			return half;
 		}
@@ -69,9 +66,9 @@ GraphHalfEdge* boundaryHalfForBVertex(GraphVertex* bVertex) {
 void updateBoundaryHalfEdges(Graph* graph) {
 	vector<GraphHalfEdge*> bHalfEdges;
 	for (auto* bVertex : graph->getBVertices()) {
-		GraphHalfEdge* bHalf = boundaryHalfForBVertex(bVertex);
+		auto* bHalf = findBoundaryHalfEdge(bVertex->getHalfEdges());
 		if (!bHalf) {
-			throw runtime_error("updateBoundaryHalfEdges: boundary vertex has no boundary half-edge");
+			throw runtime_error("updateBoundaryHalfEdges: boundary vertex has no half-edge on the boundary");
 		}
 		bHalfEdges.push_back(bHalf);
 	}
