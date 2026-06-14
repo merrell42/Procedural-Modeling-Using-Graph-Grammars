@@ -57,6 +57,7 @@ public:
     Graph* copy() const;
     void merge(Graph* other);
     void setBVertices(const vector<GraphVertex*>& verts);
+    void setBHalfEdges(const vector<GraphHalfEdge*>& halfs);
 
 private:
     vector<GraphVertex*> vertices;
