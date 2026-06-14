@@ -147,11 +147,13 @@ void exportGroups(
 ) {
 	for (const auto& group : groups) {
 		// Assumes there are only two graphs in the template set.
-		const int leftIndex = group.graphIndices[0][0];
-		const int rightIndex = group.graphIndices[1][0];
-		auto leftValues = matchers[0].getGraphValues(leftIndex);
-		auto rightValues = matchers[1].getGraphValues(rightIndex);
-		RuleExporter::exportRule(&grammar, leftValues, rightValues, primitives);
+		for (int leftIndex : group.graphIndices[0]) {
+			for (int rightIndex : group.graphIndices[1]) {
+				auto leftValues = matchers[0].getGraphValues(leftIndex);
+				auto rightValues = matchers[1].getGraphValues(rightIndex);
+				RuleExporter::exportRule(&grammar, leftValues, rightValues, primitives);
+			}
+		}
 	}
 }
 
