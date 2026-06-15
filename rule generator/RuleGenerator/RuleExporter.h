@@ -1,17 +1,23 @@
 #pragma once
 
+#include <vector>
 #include "TemplateMatcher.h"
 #include "../../cpp_version/primitives/primitives.h"
 
 class Graph;
 class GraphGrammar;
 
+struct GraphGroup {
+	vector<int> boundaryValues;
+	vector<vector<int>> graphIndices;
+};
+
 class RuleExporter {
 public:
-	static void exportRule(
-		GraphGrammar* grammar,
-		const GraphValues& leftValues,
-		const GraphValues& rightValues,
+	static void exportGroups(
+		GraphGrammar& grammar,
+		const vector<GraphGroup>& groups,
+		const vector<TemplateMatcher>& matchers,
 		Primitives* primitives
 	);
 };
