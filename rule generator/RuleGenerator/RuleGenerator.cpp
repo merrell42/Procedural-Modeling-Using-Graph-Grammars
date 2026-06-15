@@ -80,14 +80,6 @@ void printBoundaryValues(const vector<vector<int>>& boundaryValues) {
 	}
 }
 
-// A group of graphs that have the same boundary.
-struct GraphGroup {
-	// Boundary values for each boundary ID.
-	vector<int> boundaryValues;
-	// The indices of the graph values within each matcher that share these boundary values.
-	vector<vector<int>> graphIndices;
-};
-
 // Group graph values by their boundary values.
 vector<GraphGroup> groupGraphs(
 	// boundary values per graph per graph state per boundary ID.
@@ -139,24 +131,6 @@ vector<GraphGroup> filterEmptyGraphGroups(vector<GraphGroup> groups) {
 	return groups;
 }
 
-void exportGroups(
-	GraphGrammar& grammar,
-	const vector<GraphGroup>& groups,
-	const vector<TemplateMatcher>& matchers,
-	Primitives* primitives
-) {
-	for (const auto& group : groups) {
-		// Assumes there are only two graphs in the template set.
-		for (int leftIndex : group.graphIndices[0]) {
-			for (int rightIndex : group.graphIndices[1]) {
-				auto leftValues = matchers[0].getGraphValues(leftIndex);
-				auto rightValues = matchers[1].getGraphValues(rightIndex);
-				RuleExporter::exportRule(&grammar, leftValues, rightValues, primitives);
-			}
-		}
-	}
-}
-
 void printGraphGroups(const vector<GraphGroup>& groups) {
 	for (size_t k = 0; k < groups.size(); k++) {
 		const auto& group = groups[k];
@@ -196,7 +170,7 @@ int GenerateRules(
 		vector<EdgeType*> eTypes;
 		for (size_t i = 0; i < primitives->edgeTypes.size(); i++) {
 			EdgeType* eType = primitives->edgeTypes[i];
-			if (types["edgeTypes"].size() > i && types["edgeTypes"][i].contains("id")) {
+			if (types["edgeTypes"][i].contains("id")) {
 				eType->setRuleGeneratorId(types["edgeTypes"][i]["id"].get<string>());
 			} else {
 				// Generate ID from index if not present in JSON.
@@ -211,8 +185,11 @@ int GenerateRules(
 			VertexType* vType = primitives->vertexTypes[i];
 			
 			// Set ruleGeneratorId if present in JSON.
-			if (types["vertexTypes"].size() > i && types["vertexTypes"][i].contains("id")) {
+			if (types["vertexTypes"][i].contains("id")) {
 				vType->setRuleGeneratorId(types["vertexTypes"][i]["id"].get<int>());
+			} else {
+				// Generate ID from index if not present in JSON.
+				vType->setRuleGeneratorId(i);
 			}
 			
 			vTypes.push_back(vType);
@@ -246,7 +223,7 @@ int GenerateRules(
 				printBoundaryValues(boundaryValues);
 			}
 			auto graphGroups = filterEmptyGraphGroups(groupGraphs(allBoundaryValues));
-			exportGroups(grammar, graphGroups, matchers, primitives);
+			RuleExporter::exportGroups(grammar, graphGroups, matchers, primitives);
 			cout << "    boundary values groups across graphs:\n";
 			printGraphGroups(graphGroups);
 		}

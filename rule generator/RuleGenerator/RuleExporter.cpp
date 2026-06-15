@@ -585,21 +585,12 @@ bool loopsAreValid(Graph* graph) {
 	return true;
 }
 
-void RuleExporter::exportRule(
+void exportRule(
 	GraphGrammar* grammar,
-	const GraphValues& leftValues,
-	const GraphValues& rightValues,
-	Primitives* primitives
+	Graph* leftGraph,
+	Graph* rightGraph
 ) {
-	auto primitiveGraphs = createPrimitiveGraphs(primitives);
-
 	try {
-		Graph* leftGraph = buildGraphFromValues(leftValues, primitiveGraphs);
-		Graph* rightGraph = buildGraphFromValues(rightValues, primitiveGraphs);
-		if (!loopsAreValid(leftGraph) || !loopsAreValid(rightGraph)) {
-			return;
-		}
-
 		const int numLeftVertices = (int)leftGraph->getVertices().size();
 		const int numLeftEdges = (int)leftGraph->getEdges().size();
 		const int numRightVertices = (int)rightGraph->getVertices().size();
@@ -627,5 +618,34 @@ void RuleExporter::exportRule(
 			<< numRightEdges << " edges)\n";
 	} catch (const exception& e) {
 		cerr << "    export failed: " << e.what() << "\n";
+	}
+}
+
+void RuleExporter::exportGroups(
+	GraphGrammar& grammar,
+	const vector<GraphGroup>& groups,
+	const vector<TemplateMatcher>& matchers,
+	Primitives* primitives
+) {
+	auto primitiveGraphs = createPrimitiveGraphs(primitives);
+	for (const auto& group : groups) {
+		vector<vector<unique_ptr<Graph>>> graphs(group.graphIndices.size());
+
+		for (int i = 0; i < group.graphIndices.size(); i++) {
+			for (int index : group.graphIndices[i]) {
+				auto graphValues = matchers[i].getGraphValues(index);
+				auto graph = unique_ptr<Graph>(buildGraphFromValues(graphValues, primitiveGraphs));
+				if (loopsAreValid(graph.get())) {
+					graphs[i].push_back(std::move(graph));
+				}
+			}
+		}
+
+		// Assumes there are only two graphs in the template set.
+		for (const auto& left : graphs[0]) {
+			for (const auto& right : graphs[1]) {
+				exportRule(&grammar, left->copy(), right->copy());
+			}
+		}
 	}
 }
