@@ -33,7 +33,7 @@ namespace {
 // constexpr const char* kDefaultPrimitives = "../primitives/diagonal box.json";
 
 constexpr const char* kDefaultLibrary = "../graph templates/graph_templates.json";
-constexpr const char* kDefaultPrimitives = "../primitives/square filled.json";
+constexpr const char* kDefaultPrimitives = "../primitives/square hollow.json";
 constexpr const char* kDefaultOutput = "../generatedRules.json";
 
 int usage(const char* exe) {

@@ -189,7 +189,7 @@ int GenerateRules(
 				vType->setRuleGeneratorId(types["vertexTypes"][i]["id"].get<int>());
 			} else {
 				// Generate ID from index if not present in JSON.
-				vType->setRuleGeneratorId(i);
+				vType->setRuleGeneratorId((int)i);
 			}
 			
 			vTypes.push_back(vType);

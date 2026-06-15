@@ -177,6 +177,7 @@
     <ClInclude Include="..\..\cpp_version\json versioning\read_json_file.h" />
     <ClInclude Include="..\..\cpp_version\json versioning\json_version_manager.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="isIsomorphic.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="RoundtripCommand.h" />
     <ClInclude Include="RuleExporter.h" />
@@ -249,6 +250,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="isIsomorphic.cpp" />
     <ClCompile Include="RuleExporter.cpp" />
     <ClCompile Include="RuleGenerator.cpp" />
     <ClCompile Include="State.cpp" />

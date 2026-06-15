@@ -196,37 +196,15 @@ vector<int> TemplateMatcher::findChoices() {
 }
 
 void TemplateMatcher::acceptMatch() {
-	// vector<int> newMatchTypes;
 	vector<int> newGraphStates;
 	for (int i = 0; i < numTemplateVertices; i++) {
 		int numStates = numStatesAtVertex(i);
 		for (int j = 0; j < numStates; j++) {
 			if (rejectionStep[i][j] == -1) {
-				// newMatchTypes.push_back(getState(i, j).getRuleGeneratorId());
 				newGraphStates.push_back(j);
 			}
 		}
 	}
-
-	// This was a simple way of excluding repeated graphs by looking at their types.
-	// But we should do something more sophisticated where we traverse the graph and
-	// make sure they are the same.
-	/*
-	sort(newMatchTypes.begin(), newMatchTypes.end());
-	bool included = true;
-	if (excludeRepeats) {
-		for (int i = 0; i < matchTypes.size() && included; i++) {
-			bool sameMatch = true;
-			for (int j = 0; j < numTemplateVertices; j++) {
-				if (newMatchTypes[j] != matchTypes[i][j]) {
-					sameMatch = false;
-				}
-			}
-			if (sameMatch) {
-				included = false;
-			}
-		}
-	} */
 	vertexValues.push_back(newGraphStates);
 }
 

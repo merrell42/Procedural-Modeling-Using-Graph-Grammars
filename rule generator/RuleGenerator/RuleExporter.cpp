@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "RuleExporter.h"
+#include "isIsomorphic.h"
 
 #include "../../cpp_version/graph/graph.h"
 #include "../../cpp_version/util/util.h"
@@ -560,6 +561,20 @@ Graph* buildGraphFromValues(
 	return releaseInstance(instances, finalResult);
 }
 
+bool isDuplicateGraph(
+	Graph* graph,
+	const vector<int>& vertexTypeIds,
+	const vector<unique_ptr<Graph>>& existingGraphs,
+	const vector<vector<int>>& existingVertexTypeIds
+) {
+	for (size_t j = 0; j < existingGraphs.size(); j++) {
+		if (isIsomorphic(graph, vertexTypeIds, existingGraphs[j].get(), existingVertexTypeIds[j])) {
+			return true;
+		}
+	}
+	return false;
+}
+
 bool loopsAreValid(Graph* graph) {
 	bool hasOuterLoop = false;
 	for (int i = 0; i < graph->getFaces().size(); i++) {
@@ -629,14 +644,19 @@ void RuleExporter::exportGroups(
 ) {
 	auto primitiveGraphs = createPrimitiveGraphs(primitives);
 	for (const auto& group : groups) {
-		vector<vector<unique_ptr<Graph>>> graphs(group.graphIndices.size());
+		const int numGraphs = (int)group.graphIndices.size();
+		vector<vector<unique_ptr<Graph>>> graphs(numGraphs);
+		vector<vector<vector<int>>> vertexTypeIds(numGraphs);
 
-		for (int i = 0; i < group.graphIndices.size(); i++) {
+		for (int i = 0; i < numGraphs; i++) {
 			for (int index : group.graphIndices[i]) {
 				auto graphValues = matchers[i].getGraphValues(index);
-				auto graph = unique_ptr<Graph>(buildGraphFromValues(graphValues, primitiveGraphs));
-				if (loopsAreValid(graph.get())) {
-					graphs[i].push_back(std::move(graph));
+				auto graphA = unique_ptr<Graph>(buildGraphFromValues(graphValues, primitiveGraphs));
+				auto vertexTypeIdsA = getVertexTypeIds(graphA.get());
+				if (loopsAreValid(graphA.get()) &&
+					!isDuplicateGraph(graphA.get(), vertexTypeIdsA, graphs[i], vertexTypeIds[i])) {
+					graphs[i].push_back(std::move(graphA));
+					vertexTypeIds[i].push_back(std::move(vertexTypeIdsA));
 				}
 			}
 		}
