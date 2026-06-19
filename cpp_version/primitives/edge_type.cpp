@@ -6,6 +6,8 @@
 #include "..\util\util.h"
 #include "..\util\binary_stream.h"
 #include <string>
+#define _USE_MATH_DEFINES
+#include <math.h>
 using namespace std;
 
 std::atomic<int> EdgeType::nextId{0};
@@ -110,6 +112,10 @@ const vector<FaceData>& EdgeType::getFaceData() const {
 
 const Vec3& EdgeType::getDir() const {
     return dir;
+}
+
+double EdgeType::getAngle() const {
+    return atan2(dir.getY(), dir.getX());
 }
 
 EdgeSettings* EdgeType::getEdgeSettings() const {

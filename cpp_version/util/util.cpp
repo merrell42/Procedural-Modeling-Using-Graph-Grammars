@@ -10,8 +10,11 @@
 #include "minmax.h"
 #endif
 #include <algorithm>
+#include <cmath>
 #include <stdexcept>
 #include <vector>
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 static int randomCount = 0;
 static int randomSeed = 42;
@@ -68,5 +71,42 @@ double Util::randomUniform(double lower, double upper) {
     }
     double s = randomValue();
     return s * (upper - lower) + lower;
+}
+
+double Util::fixAngle(double angle) {
+    while (angle > M_PI) {
+        angle -= 2 * M_PI;
+    }
+    while (angle <= -M_PI) {
+        angle += 2 * M_PI;
+    }
+    return angle;
+}
+
+int Util::angleWedges(double prev, double next) {
+    if (prev >= M_PI) { prev -= 2 * M_PI; }
+    if (next >= M_PI) { next -= 2 * M_PI; }
+
+    int sign = 0;
+    if (prev >= 0 && next < 0) {
+        sign = 1;
+    } else if (next >= 0 && prev < 0) {
+        sign = -1;
+    }
+
+    // The 0.01 sign makes positive turns more common when
+    // angles are in opposite directions.
+    if (abs(prev - next) + 0.01 * sign > M_PI) {
+        return sign;
+    }
+    return 0;
+}
+
+int Util::wedgeTurns(const vector<double>& angles) {
+    int turns = 0;
+    for (size_t i = 0; i + 1 < angles.size(); i++) {
+        turns += angleWedges(angles[i], angles[i + 1]);
+    }
+    return turns;
 }
 

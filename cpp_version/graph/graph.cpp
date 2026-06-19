@@ -453,6 +453,10 @@ void Graph::setBVertices(const vector<GraphVertex*>& verts) {
     bVertices = verts;
 }
 
+void Graph::setBHalfEdges(const vector<GraphHalfEdge*>& halfs) {
+    bHalfEdges = halfs;
+}
+
 void Graph::merge(Graph* other) {
     if (!other || other == this) {
         return;

@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "RuleExporter.h"
+#include "isIsomorphic.h"
 
 #include "../../cpp_version/graph/graph.h"
 #include "../../cpp_version/util/util.h"
@@ -44,7 +45,7 @@ GraphHalfEdge* firstHalfEdge(GraphVertex* vertex) {
 	return nullptr;
 }
 
-void refreshBVertices(Graph* graph) {
+void updateBoundaryVertices(Graph* graph) {
 	vector<GraphVertex*> bVertices;
 	for (auto* v : graph->getVertices()) {
 		if (v && v->getType() == edgeVertexType()) {
@@ -52,6 +53,27 @@ void refreshBVertices(Graph* graph) {
 		}
 	}
 	graph->setBVertices(bVertices);
+}
+
+GraphHalfEdge* findBoundaryHalfEdge(const vector<GraphHalfEdge*>& halfEdges) {
+	for (auto* half : halfEdges) {
+		if (half && !half->getEdge()) {
+			return half;
+		}
+	}
+	return nullptr;
+}
+
+void updateBoundaryHalfEdges(Graph* graph) {
+	vector<GraphHalfEdge*> bHalfEdges;
+	for (auto* bVertex : graph->getBVertices()) {
+		auto* bHalf = findBoundaryHalfEdge(bVertex->getHalfEdges());
+		if (!bHalf) {
+			throw runtime_error("updateBoundaryHalfEdges: boundary vertex has no half-edge on the boundary");
+		}
+		bHalfEdges.push_back(bHalf);
+	}
+	graph->setBHalfEdges(bHalfEdges);
 }
 
 vector<pair<GraphVertex*, GraphVertex*>> findLoopables(Graph* graph) {
@@ -214,7 +236,7 @@ GlueTrack glueVertices(
 
 	netA->removeVertex(vertexA);
 	netA->removeVertex(vertexB);
-	refreshBVertices(netA);
+	updateBoundaryVertices(netA);
 
 	const auto& newBVertices = netA->getBVertices();
 	GlueTrack track;
@@ -300,13 +322,10 @@ Graph* createVertexGraph(VertexType* vType) {
 		const auto& faceData = edgeType->getFaceData();
 		for (size_t faceIndex = 0; faceIndex < faceData.size(); faceIndex++) {
 			const auto& faceDatum = faceData[faceIndex];
-			// Match ms.endpoint.oriented / ms.graphEndpoint.oriented:
-			// forward = onRight XOR (isAtStart ? 0 : 1)
-			bool forward = faceDatum.onRight ^ !isAtStart;
+			int position = faceDatum.onRight ^ isAtStart;
+			bool forward = !faceDatum.onRight;
 			auto* half = (new GraphHalfEdge(forward))->connectGraph(graph);
 			half->connectEdge(graphEdge, (int)faceIndex);
-
-			int position = faceDatum.onRight ^ isAtStart;
 			int faceId = connectionFaceIds[connIndex][faceIndex];
 			auto& faceInfo = faceInfos[faceId];
 			if (!faceInfo.type) {
@@ -364,14 +383,13 @@ Graph* createEdgeGraph(EdgeType* eType) {
 	for (size_t faceIndex = 0; faceIndex < faceData.size(); faceIndex++) {
 		const auto& faceDatum = faceData[faceIndex];
 		bool onRight = faceDatum.onRight;
-		bool start0 = !onRight;
-		// hStart attaches to the start endpoint (bVertex0 when start0).
-		bool forward = onRight ^ !start0;
+		bool forward = !onRight;
 
 		auto* hStart = (new GraphHalfEdge(forward))->connectGraph(graph);
 		auto* hEnd = (new GraphHalfEdge(false))->connectGraph(graph);
 		hStart->connectEdge(graphEdge, (int)faceIndex);
 
+		bool start0 = !onRight;
 		hStart->connectVertex(start0 ? bVertex0 : bVertex1, -1);
 		hEnd->connectVertex(start0 ? bVertex1 : bVertex0, -1);
 
@@ -455,7 +473,9 @@ Graph* buildGraphFromValues(
 	Graph* finalResult = nullptr;
 
 	if (edgeQueue.empty()) {
-		return instances[0].release();
+		Graph* result = instances[0].release();
+		updateBoundaryHalfEdges(result);
+		return result;
 	}
 
 	while (!edgeQueue.empty()) {
@@ -537,20 +557,55 @@ Graph* buildGraphFromValues(
 	if (!finalResult) {
 		throw runtime_error("buildGraphFromValues: no result");
 	}
+	updateBoundaryHalfEdges(finalResult);
 	return releaseInstance(instances, finalResult);
 }
 
-void RuleExporter::exportRule(
-	GraphGrammar* grammar,
-	const GraphValues& leftValues,
-	const GraphValues& rightValues,
-	Primitives* primitives
+bool isDuplicateGraph(
+	Graph* graph,
+	const vector<int>& vertexTypeIds,
+	const vector<unique_ptr<Graph>>& existingGraphs,
+	const vector<vector<int>>& existingVertexTypeIds
 ) {
-	auto primitiveGraphs = createPrimitiveGraphs(primitives);
+	for (size_t j = 0; j < existingGraphs.size(); j++) {
+		if (isIsomorphic(graph, vertexTypeIds, existingGraphs[j].get(), existingVertexTypeIds[j])) {
+			return true;
+		}
+	}
+	return false;
+}
 
+bool loopsAreValid(Graph* graph) {
+	bool hasOuterLoop = false;
+	for (int i = 0; i < graph->getFaces().size(); i++) {
+		auto* face = graph->getFaces()[i];
+		if (face->isLoopy()) {
+			int turns = face->computeTurns();
+			// An outer loop has 1 turn, an inner loop has -1 turn.
+			bool isOuterLoop = (turns == 1);
+			bool isInnerLoop = (turns == -1);
+			if (!isOuterLoop && !isInnerLoop) {
+				// Any other number of turns is invalid.
+				return false;
+			}
+			// There can be many inner loops, but only one outer loop.
+			if (isOuterLoop) {
+				if (hasOuterLoop) {
+					return false;
+				}
+				hasOuterLoop = true;
+			}
+		}
+	}
+	return true;
+}
+
+void exportRule(
+	GraphGrammar* grammar,
+	Graph* leftGraph,
+	Graph* rightGraph
+) {
 	try {
-		Graph* leftGraph = buildGraphFromValues(leftValues, primitiveGraphs);
-		Graph* rightGraph = buildGraphFromValues(rightValues, primitiveGraphs);
 		const int numLeftVertices = (int)leftGraph->getVertices().size();
 		const int numLeftEdges = (int)leftGraph->getEdges().size();
 		const int numRightVertices = (int)rightGraph->getVertices().size();
@@ -578,5 +633,39 @@ void RuleExporter::exportRule(
 			<< numRightEdges << " edges)\n";
 	} catch (const exception& e) {
 		cerr << "    export failed: " << e.what() << "\n";
+	}
+}
+
+void RuleExporter::exportGroups(
+	GraphGrammar& grammar,
+	const vector<GraphGroup>& groups,
+	const vector<TemplateMatcher>& matchers,
+	Primitives* primitives
+) {
+	auto primitiveGraphs = createPrimitiveGraphs(primitives);
+	for (const auto& group : groups) {
+		const int numGraphs = (int)group.graphIndices.size();
+		vector<vector<unique_ptr<Graph>>> graphs(numGraphs);
+		vector<vector<vector<int>>> vertexTypeIds(numGraphs);
+
+		for (int i = 0; i < numGraphs; i++) {
+			for (int index : group.graphIndices[i]) {
+				auto graphValues = matchers[i].getGraphValues(index);
+				auto graphA = unique_ptr<Graph>(buildGraphFromValues(graphValues, primitiveGraphs));
+				auto vertexTypeIdsA = getVertexTypeIds(graphA.get());
+				if (loopsAreValid(graphA.get()) &&
+					!isDuplicateGraph(graphA.get(), vertexTypeIdsA, graphs[i], vertexTypeIds[i])) {
+					graphs[i].push_back(std::move(graphA));
+					vertexTypeIds[i].push_back(std::move(vertexTypeIdsA));
+				}
+			}
+		}
+
+		// Assumes there are only two graphs in the template set.
+		for (const auto& left : graphs[0]) {
+			for (const auto& right : graphs[1]) {
+				exportRule(&grammar, left->copy(), right->copy());
+			}
+		}
 	}
 }
