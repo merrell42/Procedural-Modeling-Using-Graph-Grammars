@@ -58,8 +58,8 @@ const History = {
             window.editor2.selectedVertexIndex = clampSelection(snap.sel2, snap.e2.vertices.length);
             window.library = structuredClone(snap.library);
             window.activeIdx = clampActive(snap.activeIdx, window.library.length);
-            window.editor1.updateDisplay();
-            window.editor2.updateDisplay();
+            window.editor1.refreshTemplate();
+            window.editor2.refreshTemplate();
             updateLibraryUI();
         } finally {
             this.suspended = false;
@@ -102,7 +102,11 @@ class TemplateEditor {
         // Graph template data structure.
         this.graphTemplate = {
             vertices: [],
-            numEdges: 0
+            numEdges: 0,
+            edgeComponentIds: [],
+            numConnectedComponents: 0,
+            edgesByComponent: new Map(),
+            splices: [],
         };
         
         // DOM element references.
@@ -143,7 +147,7 @@ class TemplateEditor {
         this.canvas.addEventListener('mouseleave', this.handleCanvasMouseLeave);
         
         
-        this.updateDisplay();
+        this.refreshTemplate();
     }
     
     // Resize canvas to fit container.
@@ -163,7 +167,7 @@ class TemplateEditor {
         this.canvas.style.setProperty('max-height', 'none', 'important');
         
         // Redraw after resize.
-        this.updateDisplay();
+        this.refreshTemplate();
     }
     
     // Check if a point is within a vertex's radius.
@@ -199,6 +203,29 @@ class TemplateEditor {
         }
     }
     
+    // Remove an edge from both endpoints, decrement numEdges, and renumber remaining indices.
+    removeEdgeFromGraph(edgeIndex) {
+        const affectedVertices = [];
+        for (const vertex of this.graphTemplate.vertices) {
+            const connectionIndex = vertex.connections.indexOf(edgeIndex);
+            if (connectionIndex !== -1) {
+                vertex.connections.splice(connectionIndex, 1);
+                affectedVertices.push(vertex);
+            }
+        }
+        this.graphTemplate.numEdges--;
+        for (const vertex of this.graphTemplate.vertices) {
+            for (let i = 0; i < vertex.connections.length; i++) {
+                if (vertex.connections[i] > edgeIndex) {
+                    vertex.connections[i]--;
+                }
+            }
+        }
+        for (const vertex of affectedVertices) {
+            this.updateOnBoundaryForVertex(vertex);
+        }
+    }
+
     // Insert edge in counter-clockwise order around a vertex.
     insertEdgeInOrder(vertex, edgeIndex, newAngle) {
         // Normalize angle to [0, 2π] range.
@@ -316,11 +343,11 @@ class TemplateEditor {
                 // Set to empty string.
                 this.removeBoundaryVertexInOtherTemplate(vertex.boundaryId);
                 vertex.boundaryId = '';
-                this.updateDisplay();
+                this.refreshTemplate();
             } else if (vertex.connections.length === 1) {
                 // Only allow setting to true if vertex has exactly one edge.
                 vertex.boundaryId = this.generateboundaryId();
-                this.updateDisplay();
+                this.refreshTemplate();
                 
                 // Add boundary vertex at same position in other template.
                 this.addBoundaryVertexInOtherTemplate(position, vertex.boundaryId);
@@ -409,14 +436,12 @@ class TemplateEditor {
                     
                     // Update onBoundary for the two vertices involved in the edge.
                     this.updateOnBoundaryForVertex(v1);
-                    this.updateOnBoundaryForVertex(v2);
-                    
-                } else {
+                    this.updateOnBoundaryForVertex(v2);   
                 }
                 
                 this.selectedVertexIndex = null;
             }
-            this.updateDisplay();
+            this.refreshTemplate();
         } else {
             // Clicked on empty space.
             if (this.selectedVertexIndex === null) {
@@ -428,7 +453,7 @@ class TemplateEditor {
                 };
                 
                 this.graphTemplate.vertices.push(vertex);
-                this.updateDisplay();
+                this.refreshTemplate();
             } else {
                 // In edge creation mode - add vertex and connect it to selected vertex.
                 const newVertex = {
@@ -459,7 +484,7 @@ class TemplateEditor {
                 
                 const selectedIndex = this.selectedVertexIndex;
                 this.selectedVertexIndex = null;
-                this.updateDisplay();
+                this.refreshTemplate();
             }
         }
     }
@@ -489,6 +514,18 @@ class TemplateEditor {
                 }
             });
         });
+
+        // Draw splices connecting disconnected edge components.
+        this.ctx.setLineDash([4, 4]);
+        for (const splice of this.graphTemplate.splices || []) {
+            this.ctx.beginPath();
+            this.ctx.moveTo(splice.p1.x, splice.p1.y);
+            this.ctx.lineTo(splice.p2.x, splice.p2.y);
+            this.ctx.strokeStyle = '#888888';
+            this.ctx.lineWidth = 1;
+            this.ctx.stroke();
+        }
+        this.ctx.setLineDash([]);
         
         // Draw existing vertices.
         this.graphTemplate.vertices.forEach((vertex, index) => {
@@ -549,8 +586,9 @@ class TemplateEditor {
         }
     }
     
-    // Update all displays.
-    updateDisplay() {
+    // Recompute derived template state and redraw the canvas.
+    refreshTemplate() {
+        updateTemplate(this.graphTemplate, this.templateId);
         this.drawVertices();
     }
     
@@ -607,7 +645,7 @@ class TemplateEditor {
             position: { x: otherPosition.x, y: otherPosition.y }
         };
         otherEditor.graphTemplate.vertices.push(newVertex);
-        otherEditor.updateDisplay();
+        otherEditor.refreshTemplate();
     }
     
     // Remove boundary vertex from other template when boundaryId changes from non-empty to empty.
@@ -620,14 +658,22 @@ class TemplateEditor {
         const vertexIndex = otherEditor.graphTemplate.vertices.findIndex(v => v.boundaryId === boundaryId);
         
         if (vertexIndex !== -1) {
-            // Delete the vertex.
+            const vertex = otherEditor.graphTemplate.vertices[vertexIndex];
+            const edgesToRemove = [...vertex.connections].sort((a, b) => b - a);
+
             otherEditor.graphTemplate.vertices.splice(vertexIndex, 1);
             if (otherEditor.selectedVertexIndex === vertexIndex) {
                 otherEditor.selectedVertexIndex = null;
             } else if (otherEditor.selectedVertexIndex > vertexIndex) {
                 otherEditor.selectedVertexIndex--;
             }
-            otherEditor.updateDisplay();
+
+            // Edges to a boundary placeholder only exist on this template; delete them entirely.
+            for (const edgeIndex of edgesToRemove) {
+                otherEditor.removeEdgeFromGraph(edgeIndex);
+            }
+
+            otherEditor.refreshTemplate();
         }
     }
     
@@ -649,7 +695,7 @@ class TemplateEditor {
             this.selectedVertexIndex = null;
             this.hoveredVertexIndex = null;
             
-            this.updateDisplay();
+            this.refreshTemplate();
         } else {
             throw new Error('Invalid format: missing or invalid "vertices" array');
         }
@@ -692,8 +738,8 @@ function clearBothCanvases() {
     editor2.graphTemplate.numEdges = 0;
     editor2.selectedVertexIndex = null;
     editor2.hoveredVertexIndex = null;
-    editor1.updateDisplay();
-    editor2.updateDisplay();
+    editor1.refreshTemplate();
+    editor2.refreshTemplate();
 }
 
 // Distinguish the three import shapes the editor accepts:
@@ -721,7 +767,7 @@ function loadLibraryEntry(idx) {
         editor1.graphTemplate.vertices = [];
         editor1.graphTemplate.numEdges = 0;
         editor1.selectedVertexIndex = null;
-        editor1.updateDisplay();
+        editor1.refreshTemplate();
     }
     if (g1) {
         editor2.handleFileImportData(g1);
@@ -729,7 +775,7 @@ function loadLibraryEntry(idx) {
         editor2.graphTemplate.vertices = [];
         editor2.graphTemplate.numEdges = 0;
         editor2.selectedVertexIndex = null;
-        editor2.updateDisplay();
+        editor2.refreshTemplate();
     }
     window.activeIdx = idx;
     markClean();
