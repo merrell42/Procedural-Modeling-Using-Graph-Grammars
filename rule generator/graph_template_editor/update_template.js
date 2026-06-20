@@ -7,7 +7,6 @@ function updateEdgeConnectedComponents(graphTemplate) {
     const n = graphTemplate.edges.length;
     if (n === 0) {
         graphTemplate.edgeComponentIds = [];
-        graphTemplate.numConnectedComponents = 0;
         graphTemplate.edgesByComponent = new Map();
         return;
     }
@@ -50,7 +49,6 @@ function updateEdgeConnectedComponents(graphTemplate) {
     }
 
     graphTemplate.edgeComponentIds = edgeComponentIds;
-    graphTemplate.numConnectedComponents = rootToId.size;
     graphTemplate.edgesByComponent = edgesByComponent;
 }
 
@@ -190,7 +188,7 @@ function minDistanceBetweenEdgeSets(graphTemplate, edgesA, edgesB) {
 // Connect all edge components with gray splices using a minimum spanning tree
 // on component-to-component distances (closest edge pair per component pair).
 function updateSplices(graphTemplate) {
-    const numComponents = graphTemplate.numConnectedComponents;
+    const numComponents = graphTemplate.edgesByComponent.size;
     if (numComponents <= 1) {
         graphTemplate.splices = [];
         return;
@@ -249,18 +247,7 @@ function updateSplices(graphTemplate) {
     graphTemplate.splices = splices;
 }
 
-function updateComponentCountDisplay(templateId, numConnectedComponents) {
-    const el = document.getElementById(`template${templateId}ComponentCount`);
-    if (!el) return;
-    if (numConnectedComponents === 0) {
-        el.textContent = '(0 components)';
-    } else {
-        el.textContent = `(${numConnectedComponents} component${numConnectedComponents === 1 ? '' : 's'})`;
-    }
-}
-
-function updateTemplate(graphTemplate, templateId) {
+function updateTemplate(graphTemplate) {
     updateEdgeConnectedComponents(graphTemplate);
     updateSplices(graphTemplate);
-    updateComponentCountDisplay(templateId, graphTemplate.numConnectedComponents);
 }

@@ -227,12 +227,6 @@ button.danger:hover {
     display: none;
 }
 
-.component-count {
-    font-size: 0.75em;
-    font-weight: normal;
-    color: #666;
-}
-
 .vertex-item button {
     padding: 5px 10px;
     font-size: 12px;

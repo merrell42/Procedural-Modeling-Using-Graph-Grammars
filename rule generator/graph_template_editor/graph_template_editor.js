@@ -115,7 +115,6 @@ class TemplateEditor {
             vertices: [],
             edges: [],
             edgeComponentIds: [],
-            numConnectedComponents: 0,
             edgesByComponent: new Map(),
             splices: [],
         };
@@ -413,6 +412,7 @@ class TemplateEditor {
         History.commit();
 
         // Check if clicking on a vertex.
+        const vIndex1 = this.selectedVertexIndex;
         const vIndex2 = this.findVertexAt(x, y);
         
         if (vIndex2 !== null) {
@@ -425,12 +425,11 @@ class TemplateEditor {
                 this.selectedVertexIndex = null;
             } else {
                 // Second vertex selected - create edge.
-                const vIndex1 = this.selectedVertexIndex;
                 const v1 = this.graphTemplate.vertices[vIndex1];
                 const v2 = this.graphTemplate.vertices[vIndex2];
                 
                 // Check if edge already exists (vertices share a common edge index).
-                if (this.findEdgeBetween(vIndex1, vIndex2) === -1) {
+                if (!this.findEdgeBetween(vIndex1, vIndex2)) {
                     // Add edge indices (using current numEdges as the edge index).
                     const edgeIndex = this.graphTemplate.edges.length;
                     this.graphTemplate.edges.push({
@@ -477,16 +476,16 @@ class TemplateEditor {
                 this.graphTemplate.vertices.push(newVertex);
                 
                 // Create edge between selected vertex and new vertex.
-                const v1 = this.graphTemplate.vertices[this.selectedVertexIndex];
+                const v1 = this.graphTemplate.vertices[vIndex1];
                 const edgeIndex = this.graphTemplate.edges.length;
                 this.graphTemplate.edges.push({
-                    start: this.selectedVertexIndex,
+                    start: vIndex1,
                     end: newVertexIndex,
                 });
 
                 // Calculate angle from v1 to new vertex for counter-clockwise ordering.
                 const angle1 = Math.atan2(newVertex.position.y - v1.position.y, newVertex.position.x - v1.position.x);
-                this.insertEdgeInOrder(this.selectedVertexIndex, edgeIndex, angle1);
+                this.insertEdgeInOrder(vIndex1, edgeIndex, angle1);
 
                 // Calculate angle from new vertex to v1 for counter-clockwise ordering.
                 const angle2 = Math.atan2(v1.position.y - newVertex.position.y, v1.position.x - newVertex.position.x);
@@ -495,8 +494,7 @@ class TemplateEditor {
                 // Update onBoundary for the two vertices involved in the edge.
                 this.updateOnBoundaryForVertex(v1);
                 this.updateOnBoundaryForVertex(newVertex);
-                
-                const selectedIndex = this.selectedVertexIndex;
+
                 this.selectedVertexIndex = null;
                 this.refreshTemplate();
             }
@@ -593,7 +591,7 @@ class TemplateEditor {
     
     // Recompute derived template state and redraw the canvas.
     refreshTemplate() {
-        updateTemplate(this.graphTemplate, this.templateId);
+        updateTemplate(this.graphTemplate);
         this.drawVertices();
     }
     
