@@ -13,11 +13,14 @@ TemplateEdge TemplateEdge::import(const Json& j) {
     if (j.contains("end") && j["end"].is_number_integer()) {
         e.end = j["end"].get<int>();
     }
+    if (j.contains("spliced") && j["spliced"].is_boolean()) {
+        e.spliced = j["spliced"].get<bool>();
+    }
     return e;
 }
 
 Json TemplateEdge::toJson() const {
-    return Json{ {"start", start}, {"end", end} };
+    return Json{ {"start", start}, {"end", end}, {"spliced", spliced} };
 }
 
 TemplateVertex TemplateVertex::import(const Json& j) {
@@ -37,6 +40,9 @@ TemplateVertex TemplateVertex::import(const Json& j) {
             v.posY = p["y"].get<double>();
         }
     }
+    if (j.contains("spliced") && j["spliced"].is_boolean()) {
+        v.spliced = j["spliced"].get<bool>();
+    }
     return v;
 }
 
@@ -45,6 +51,7 @@ Json TemplateVertex::toJson() const {
     j["connections"] = connections;
     j["boundaryId"]  = boundaryId;
     j["position"]    = Json{ {"x", posX}, {"y", posY} };
+    j["spliced"]     = spliced;
     return j;
 }
 

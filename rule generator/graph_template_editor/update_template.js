@@ -159,6 +159,13 @@ function closestPointsOnSegments(a, b, c, d) {
     };
 }
 
+function parametricTOnSegment(point, endpointA, endpointB) {
+    const dx = endpointB.x - endpointA.x;
+    const dy = endpointB.y - endpointA.y;
+    const lengthSq = dx * dx + dy * dy;
+    return dot(point.x - endpointA.x, point.y - endpointA.y, dx, dy) / lengthSq;
+}
+
 function minDistanceBetweenEdgeSets(graphTemplate, edgesA, edgesB) {
     let closest = null;
     for (const edgeA of edgesA) {
@@ -173,15 +180,25 @@ function minDistanceBetweenEdgeSets(graphTemplate, edgesA, edgesB) {
                     pointB: result.pointB,
                     segA,
                     segB,
+                    edgeA,
+                    edgeB,
                 };
             }
         }
     }
-    if (!closest) return null;
+    if (!closest) {
+        return null;
+    }
+    const pointA = moveSpliceAwayFromEndpoints(closest.pointA, closest.segA.a, closest.segA.b);
+    const pointB = moveSpliceAwayFromEndpoints(closest.pointB, closest.segB.a, closest.segB.b);
     return {
         dist: closest.dist,
-        pointA: moveSpliceAwayFromEndpoints(closest.pointA, closest.segA.a, closest.segA.b),
-        pointB: moveSpliceAwayFromEndpoints(closest.pointB, closest.segB.a, closest.segB.b),
+        pointA,
+        pointB,
+        edgeA: closest.edgeA,
+        edgeB: closest.edgeB,
+        tA: parametricTOnSegment(pointA, closest.segA.a, closest.segA.b),
+        tB: parametricTOnSegment(pointB, closest.segB.a, closest.segB.b),
     };
 }
 
@@ -208,9 +225,7 @@ function updateSplices(graphTemplate) {
                 candidateSplices.push({
                     componentA: componentIds[i],
                     componentB: componentIds[j],
-                    dist: closest.dist,
-                    p1: closest.pointA,
-                    p2: closest.pointB,
+                    ...closest,
                 });
             }
         }
@@ -239,9 +254,12 @@ function updateSplices(graphTemplate) {
 
     const splices = [];
     for (const candidate of candidateSplices) {
-        if (find(candidate.componentA) === find(candidate.componentB)) continue;
-        union(candidate.componentA, candidate.componentB);
-        splices.push({ p1: candidate.p1, p2: candidate.p2 });
+        const { componentA, componentB, dist, ...splice } = candidate;
+        if (find(componentA) === find(componentB)) {
+            continue;
+        }
+        union(componentA, componentB);
+        splices.push({ ...splice });
     }
 
     graphTemplate.splices = splices;

@@ -100,8 +100,13 @@ function cloneGraphData(graph) {
             connections: v.connections || [],
             boundaryId: v.boundaryId || '',
             position: { ...v.position },
+            spliced: v.spliced ?? false,
         })),
-        edges: graph.edges.map(e => ({ start: e.start, end: e.end })),
+        edges: graph.edges.map(e => ({
+            start: e.start,
+            end: e.end,
+            spliced: e.spliced ?? false,
+        })),
     };
 }
 
@@ -522,8 +527,8 @@ class TemplateEditor {
         this.ctx.setLineDash([4, 4]);
         for (const splice of this.graphTemplate.splices || []) {
             this.ctx.beginPath();
-            this.ctx.moveTo(splice.p1.x, splice.p1.y);
-            this.ctx.lineTo(splice.p2.x, splice.p2.y);
+            this.ctx.moveTo(splice.pointA.x, splice.pointA.y);
+            this.ctx.lineTo(splice.pointB.x, splice.pointB.y);
             this.ctx.strokeStyle = '#888888';
             this.ctx.lineWidth = 1;
             this.ctx.stroke();
@@ -820,6 +825,15 @@ function serializeLibraryEntry(entry) {
     };
 }
 
+function serializeLibraryEntryForExport(entry) {
+    return {
+        comment: entry.comment ?? '',
+        graphs: Array.isArray(entry.graphs)
+            ? entry.graphs.map(g => exportGraphWithSplices(g))
+            : [],
+    };
+}
+
 function confirmDiscardUnsaved() {
     if (!hasUnsavedEdits()) return true;
     return window.confirm('You have unsaved edits to the current entry. Discard them?');
@@ -864,9 +878,15 @@ document.addEventListener('DOMContentLoaded', () => {
     exportAllBtn.addEventListener('click', () => {
         let out;
         if (window.library.length === 0) {
-            out = [snapshotCurrentPair()];
+            out = [{
+                comment: '',
+                graphs: [
+                    exportGraphWithSplices(editor1.graphTemplate),
+                    exportGraphWithSplices(editor2.graphTemplate),
+                ],
+            }];
         } else {
-            out = window.library.map(serializeLibraryEntry);
+            out = window.library.map(serializeLibraryEntryForExport);
         }
         const json = JSON.stringify(out, null, 2);
         const blob = new Blob([json], { type: 'application/json' });
@@ -881,8 +901,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Per-pair export.
     exportPairBtn.addEventListener('click', () => {
         const combined = [
-            cloneGraphData(editor1.graphTemplate),
-            cloneGraphData(editor2.graphTemplate),
+            exportGraphWithSplices(editor1.graphTemplate),
+            exportGraphWithSplices(editor2.graphTemplate),
         ];
         const json = JSON.stringify(combined, null, 2);
         const blob = new Blob([json], { type: 'application/json' });

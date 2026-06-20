@@ -11,6 +11,7 @@ using Json = nlohmann::json;
 struct TemplateEdge {
     int start = 0;
     int end = 0;
+    bool spliced = false;
 
     static TemplateEdge import(const Json& j);
     Json toJson() const;
@@ -33,6 +34,7 @@ struct TemplateVertex {
     // so a template can be saved without losing its visual layout.
     double posX = 0.0;
     double posY = 0.0;
+    bool spliced = false;
 
     static TemplateVertex import(const Json& j);
     Json toJson() const;
