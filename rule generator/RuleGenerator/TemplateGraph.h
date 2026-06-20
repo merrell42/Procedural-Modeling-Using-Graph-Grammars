@@ -7,6 +7,15 @@
 
 using Json = nlohmann::json;
 
+// One edge in a graph template.
+struct TemplateEdge {
+    int start = 0;
+    int end = 0;
+
+    static TemplateEdge import(const Json& j);
+    Json toJson() const;
+};
+
 // One vertex in a graph template.
 struct TemplateVertex {
     // Edge indices incident to this vertex, ordered CCW around the vertex
@@ -32,7 +41,7 @@ struct TemplateVertex {
 // One graph in a template set (left or right side of a production rule).
 struct TemplateGraph {
     std::vector<TemplateVertex> vertices;
-    int numEdges = 0;
+    std::vector<TemplateEdge> edges;
 
     static TemplateGraph import(const Json& j);
     Json toJson() const;
@@ -50,8 +59,7 @@ struct TemplateGraphSet {
 };
 
 // Reads the library JSON at `path` and returns every entry. Throws on I/O or
-// schema errors. The JSON is expected at the root as either an array of
-// entries (the standard library format) or a single entry (legacy).
+// schema errors. The JSON root must be an array of entries.
 std::vector<TemplateGraphSet> importTemplateGraphs(const std::string& path);
 
 // Symmetric writer. Serializes `sets` as a JSON array, two-space indented.

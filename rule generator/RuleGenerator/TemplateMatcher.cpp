@@ -27,16 +27,9 @@ TemplateMatcher::TemplateMatcher(
 	numEdgeStates = (int)edgeStates.size();
 	numTemplateVertices = (int)templateGraph.vertices.size();
 
-	// Build eConnections from vertices.
-	for (int i = 0; i < templateGraph.numEdges; i++) {
-		eConnections.push_back(vector<int>());
-	}
-	for (int i = 0; i < templateGraph.vertices.size(); i++) {
-		auto connections = templateGraph.vertices[i].connections;
-		for (int j = 0; j < connections.size(); j++) {
-			int edgeIndex = connections[j];
-			eConnections[edgeIndex].push_back(i);
-		}
+	// Build eConnections from explicit edge list.
+	for (const auto& edge : templateGraph.edges) {
+		eConnections.push_back({edge.start, edge.end});
 	}
 
 	// -1 means not rejected.

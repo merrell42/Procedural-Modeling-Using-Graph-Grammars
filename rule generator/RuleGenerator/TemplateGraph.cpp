@@ -5,6 +5,21 @@
 #include <sstream>
 #include <stdexcept>
 
+TemplateEdge TemplateEdge::import(const Json& j) {
+    TemplateEdge e;
+    if (j.contains("start") && j["start"].is_number_integer()) {
+        e.start = j["start"].get<int>();
+    }
+    if (j.contains("end") && j["end"].is_number_integer()) {
+        e.end = j["end"].get<int>();
+    }
+    return e;
+}
+
+Json TemplateEdge::toJson() const {
+    return Json{ {"start", start}, {"end", end} };
+}
+
 TemplateVertex TemplateVertex::import(const Json& j) {
     TemplateVertex v;
     if (j.contains("connections") && j["connections"].is_array()) {
@@ -40,8 +55,10 @@ TemplateGraph TemplateGraph::import(const Json& j) {
             g.vertices.push_back(TemplateVertex::import(v));
         }
     }
-    if (j.contains("numEdges") && j["numEdges"].is_number_integer()) {
-        g.numEdges = j["numEdges"].get<int>();
+    if (j.contains("edges") && j["edges"].is_array()) {
+        for (const auto& e : j["edges"]) {
+            g.edges.push_back(TemplateEdge::import(e));
+        }
     }
     return g;
 }
@@ -51,7 +68,9 @@ Json TemplateGraph::toJson() const {
     Json verts = Json::array();
     for (const auto& v : vertices) verts.push_back(v.toJson());
     j["vertices"] = verts;
-    j["numEdges"] = numEdges;
+    Json edgeArr = Json::array();
+    for (const auto& e : edges) edgeArr.push_back(e.toJson());
+    j["edges"] = edgeArr;
     return j;
 }
 
@@ -86,14 +105,10 @@ std::vector<TemplateGraphSet> importTemplateGraphs(const std::string& path) {
 
     std::vector<TemplateGraphSet> out;
     if (root.is_array()) {
-        // Standard format: array of entries.
         for (const auto& e : root) out.push_back(TemplateGraphSet::import(e));
-    } else if (root.is_object()) {
-        // Legacy single-entry: wrap it.
-        out.push_back(TemplateGraphSet::import(root));
     } else {
         throw std::runtime_error(
-            "importTemplateGraphs: root must be array or object in " + path);
+            "importTemplateGraphs: root must be array in " + path);
     }
     return out;
 }

@@ -8,7 +8,7 @@
 //                          `.roundtrip.json` sibling, re-parses both, and
 //                          compares as JSON. Pass = TemplateGraph import +
 //                          toJson are inverses (proves boundaryId / position
-//                          / numEdges all survive — the matcher only reads
+//                          / edges all survive — the matcher only reads
 //                          connections, so these fields would otherwise be
 //                          silently broken).
 //

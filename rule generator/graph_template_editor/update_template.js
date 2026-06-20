@@ -4,7 +4,7 @@ const OFFSET_FROM_ENDPOINT = 40;
 // Edges belong to the same connected component when they share a vertex
 // (directly or through a chain of edges). Recomputed whenever the graph changes.
 function updateEdgeConnectedComponents(graphTemplate) {
-    const n = graphTemplate.numEdges;
+    const n = graphTemplate.edges.length;
     if (n === 0) {
         graphTemplate.edgeComponentIds = [];
         graphTemplate.numConnectedComponents = 0;
@@ -55,17 +55,10 @@ function updateEdgeConnectedComponents(graphTemplate) {
 }
 
 function getEdgeEndpoints(graphTemplate, edgeIndex) {
-    const positions = [];
-    for (const vertex of graphTemplate.vertices) {
-        if (vertex.connections.includes(edgeIndex)) {
-            positions.push(vertex.position);
-        }
-    }
-    if (positions.length !== 2) {
-        debugger;
-        return null;
-    }
-    return { a: positions[0], b: positions[1] };
+    const edge = graphTemplate.edges[edgeIndex];
+    const vStart = graphTemplate.vertices[edge.start];
+    const vEnd = graphTemplate.vertices[edge.end];
+    return { a: vStart.position, b: vEnd.position };
 }
 
 function clamp(value, min, max) {

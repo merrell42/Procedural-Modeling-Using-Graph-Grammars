@@ -233,13 +233,6 @@ button.danger:hover {
     color: #666;
 }
 
-#numEdges {
-    width: 100%;
-    padding: 5px;
-    margin-top: 5px;
-    margin-bottom: 10px;
-}
-
 .vertex-item button {
     padding: 5px 10px;
     font-size: 12px;
