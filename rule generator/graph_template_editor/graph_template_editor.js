@@ -828,7 +828,9 @@ function serializeLibraryEntry(entry) {
 function serializeLibraryEntryForExport(entry) {
     return {
         comment: entry.comment ?? '',
-        graphs: entry.graphs.map(g => exportGraphWithSplices(g)),
+        graphs: Array.isArray(entry.graphs)
+            ? entry.graphs.map(g => exportGraphWithSplices(g))
+            : [],
     };
 }
 

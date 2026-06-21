@@ -20,7 +20,6 @@ public:
             int dims);
     static Primitives* import(const Json& json);
     Json exportJson() const;
-    EdgeType* getSplicedEdgeType(FaceType* faceType);
 
     vector<VertexType*> vertexTypes;
     vector<EdgeType*> edgeTypes;

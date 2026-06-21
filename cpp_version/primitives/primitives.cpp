@@ -1,8 +1,5 @@
 #include "pch.h"
 #include "primitives.h"
-#include "../util/util.h"
-
-#include <string>
 
 Primitives::Primitives(const vector<VertexType*>& vTypes,
                  const vector<EdgeType*>& eTypes,
@@ -64,25 +61,4 @@ Json Primitives::exportJson() const {
     }
     json["vertexTypes"] = vertexTypesJson;
     return json;
-}
-
-EdgeType* Primitives::getSplicedEdgeType(FaceType* faceType) {
-    int faceIndex = indexOf(faceTypes, faceType);
-    if (faceIndex < 0) {
-        throw runtime_error("getSplicedEdgeType: unknown face type");
-    }
-    string key = to_string(faceIndex);
-    auto it = splicedEdgeTypes.find(key);
-    if (it != splicedEdgeTypes.end()) {
-        return it->second;
-    }
-
-    vector<FaceData> faceData = {
-        { faceType, true },
-        { faceType, false },
-    };
-    auto* result = new EdgeType(faceData, Vec3(0, 1, 0), false);
-    result->setSpliced(true);
-    splicedEdgeTypes[key] = result;
-    return result;
 }
