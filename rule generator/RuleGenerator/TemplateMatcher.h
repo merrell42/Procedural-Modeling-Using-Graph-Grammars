@@ -5,15 +5,20 @@
 #include "json.h"
 #include "../../cpp_version/primitives/vertex_type.h"
 #include "State.h"
+
+class FaceType;
 using namespace std;
 
 using Json = nlohmann::json;
+
+enum class PrimitiveType { Vertex, Edge, Spliced };
 
 // Mirrors json.matches[i] from ms.networkHierarchy.partialImport.
 class GraphValues {
 public:
 	vector<int> vertices;
-	vector<bool> vertexOnBoundary;
+	vector<PrimitiveType> primitiveType;
+	vector<int> spliceFaceTypeIndex;
 	vector<array<int, 4>> edges;
 };
 
@@ -43,6 +48,8 @@ public:
 	TemplateGraph templateGraph;
 	// Edge connections: which vertices are connected to each edge.
 	vector<vector<int>> eConnections;
+	vector<EdgeType*> edgeTypes;
+	vector<FaceType*> faceTypes;
 	int numTemplateVertices;
 	int numVertexStates;
 	int numEdgeStates;
@@ -54,7 +61,12 @@ public:
 	// Each value is the index of the vertex state.
 	vector<vector<int>> vertexValues;
 
-	TemplateMatcher(TemplateGraph templateGraph_, vector<VertexType*> vTypes, vector<EdgeType*> eTypes);
+	TemplateMatcher(
+		TemplateGraph templateGraph_,
+		vector<VertexType*> vTypes,
+		vector<EdgeType*> eTypes,
+		vector<FaceType*> faceTypes_
+	);
 	void match();
 	GraphValues getGraphValues(int graphIndex) const;
 
@@ -69,4 +81,19 @@ private:
 	int numStatesAtVertex(int vIndex);
 	const State& getState(int vIndex, int stateIndex) const;
 	void acceptMatch();
+	bool propagateSplicedEdge(int updateIndex, int neighbor, int connIndex, int neighborConnIndex);
+	bool propagateEdge(int updateIndex, int neighbor, int connIndex, int neighborConnIndex);
+
+	bool usesEdgeStates(int vIndex) const;
+	bool isSplicedVertex(int vIndex) const;
+	bool isBoundaryVertex(int vIndex) const;
+	int neighborAcrossEdge(int vIndex, int edgeIndex) const;
+	string getConnectionId(int vIndex, int stateIndex, int connIndex) const;
+	FaceType* faceTypeAtSpliceConnection(int vIndex, int stateIndex, int connIndex) const;
+	int spliceConnectionIndex(int vIndex) const;
+	bool spliceOnRight(int vIndex, int stateIndex) const;
+	int splicedBoundaryVertexIndex(int vIndex, int stateIndex, int connIndex) const;
+	int boundaryVertexIndex(int vIndex, int stateIndex, int templateEdgeIndex, int connIndex) const;
+	int faceTypeIndex(FaceType* faceType) const;
+	int splicedGraphIndex(int edgeTypeIndex, bool onRight) const;
 };

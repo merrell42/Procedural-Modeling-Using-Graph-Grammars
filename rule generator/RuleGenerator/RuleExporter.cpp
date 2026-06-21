@@ -2,6 +2,7 @@
 #include "RuleExporter.h"
 #include "isIsomorphic.h"
 
+#include "../../cpp_version/primitives/vertex_type.h"
 #include "../../cpp_version/graph/graph.h"
 #include "../../cpp_version/util/util.h"
 #include "../../cpp_version/graph_grammar.h"
@@ -19,6 +20,7 @@ using namespace std;
 struct PrimitiveGraphs {
 	vector<unique_ptr<Graph>> vertexGraphs;
 	vector<unique_ptr<Graph>> edgeGraphs;
+	vector<unique_ptr<Graph>> splicedGraphs;
 };
 
 struct GlueTrack {
@@ -36,6 +38,116 @@ VertexType* edgeVertexType() {
 	return type;
 }
 
+VertexType* splicedVertexType() {
+	static VertexType* type = new VertexType();
+	return type;
+}
+
+void removeGluedBoundaryVertices(Graph* graph, GraphVertex* vertexA, GraphVertex* vertexB) {
+	vector<GraphVertex*> bVertices;
+	for (auto* vertex : graph->getBVertices()) {
+		if (vertex && vertex != vertexA && vertex != vertexB) {
+			bVertices.push_back(vertex);
+		}
+	}
+	graph->setBVertices(bVertices);
+}
+
+void refreshBoundaryVertices(Graph* graph) {
+	vector<GraphVertex*> bVertices;
+	for (auto* vertex : graph->getVertices()) {
+		if (vertex && vertex->getType() == edgeVertexType()) {
+			bVertices.push_back(vertex);
+		}
+	}
+	graph->setBVertices(bVertices);
+}
+
+Graph* createGraphWithConnections(
+	VertexType* centerType,
+	const vector<HalfEdgeType>& connections
+) {
+	auto* graph = new Graph();
+	const size_t connectionCount = connections.size();
+	unordered_map<int, FaceBuildInfo> faceInfos;
+	vector<GraphVertex*> bVertices;
+	GraphVertex* center = nullptr;
+
+	vector<vector<int>> connectionFaceIds(connectionCount);
+	for (size_t connIndex = 0; connIndex < connectionCount; connIndex++) {
+		vector<int> faceIds = { (int)connIndex, (int)((connIndex + 1) % connectionCount) };
+		if (!connections[connIndex].isAtStart) {
+			reverse(faceIds.begin(), faceIds.end());
+		}
+		connectionFaceIds[connIndex] = std::move(faceIds);
+	}
+
+	for (size_t connIndex = 0; connIndex < connectionCount; connIndex++) {
+		const auto& connection = connections[connIndex];
+		EdgeType* edgeType = connection.edge;
+		bool isAtStart = connection.isAtStart;
+
+		auto* graphEdge = (new GraphEdge())->connectGraph(graph);
+		graphEdge->setType(edgeType);
+
+		auto* bVertex = (new GraphVertex())->connectGraph(graph);
+		bVertex->setType(edgeVertexType());
+		bVertices.push_back(bVertex);
+
+		if (!center) {
+			center = (new GraphVertex())->connectGraph(graph);
+			center->setType(centerType);
+		}
+
+		const auto& faceData = edgeType->getFaceData();
+		for (size_t faceIndex = 0; faceIndex < faceData.size(); faceIndex++) {
+			const auto& faceDatum = faceData[faceIndex];
+			int position = faceDatum.onRight ^ isAtStart;
+			bool forward = !faceDatum.onRight;
+			auto* half = (new GraphHalfEdge(forward))->connectGraph(graph);
+			half->connectEdge(graphEdge, (int)faceIndex);
+			int faceId = connectionFaceIds[connIndex][faceIndex];
+			auto& faceInfo = faceInfos[faceId];
+			if (!faceInfo.type) {
+				faceInfo.type = faceDatum.type;
+			}
+			if (faceInfo.hEdges[position]) {
+				throw runtime_error("createGraphWithConnections: multiple faces with the same ID within a primitive");
+			}
+			faceInfo.hEdges[position] = half;
+
+			if (position == 0) {
+				half->connectVertex(bVertex, -1);
+			} else {
+				half->connectVertex(center, -1);
+				auto* bonusHalf = (new GraphHalfEdge(false))->connectGraph(graph);
+				bonusHalf->connectVertex(bVertex, -1);
+				faceInfo.hEdges[2] = bonusHalf;
+			}
+		}
+	}
+
+	for (auto& entry : faceInfos) {
+		auto& faceInfo = entry.second;
+		if (!faceInfo.hEdges[0] || !faceInfo.hEdges[1] || !faceInfo.hEdges[2]) {
+			throw runtime_error("createGraphWithConnections: missing half-edge for face");
+		}
+		auto* face = (new GraphFace())->connectGraph(graph);
+		face->setType(faceInfo.type);
+		face->setOuterComponent(faceInfo.hEdges[0]);
+		faceInfo.hEdges[0]->connectNext(faceInfo.hEdges[1]);
+		faceInfo.hEdges[1]->connectNext(faceInfo.hEdges[2]);
+		for (auto* half : faceInfo.hEdges) {
+			if (half) {
+				half->setFace(face);
+			}
+		}
+	}
+
+	graph->setBVertices(bVertices);
+	return graph;
+}
+
 GraphHalfEdge* firstHalfEdge(GraphVertex* vertex) {
 	for (auto* half : vertex->getHalfEdges()) {
 		if (half) {
@@ -43,16 +155,6 @@ GraphHalfEdge* firstHalfEdge(GraphVertex* vertex) {
 		}
 	}
 	return nullptr;
-}
-
-void updateBoundaryVertices(Graph* graph) {
-	vector<GraphVertex*> bVertices;
-	for (auto* v : graph->getVertices()) {
-		if (v && v->getType() == edgeVertexType()) {
-			bVertices.push_back(v);
-		}
-	}
-	graph->setBVertices(bVertices);
 }
 
 GraphHalfEdge* findBoundaryHalfEdge(const vector<GraphHalfEdge*>& halfEdges) {
@@ -74,23 +176,6 @@ void updateBoundaryHalfEdges(Graph* graph) {
 		bHalfEdges.push_back(bHalf);
 	}
 	graph->setBHalfEdges(bHalfEdges);
-}
-
-vector<pair<GraphVertex*, GraphVertex*>> findLoopables(Graph* graph) {
-	vector<pair<GraphVertex*, GraphVertex*>> loopables;
-	const auto& bVertices = graph->getBVertices();
-	unordered_set<GraphVertex*> bVertexSet(bVertices.begin(), bVertices.end());
-	for (auto* face : graph->getFaces()) {
-		auto outer = face->getOuterHalfEdges();
-		for (size_t i = 0; i < outer.size(); i++) {
-			auto* v0 = outer[i]->getVertex();
-			auto* v1 = outer[(i + 1) % outer.size()]->getVertex();
-			if (v0 && v1 && v0 != v1 && bVertexSet.count(v0) && bVertexSet.count(v1)) {
-				loopables.push_back({ v0, v1 });
-			}
-		}
-	}
-	return loopables;
 }
 
 bool halfInGraph(Graph* graph, GraphHalfEdge* half) {
@@ -169,6 +254,11 @@ GraphHalfEdge* glueHalfEdges(GraphHalfEdge* half0, GraphHalfEdge* half1, Graph* 
 	auto* face1 = half1->getFace();
 	GraphFace* face = face0 ? face0 : face1;
 	if (face0 && face1 && face0 != face1) {
+		for (auto* half : graph->getHalfEdges()) {
+			if (half && half->getFace() == face1) {
+				half->setFace(face0);
+			}
+		}
 		face0->mergeInto(face1);
 		graph->removeFace(face1);
 		face = face0;
@@ -176,6 +266,46 @@ GraphHalfEdge* glueHalfEdges(GraphHalfEdge* half0, GraphHalfEdge* half1, Graph* 
 	if (face) {
 		face->replaceHalfEdge(half0, replacement);
 		face->replaceHalfEdge(half1, replacement);
+	}
+
+	for (auto* half : graph->getHalfEdges()) {
+		if (!half || half == half0 || half == half1 || half == replacement) {
+			continue;
+		}
+		if (half->getPrev() == half0 || half->getPrev() == half1) {
+			half->setPrev(replacement);
+		}
+		if (half->getNext() == half0 || half->getNext() == half1) {
+			half->connectNext(replacement);
+		}
+	}
+
+	for (auto* vertex : graph->getVertices()) {
+		if (!vertex) {
+			continue;
+		}
+		const auto& vertexHalfEdges = vertex->getHalfEdges();
+		for (size_t i = 0; i < vertexHalfEdges.size(); i++) {
+			if (vertexHalfEdges[i] == half0) {
+				vertex->setHalfEdge(replacement, (int)i);
+			} else if (vertexHalfEdges[i] == half1) {
+				vertex->setHalfEdge(nullptr, (int)i);
+			}
+		}
+	}
+
+	for (auto* edge : graph->getEdges()) {
+		if (!edge) {
+			continue;
+		}
+		auto& edgeHalfEdges = const_cast<vector<vector<GraphHalfEdge*>>&>(edge->getHalfEdges());
+		for (auto& slot : edgeHalfEdges) {
+			for (auto*& half : slot) {
+				if (half == half0 || half == half1) {
+					half = replacement;
+				}
+			}
+		}
 	}
 
 	graph->removeHalfEdge(half0);
@@ -223,6 +353,16 @@ GlueTrack glueVertices(
 	}
 	netA->removeEdge(edgeB);
 
+	auto graphHasSplicedEdge = [](Graph* graph) {
+		for (auto* edge : graph->getEdges()) {
+			if (edge && edge->getType() && edge->getType()->getSpliced()) {
+				return true;
+			}
+		}
+		return false;
+	};
+	bool involvesSplicedEdge = graphHasSplicedEdge(netA) || graphHasSplicedEdge(netB);
+
 	for (size_t i = 0; i < halfEdgesA.size(); i++) {
 		bool aOnBoundary = halfEdgesA[i][0] && halfEdgesA[i][0]->getVertex() == vertexA;
 		auto* half0 = aOnBoundary ? halfEdgesB[i][0] : halfEdgesA[i][0];
@@ -230,13 +370,47 @@ GlueTrack glueVertices(
 		if (half0 && half1) {
 			GraphHalfEdge* halfToRemove = half0->getNext();
 			glueHalfEdges(half0, half1, netA);
-			removeHalfEdge(halfToRemove, netA);
+			if (!involvesSplicedEdge && halfToRemove) {
+				removeHalfEdge(halfToRemove, netA);
+			}
+		}
+	}
+
+	unordered_set<GraphVertex*> bVertexSet(
+		netA->getBVertices().begin(),
+		netA->getBVertices().end()
+	);
+	vector<GraphVertex*> interiorVertices;
+	for (auto* vertex : netA->getVertices()) {
+		if (vertex && vertex != vertexA && vertex != vertexB && !bVertexSet.count(vertex)) {
+			interiorVertices.push_back(vertex);
+		}
+	}
+	if (!interiorVertices.empty() && involvesSplicedEdge) {
+		GraphVertex* targetInterior = interiorVertices[0];
+		for (size_t i = 1; i < interiorVertices.size(); i++) {
+			GraphVertex* extraInterior = interiorVertices[i];
+			for (auto* half : netA->getHalfEdges()) {
+				if (half && half->getVertex() == extraInterior) {
+					half->connectVertex(targetInterior, -1);
+				}
+			}
+			netA->removeVertex(extraInterior);
+		}
+		for (auto* half : netA->getHalfEdges()) {
+			if (half && (half->getVertex() == vertexA || half->getVertex() == vertexB)) {
+				half->connectVertex(targetInterior, -1);
+			}
 		}
 	}
 
 	netA->removeVertex(vertexA);
 	netA->removeVertex(vertexB);
-	updateBoundaryVertices(netA);
+	if (involvesSplicedEdge) {
+		removeGluedBoundaryVertices(netA, vertexA, vertexB);
+	} else {
+		refreshBoundaryVertices(netA);
+	}
 
 	const auto& newBVertices = netA->getBVertices();
 	GlueTrack track;
@@ -286,86 +460,7 @@ pair<unique_ptr<Graph>, GlueTrack> copyAndGlue(
 }
 
 Graph* createVertexGraph(VertexType* vType) {
-	auto* graph = new Graph();
-	const auto& halfEdgeTypes = vType->getHalfEdgeTypes();
-	unordered_map<int, FaceBuildInfo> faceInfos;
-	vector<GraphVertex*> bVertices;
-	GraphVertex* center = nullptr;
-
-	const size_t connectionCount = halfEdgeTypes.size();
-	vector<vector<int>> connectionFaceIds(connectionCount);
-	for (size_t i = 0; i < connectionCount; i++) {
-		vector<int> faceIds = { (int)i, (int)((i + 1) % connectionCount) };
-		if (!halfEdgeTypes[i].isAtStart) {
-			reverse(faceIds.begin(), faceIds.end());
-		}
-		connectionFaceIds[i] = std::move(faceIds);
-	}
-
-	for (size_t connIndex = 0; connIndex < connectionCount; connIndex++) {
-		const auto& connection = halfEdgeTypes[connIndex];
-		EdgeType* edgeType = connection.edge;
-		bool isAtStart = connection.isAtStart;
-
-		auto* graphEdge = (new GraphEdge())->connectGraph(graph);
-		graphEdge->setType(edgeType);
-
-		auto* bVertex = (new GraphVertex())->connectGraph(graph);
-		bVertex->setType(edgeVertexType());
-		bVertices.push_back(bVertex);
-
-		if (!center) {
-			center = (new GraphVertex())->connectGraph(graph);
-			center->setType(vType);
-		}
-
-		const auto& faceData = edgeType->getFaceData();
-		for (size_t faceIndex = 0; faceIndex < faceData.size(); faceIndex++) {
-			const auto& faceDatum = faceData[faceIndex];
-			int position = faceDatum.onRight ^ isAtStart;
-			bool forward = !faceDatum.onRight;
-			auto* half = (new GraphHalfEdge(forward))->connectGraph(graph);
-			half->connectEdge(graphEdge, (int)faceIndex);
-			int faceId = connectionFaceIds[connIndex][faceIndex];
-			auto& faceInfo = faceInfos[faceId];
-			if (!faceInfo.type) {
-				faceInfo.type = faceDatum.type;
-			}
-			if (faceInfo.hEdges[position]) {
-				throw runtime_error("createVertexGraph: multiple faces with the same ID within a primitive");
-			}
-			faceInfo.hEdges[position] = half;
-
-			if (position == 0) {
-				half->connectVertex(bVertex, -1);
-			} else {
-				half->connectVertex(center, -1);
-				auto* bonusHalf = (new GraphHalfEdge(false))->connectGraph(graph);
-				bonusHalf->connectVertex(bVertex, -1);
-				faceInfo.hEdges[2] = bonusHalf;
-			}
-		}
-	}
-
-	for (auto& entry : faceInfos) {
-		auto& faceInfo = entry.second;
-		if (!faceInfo.hEdges[0] || !faceInfo.hEdges[1] || !faceInfo.hEdges[2]) {
-			throw runtime_error("createVertexGraph: missing half-edge for face");
-		}
-		auto* face = (new GraphFace())->connectGraph(graph);
-		face->setType(faceInfo.type);
-		face->setOuterComponent(faceInfo.hEdges[0]);
-		faceInfo.hEdges[0]->connectNext(faceInfo.hEdges[1]);
-		faceInfo.hEdges[1]->connectNext(faceInfo.hEdges[2]);
-		for (auto* half : faceInfo.hEdges) {
-			if (half) {
-				half->setFace(face);
-			}
-		}
-	}
-
-	graph->setBVertices(bVertices);
-	return graph;
+	return createGraphWithConnections(vType, vType->getHalfEdgeTypes());
 }
 
 Graph* createEdgeGraph(EdgeType* eType) {
@@ -404,26 +499,77 @@ Graph* createEdgeGraph(EdgeType* eType) {
 	return graph;
 }
 
+Graph* createSplicedVertexGraph(
+	EdgeType* segmentEdgeType,
+	bool spliceOnRight,
+	EdgeType* splicedEdgeType
+) {
+	// Connections in CCW order around the center; bVertex index matches connection order.
+	vector<HalfEdgeType> connections = spliceOnRight
+		? vector<HalfEdgeType>{
+			HalfEdgeType(segmentEdgeType, true),
+			HalfEdgeType(splicedEdgeType, true),
+			HalfEdgeType(segmentEdgeType, false),
+		}
+		: vector<HalfEdgeType>{
+			HalfEdgeType(segmentEdgeType, true),
+			HalfEdgeType(segmentEdgeType, false),
+			HalfEdgeType(splicedEdgeType, true),
+		};
+	return createGraphWithConnections(splicedVertexType(), connections);
+}
+
+void applySplicedEdgeType(Graph* graph, EdgeType* splicedEdgeType) {
+	for (auto* edge : graph->getEdges()) {
+		if (edge && edge->getType() && edge->getType()->getSpliced()) {
+			edge->setType(splicedEdgeType);
+			return;
+		}
+	}
+	throw runtime_error("applySplicedEdgeType: spliced edge not found");
+}
+
 Graph* getPrimitiveGraph(
 	const GraphValues& graphValues,
 	size_t index,
 	const PrimitiveGraphs& graphs
 ) {
-	const bool onBoundary = graphValues.vertexOnBoundary[index];
-	const auto& primitives = onBoundary ? graphs.edgeGraphs : graphs.vertexGraphs;
-	return primitives[graphValues.vertices[index]].get();
+	switch (graphValues.primitiveType[index]) {
+	case PrimitiveType::Edge:
+		return graphs.edgeGraphs[graphValues.vertices[index]].get();
+	case PrimitiveType::Spliced:
+		return graphs.splicedGraphs[graphValues.vertices[index]].get();
+	default:
+		return graphs.vertexGraphs[graphValues.vertices[index]].get();
+	}
 }
 
 PrimitiveGraphs createPrimitiveGraphs(Primitives* primitives) {
 	PrimitiveGraphs result;
 	result.vertexGraphs.reserve(primitives->vertexTypes.size());
-	for (auto* vType : primitives->vertexTypes) {
+	for (VertexType* vType : primitives->vertexTypes) {
 		result.vertexGraphs.push_back(unique_ptr<Graph>(createVertexGraph(vType)));
 	}
 
 	result.edgeGraphs.reserve(primitives->edgeTypes.size());
-	for (auto* eType : primitives->edgeTypes) {
+	for (EdgeType* eType : primitives->edgeTypes) {
 		result.edgeGraphs.push_back(unique_ptr<Graph>(createEdgeGraph(eType)));
+	}
+
+	if (primitives->faceTypes.empty()) {
+		return result;
+	}
+	EdgeType* placeholderSplicedEdgeType = primitives->getSplicedEdgeType(primitives->faceTypes[0]);
+	for (EdgeType* eType : primitives->edgeTypes) {
+		if (eType->getSpliced()) {
+			continue;
+		}
+		result.splicedGraphs.push_back(unique_ptr<Graph>(
+			createSplicedVertexGraph(eType, false, placeholderSplicedEdgeType)
+		));
+		result.splicedGraphs.push_back(unique_ptr<Graph>(
+			createSplicedVertexGraph(eType, true, placeholderSplicedEdgeType)
+		));
 	}
 	return result;
 }
@@ -437,9 +583,46 @@ Graph* releaseInstance(vector<unique_ptr<Graph>>& instances, Graph* graph) {
 	throw runtime_error("buildGraphFromValues: result not owned by instances");
 }
 
+vector<array<int, 4>> orderGlueEdges(const vector<array<int, 4>>& edges, size_t instanceCount) {
+	vector<int> parent(instanceCount);
+	for (size_t i = 0; i < instanceCount; i++) {
+		parent[i] = (int)i;
+	}
+	auto findRoot = [&](int x) {
+		while (parent[x] != x) {
+			parent[x] = parent[parent[x]];
+			x = parent[x];
+		}
+		return x;
+	};
+	auto unite = [&](int a, int b) {
+		a = findRoot(a);
+		b = findRoot(b);
+		if (a != b) {
+			parent[b] = a;
+		}
+	};
+
+	vector<array<int, 4>> mergeEdges;
+	vector<array<int, 4>> loopEdges;
+	for (const auto& edge : edges) {
+		int instanceA = edge[0];
+		int instanceB = edge[2];
+		if (findRoot(instanceA) != findRoot(instanceB)) {
+			mergeEdges.push_back(edge);
+			unite(instanceA, instanceB);
+		} else {
+			loopEdges.push_back(edge);
+		}
+	}
+	mergeEdges.insert(mergeEdges.end(), loopEdges.begin(), loopEdges.end());
+	return mergeEdges;
+}
+
 Graph* buildGraphFromValues(
 	const GraphValues& graphValues,
-	const PrimitiveGraphs& graphs
+	const PrimitiveGraphs& graphs,
+	Primitives* primitives
 ) {
 	if (graphValues.edges.empty() && graphValues.vertices.size() == 0) {
 		// return Graph::createEmpty(primitives);
@@ -451,6 +634,16 @@ Graph* buildGraphFromValues(
 	for (size_t i = 0; i < graphValues.vertices.size(); i++) {
 		Graph* prototype = getPrimitiveGraph(graphValues, i, graphs);
 		instances.push_back(unique_ptr<Graph>(prototype->copy()));
+		if (graphValues.primitiveType[i] == PrimitiveType::Spliced) {
+			int faceIndex = graphValues.spliceFaceTypeIndex[i];
+			if (faceIndex < 0 || faceIndex >= (int)primitives->faceTypes.size()) {
+				throw runtime_error("buildGraphFromValues: invalid splice face type index");
+			}
+			EdgeType* splicedEdgeType = primitives->getSplicedEdgeType(
+				primitives->faceTypes[faceIndex]
+			);
+			applySplicedEdgeType(instances.back().get(), splicedEdgeType);
+		}
 	}
 
 	unordered_map<string, string> matchToNetwork;
@@ -469,7 +662,10 @@ Graph* buildGraphFromValues(
 		networkMap[graph->getId()] = graph;
 	}
 
-	vector<array<int, 4>> edgeQueue = graphValues.edges;
+	vector<array<int, 4>> edgeQueue = orderGlueEdges(
+		graphValues.edges,
+		graphValues.vertices.size()
+	);
 	Graph* finalResult = nullptr;
 
 	if (edgeQueue.empty()) {
@@ -478,80 +674,100 @@ Graph* buildGraphFromValues(
 		return result;
 	}
 
-	while (!edgeQueue.empty()) {
-		vector<array<int, 4>> nextQueue;
-		for (const auto& edge : edgeQueue) {
-			int vertexA = edge[0];
-			int bVertexIndexA = edge[1];
-			int vertexB = edge[2];
-			int bVertexIndexB = edge[3];
+	auto applyGlue = [&](const array<int, 4>& edge, bool allowLoop) -> bool {
+		int vertexA = edge[0];
+		int matchBoundaryVertexIndexA = edge[1];
+		int vertexB = edge[2];
+		int matchBoundaryVertexIndexB = edge[3];
 
-			string keyA = to_string(vertexA) + "," + to_string(bVertexIndexA);
-			string keyB = to_string(vertexB) + "," + to_string(bVertexIndexB);
-			auto netKeyA = matchToNetwork[keyA];
-			auto netKeyB = matchToNetwork[keyB];
-			auto commaA = netKeyA.find(',');
-			auto commaB = netKeyB.find(',');
-			int netA = stoi(netKeyA.substr(0, commaA));
-			int nBVertA = stoi(netKeyA.substr(commaA + 1));
-			int netB = stoi(netKeyB.substr(0, commaB));
-			int nBVertB = stoi(netKeyB.substr(commaB + 1));
+		string keyA = to_string(vertexA) + "," + to_string(matchBoundaryVertexIndexA);
+		string keyB = to_string(vertexB) + "," + to_string(matchBoundaryVertexIndexB);
+		auto netKeyA = matchToNetwork[keyA];
+		auto netKeyB = matchToNetwork[keyB];
+		if (netKeyA.empty() || netKeyB.empty()) {
+			return false;
+		}
+		auto commaA = netKeyA.find(',');
+		auto commaB = netKeyB.find(',');
+		int netA = stoi(netKeyA.substr(0, commaA));
+		int boundaryVertexIndexA = stoi(netKeyA.substr(commaA + 1));
+		int netB = stoi(netKeyB.substr(0, commaB));
+		int boundaryVertexIndexB = stoi(netKeyB.substr(commaB + 1));
 
-			auto* graphA = networkMap[netA];
-			auto* graphB = networkMap[netB];
+		auto graphAIt = networkMap.find(netA);
+		auto graphBIt = networkMap.find(netB);
+		if (graphAIt == networkMap.end() || graphBIt == networkMap.end()) {
+			return false;
+		}
+		auto* graphA = graphAIt->second;
+		auto* graphB = graphBIt->second;
 
-			if (netA == netB) {
-				auto loopables = findLoopables(graphA);
-				bool canLoop = false;
-				auto* bVertexA = graphA->getBVertices()[nBVertA];
-				auto* bVertexB = graphA->getBVertices()[nBVertB];
-				for (const auto& loopable : loopables) {
-					if ((loopable.first == bVertexA && loopable.second == bVertexB) ||
-						(loopable.second == bVertexA && loopable.first == bVertexB)) {
-						canLoop = true;
-						break;
-					}
-				}
-				if (!canLoop) {
-					nextQueue.push_back(edge);
+		if (netA == netB) {
+			if (!allowLoop) {
+				return false;
+			}
+		}
+
+		auto outcome = copyAndGlue(*graphA, boundaryVertexIndexA, *graphB, boundaryVertexIndexB, netA == netB);
+		auto& track = outcome.second;
+		Graph* merged = outcome.first.get();
+		int mergedId = merged->getId();
+
+		for (size_t index = 0; index < track.aDest.size(); index++) {
+			if (track.aDest[index] >= 0) {
+				string oldNetKey = to_string(netA) + "," + to_string(index);
+				auto matchIt = networkToMatch.find(oldNetKey);
+				if (matchIt == networkToMatch.end()) {
 					continue;
 				}
+				string newNetKey = to_string(mergedId) + "," + to_string(track.aDest[index]);
+				matchToNetwork[matchIt->second] = newNetKey;
+				networkToMatch[newNetKey] = matchIt->second;
 			}
-
-			auto outcome = copyAndGlue(*graphA, nBVertA, *graphB, nBVertB, netA == netB);
-			auto& track = outcome.second;
-			Graph* merged = outcome.first.get();
-			int mergedId = merged->getId();
-
-			for (size_t index = 0; index < track.aDest.size(); index++) {
-				if (track.aDest[index] >= 0) {
-					string oldMatchKey = networkToMatch[to_string(netA) + "," + to_string(index)];
-					string newNetKey = to_string(mergedId) + "," + to_string(track.aDest[index]);
-					matchToNetwork[oldMatchKey] = newNetKey;
-					networkToMatch[newNetKey] = oldMatchKey;
-				}
-			}
-			if (netA != netB) {
-				for (size_t index = 0; index < track.bDest.size(); index++) {
-					if (track.bDest[index] >= 0) {
-						string oldMatchKey = networkToMatch[to_string(netB) + "," + to_string(index)];
-						string newNetKey = to_string(mergedId) + "," + to_string(track.bDest[index]);
-						matchToNetwork[oldMatchKey] = newNetKey;
-						networkToMatch[newNetKey] = oldMatchKey;
+		}
+		if (netA != netB) {
+			for (size_t index = 0; index < track.bDest.size(); index++) {
+				if (track.bDest[index] >= 0) {
+					string oldNetKey = to_string(netB) + "," + to_string(index);
+					auto matchIt = networkToMatch.find(oldNetKey);
+					if (matchIt == networkToMatch.end()) {
+						continue;
 					}
+					string newNetKey = to_string(mergedId) + "," + to_string(track.bDest[index]);
+					matchToNetwork[matchIt->second] = newNetKey;
+					networkToMatch[newNetKey] = matchIt->second;
 				}
-				networkMap.erase(netB);
 			}
-
-			finalResult = merged;
-			networkMap[mergedId] = finalResult;
-			instances.push_back(std::move(outcome.first));
+			networkMap.erase(netB);
 		}
 
-		if (edgeQueue.size() == nextQueue.size()) {
+		finalResult = merged;
+		networkMap[mergedId] = finalResult;
+		instances.push_back(std::move(outcome.first));
+		return true;
+	};
+
+	while (!edgeQueue.empty()) {
+		bool progress = false;
+		for (size_t i = 0; i < edgeQueue.size(); i++) {
+			if (applyGlue(edgeQueue[i], false)) {
+				edgeQueue.erase(edgeQueue.begin() + (int)i);
+				progress = true;
+				break;
+			}
+		}
+		if (!progress) {
+			for (size_t i = 0; i < edgeQueue.size(); i++) {
+				if (applyGlue(edgeQueue[i], true)) {
+					edgeQueue.erase(edgeQueue.begin() + (int)i);
+					progress = true;
+					break;
+				}
+			}
+		}
+		if (!progress) {
 			throw runtime_error("buildGraphFromValues: cannot glue graph");
 		}
-		edgeQueue = std::move(nextQueue);
 	}
 
 	if (!finalResult) {
@@ -616,7 +832,6 @@ void exportRule(
 		vector<Graph*> graphs = rightEmpty
 			? vector<Graph*>{ rightGraph, leftGraph }
 			: vector<Graph*>{ leftGraph, rightGraph };
-		// TODO: Handle rules with splices in them.
 		ProductionRule* rule = new ProductionRule(graphs);
 		if (leftEmpty || rightEmpty) {
 			grammar->addStarterRule(rule);
@@ -651,7 +866,7 @@ void RuleExporter::exportGroups(
 		for (int i = 0; i < numGraphs; i++) {
 			for (int index : group.graphIndices[i]) {
 				auto graphValues = matchers[i].getGraphValues(index);
-				auto graphA = unique_ptr<Graph>(buildGraphFromValues(graphValues, primitiveGraphs));
+				auto graphA = unique_ptr<Graph>(buildGraphFromValues(graphValues, primitiveGraphs, primitives));
 				auto vertexTypeIdsA = getVertexTypeIds(graphA.get());
 				if (loopsAreValid(graphA.get()) &&
 					!isDuplicateGraph(graphA.get(), vertexTypeIdsA, graphs[i], vertexTypeIds[i])) {

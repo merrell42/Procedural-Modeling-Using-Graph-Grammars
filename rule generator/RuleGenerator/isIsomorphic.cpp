@@ -199,7 +199,7 @@ vector<int> buildVertexMatchOrder(const vector<GraphVertex*>& vertices) {
 vector<int> getVertexTypeIds(const Graph* graph) {
 	vector<int> vertexTypeIds;
 	for (auto* vertex : graph->getVertices()) {
-		vertexTypeIds.push_back(vertex->getType()->getRuleGeneratorId());
+		vertexTypeIds.push_back(getVertexTypeId(vertex));
 	}
 	sort(vertexTypeIds.begin(), vertexTypeIds.end());
 	return vertexTypeIds;

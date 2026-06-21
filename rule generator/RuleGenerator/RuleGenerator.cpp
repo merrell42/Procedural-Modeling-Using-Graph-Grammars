@@ -155,6 +155,40 @@ void printGraphGroups(const vector<GraphGroup>& groups) {
 	}
 }
 
+vector<EdgeType*> applyEdgeRuleGeneratorIds(
+	const Json& types,
+	Primitives* primitives
+) {
+	vector<EdgeType*> eTypes;
+	for (size_t i = 0; i < primitives->edgeTypes.size(); i++) {
+		EdgeType* eType = primitives->edgeTypes[i];
+		if (types["edgeTypes"][i].contains("id")) {
+			eType->setRuleGeneratorId(types["edgeTypes"][i]["id"].get<string>());
+		} else {
+			eType->setRuleGeneratorId("edge" + to_string(i));
+		}
+		eTypes.push_back(eType);
+	}
+	return eTypes;
+}
+
+vector<VertexType*> applyVertexRuleGeneratorIds(
+	const Json& types,
+	Primitives* primitives
+) {
+	vector<VertexType*> vTypes;
+	for (size_t i = 0; i < primitives->vertexTypes.size(); i++) {
+		VertexType* vType = primitives->vertexTypes[i];
+		if (types["vertexTypes"][i].contains("id")) {
+			vType->setRuleGeneratorId(types["vertexTypes"][i]["id"].get<int>());
+		} else {
+			vType->setRuleGeneratorId((int)i);
+		}
+		vTypes.push_back(vType);
+	}
+	return vTypes;
+}
+
 int GenerateRules(
 	const string& primitivesPath,
     const string& templatesPath,
@@ -164,36 +198,8 @@ int GenerateRules(
 		Json parsed = readJsonFile(primitivesPath);
 		Primitives* primitives = Primitives::import(parsed["types"]);
 		GraphGrammar grammar(primitives);
-		
-		// Set ruleGeneratorId on edges if present in JSON, otherwise generate from index.
-		Json types = parsed["types"];
-		vector<EdgeType*> eTypes;
-		for (size_t i = 0; i < primitives->edgeTypes.size(); i++) {
-			EdgeType* eType = primitives->edgeTypes[i];
-			if (types["edgeTypes"][i].contains("id")) {
-				eType->setRuleGeneratorId(types["edgeTypes"][i]["id"].get<string>());
-			} else {
-				// Generate ID from index if not present in JSON.
-				eType->setRuleGeneratorId("edge" + to_string(i));
-			}
-			eTypes.push_back(eType);
-		}
-		
-		// Set ruleGeneratorId on vertices if present in JSON.
-		vector<VertexType*> vTypes;
-		for (size_t i = 0; i < primitives->vertexTypes.size(); i++) {
-			VertexType* vType = primitives->vertexTypes[i];
-			
-			// Set ruleGeneratorId if present in JSON.
-			if (types["vertexTypes"][i].contains("id")) {
-				vType->setRuleGeneratorId(types["vertexTypes"][i]["id"].get<int>());
-			} else {
-				// Generate ID from index if not present in JSON.
-				vType->setRuleGeneratorId((int)i);
-			}
-			
-			vTypes.push_back(vType);
-		}
+		auto eTypes = applyEdgeRuleGeneratorIds(parsed["types"], primitives);
+		auto vTypes = applyVertexRuleGeneratorIds(parsed["types"], primitives);
 
 		auto templateGraphSets = importTemplateGraphs(templatesPath);
 		cout << "match:\n"
@@ -211,7 +217,12 @@ int GenerateRules(
 				continue;
 			}
 			for (int j = 0; j < numGraphs; j++) {
-				matchers.push_back(TemplateMatcher(templateGraphSets[i].graphs[j], vTypes, eTypes));
+				matchers.push_back(TemplateMatcher(
+					templateGraphSets[i].graphs[j],
+					vTypes,
+					eTypes,
+					primitives->faceTypes
+				));
 			}
 			vector<vector<vector<int>>> allBoundaryValues;
 			vector<string> boundaryIds = collectBoundaryIds(templateGraphSets[i].graphs[0]);
