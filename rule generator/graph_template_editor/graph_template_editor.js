@@ -687,7 +687,7 @@ class TemplateEditor {
     
     // Handle file import data.
     handleFileImportData(imported) {
-        const { vertices, edges } = cloneGraphData(imported);
+        const { vertices, edges } = importGraphWithSplices(imported);
         this.graphTemplate.vertices = vertices;
         this.graphTemplate.edges = edges;
         this.selectedVertexIndex = null;
