@@ -27,6 +27,9 @@
     <ClInclude Include="RoundtripCommand.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SpliceCheckCommand.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="RuleExporter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -87,6 +90,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RoundtripCommand.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SpliceCheckCommand.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\cpp_version\graph\edge_settings.cpp">

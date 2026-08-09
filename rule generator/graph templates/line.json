@@ -1,0 +1,44 @@
+[
+  {
+    "comment": "Line Segment",
+    "graphs": [
+      {
+        "vertices": [
+          {
+            "connections": [
+              0
+            ],
+            "boundaryId": "",
+            "position": {
+              "x": 361,
+              "y": 158.1875
+            },
+            "spliced": false
+          },
+          {
+            "connections": [
+              0
+            ],
+            "boundaryId": "",
+            "position": {
+              "x": 373,
+              "y": 435.1875
+            },
+            "spliced": false
+          }
+        ],
+        "edges": [
+          {
+            "start": 0,
+            "end": 1,
+            "spliced": false
+          }
+        ]
+      },
+      {
+        "vertices": [],
+        "edges": []
+      }
+    ]
+  }
+]
