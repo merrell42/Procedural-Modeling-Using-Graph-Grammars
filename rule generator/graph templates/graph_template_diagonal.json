@@ -1,0 +1,68 @@
+[
+  {
+    "comment": "Diagonal",
+    "graphs": [
+      {
+        "vertices": [
+          {
+            "connections": [
+              4,
+              3,
+              0
+            ],
+            "boundaryId": "",
+            "position": {
+              "x": 252,
+              "y": 121.1875
+            }
+          },
+          {
+            "connections": [
+              2,
+              3
+            ],
+            "boundaryId": "",
+            "position": {
+              "x": 250,
+              "y": 330.1875
+            }
+          },
+          {
+            "connections": [
+              2,
+              4,
+              1
+            ],
+            "boundaryId": "",
+            "position": {
+              "x": 507,
+              "y": 343.1875
+            }
+          },
+          {
+            "connections": [
+              1,
+              0
+            ],
+            "boundaryId": "",
+            "position": {
+              "x": 504,
+              "y": 117.1875
+            }
+          }
+        ],
+        "edges": [
+          { "start": 0, "end": 3 },
+          { "start": 2, "end": 3 },
+          { "start": 1, "end": 2 },
+          { "start": 0, "end": 1 },
+          { "start": 0, "end": 2 }
+        ]
+      },
+      {
+        "vertices": [],
+        "edges": []
+      }
+    ]
+  }
+]

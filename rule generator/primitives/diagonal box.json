@@ -1,0 +1,430 @@
+{
+  "name": "Diagonal Box",
+  "types": {
+    "dims": 2,
+    "edgeTypes": [
+      {
+        "dir": {
+          "x": -1.6081226496766364e-16,
+          "y": 1,
+          "z": 0
+        },
+        "edgeSettings": null,
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 0
+          },
+          {
+            "onRight": false,
+            "type": 0
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 1,
+          "y": 0,
+          "z": 0
+        },
+        "edgeSettings": null,
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 0
+          },
+          {
+            "onRight": false,
+            "type": 0
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0.7255835517397619,
+          "y": 0.6881340781015807,
+          "z": 0
+        },
+        "edgeSettings": null,
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 0
+          },
+          {
+            "onRight": false,
+            "type": 0
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 1,
+          "y": 0,
+          "z": 0
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 0
+          },
+          {
+            "onRight": false,
+            "type": 0
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": true
+      },
+      {
+        "dir": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 0
+          },
+          {
+            "onRight": false,
+            "type": 0
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": true
+      }
+    ],
+    "faceTypes": [
+      {
+        "color": null,
+        "normal": {
+          "x": 0,
+          "y": 0,
+          "z": 1
+        }
+      }
+    ],
+    "vertexTypes": [
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 1.6081226496766364e-16,
+              "y": -1,
+              "z": 0
+            },
+            "edge": 0,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 1,
+              "y": 0,
+              "z": 0
+            },
+            "edge": 1,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 1,
+              "y": 0,
+              "z": 0
+            },
+            "edge": 1,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": 0.7255835517397619,
+              "y": 0.6881340781015807,
+              "z": 0
+            },
+            "edge": 2,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": -1.6081226496766364e-16,
+              "y": 1,
+              "z": 0
+            },
+            "edge": 0,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": -1.6081226496766364e-16,
+              "y": 1,
+              "z": 0
+            },
+            "edge": 0,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": -1,
+              "y": 0,
+              "z": 0
+            },
+            "edge": 1,
+            "isAtStart": false
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": -0.7255835517397619,
+              "y": -0.6881340781015807,
+              "z": 0
+            },
+            "edge": 2,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 1.6081226496766364e-16,
+              "y": -1,
+              "z": 0
+            },
+            "edge": 0,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": -1,
+              "y": 0,
+              "z": 0
+            },
+            "edge": 1,
+            "isAtStart": false
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 1.6081226496766364e-16,
+              "y": -1,
+              "z": 0
+            },
+            "edge": 0,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": -1.6081226496766364e-16,
+              "y": 1,
+              "z": 0
+            },
+            "edge": 0,
+            "isAtStart": true
+          }
+        ],
+        "spliced": true
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 1,
+              "y": 0,
+              "z": 0
+            },
+            "edge": 3,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": -1,
+              "y": 0,
+              "z": 0
+            },
+            "edge": 3,
+            "isAtStart": false
+          }
+        ],
+        "spliced": true
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 1,
+              "y": 0,
+              "z": 0
+            },
+            "edge": 1,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": -1,
+              "y": 0,
+              "z": 0
+            },
+            "edge": 1,
+            "isAtStart": false
+          }
+        ],
+        "spliced": true
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 0,
+              "y": -1,
+              "z": 0
+            },
+            "edge": 4,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "edge": 4,
+            "isAtStart": true
+          }
+        ],
+        "spliced": true
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "edge": 3,
+            "isAtStart": true
+          },
+          {
+            "edge": 4,
+            "isAtStart": true
+          }
+        ],
+        "spliced": true
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "edge": 3,
+            "isAtStart": true
+          },
+          {
+            "edge": 4,
+            "isAtStart": false
+          }
+        ],
+        "spliced": true
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "edge": 4,
+            "isAtStart": true
+          },
+          {
+            "edge": 3,
+            "isAtStart": true
+          }
+        ],
+        "spliced": true
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "edge": 4,
+            "isAtStart": true
+          },
+          {
+            "edge": 3,
+            "isAtStart": false
+          }
+        ],
+        "spliced": true
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "edge": 3,
+            "isAtStart": false
+          },
+          {
+            "edge": 4,
+            "isAtStart": true
+          }
+        ],
+        "spliced": true
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "edge": 3,
+            "isAtStart": false
+          },
+          {
+            "edge": 4,
+            "isAtStart": false
+          }
+        ],
+        "spliced": true
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "edge": 4,
+            "isAtStart": false
+          },
+          {
+            "edge": 3,
+            "isAtStart": true
+          }
+        ],
+        "spliced": true
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "edge": 4,
+            "isAtStart": false
+          },
+          {
+            "edge": 3,
+            "isAtStart": false
+          }
+        ],
+        "spliced": true
+      }
+    ]
+  },
+  "version": 1
+}

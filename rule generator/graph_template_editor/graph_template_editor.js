@@ -58,8 +58,8 @@ const History = {
             window.editor2.selectedVertexIndex = clampSelection(snap.sel2, snap.e2.vertices.length);
             window.library = structuredClone(snap.library);
             window.activeIdx = clampActive(snap.activeIdx, window.library.length);
-            window.editor1.updateDisplay();
-            window.editor2.updateDisplay();
+            window.editor1.refreshTemplate();
+            window.editor2.refreshTemplate();
             updateLibraryUI();
         } finally {
             this.suspended = false;
@@ -94,6 +94,22 @@ function isTypingInTextInput(el) {
     return false;
 }
 
+function cloneGraphData(graph) {
+    return {
+        vertices: graph.vertices.map(v => ({
+            connections: v.connections || [],
+            boundaryId: v.boundaryId || '',
+            position: { ...v.position },
+            spliced: v.spliced ?? false,
+        })),
+        edges: graph.edges.map(e => ({
+            start: e.start,
+            end: e.end,
+            spliced: e.spliced ?? false,
+        })),
+    };
+}
+
 // TemplateEditor class to manage a single graph template.
 class TemplateEditor {
     constructor(templateId) {
@@ -102,7 +118,10 @@ class TemplateEditor {
         // Graph template data structure.
         this.graphTemplate = {
             vertices: [],
-            numEdges: 0
+            edges: [],
+            edgeComponentIds: [],
+            edgesByComponent: new Map(),
+            splices: [],
         };
         
         // DOM element references.
@@ -143,7 +162,7 @@ class TemplateEditor {
         this.canvas.addEventListener('mouseleave', this.handleCanvasMouseLeave);
         
         
-        this.updateDisplay();
+        this.refreshTemplate();
     }
     
     // Resize canvas to fit container.
@@ -163,7 +182,7 @@ class TemplateEditor {
         this.canvas.style.setProperty('max-height', 'none', 'important');
         
         // Redraw after resize.
-        this.updateDisplay();
+        this.refreshTemplate();
     }
     
     // Check if a point is within a vertex's radius.
@@ -199,36 +218,59 @@ class TemplateEditor {
         }
     }
     
-    // Insert edge in counter-clockwise order around a vertex.
-    insertEdgeInOrder(vertex, edgeIndex, newAngle) {
-        // Normalize angle to [0, 2π] range.
-        const normalizedAngle = newAngle < 0 ? newAngle + 2 * Math.PI : newAngle;
-        
-        // Find the insertion position by comparing angles.
-        let insertIndex = vertex.connections.length;
-        
-        for (let i = 0; i < vertex.connections.length; i++) {
-            const existingEdgeIndex = vertex.connections[i];
-            // Find the other vertex connected by this edge.
-            const otherVertex = this.graphTemplate.vertices.find((v, idx) => 
-                v !== vertex && v.connections.includes(existingEdgeIndex)
-            );
-            
-            if (otherVertex) {
-                const existingAngle = Math.atan2(
-                    otherVertex.position.y - vertex.position.y,
-                    otherVertex.position.x - vertex.position.x
-                );
-                const normalizedExistingAngle = existingAngle < 0 ? existingAngle + 2 * Math.PI : existingAngle;
-                
-                // Insert before this edge if the new angle is smaller (counter-clockwise order).
-                if (normalizedAngle < normalizedExistingAngle) {
-                    insertIndex = i;
-                    break;
+    // Find an edge between the two given vertex indices.
+    findEdgeBetween(indexA, indexB) {
+        return this.graphTemplate.edges.find(e =>
+            (e.start === indexA && e.end === indexB) ||
+            (e.start === indexB && e.end === indexA)
+        );
+    }
+
+    // Remove an edge and renumber remaining connection indices.
+    removeEdgeFromGraph(edgeIndex) {
+        const edge = this.graphTemplate.edges[edgeIndex];
+        if (!edge) return;
+
+        const vStart = this.graphTemplate.vertices[edge.start];
+        const vEnd = this.graphTemplate.vertices[edge.end];
+        vStart.connections.splice(vStart.connections.indexOf(edgeIndex), 1);
+        vEnd.connections.splice(vEnd.connections.indexOf(edgeIndex), 1);
+        this.graphTemplate.edges.splice(edgeIndex, 1);
+
+        for (const vertex of this.graphTemplate.vertices) {
+            for (let i = 0; i < vertex.connections.length; i++) {
+                if (vertex.connections[i] > edgeIndex) {
+                    vertex.connections[i]--;
                 }
             }
         }
-        
+        this.updateOnBoundaryForVertex(vStart);
+        this.updateOnBoundaryForVertex(vEnd);
+    }
+
+    // Insert edge in counter-clockwise order around a vertex.
+    insertEdgeInOrder(vertexIndex, edgeIndex, newAngle) {
+        const vertex = this.graphTemplate.vertices[vertexIndex];
+        const normalizedAngle = newAngle < 0 ? newAngle + 2 * Math.PI : newAngle;
+        let insertIndex = vertex.connections.length;
+
+        for (let i = 0; i < vertex.connections.length; i++) {
+            const existingEdge = this.graphTemplate.edges[vertex.connections[i]];
+            const otherVertexIndex = existingEdge.start === vertexIndex
+                ? existingEdge.end
+                : existingEdge.start;
+            const otherVertex = this.graphTemplate.vertices[otherVertexIndex];
+            const existingAngle = Math.atan2(
+                otherVertex.position.y - vertex.position.y,
+                otherVertex.position.x - vertex.position.x
+            );
+            const normalizedExistingAngle = existingAngle < 0 ? existingAngle + 2 * Math.PI : existingAngle;
+            if (normalizedAngle < normalizedExistingAngle) {
+                insertIndex = i;
+                break;
+            }
+        }
+
         vertex.connections.splice(insertIndex, 0, edgeIndex);
     }
     
@@ -316,11 +358,11 @@ class TemplateEditor {
                 // Set to empty string.
                 this.removeBoundaryVertexInOtherTemplate(vertex.boundaryId);
                 vertex.boundaryId = '';
-                this.updateDisplay();
+                this.refreshTemplate();
             } else if (vertex.connections.length === 1) {
                 // Only allow setting to true if vertex has exactly one edge.
                 vertex.boundaryId = this.generateboundaryId();
-                this.updateDisplay();
+                this.refreshTemplate();
                 
                 // Add boundary vertex at same position in other template.
                 this.addBoundaryVertexInOtherTemplate(position, vertex.boundaryId);
@@ -375,48 +417,47 @@ class TemplateEditor {
         History.commit();
 
         // Check if clicking on a vertex.
-        const vertexIndex = this.findVertexAt(x, y);
+        const vIndex1 = this.selectedVertexIndex;
+        const vIndex2 = this.findVertexAt(x, y);
         
-        if (vertexIndex !== null) {
+        if (vIndex2 !== null) {
             // Clicked on a vertex - handle edge creation.
             if (this.selectedVertexIndex === null) {
                 // First vertex selected.
-                this.selectedVertexIndex = vertexIndex;
-            } else if (this.selectedVertexIndex === vertexIndex) {
+                this.selectedVertexIndex = vIndex2;
+            } else if (this.selectedVertexIndex === vIndex2) {
                 // Clicked the same vertex - deselect.
                 this.selectedVertexIndex = null;
             } else {
                 // Second vertex selected - create edge.
-                const v1 = this.graphTemplate.vertices[this.selectedVertexIndex];
-                const v2 = this.graphTemplate.vertices[vertexIndex];
+                const v1 = this.graphTemplate.vertices[vIndex1];
+                const v2 = this.graphTemplate.vertices[vIndex2];
                 
                 // Check if edge already exists (vertices share a common edge index).
-                const sharedEdge = v1.connections.find(edgeIndex => v2.connections.includes(edgeIndex));
-                
-                if (sharedEdge === undefined) {
+                if (!this.findEdgeBetween(vIndex1, vIndex2)) {
                     // Add edge indices (using current numEdges as the edge index).
-                    const edgeIndex = this.graphTemplate.numEdges;
-                    
+                    const edgeIndex = this.graphTemplate.edges.length;
+                    this.graphTemplate.edges.push({
+                        start: vIndex1,
+                        end: vIndex2,
+                    });
+
                     // Calculate angle from v1 to v2 for counter-clockwise ordering.
                     const angle1 = Math.atan2(v2.position.y - v1.position.y, v2.position.x - v1.position.x);
-                    this.insertEdgeInOrder(v1, edgeIndex, angle1);
-                    
+                    this.insertEdgeInOrder(vIndex1, edgeIndex, angle1);
+
                     // Calculate angle from v2 to v1 for counter-clockwise ordering.
                     const angle2 = Math.atan2(v1.position.y - v2.position.y, v1.position.x - v2.position.x);
-                    this.insertEdgeInOrder(v2, edgeIndex, angle2);
-                    
-                    this.graphTemplate.numEdges++;
-                    
+                    this.insertEdgeInOrder(vIndex2, edgeIndex, angle2);
+
                     // Update onBoundary for the two vertices involved in the edge.
                     this.updateOnBoundaryForVertex(v1);
                     this.updateOnBoundaryForVertex(v2);
-                    
-                } else {
                 }
                 
                 this.selectedVertexIndex = null;
             }
-            this.updateDisplay();
+            this.refreshTemplate();
         } else {
             // Clicked on empty space.
             if (this.selectedVertexIndex === null) {
@@ -428,7 +469,7 @@ class TemplateEditor {
                 };
                 
                 this.graphTemplate.vertices.push(vertex);
-                this.updateDisplay();
+                this.refreshTemplate();
             } else {
                 // In edge creation mode - add vertex and connect it to selected vertex.
                 const newVertex = {
@@ -440,26 +481,27 @@ class TemplateEditor {
                 this.graphTemplate.vertices.push(newVertex);
                 
                 // Create edge between selected vertex and new vertex.
-                const v1 = this.graphTemplate.vertices[this.selectedVertexIndex];
-                const edgeIndex = this.graphTemplate.numEdges;
-                
+                const v1 = this.graphTemplate.vertices[vIndex1];
+                const edgeIndex = this.graphTemplate.edges.length;
+                this.graphTemplate.edges.push({
+                    start: vIndex1,
+                    end: newVertexIndex,
+                });
+
                 // Calculate angle from v1 to new vertex for counter-clockwise ordering.
                 const angle1 = Math.atan2(newVertex.position.y - v1.position.y, newVertex.position.x - v1.position.x);
-                this.insertEdgeInOrder(v1, edgeIndex, angle1);
-                
+                this.insertEdgeInOrder(vIndex1, edgeIndex, angle1);
+
                 // Calculate angle from new vertex to v1 for counter-clockwise ordering.
                 const angle2 = Math.atan2(v1.position.y - newVertex.position.y, v1.position.x - newVertex.position.x);
-                this.insertEdgeInOrder(newVertex, edgeIndex, angle2);
-                
-                this.graphTemplate.numEdges++;
+                this.insertEdgeInOrder(newVertexIndex, edgeIndex, angle2);
                 
                 // Update onBoundary for the two vertices involved in the edge.
                 this.updateOnBoundaryForVertex(v1);
                 this.updateOnBoundaryForVertex(newVertex);
-                
-                const selectedIndex = this.selectedVertexIndex;
+
                 this.selectedVertexIndex = null;
-                this.updateDisplay();
+                this.refreshTemplate();
             }
         }
     }
@@ -468,27 +510,30 @@ class TemplateEditor {
     drawVertices() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         
-        // Draw edges (only draw each edge once).
-        const drawnEdges = new Set();
-        this.graphTemplate.vertices.forEach((vertex, index) => {
-            vertex.connections.forEach(edgeIndex => {
-                if (!drawnEdges.has(edgeIndex)) {
-                    // Find the other vertex connected by this edge.
-                    const otherVertex = this.graphTemplate.vertices.find((v, i) => 
-                        i !== index && v.connections.includes(edgeIndex)
-                    );
-                    if (otherVertex) {
-                        this.ctx.beginPath();
-                        this.ctx.moveTo(vertex.position.x, vertex.position.y);
-                        this.ctx.lineTo(otherVertex.position.x, otherVertex.position.y);
-                        this.ctx.strokeStyle = '#0066FF';
-                        this.ctx.lineWidth = 1;
-                        this.ctx.stroke();
-                        drawnEdges.add(edgeIndex);
-                    }
-                }
-            });
-        });
+        // Draw edges.
+        for (const edge of this.graphTemplate.edges) {
+            const vStart = this.graphTemplate.vertices[edge.start];
+            const vEnd = this.graphTemplate.vertices[edge.end];
+            if (!vStart || !vEnd) continue;
+            this.ctx.beginPath();
+            this.ctx.moveTo(vStart.position.x, vStart.position.y);
+            this.ctx.lineTo(vEnd.position.x, vEnd.position.y);
+            this.ctx.strokeStyle = '#0066FF';
+            this.ctx.lineWidth = 1;
+            this.ctx.stroke();
+        }
+
+        // Draw splices connecting disconnected edge components.
+        this.ctx.setLineDash([4, 4]);
+        for (const splice of this.graphTemplate.splices || []) {
+            this.ctx.beginPath();
+            this.ctx.moveTo(splice.pointA.x, splice.pointA.y);
+            this.ctx.lineTo(splice.pointB.x, splice.pointB.y);
+            this.ctx.strokeStyle = '#888888';
+            this.ctx.lineWidth = 1;
+            this.ctx.stroke();
+        }
+        this.ctx.setLineDash([]);
         
         // Draw existing vertices.
         this.graphTemplate.vertices.forEach((vertex, index) => {
@@ -549,8 +594,9 @@ class TemplateEditor {
         }
     }
     
-    // Update all displays.
-    updateDisplay() {
+    // Recompute derived template state and redraw the canvas.
+    refreshTemplate() {
+        updateTemplate(this.graphTemplate);
         this.drawVertices();
     }
     
@@ -607,7 +653,7 @@ class TemplateEditor {
             position: { x: otherPosition.x, y: otherPosition.y }
         };
         otherEditor.graphTemplate.vertices.push(newVertex);
-        otherEditor.updateDisplay();
+        otherEditor.refreshTemplate();
     }
     
     // Remove boundary vertex from other template when boundaryId changes from non-empty to empty.
@@ -620,39 +666,33 @@ class TemplateEditor {
         const vertexIndex = otherEditor.graphTemplate.vertices.findIndex(v => v.boundaryId === boundaryId);
         
         if (vertexIndex !== -1) {
-            // Delete the vertex.
+            const vertex = otherEditor.graphTemplate.vertices[vertexIndex];
+            const edgesToRemove = [...vertex.connections].sort((a, b) => b - a);
+
             otherEditor.graphTemplate.vertices.splice(vertexIndex, 1);
             if (otherEditor.selectedVertexIndex === vertexIndex) {
                 otherEditor.selectedVertexIndex = null;
             } else if (otherEditor.selectedVertexIndex > vertexIndex) {
                 otherEditor.selectedVertexIndex--;
             }
-            otherEditor.updateDisplay();
+
+            // Edges to a boundary placeholder only exist on this template; delete them entirely.
+            for (const edgeIndex of edgesToRemove) {
+                otherEditor.removeEdgeFromGraph(edgeIndex);
+            }
+
+            otherEditor.refreshTemplate();
         }
     }
     
     // Handle file import data.
     handleFileImportData(imported) {
-        if (imported.vertices && Array.isArray(imported.vertices)) {
-            // Validate and normalize vertex data.
-            this.graphTemplate.vertices = imported.vertices.map((v, index) => {
-                // Ensure all required fields exist.
-                return {
-                    connections: Array.isArray(v.connections) ? v.connections : [],
-                    boundaryId: typeof v.boundaryId === 'string' ? v.boundaryId : '',
-                    position: v.position && typeof v.position.x === 'number' && typeof v.position.y === 'number'
-                        ? { x: v.position.x, y: v.position.y }
-                        : { x: 100 + index * 50, y: 100 } // Default position if missing.
-                };
-            });
-            this.graphTemplate.numEdges = typeof imported.numEdges === 'number' ? imported.numEdges : 0;
-            this.selectedVertexIndex = null;
-            this.hoveredVertexIndex = null;
-            
-            this.updateDisplay();
-        } else {
-            throw new Error('Invalid format: missing or invalid "vertices" array');
-        }
+        const { vertices, edges } = cloneGraphData(imported);
+        this.graphTemplate.vertices = vertices;
+        this.graphTemplate.edges = edges;
+        this.selectedVertexIndex = null;
+        this.hoveredVertexIndex = null;
+        this.refreshTemplate();
     }
     
 }
@@ -685,21 +725,21 @@ function hasUnsavedEdits() {
 
 function clearBothCanvases() {
     editor1.graphTemplate.vertices = [];
-    editor1.graphTemplate.numEdges = 0;
+    editor1.graphTemplate.edges = [];
     editor1.selectedVertexIndex = null;
     editor1.hoveredVertexIndex = null;
     editor2.graphTemplate.vertices = [];
-    editor2.graphTemplate.numEdges = 0;
+    editor2.graphTemplate.edges = [];
     editor2.selectedVertexIndex = null;
     editor2.hoveredVertexIndex = null;
-    editor1.updateDisplay();
-    editor2.updateDisplay();
+    editor1.refreshTemplate();
+    editor2.refreshTemplate();
 }
 
 // Distinguish the three import shapes the editor accepts:
 //   library      : array of { comment?, graphs: [...] }
-//   per-pair     : array of length 2 of { vertices, numEdges }
-//   single       : object with { vertices, numEdges }
+//   per-pair     : array of length 2 of { vertices, edges }
+//   single       : object with { vertices, edges }
 function detectImportShape(data) {
     if (Array.isArray(data)) {
         if (data.length > 0 && data[0] && Array.isArray(data[0].graphs)) return 'library';
@@ -719,17 +759,17 @@ function loadLibraryEntry(idx) {
         editor1.handleFileImportData(g0);
     } else {
         editor1.graphTemplate.vertices = [];
-        editor1.graphTemplate.numEdges = 0;
+        editor1.graphTemplate.edges = [];
         editor1.selectedVertexIndex = null;
-        editor1.updateDisplay();
+        editor1.refreshTemplate();
     }
     if (g1) {
         editor2.handleFileImportData(g1);
     } else {
         editor2.graphTemplate.vertices = [];
-        editor2.graphTemplate.numEdges = 0;
+        editor2.graphTemplate.edges = [];
         editor2.selectedVertexIndex = null;
-        editor2.updateDisplay();
+        editor2.refreshTemplate();
     }
     window.activeIdx = idx;
     markClean();
@@ -770,9 +810,27 @@ function snapshotCurrentPair() {
     return {
         comment: '',
         graphs: [
-            structuredClone(editor1.graphTemplate),
-            structuredClone(editor2.graphTemplate),
+            cloneGraphData(editor1.graphTemplate),
+            cloneGraphData(editor2.graphTemplate),
         ],
+    };
+}
+
+function serializeLibraryEntry(entry) {
+    return {
+        comment: typeof entry.comment === 'string' ? entry.comment : '',
+        graphs: Array.isArray(entry.graphs)
+            ? entry.graphs.map(g => cloneGraphData(g))
+            : [],
+    };
+}
+
+function serializeLibraryEntryForExport(entry) {
+    return {
+        comment: entry.comment ?? '',
+        graphs: Array.isArray(entry.graphs)
+            ? entry.graphs.map(g => exportGraphWithSplices(g))
+            : [],
     };
 }
 
@@ -818,9 +876,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // exporting just that pair as a one-entry library so the file is never
     // empty when something useful is on the canvas.
     exportAllBtn.addEventListener('click', () => {
-        let out = window.library;
-        if (out.length === 0) {
-            out = [snapshotCurrentPair()];
+        let out;
+        if (window.library.length === 0) {
+            out = [{
+                comment: '',
+                graphs: [
+                    exportGraphWithSplices(editor1.graphTemplate),
+                    exportGraphWithSplices(editor2.graphTemplate),
+                ],
+            }];
+        } else {
+            out = window.library.map(serializeLibraryEntryForExport);
         }
         const json = JSON.stringify(out, null, 2);
         const blob = new Blob([json], { type: 'application/json' });
@@ -832,9 +898,12 @@ document.addEventListener('DOMContentLoaded', () => {
         URL.revokeObjectURL(url);
     });
 
-    // Legacy per-pair export, kept for one-off sharing.
+    // Per-pair export.
     exportPairBtn.addEventListener('click', () => {
-        const combined = [editor1.graphTemplate, editor2.graphTemplate];
+        const combined = [
+            exportGraphWithSplices(editor1.graphTemplate),
+            exportGraphWithSplices(editor2.graphTemplate),
+        ];
         const json = JSON.stringify(combined, null, 2);
         const blob = new Blob([json], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
@@ -863,7 +932,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const imported = JSON.parse(e.target.result);
                     const shape = detectImportShape(imported);
                     if (shape === 'library') {
-                        window.library = imported.map(entry => ({
+                        window.library = imported.map(entry => serializeLibraryEntry({
                             comment: typeof entry.comment === 'string' ? entry.comment : '',
                             graphs: Array.isArray(entry.graphs) ? entry.graphs : [],
                         }));
@@ -876,17 +945,16 @@ document.addEventListener('DOMContentLoaded', () => {
                             updateLibraryUI();
                         }
                     } else if (shape === 'pair') {
-                        // Wrap the per-pair format as a one-entry library.
-                        window.library = [{
+                        window.library = [serializeLibraryEntry({
                             comment: '',
                             graphs: imported.slice(0, 2),
-                        }];
+                        })];
                         loadLibraryEntry(0);
                     } else if (shape === 'single') {
-                        window.library = [{
+                        window.library = [serializeLibraryEntry({
                             comment: '',
                             graphs: [imported],
-                        }];
+                        })];
                         loadLibraryEntry(0);
                     } else {
                         console.error('Unrecognized import shape');
@@ -897,7 +965,7 @@ document.addEventListener('DOMContentLoaded', () => {
             };
             reader.readAsText(files[0]);
         } else {
-            // Multiple files: legacy path — first file into editor1, second into editor2.
+            // Multiple files: first file into editor1, second into editor2.
             const reader1 = new FileReader();
             reader1.onload = (e) => {
                 try {
