@@ -193,6 +193,9 @@ void FGrammarDLL::UpdateMesh() {
     // Process each submesh
     for (int32 submeshIndex = 0; submeshIndex < meshData.numSubmeshes; submeshIndex++) {
         SubmeshCpp submesh = meshData.submeshes[submeshIndex];
+        if (submesh.numVertices <= 0) {
+            continue;
+        }
         
         // Prepare mesh data for this submesh
         TArray<FVector> Vertices;
@@ -246,19 +249,21 @@ void FGrammarDLL::UpdateMesh() {
             Triangles.Add(i2);
         }
         
-        // Create the procedural mesh section for this submesh
-        ProcMeshComponent->CreateMeshSection(submeshIndex, Vertices, Triangles, Normals, UVs, VertexColors, Tangents, true);
-        
-        // Create material for this submesh based on color
-        UMaterial* SubmeshMaterial = LoadObject<UMaterial>(nullptr, TEXT("/Engine/BasicShapes/BasicShapeMaterial"));
-        if (SubmeshMaterial) {
-            // Create a dynamic material instance to set the color
-            UMaterialInstanceDynamic* DynamicMaterial = UMaterialInstanceDynamic::Create(SubmeshMaterial, nullptr);
-            if (DynamicMaterial) {
-                DynamicMaterial->SetVectorParameterValue(TEXT("Color"), FLinearColor(submesh.red, submesh.green, submesh.blue, 1.0f));
-                ProcMeshComponent->SetMaterial(submeshIndex, DynamicMaterial);
-            } else {
-                ProcMeshComponent->SetMaterial(submeshIndex, SubmeshMaterial);
+        if (Triangles.Num() > 0) {
+            // Create the procedural mesh section for this submesh
+            ProcMeshComponent->CreateMeshSection(submeshIndex, Vertices, Triangles, Normals, UVs, VertexColors, Tangents, true);
+            
+            // Create material for this submesh based on color
+            UMaterial* SubmeshMaterial = LoadObject<UMaterial>(nullptr, TEXT("/Engine/BasicShapes/BasicShapeMaterial"));
+            if (SubmeshMaterial) {
+                // Create a dynamic material instance to set the color
+                UMaterialInstanceDynamic* DynamicMaterial = UMaterialInstanceDynamic::Create(SubmeshMaterial, nullptr);
+                if (DynamicMaterial) {
+                    DynamicMaterial->SetVectorParameterValue(TEXT("Color"), FLinearColor(submesh.red, submesh.green, submesh.blue, 1.0f));
+                    ProcMeshComponent->SetMaterial(submeshIndex, DynamicMaterial);
+                } else {
+                    ProcMeshComponent->SetMaterial(submeshIndex, SubmeshMaterial);
+                }
             }
         }
         

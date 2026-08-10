@@ -298,93 +298,96 @@ void GrammarEditor::update_mesh() {
 		return;
 	}
 
-	// Check if we have any submeshes with vertices.
-	bool has_vertices = false;
+	// Check if we have any renderable geometry.
+	bool has_mesh = false;
+	bool has_lines = false;
 	for (int submesh_index = 0; submesh_index < mesh.numSubmeshes; submesh_index++) {
-		if (mesh.submeshes[submesh_index].numVertices > 0 && mesh.submeshes[submesh_index].numTriangles > 0) {
-			has_vertices = true;
-			break;
+		SubmeshCpp submesh = mesh.submeshes[submesh_index];
+		if (submesh.numVertices > 0 && submesh.numTriangles > 0) {
+			has_mesh = true;
+		}
+		if (submesh.numVertices > 0 && submesh.numFaces > 0) {
+			has_lines = true;
 		}
 	}
 
-	// Remove mesh if empty. Godot does not support empty meshes.
-	if (!has_vertices) {
+	if (!has_mesh && !has_lines) {
 		if (mesh_instance) {
 			mesh_instance->queue_free();
 			mesh_instance = nullptr;
 		}
 		
-		// Also remove edge lines
 		if (edge_lines_instance) {
 			edge_lines_instance->queue_free();
 			edge_lines_instance = nullptr;
 		}
+		destroyMesh(mesh);
 		return;
 	}
 	
-	// Find existing mesh instance or create a new one.
-	if (!mesh_instance) {
-		mesh_instance = memnew(MeshInstance3D);
-		mesh_instance->set_name("Generated Mesh");
-		current_scene->add_child(mesh_instance);
-		mesh_instance->set_owner(current_scene);
-	}
+	if (has_mesh) {
+		if (!mesh_instance) {
+			mesh_instance = memnew(MeshInstance3D);
+			mesh_instance->set_name("Generated Mesh");
+			current_scene->add_child(mesh_instance);
+			mesh_instance->set_owner(current_scene);
+		}
 
-	// Create the array mesh.
-	Ref<ArrayMesh> array_mesh = memnew(ArrayMesh);
-	
-	// Process each submesh.
-	for (int submesh_index = 0; submesh_index < mesh.numSubmeshes; submesh_index++) {
-		SubmeshCpp submesh = mesh.submeshes[submesh_index];
+		Ref<ArrayMesh> array_mesh = memnew(ArrayMesh);
 		
-		// Skip empty submeshes.
-		if (submesh.numVertices == 0 || submesh.numTriangles == 0) {
-			continue;
+		for (int submesh_index = 0; submesh_index < mesh.numSubmeshes; submesh_index++) {
+			SubmeshCpp submesh = mesh.submeshes[submesh_index];
+			
+			if (submesh.numVertices == 0 || submesh.numTriangles == 0) {
+				continue;
+			}
+
+			PackedVector3Array vertices;
+			PackedInt32Array indices;
+			PackedVector3Array normals;
+
+			// Switch Y and Z coordinates.
+			vertices.resize(submesh.numVertices);
+			for (int i = 0; i < submesh.numVertices; i++) {
+				vertices[i] = Vector3(submesh.positions[i * 3], submesh.positions[i * 3 + 2], submesh.positions[i * 3 + 1]);
+			}
+			normals.resize(submesh.numVertices);
+			for (int i = 0; i < submesh.numVertices; i++) {
+				normals[i] = Vector3(submesh.normals[i * 3], submesh.normals[i * 3 + 2], submesh.normals[i * 3 + 1]);
+			}
+
+			indices.resize(submesh.numTriangles * 3);
+			for (int i = 0; i < submesh.numTriangles; i++) {
+				indices[i * 3] = submesh.triangles[i * 3];
+				indices[i * 3 + 1] = submesh.triangles[i * 3 + 2];
+				indices[i * 3 + 2] = submesh.triangles[i * 3 + 1];
+			}
+
+			// Create the mesh surface for this submesh.
+			Array arrays;
+			arrays.resize(Mesh::ARRAY_MAX);
+			arrays[Mesh::ARRAY_VERTEX] = vertices;
+			arrays[Mesh::ARRAY_INDEX] = indices;
+			arrays[Mesh::ARRAY_NORMAL] = normals;
+
+			array_mesh->add_surface_from_arrays(Mesh::PRIMITIVE_TRIANGLES, arrays);
+			
+			// Create material for this submesh based on color.
+			Ref<StandardMaterial3D> material = memnew(StandardMaterial3D);
+			material->set_albedo(Color(submesh.red, submesh.green, submesh.blue, 1.0f));
+			array_mesh->surface_set_material(submesh_index, material);
 		}
-
-		PackedVector3Array vertices;
-		PackedInt32Array indices;
-		PackedVector3Array normals;
-
-		// Switch Y and Z coordinates.
-		vertices.resize(submesh.numVertices);
-		for (int i = 0; i < submesh.numVertices; i++) {
-			vertices[i] = Vector3(submesh.positions[i * 3], submesh.positions[i * 3 + 2], submesh.positions[i * 3 + 1]);
-		}
-		normals.resize(submesh.numVertices);
-		for (int i = 0; i < submesh.numVertices; i++) {
-			normals[i] = Vector3(submesh.normals[i * 3], submesh.normals[i * 3 + 2], submesh.normals[i * 3 + 1]);
-		}
-
-		indices.resize(submesh.numTriangles * 3);
-		for (int i = 0; i < submesh.numTriangles; i++) {
-			// Reverse the orientation for each triangle.
-			indices[i * 3] = submesh.triangles[i * 3];
-			indices[i * 3 + 1] = submesh.triangles[i * 3 + 2];
-			indices[i * 3 + 2] = submesh.triangles[i * 3 + 1];
-		}
-
-		// Create the mesh surface for this submesh.
-		Array arrays;
-		arrays.resize(Mesh::ARRAY_MAX);
-		arrays[Mesh::ARRAY_VERTEX] = vertices;
-		arrays[Mesh::ARRAY_INDEX] = indices;
-		arrays[Mesh::ARRAY_NORMAL] = normals;
-
-		array_mesh->add_surface_from_arrays(Mesh::PRIMITIVE_TRIANGLES, arrays);
 		
-		// Create material for this submesh based on color.
-		Ref<StandardMaterial3D> material = memnew(StandardMaterial3D);
-		material->set_albedo(Color(submesh.red, submesh.green, submesh.blue, 1.0f));
-		array_mesh->surface_set_material(submesh_index, material);
+		mesh_instance->set_mesh(array_mesh);
+	} else if (mesh_instance) {
+		mesh_instance->queue_free();
+		mesh_instance = nullptr;
 	}
-	
-	mesh_instance->set_mesh(array_mesh);
 	
 	// Create edge lines from the first submesh (for visualization).
-	if (mesh.numSubmeshes > 0) {
+	if (has_lines && mesh.numSubmeshes > 0) {
 		SubmeshCpp first_submesh = mesh.submeshes[0];
-		if (first_submesh.numVertices > 0) {
+		if (first_submesh.numVertices > 0 && first_submesh.numFaces > 0) {
 			PackedVector3Array vertices;
 			PackedInt32Array face_indices;
 			
@@ -402,6 +405,9 @@ void GrammarEditor::update_mesh() {
 			
 			create_edge_lines(vertices, face_indices);
 		}
+	} else if (edge_lines_instance) {
+		edge_lines_instance->queue_free();
+		edge_lines_instance = nullptr;
 	}
 	
 	// Clean up the mesh data.
