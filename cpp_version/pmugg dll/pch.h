@@ -6,7 +6,21 @@
 #ifndef PCH_H
 #define PCH_H
 
-// add headers that you want to pre-compile here
+// Keep Windows and CRT/stdlib state consistent across all translation units.
 #include "framework.h"
+
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <cmath>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <vector>
+#include <string>
+#include <memory>
+#include <algorithm>
+#include <optional>
+#include <chrono>
 
 #endif //PCH_H
