@@ -26,7 +26,6 @@ TemplateMatcher::TemplateMatcher(
 	vector<VertexType*> vTypes,
 	vector<EdgeType*> eTypes
 ) : templateGraph(templateGraph_), edgeTypes(std::move(eTypes)) {
-	counter = 0;
 	for (int i = 0; i < (int)vTypes.size(); i++) {
 		VertexType* vType = vTypes[i];
 		for (int j = 0; j < (int)vType->getHalfEdgeTypes().size(); j++) {
@@ -260,7 +259,6 @@ void TemplateMatcher::match() {
 	}
 	decisions.push_back(decison0);
 	while (decisions.size() > 0) {
-		counter++;
 		applyDecision();
 		bool success = propagate();
 		if (success) {

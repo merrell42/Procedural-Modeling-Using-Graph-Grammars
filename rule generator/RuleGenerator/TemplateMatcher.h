@@ -62,8 +62,6 @@ public:
 	int numEdgeStates;
 	// Our current position within the vertices.
 	int vIndex;
-	// For debugging.
-	int counter;
 	// For each graph that matches the template, this lists the value of each vertex.
 	// Each value is the index of the vertex state.
 	vector<vector<int>> vertexValues;
@@ -72,6 +70,7 @@ public:
 	void match();
 	GraphValues getGraphValues(int graphIndex) const;
 
+private:
 	// Boundary or spliced vertices are assigned edge states.
 	bool usesEdgeState(int vIndex) const;
 	// Face-id advertised on a spliced half-edge for the given edge state (empty if none).
@@ -79,8 +78,6 @@ public:
 	// Which FaceData side the spliced half-edge selects for this edge state.
 	// Returns false if the connection/state cannot select a face.
 	bool splicedFaceOnRight(int vIndex, int stateIndex, int connIndex, bool& onRightOut) const;
-
-private:
 	void applyDecision();
 	bool propagate();
 	vector<int> findChoices();

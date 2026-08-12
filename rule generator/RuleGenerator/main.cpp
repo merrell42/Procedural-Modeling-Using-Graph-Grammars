@@ -20,7 +20,6 @@
 #include "pch.h"
 #include "RuleGenerator.h"
 #include "RoundtripCommand.h"
-#include "SpliceCheckCommand.h"
 
 #include <iostream>
 #include <string>
@@ -38,9 +37,6 @@ constexpr const char* kDefaultPrimitives = "../primitives/H.json";
 // constexpr const char* kDefaultLibrary = "../graph templates/graph_templates.json";
 // constexpr const char* kDefaultPrimitives = "../primitives/square filled.json";
 
-constexpr const char* kDefaultHLibrary = "../graph templates/H.json";
-constexpr const char* kDefaultHPrimitives = "../primitives/H.json";
-
 constexpr const char* kDefaultOutput = "../generatedRules.json";
 
 int usage(const char* exe) {
@@ -48,8 +44,7 @@ int usage(const char* exe) {
          << "  " << exe << "                              # default smoke\n"
          << "  " << exe << " smoke                        # default smoke\n"
          << "  " << exe << " roundtrip [<library.json>]   # TemplateGraph round-trip test\n"
-         << "  " << exe << " match <primitives.json> [<library.json>]  # alternate input\n"
-         << "  " << exe << " splice-check [<primitives.json> [<library.json>]]\n";
+         << "  " << exe << " match <primitives.json> [<library.json>]  # alternate input\n";
     return 2;
 }
 
@@ -71,11 +66,6 @@ int main(int argc, char* argv[]) {
         string primPath = argv[2];
         string libPath  = (argc >= 4) ? argv[3] : kDefaultLibrary;
         return GenerateRules(primPath, libPath, kDefaultOutput);
-    }
-    if (cmd == "splice-check") {
-        string primPath = (argc >= 3) ? argv[2] : kDefaultHPrimitives;
-        string libPath  = (argc >= 4) ? argv[3] : kDefaultHLibrary;
-        return runSpliceCheck(primPath, libPath);
     }
     if (cmd == "--help" || cmd == "-h") {
         usage(exe);
