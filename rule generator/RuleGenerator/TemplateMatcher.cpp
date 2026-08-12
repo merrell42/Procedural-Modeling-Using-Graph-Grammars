@@ -479,43 +479,6 @@ GraphValues TemplateMatcher::getGraphValues(int graphIndex) const {
 		graphValues.spliceIsAtStart.push_back(spliceIsAtStart);
 	}
 
-	// Resolve where each boundary tip survives after gluing, so exporters can
-	// order bVertices by shared boundaryId across both sides of a rule.
-	const int nTemplate = (int)vertexValue.size();
-	graphValues.tipInstance.assign(nTemplate, -1);
-	graphValues.tipSlot.assign(nTemplate, -1);
-	for (int j = 0; j < nTemplate; j++) {
-		const auto& templateVertex = templateGraph.vertices[j];
-		if (templateVertex.boundaryId.empty() || templateVertex.spliced) {
-			continue;
-		}
-		for (int c = 0; c < (int)templateVertex.connections.size(); c++) {
-			const int e = templateVertex.connections[c];
-			const auto& ends = eConnections[e];
-			const int neighbor = (ends[0] == j) ? ends[1] : ends[0];
-			if (neighbor < 0 || neighbor >= nTemplate) {
-				continue;
-			}
-			if (templateGraph.vertices[neighbor].spliced) {
-				// Boundary edge-graph glues away the state slot; the opposite end remains.
-				const int gluedSlot = connectionIndexAt(j, vertexValue[j], c);
-				graphValues.tipInstance[j] = templateToMatch[j];
-				graphValues.tipSlot[j] = 1 - gluedSlot;
-				break;
-			}
-			if (templateGraph.vertices[neighbor].boundaryId.empty() &&
-				!templateGraph.vertices[neighbor].spliced) {
-				// Interior vertex primitive owns the boundary spoke.
-				const int neighborConn = ConnectionIndex(neighbor, e, -1);
-				graphValues.tipInstance[j] = templateToMatch[neighbor];
-				graphValues.tipSlot[j] = connectionIndexAt(
-					neighbor, vertexValue[neighbor], neighborConn
-				);
-				break;
-			}
-		}
-	}
-
 	vector<array<int, 4>> normalEdges;
 	vector<array<int, 4>> splicedEdges;
 	for (int j = 0; j < (int)eConnections.size(); j++) {

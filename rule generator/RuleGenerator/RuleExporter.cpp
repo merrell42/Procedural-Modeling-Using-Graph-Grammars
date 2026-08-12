@@ -75,28 +75,68 @@ GraphHalfEdge* findInteriorHalfEdge(const vector<GraphHalfEdge*>& halfEdges) {
 	return nullptr;
 }
 
-// Match shipped grammars (e.g. 2D Branches/H.json): morphism.halfs lists each
-// boundary vertex's interior half-edge first, then each boundary half-edge.
-// RuleApplier looks up boundary (edgeless) halfs in the second half and uses
-// getPrev()->getEdge() to recover the interior edge.
-void updateBoundaryHalfEdges(Graph* graph) {
-	vector<GraphHalfEdge*> bHalfEdges;
-	bHalfEdges.reserve(graph->getBVertices().size() * 2);
-	for (auto* bVertex : graph->getBVertices()) {
-		auto* interiorHalf = findInteriorHalfEdge(bVertex->getHalfEdges());
-		if (!interiorHalf) {
-			throw runtime_error("updateBoundaryHalfEdges: boundary vertex has no interior half-edge");
+// Like web getConnectors; rotate to a canonical order.
+// morphism.halfs stores boundary (edgeless) halfs — what RuleApplier looks up.
+void setBoundaryFromWalk(Graph* graph) {
+	vector<GraphVertex*> connectors;
+	vector<GraphHalfEdge*> boundaryHalfs;
+	vector<GraphHalfEdge*> interiorHalfs;
+	unordered_set<GraphVertex*> seen;
+
+	for (auto* face : graph->getFaces()) {
+		if (!face) {
+			continue;
 		}
-		bHalfEdges.push_back(interiorHalf);
-	}
-	for (auto* bVertex : graph->getBVertices()) {
-		auto* bHalf = findBoundaryHalfEdge(bVertex->getHalfEdges());
-		if (!bHalf) {
-			throw runtime_error("updateBoundaryHalfEdges: boundary vertex has no half-edge on the boundary");
+		for (auto* half : face->getOuterHalfEdges()) {
+			if (!half || half->getEdge()) {
+				continue;
+			}
+			GraphVertex* vertex = half->getVertex();
+			if (!vertex || seen.count(vertex)) {
+				continue;
+			}
+			GraphHalfEdge* interiorHalf = findInteriorHalfEdge(vertex->getHalfEdges());
+			GraphHalfEdge* boundaryHalf = findBoundaryHalfEdge(vertex->getHalfEdges());
+			if (!interiorHalf || !boundaryHalf) {
+				throw runtime_error("setBoundaryFromWalk: boundary vertex missing half-edge");
+			}
+			seen.insert(vertex);
+			connectors.push_back(vertex);
+			interiorHalfs.push_back(interiorHalf);
+			boundaryHalfs.push_back(boundaryHalf);
 		}
-		bHalfEdges.push_back(bHalf);
 	}
-	graph->setBHalfEdges(bHalfEdges);
+
+	const int n = (int)connectors.size();
+	if (n > 1) {
+		auto signature = [&](int rot) {
+			vector<pair<int, int>> sig;
+			sig.reserve(n);
+			for (int i = 0; i < n; i++) {
+				GraphHalfEdge* half = interiorHalfs[(i + rot) % n];
+				EdgeType* eType = half->getEdge()->getType();
+				sig.push_back({ eType->getId(), half->getForward() ? 1 : 0 });
+			}
+			return sig;
+		};
+		int bestRot = 0;
+		auto bestSig = signature(0);
+		for (int rot = 1; rot < n; rot++) {
+			auto sig = signature(rot);
+			if (sig < bestSig) {
+				bestSig = std::move(sig);
+				bestRot = rot;
+			}
+		}
+		if (bestRot != 0) {
+			rotate(connectors.begin(), connectors.begin() + bestRot, connectors.end());
+			rotate(interiorHalfs.begin(), interiorHalfs.begin() + bestRot, interiorHalfs.end());
+			rotate(boundaryHalfs.begin(), boundaryHalfs.begin() + bestRot, boundaryHalfs.end());
+		}
+	}
+
+	graph->setBVertices(connectors);
+	graph->setBHalfEdges(boundaryHalfs);
 }
 
 vector<pair<GraphVertex*, GraphVertex*>> findLoopables(Graph* graph) {
@@ -512,14 +552,8 @@ Graph* createSplicedVertexGraph(
 		int bSlot = 0;
 	};
 
-	// CCW around center relative to segment start→end.
-	// Half-edge attach order at the center becomes the vertex fan order; shipped
-	// H.json splice mids use [end(fwd=F), start(fwd=T), splice], so walk end→start
-	// first and place the splice on the left/right side of the start→end walk.
-	//
-	// The splice spoke uses !spliceIsAtStart so that after gluing two mids, each
-	// face walk through the splice continues on a same-forward segment half
-	// (matches H.json: splice.fwd == next.fwd).
+	// CCW fan: end, then start; splice on left/right of start→end.
+	// !spliceIsAtStart keeps splice.fwd == next.fwd after gluing (see H.json).
 	vector<Spoke> ccw;
 	const bool spliceSpokeAtStart = !spliceIsAtStart;
 	if (!spliceOnRight) {
@@ -702,67 +736,9 @@ Graph* releaseInstance(vector<unique_ptr<Graph>>& instances, Graph* graph) {
 	throw runtime_error("buildGraphFromValues: result not owned by instances");
 }
 
-GraphVertex* resolveTipVertex(
-	const GraphValues& graphValues,
-	int templateVertex,
-	const unordered_map<string, string>& matchToNetwork,
-	Graph* finalResult
-) {
-	if (templateVertex < 0 ||
-		templateVertex >= (int)graphValues.tipInstance.size() ||
-		graphValues.tipInstance[templateVertex] < 0) {
-		return nullptr;
-	}
-	const int instance = graphValues.tipInstance[templateVertex];
-	const int slot = graphValues.tipSlot[templateVertex];
-	const string matchKey = to_string(instance) + "," + to_string(slot);
-	auto it = matchToNetwork.find(matchKey);
-	if (it == matchToNetwork.end()) {
-		return nullptr;
-	}
-	const string& netKey = it->second;
-	const auto comma = netKey.find(',');
-	const int netId = stoi(netKey.substr(0, comma));
-	const int bSlot = stoi(netKey.substr(comma + 1));
-	if (netId != finalResult->getId() || bSlot < 0) {
-		return nullptr;
-	}
-	const auto& bVertices = finalResult->getBVertices();
-	if (bSlot >= (int)bVertices.size()) {
-		return nullptr;
-	}
-	return bVertices[bSlot];
-}
-
-void orderBoundaryVertices(
-	Graph* graph,
-	const GraphValues& graphValues,
-	const vector<int>& boundaryTemplateOrder,
-	const unordered_map<string, string>& matchToNetwork
-) {
-	if (boundaryTemplateOrder.empty()) {
-		return;
-	}
-	vector<GraphVertex*> ordered;
-	ordered.reserve(boundaryTemplateOrder.size());
-	unordered_set<GraphVertex*> used;
-	for (int templateVertex : boundaryTemplateOrder) {
-		GraphVertex* tip = resolveTipVertex(
-			graphValues, templateVertex, matchToNetwork, graph
-		);
-		if (!tip || used.count(tip)) {
-			throw runtime_error("orderBoundaryVertices: failed to resolve boundary tip");
-		}
-		used.insert(tip);
-		ordered.push_back(tip);
-	}
-	graph->setBVertices(ordered);
-}
-
 Graph* buildGraphFromValues(
 	const GraphValues& graphValues,
-	const PrimitiveGraphs& graphs,
-	const vector<int>& boundaryTemplateOrder
+	const PrimitiveGraphs& graphs
 ) {
 	if (graphValues.edges.empty() && graphValues.vertices.size() == 0) {
 		return new Graph();
@@ -796,8 +772,7 @@ Graph* buildGraphFromValues(
 
 	if (edgeQueue.empty()) {
 		Graph* result = instances[0].release();
-		orderBoundaryVertices(result, graphValues, boundaryTemplateOrder, matchToNetwork);
-		updateBoundaryHalfEdges(result);
+		setBoundaryFromWalk(result);
 		return result;
 	}
 
@@ -880,9 +855,7 @@ Graph* buildGraphFromValues(
 	if (!finalResult) {
 		throw runtime_error("buildGraphFromValues: no result");
 	}
-	// Reorder surviving edge-stub bVertices by shared boundaryId order.
-	orderBoundaryVertices(finalResult, graphValues, boundaryTemplateOrder, matchToNetwork);
-	updateBoundaryHalfEdges(finalResult);
+	setBoundaryFromWalk(finalResult);
 	return releaseInstance(instances, finalResult);
 }
 
@@ -998,48 +971,16 @@ void RuleExporter::exportGroups(
 	}
 
 	auto primitiveGraphs = createPrimitiveGraphs(primitives, needSpliced);
-
-	// Shared boundaryId order from the first template graph — both rule sides
-	// must emit morphisms in this order so RuleApplier can pair boundaries.
-	vector<int> boundaryTemplateOrder;
-	if (!matchers.empty()) {
-		for (int v = 0; v < (int)matchers[0].templateGraph.vertices.size(); v++) {
-			if (!matchers[0].templateGraph.vertices[v].boundaryId.empty()) {
-				boundaryTemplateOrder.push_back(v);
-			}
-		}
-	}
-
 	for (const auto& group : groups) {
 		const int numGraphs = (int)group.graphIndices.size();
 		vector<vector<unique_ptr<Graph>>> graphs(numGraphs);
 		vector<vector<vector<int>>> vertexTypeIds(numGraphs);
 
 		for (int i = 0; i < numGraphs; i++) {
-			// Map this template's vertices to the shared boundaryId order.
-			vector<int> localBoundaryOrder;
-			localBoundaryOrder.reserve(boundaryTemplateOrder.size());
-			for (int srcV : boundaryTemplateOrder) {
-				const string& id = matchers[0].templateGraph.vertices[srcV].boundaryId;
-				int local = -1;
-				for (int v = 0; v < (int)matchers[i].templateGraph.vertices.size(); v++) {
-					if (matchers[i].templateGraph.vertices[v].boundaryId == id) {
-						local = v;
-						break;
-					}
-				}
-				if (local < 0) {
-					throw runtime_error("exportGroups: missing shared boundaryId in template graph");
-				}
-				localBoundaryOrder.push_back(local);
-			}
-
 			for (int index : group.graphIndices[i]) {
 				try {
 					auto graphValues = matchers[i].getGraphValues(index);
-					auto graphA = unique_ptr<Graph>(
-						buildGraphFromValues(graphValues, primitiveGraphs, localBoundaryOrder)
-					);
+					auto graphA = unique_ptr<Graph>(buildGraphFromValues(graphValues, primitiveGraphs));
 					auto vertexTypeIdsA = getVertexTypeIds(graphA.get());
 					if (loopsAreValid(graphA.get()) &&
 						!isDuplicateGraph(graphA.get(), vertexTypeIdsA, graphs[i], vertexTypeIds[i])) {

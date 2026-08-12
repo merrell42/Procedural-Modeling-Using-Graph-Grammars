@@ -13,7 +13,9 @@ using Json = nlohmann::json;
 class EdgeType;
 class FaceType;
 
-// Mirrors json.matches[i] from ms.networkHierarchy.partialImport.
+// Match values describing one template assignment, used to glue primitive
+// graphs into a rule side (see buildGraphFromValues). Evolved from the web
+// matcher output that ms.networkHierarchy.glueMatch consumed as json.matches[i].
 class GraphValues {
 public:
 	vector<int> vertices;
@@ -25,11 +27,6 @@ public:
 	// For spliced sites: whether this site is the start end of the spliced edge.
 	vector<bool> spliceIsAtStart;
 	vector<array<int, 4>> edges;
-	// After gluing, each template boundary vertex maps to a surviving bVertex on
-	// some primitive instance: (tipInstance, tipSlot). Used to order morphisms
-	// consistently across the two sides of a rule (by shared boundaryId).
-	vector<int> tipInstance;
-	vector<int> tipSlot;
 };
 
 class Decision {
