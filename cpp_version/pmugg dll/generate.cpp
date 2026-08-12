@@ -12,6 +12,7 @@
 #include "../util/util.h"
 #include "../settings.h"
 #include "../json versioning/read_json_file.h"
+#include "../util/diagnostics.h"
 
 using namespace std;
 using Json = nlohmann::json;
@@ -29,13 +30,27 @@ void safeCopy(char* dest, int len, const char* src) {
 #endif
 }
 
+static void logDllWarningFromGrammar(const GraphGrammar* grammar) {
+	if (!grammar->hasStarterRules(true) && !grammar->hasStarterRules(false)) {
+		Diagnostics::setWarning(
+			"Warning: Graph grammar has no starter or ground rules; start productions will be skipped.");
+	}
+}
+
+void getLastWarning(char* result, int len) {
+	safeCopy(result, len, Diagnostics::getWarning().c_str());
+	Diagnostics::clearWarning();
+}
+
 // Initialize the model and mutator from the JSON file. Return messages in the result string.
 void initialize(const char* filePath, char* result, int len, int seed) {
 	resetRandom(seed);
+	Diagnostics::clearWarning();
 
 	try {
 		Json parsed = readJsonFile(filePath);
 		auto grammar = GraphGrammar::import(parsed);
+		logDllWarningFromGrammar(grammar);
 		model = new Model();
 		mutator = new Mutator(model, grammar);
 		safeCopy(result, len, "Success");
@@ -43,7 +58,7 @@ void initialize(const char* filePath, char* result, int len, int seed) {
 		string errorMsg = "Error: JSON parsing failed - ";
 		errorMsg += e.what();
 		safeCopy(result, len, errorMsg.c_str());
-	} catch (const runtime_error& e) {
+	} catch (const exception& e) {
 		string errorMsg = "Error: ";
 		errorMsg += e.what();
 		safeCopy(result, len, errorMsg.c_str());
@@ -59,7 +74,11 @@ void reset(int seed) {
 
 // Iterate some number of steps.
 void iterate(int steps) {
-	mutator->iterate(steps);
+	try {
+		mutator->iterate(steps);
+	} catch (const exception& e) {
+		Diagnostics::setWarning(string("Warning: ") + e.what());
+	}
 }
 
 // Iterate until a certain amount of time has passed.
@@ -69,7 +88,12 @@ int iterateToTime(float timeSeconds) {
 	auto targetDuration = std::chrono::duration<float>(timeSeconds);
 	
 	while (std::chrono::high_resolution_clock::now() - startTime < targetDuration) {
-		mutator->iterate(1);
+		try {
+			mutator->iterate(1);
+		} catch (const exception& e) {
+			Diagnostics::setWarning(string("Warning: ") + e.what());
+			break;
+		}
 		steps++;
 	}
 	return steps;

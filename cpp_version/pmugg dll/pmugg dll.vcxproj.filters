@@ -191,6 +191,9 @@
     <ClCompile Include="..\util\range.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\util\diagnostics.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\util\util.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

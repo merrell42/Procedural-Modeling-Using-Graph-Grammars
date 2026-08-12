@@ -12,6 +12,7 @@
 #include "primitives/vertex_type.h"
 #include "settings.h"
 #include "util/util.h"
+#include "util/diagnostics.h"
 #include "util/binary_stream.h"
 #include "json versioning/json_version_manager.h"
 #include "json versioning/json_migrations.h"
@@ -49,6 +50,12 @@ bool GraphGrammar::isGrounded() const {
     return grounded && groundRules.size() > 0;
 }
 
+bool GraphGrammar::hasStarterRules(bool useGround) const {
+    bool isGrounded = (grounded && useGround) || starterRules.empty();
+    const auto& ruleSet = isGrounded ? groundRules : starterRules;
+    return !ruleSet.empty();
+}
+
 void GraphGrammar::addRule(ProductionRule* rule) {
     rules.push_back(rule);
 }
@@ -81,6 +88,12 @@ Production GraphGrammar::getProduction() {
 Production GraphGrammar::getStarterProduction(bool useGround) {
     bool isGrounded = (grounded && useGround) || starterRules.empty();
     auto& rules = isGrounded ? groundRules : starterRules;
+
+    if (rules.empty()) {
+        Diagnostics::setWarning(
+            "Warning: Graph grammar has no starter or ground rules; start productions will be skipped.");
+        return { nullptr, nullptr, nullptr, false };
+    }
 
     auto* rule = Util::pick(rules);
     if (rule) {

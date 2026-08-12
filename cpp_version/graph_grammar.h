@@ -50,6 +50,7 @@ public:
     Production getStarterProduction(bool useGround);
 
     bool isGrounded() const;
+    bool hasStarterRules(bool useGround) const;
 
     // Get the number of dimensions of the graph.
     int getDims() const { return primitives->dims; }

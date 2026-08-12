@@ -16,6 +16,7 @@
 // The functions that are exported from the DLL.
 extern "C" {
     GENERATE_API void initialize(const char* filePath, char* result, int len, int seed);
+    GENERATE_API void getLastWarning(char* result, int len);
     GENERATE_API void reset(int seed);
     GENERATE_API void iterate(int steps);
     GENERATE_API int iterateToTime(float timeSeconds);

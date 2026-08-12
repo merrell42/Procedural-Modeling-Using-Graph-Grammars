@@ -62,6 +62,9 @@ namespace Grammar {
         private static extern void initialize(string filePath, StringBuilder result, int len, int seed);
 
         [DllImport(pmuggDll, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void getLastWarning(StringBuilder result, int len);
+
+        [DllImport(pmuggDll, CallingConvention = CallingConvention.Cdecl)]
         private static extern void reset(int seed);
 
         [DllImport(pmuggDll, CallingConvention = CallingConvention.Cdecl)]
@@ -127,6 +130,7 @@ namespace Grammar {
             float timePerFrame = 0.1f;
             int stepsCompleted = iterateToTime(timePerFrame);
             iterationCount += stepsCompleted;
+            LogDllWarning();
 
             UpdateMesh();
             SceneView.RepaintAll();
@@ -378,7 +382,16 @@ namespace Grammar {
         private void IterateSteps(int steps) {
             iterate(steps);
             iterationCount += steps;
+            LogDllWarning();
             UpdateMesh();
+        }
+
+        private void LogDllWarning() {
+            StringBuilder warning = new StringBuilder(1024);
+            getLastWarning(warning, warning.Capacity);
+            if (warning.Length > 0) {
+                Debug.LogWarning(warning.ToString());
+            }
         }
 
         [Shortcut("Grammar/Reset Generation Keypad", KeyCode.Keypad0)]
@@ -490,6 +503,7 @@ namespace Grammar {
             if (sb.ToString() == "Success") {
                 grammarName = Path.GetFileNameWithoutExtension(path);
                 iterationCount = 0;
+                LogDllWarning();
                 UpdateMesh();
             } else {
                 grammarName = "";

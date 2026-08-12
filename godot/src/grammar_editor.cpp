@@ -17,6 +17,14 @@ using namespace godot;
  // Animation time step per frame.
 #define TIME_PER_FRAME 0.05f
 
+static void log_dll_warning() {
+	char warning[1024];
+	getLastWarning(warning, sizeof(warning));
+	if (warning[0] != '\0') {
+		UtilityFunctions::push_warning(warning);
+	}
+}
+
 void GrammarEditor::_bind_methods() {
     ClassDB::bind_method(D_METHOD("on_load_grammar_pressed"), &GrammarEditor::on_load_grammar_pressed);
     ClassDB::bind_method(D_METHOD("on_file_selected"), &GrammarEditor::on_file_selected);
@@ -207,6 +215,7 @@ void GrammarEditor::on_file_selected(String path) {
 		get_current_values();
 		initialize(path_cstr, result, sizeof(result), seed_value);
 		UtilityFunctions::print(result);
+		log_dll_warning();
 		
 		// Set the size.
 		setSize(size_x_value, size_y_value, size_z_value);
@@ -227,6 +236,7 @@ void GrammarEditor::on_step_pressed() {
 		return;
 	}
 	iterate(1);
+	log_dll_warning();
 	iteration_count++;
 	update_iteration_display();
 	update_mesh();
@@ -265,6 +275,7 @@ void GrammarEditor::on_animation_timer_timeout() {
 		// TODO: Check that this is working. I'm having trouble recompiling the plugin.
         int steps_completed = iterateToTime(TIME_PER_FRAME);
         iteration_count += steps_completed;
+        log_dll_warning();
         update_iteration_display();
         update_mesh();
         
@@ -496,6 +507,7 @@ void GrammarEditor::load_file_from_folder(String file_path) {
     get_current_values();
     initialize(path_cstr, result, sizeof(result), seed_value);
     UtilityFunctions::print(result);
+    log_dll_warning();
     setSize(size_x_value, size_y_value, size_z_value);
 
     // Enable the buttons.

@@ -196,6 +196,7 @@
     <ClCompile Include="..\util\matrix.cpp" />
     <ClCompile Include="..\util\range.cpp" />
     <ClCompile Include="..\util\timer.cpp" />
+    <ClCompile Include="..\util\diagnostics.cpp" />
     <ClCompile Include="..\util\util.cpp" />
     <ClCompile Include="minmax.cpp" />
     <ClCompile Include="pmugg.cpp" />
@@ -261,6 +262,7 @@
     <ClInclude Include="..\util\matrix.h" />
     <ClInclude Include="..\util\range.h" />
     <ClInclude Include="..\util\timer.h" />
+    <ClInclude Include="..\util\diagnostics.h" />
     <ClInclude Include="..\util\util.h" />
     <ClInclude Include="minmax.h" />
     <ClInclude Include="..\pch.h" />
