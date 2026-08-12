@@ -66,8 +66,29 @@ GraphHalfEdge* findBoundaryHalfEdge(const vector<GraphHalfEdge*>& halfEdges) {
 	return nullptr;
 }
 
+GraphHalfEdge* findInteriorHalfEdge(const vector<GraphHalfEdge*>& halfEdges) {
+	for (auto* half : halfEdges) {
+		if (half && half->getEdge()) {
+			return half;
+		}
+	}
+	return nullptr;
+}
+
+// Match shipped grammars (e.g. 2D Branches/H.json): morphism.halfs lists each
+// boundary vertex's interior half-edge first, then each boundary half-edge.
+// RuleApplier looks up boundary (edgeless) halfs in the second half and uses
+// getPrev()->getEdge() to recover the interior edge.
 void updateBoundaryHalfEdges(Graph* graph) {
 	vector<GraphHalfEdge*> bHalfEdges;
+	bHalfEdges.reserve(graph->getBVertices().size() * 2);
+	for (auto* bVertex : graph->getBVertices()) {
+		auto* interiorHalf = findInteriorHalfEdge(bVertex->getHalfEdges());
+		if (!interiorHalf) {
+			throw runtime_error("updateBoundaryHalfEdges: boundary vertex has no interior half-edge");
+		}
+		bHalfEdges.push_back(interiorHalf);
+	}
 	for (auto* bVertex : graph->getBVertices()) {
 		auto* bHalf = findBoundaryHalfEdge(bVertex->getHalfEdges());
 		if (!bHalf) {
@@ -406,18 +427,36 @@ Graph* createEdgeGraph(EdgeType* eType) {
 	return graph;
 }
 
-VertexType* splitVertexTypeForEdge(EdgeType* segmentType) {
-	static unordered_map<int, VertexType*> cache;
-	const int id = segmentType->getId();
-	auto it = cache.find(id);
-	if (it != cache.end() && it->second->getHalfEdgeTypes()[0].edge == segmentType) {
-		return it->second;
+bool isSplitVertexTypeForEdge(VertexType* vType, EdgeType* segmentType) {
+	if (!vType || !vType->getSpliced()) {
+		return false;
 	}
+	const auto& hets = vType->getHalfEdgeTypes();
+	if (hets.size() != 2) {
+		return false;
+	}
+	if (hets[0].edge != segmentType || hets[1].edge != segmentType) {
+		return false;
+	}
+	return hets[0].isAtStart != hets[1].isAtStart;
+}
+
+// Mid-edge vertex created when an edge is split for a splice. Must live in
+// primitives->vertexTypes so Graph::exportJson emits kind "v" (not "e").
+VertexType* findOrCreateSplitVertexType(Primitives* primitives, EdgeType* segmentType) {
+	for (auto* vType : primitives->vertexTypes) {
+		if (isSplitVertexTypeForEdge(vType, segmentType)) {
+			return vType;
+		}
+	}
+
 	auto* vertexType = new VertexType();
+	// Same half-edge order as Edge::getVertexType (runtime fullSplit).
 	vertexType->addHalfEdge(segmentType, true);
 	vertexType->addHalfEdge(segmentType, false);
 	vertexType->setSpliced(true);
-	cache[id] = vertexType;
+	vertexType->setRuleGeneratorId((int)primitives->vertexTypes.size());
+	primitives->vertexTypes.push_back(vertexType);
 	return vertexType;
 }
 
@@ -435,6 +474,7 @@ EdgeType* findOrCreateSplicedEdgeType(Primitives* primitives, FaceType* faceType
 			}
 		}
 		if (hasFace) {
+			findOrCreateSplitVertexType(primitives, eType);
 			return eType;
 		}
 	}
@@ -448,19 +488,21 @@ EdgeType* findOrCreateSplicedEdgeType(Primitives* primitives, FaceType* faceType
 	eType->setSpliced(true);
 	eType->setRuleGeneratorId("spliceFace" + to_string((int)primitives->edgeTypes.size()));
 	primitives->edgeTypes.push_back(eType);
+	findOrCreateSplitVertexType(primitives, eType);
 	return eType;
 }
 
 // Mid-edge splice site: center is a spliced VertexType for the segment;
 // bVertices[0]=start, [1]=end, [2]=splice. Splice spoke uses splicedEdgeType.
 Graph* createSplicedVertexGraph(
+	Primitives* primitives,
 	EdgeType* segmentType,
 	bool spliceOnRight,
 	bool spliceIsAtStart,
 	EdgeType* splicedEdgeType
 ) {
 	auto* graph = new Graph();
-	auto* centerType = splitVertexTypeForEdge(segmentType);
+	auto* centerType = findOrCreateSplitVertexType(primitives, segmentType);
 	auto* center = (new GraphVertex())->connectGraph(graph);
 	center->setType(centerType);
 
@@ -470,21 +512,27 @@ Graph* createSplicedVertexGraph(
 		int bSlot = 0;
 	};
 
-	// CCW around center relative to segment start→end:
-	// splice on left  → start, splice, end
-	// splice on right → start, end, splice
+	// CCW around center relative to segment start→end.
+	// Half-edge attach order at the center becomes the vertex fan order; shipped
+	// H.json splice mids use [end(fwd=F), start(fwd=T), splice], so walk end→start
+	// first and place the splice on the left/right side of the start→end walk.
+	//
+	// The splice spoke uses !spliceIsAtStart so that after gluing two mids, each
+	// face walk through the splice continues on a same-forward segment half
+	// (matches H.json: splice.fwd == next.fwd).
 	vector<Spoke> ccw;
+	const bool spliceSpokeAtStart = !spliceIsAtStart;
 	if (!spliceOnRight) {
 		ccw = {
+			{ segmentType, false, 1 },
 			{ segmentType, true, 0 },
-			{ splicedEdgeType, spliceIsAtStart, 2 },
-			{ segmentType, false, 1 }
+			{ splicedEdgeType, spliceSpokeAtStart, 2 }
 		};
 	} else {
 		ccw = {
-			{ segmentType, true, 0 },
 			{ segmentType, false, 1 },
-			{ splicedEdgeType, spliceIsAtStart, 2 }
+			{ splicedEdgeType, spliceSpokeAtStart, 2 },
+			{ segmentType, true, 0 }
 		};
 	}
 
@@ -629,7 +677,7 @@ PrimitiveGraphs createPrimitiveGraphs(Primitives* primitives, bool buildSpliced)
 			for (int atStart = 0; atStart < 2; atStart++) {
 				const bool spliceIsAtStart = atStart == 1;
 				auto* splicedGraph = createSplicedVertexGraph(
-					eType, onRight, spliceIsAtStart, splicedEdge
+					primitives, eType, onRight, spliceIsAtStart, splicedEdge
 				);
 				result.splicedGraphs[4 * i + 2 * side + atStart] = unique_ptr<Graph>(splicedGraph);
 			}
@@ -654,9 +702,67 @@ Graph* releaseInstance(vector<unique_ptr<Graph>>& instances, Graph* graph) {
 	throw runtime_error("buildGraphFromValues: result not owned by instances");
 }
 
+GraphVertex* resolveTipVertex(
+	const GraphValues& graphValues,
+	int templateVertex,
+	const unordered_map<string, string>& matchToNetwork,
+	Graph* finalResult
+) {
+	if (templateVertex < 0 ||
+		templateVertex >= (int)graphValues.tipInstance.size() ||
+		graphValues.tipInstance[templateVertex] < 0) {
+		return nullptr;
+	}
+	const int instance = graphValues.tipInstance[templateVertex];
+	const int slot = graphValues.tipSlot[templateVertex];
+	const string matchKey = to_string(instance) + "," + to_string(slot);
+	auto it = matchToNetwork.find(matchKey);
+	if (it == matchToNetwork.end()) {
+		return nullptr;
+	}
+	const string& netKey = it->second;
+	const auto comma = netKey.find(',');
+	const int netId = stoi(netKey.substr(0, comma));
+	const int bSlot = stoi(netKey.substr(comma + 1));
+	if (netId != finalResult->getId() || bSlot < 0) {
+		return nullptr;
+	}
+	const auto& bVertices = finalResult->getBVertices();
+	if (bSlot >= (int)bVertices.size()) {
+		return nullptr;
+	}
+	return bVertices[bSlot];
+}
+
+void orderBoundaryVertices(
+	Graph* graph,
+	const GraphValues& graphValues,
+	const vector<int>& boundaryTemplateOrder,
+	const unordered_map<string, string>& matchToNetwork
+) {
+	if (boundaryTemplateOrder.empty()) {
+		return;
+	}
+	vector<GraphVertex*> ordered;
+	ordered.reserve(boundaryTemplateOrder.size());
+	unordered_set<GraphVertex*> used;
+	for (int templateVertex : boundaryTemplateOrder) {
+		GraphVertex* tip = resolveTipVertex(
+			graphValues, templateVertex, matchToNetwork, graph
+		);
+		if (!tip || used.count(tip)) {
+			throw runtime_error("orderBoundaryVertices: failed to resolve boundary tip");
+		}
+		used.insert(tip);
+		ordered.push_back(tip);
+	}
+	graph->setBVertices(ordered);
+}
+
 Graph* buildGraphFromValues(
 	const GraphValues& graphValues,
-	const PrimitiveGraphs& graphs
+	const PrimitiveGraphs& graphs,
+	const vector<int>& boundaryTemplateOrder
 ) {
 	if (graphValues.edges.empty() && graphValues.vertices.size() == 0) {
 		return new Graph();
@@ -690,6 +796,7 @@ Graph* buildGraphFromValues(
 
 	if (edgeQueue.empty()) {
 		Graph* result = instances[0].release();
+		orderBoundaryVertices(result, graphValues, boundaryTemplateOrder, matchToNetwork);
 		updateBoundaryHalfEdges(result);
 		return result;
 	}
@@ -773,6 +880,8 @@ Graph* buildGraphFromValues(
 	if (!finalResult) {
 		throw runtime_error("buildGraphFromValues: no result");
 	}
+	// Reorder surviving edge-stub bVertices by shared boundaryId order.
+	orderBoundaryVertices(finalResult, graphValues, boundaryTemplateOrder, matchToNetwork);
 	updateBoundaryHalfEdges(finalResult);
 	return releaseInstance(instances, finalResult);
 }
@@ -889,16 +998,48 @@ void RuleExporter::exportGroups(
 	}
 
 	auto primitiveGraphs = createPrimitiveGraphs(primitives, needSpliced);
+
+	// Shared boundaryId order from the first template graph — both rule sides
+	// must emit morphisms in this order so RuleApplier can pair boundaries.
+	vector<int> boundaryTemplateOrder;
+	if (!matchers.empty()) {
+		for (int v = 0; v < (int)matchers[0].templateGraph.vertices.size(); v++) {
+			if (!matchers[0].templateGraph.vertices[v].boundaryId.empty()) {
+				boundaryTemplateOrder.push_back(v);
+			}
+		}
+	}
+
 	for (const auto& group : groups) {
 		const int numGraphs = (int)group.graphIndices.size();
 		vector<vector<unique_ptr<Graph>>> graphs(numGraphs);
 		vector<vector<vector<int>>> vertexTypeIds(numGraphs);
 
 		for (int i = 0; i < numGraphs; i++) {
+			// Map this template's vertices to the shared boundaryId order.
+			vector<int> localBoundaryOrder;
+			localBoundaryOrder.reserve(boundaryTemplateOrder.size());
+			for (int srcV : boundaryTemplateOrder) {
+				const string& id = matchers[0].templateGraph.vertices[srcV].boundaryId;
+				int local = -1;
+				for (int v = 0; v < (int)matchers[i].templateGraph.vertices.size(); v++) {
+					if (matchers[i].templateGraph.vertices[v].boundaryId == id) {
+						local = v;
+						break;
+					}
+				}
+				if (local < 0) {
+					throw runtime_error("exportGroups: missing shared boundaryId in template graph");
+				}
+				localBoundaryOrder.push_back(local);
+			}
+
 			for (int index : group.graphIndices[i]) {
 				try {
 					auto graphValues = matchers[i].getGraphValues(index);
-					auto graphA = unique_ptr<Graph>(buildGraphFromValues(graphValues, primitiveGraphs));
+					auto graphA = unique_ptr<Graph>(
+						buildGraphFromValues(graphValues, primitiveGraphs, localBoundaryOrder)
+					);
 					auto vertexTypeIdsA = getVertexTypeIds(graphA.get());
 					if (loopsAreValid(graphA.get()) &&
 						!isDuplicateGraph(graphA.get(), vertexTypeIdsA, graphs[i], vertexTypeIds[i])) {
