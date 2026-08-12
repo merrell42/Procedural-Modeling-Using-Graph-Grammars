@@ -134,7 +134,7 @@ bool TemplateMatcher::orientedNormalWalk(
 		toConn = normalConns[0];
 	}
 
-	if (edgeStates[stateIndex].getHalfEdgeIndex() == 1) {
+	if (edgeStates[stateIndex].GetConnectionIndex(fromConn) == 1) {
 		std::swap(fromConn, toConn);
 	}
 	return true;
@@ -185,10 +185,10 @@ string TemplateMatcher::connectionIdAt(int vIndex, int stateIndex, int connIndex
 	}
 	const EdgeState& edgeState = edgeStates[stateIndex];
 	if (connIndex == fromConn) {
-		return edgeState.getId();
+		return edgeState.getName();
 	}
 	if (connIndex == toConn) {
-		return edgeState.getOppositeId();
+		return edgeState.GetConnectionId(connIndex);
 	}
 	// Spliced half-edge — callers should use faceIdForSplicedConnection instead.
 	return getState(vIndex, stateIndex).GetConnectionId(connIndex);
@@ -214,12 +214,12 @@ int TemplateMatcher::connectionIndexAt(int vIndex, int stateIndex, int connIndex
 	const EdgeState& edgeState = edgeStates[stateIndex];
 	// bVertices[0] = segment start, bVertices[1] = segment end.
 	if (connIndex == fromConn) {
-		return edgeState.getHalfEdgeIndex();
+		return edgeState.GetConnectionIndex(connIndex);
 	}
 	if (connIndex == toConn) {
-		return 1 - edgeState.getHalfEdgeIndex();
+		return 1 - edgeState.GetConnectionIndex(connIndex);
 	}
-	return edgeState.getHalfEdgeIndex();
+	return edgeState.GetConnectionIndex(connIndex);
 }
 
 bool TemplateMatcher::splicedFaceOnRight(

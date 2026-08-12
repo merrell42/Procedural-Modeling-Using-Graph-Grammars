@@ -43,9 +43,6 @@ class EdgeState : public State {
 		string getName() const override { return id; }
 		int getTypeValue() const override { return typeValue; }
 		int GetConnectionIndex(int connectionIndex) const override { return halfEdgeIndex; }
-		int getHalfEdgeIndex() const { return halfEdgeIndex; }
-		const string& getId() const { return id; }
-		const string& getOppositeId() const { return oppositeId; }
 
 	private:
 		string id;
