@@ -22,7 +22,7 @@ struct PrimitiveGraphs {
 	vector<unique_ptr<Graph>> splicedGraphs;
 };
 
-int splicedPoolIndex(int eTypeIndex, bool onRight) {
+int splicedGraphIndex(int eTypeIndex, bool onRight) {
 	return 2 * eTypeIndex + (onRight ? 1 : 0);
 }
 
@@ -78,24 +78,23 @@ GraphHalfEdge* findInteriorHalfEdge(const vector<GraphHalfEdge*>& halfEdges) {
 	return nullptr;
 }
 
-// Like web getConnectors; rotate to a canonical order.
-// morphism.halfs stores boundary (edgeless) halfs — what RuleApplier looks up.
+// Like web getConnectors. Walks edgeless face half-edges to collect the
+// boundary, then rotates to a canonical start so left/right graphs of a rule
+// share the same bVertices[i] / bHalfEdges[i] numbering. RuleApplier uses
+// those paired indices as the morphism; a shifted cycle maps the wrong connectors.
 void setBoundaryFromWalk(Graph* graph) {
-	vector<GraphVertex*> connectors;
+	vector<GraphVertex*> boundaryVertices;
 	vector<GraphHalfEdge*> boundaryHalfs;
 	vector<GraphHalfEdge*> interiorHalfs;
-	unordered_set<GraphVertex*> seen;
+	unordered_set<GraphVertex*> visited;
 
 	for (auto* face : graph->getFaces()) {
-		if (!face) {
-			continue;
-		}
 		for (auto* half : face->getOuterHalfEdges()) {
 			if (!half || half->getEdge()) {
 				continue;
 			}
 			GraphVertex* vertex = half->getVertex();
-			if (!vertex || seen.count(vertex)) {
+			if (!vertex || visited.count(vertex) > 0) {
 				continue;
 			}
 			GraphHalfEdge* interiorHalf = findInteriorHalfEdge(vertex->getHalfEdges());
@@ -103,42 +102,43 @@ void setBoundaryFromWalk(Graph* graph) {
 			if (!interiorHalf || !boundaryHalf) {
 				throw runtime_error("setBoundaryFromWalk: boundary vertex missing half-edge");
 			}
-			seen.insert(vertex);
-			connectors.push_back(vertex);
+			visited.insert(vertex);
+			boundaryVertices.push_back(vertex);
 			interiorHalfs.push_back(interiorHalf);
 			boundaryHalfs.push_back(boundaryHalf);
 		}
 	}
 
-	const int n = (int)connectors.size();
-	if (n > 1) {
-		auto signature = [&](int rot) {
-			vector<pair<int, int>> sig;
-			sig.reserve(n);
-			for (int i = 0; i < n; i++) {
-				GraphHalfEdge* half = interiorHalfs[(i + rot) % n];
-				EdgeType* eType = half->getEdge()->getType();
-				sig.push_back({ eType->getId(), half->getForward() ? 1 : 0 });
-			}
-			return sig;
-		};
-		int bestRot = 0;
-		auto bestSig = signature(0);
-		for (int rot = 1; rot < n; rot++) {
-			auto sig = signature(rot);
-			if (sig < bestSig) {
-				bestSig = std::move(sig);
-				bestRot = rot;
-			}
+	const int n = (int)boundaryVertices.size();
+	// Get the boundary of the boundary starting at a particular offset.
+	// Pick the lexicographically smallest signature.
+	auto getSignature = [&](int offset) {
+		vector<pair<int, int>> signature;
+		signature.reserve(n);
+		for (int i = 0; i < n; i++) {
+			GraphHalfEdge* half = interiorHalfs[(i + offset) % n];
+			int eTypeId = half->getEdge()->getType()->getId();
+			int direction = half->getForward() ? 1 : 0;
+			signature.push_back({ eTypeId, direction });
 		}
-		if (bestRot != 0) {
-			rotate(connectors.begin(), connectors.begin() + bestRot, connectors.end());
-			rotate(interiorHalfs.begin(), interiorHalfs.begin() + bestRot, interiorHalfs.end());
-			rotate(boundaryHalfs.begin(), boundaryHalfs.begin() + bestRot, boundaryHalfs.end());
+		return signature;
+	};
+	int bestOffset = 0;
+	auto bestSignature = getSignature(0);
+	for (int offset = 1; offset < n; offset++) {
+		auto signature = getSignature(offset);
+		if (signature < bestSignature) {
+			bestSignature = std::move(signature);
+			bestOffset = offset;
 		}
 	}
+	if (bestOffset != 0) {
+		rotate(boundaryVertices.begin(), boundaryVertices.begin() + bestOffset, boundaryVertices.end());
+		rotate(interiorHalfs.begin(), interiorHalfs.begin() + bestOffset, interiorHalfs.end());
+		rotate(boundaryHalfs.begin(), boundaryHalfs.begin() + bestOffset, boundaryHalfs.end());
+	}
 
-	graph->setBVertices(connectors);
+	graph->setBVertices(boundaryVertices);
 	graph->setBHalfEdges(boundaryHalfs);
 }
 
@@ -601,13 +601,13 @@ unique_ptr<Graph> instantiatePrimitiveGraph(
 ) {
 	const auto& site = graphValues.vertices[index];
 	if (site.kind == GraphValues::Site::Spliced) {
-		const int poolIndex = splicedPoolIndex(site.typeValue, site.spliceOnRight);
-		if (poolIndex < 0 || poolIndex >= (int)graphs.splicedGraphs.size() ||
-			!graphs.splicedGraphs[poolIndex]) {
+		const int graphIndex = splicedGraphIndex(site.typeValue, site.spliceOnRight);
+		if (graphIndex < 0 || graphIndex >= (int)graphs.splicedGraphs.size() ||
+			!graphs.splicedGraphs[graphIndex]) {
 			throw runtime_error("instantiatePrimitiveGraph: missing spliced primitive");
 		}
 		if (!site.spliceIsAtStart) {
-			return unique_ptr<Graph>(graphs.splicedGraphs[poolIndex]->copy());
+			return unique_ptr<Graph>(graphs.splicedGraphs[graphIndex]->copy());
 		}
 		EdgeType* segment = primitives->edgeTypes[site.typeValue];
 		FaceType* faceType = nullptr;
@@ -670,7 +670,7 @@ PrimitiveGraphs createPrimitiveGraphs(Primitives* primitives, bool buildSpliced)
 			auto* splicedGraph = createSplicedVertexGraph(
 				primitives, eType, onRight, false, splicedEdge
 			);
-			result.splicedGraphs[splicedPoolIndex((int)i, onRight)] = unique_ptr<Graph>(splicedGraph);
+			result.splicedGraphs[splicedGraphIndex((int)i, onRight)] = unique_ptr<Graph>(splicedGraph);
 		}
 	}
 
