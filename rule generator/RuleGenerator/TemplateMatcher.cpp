@@ -104,14 +104,12 @@ optional<TemplateMatcher::SpliceLayout> TemplateMatcher::spliceLayout(
 
 	int normalConns[2] = { -1, -1 };
 	int spliceConn = -1;
-	int spliceEdge = -1;
 	int normalCount = 0;
 	for (int i = 0; i < n; i++) {
 		int e = vertex.connections[i];
 		if (templateGraph.edges[e].spliced) {
 			if (spliceConn < 0) {
 				spliceConn = i;
-				spliceEdge = e;
 			}
 		} else {
 			if (normalCount < 2) {
@@ -145,7 +143,6 @@ optional<TemplateMatcher::SpliceLayout> TemplateMatcher::spliceLayout(
 	}
 
 	layout.spliceConn = spliceConn;
-	layout.spliceEdge = spliceEdge;
 	// CCW side of the oriented walk → left (onRight=false); CW side → right.
 	layout.onRight = !spliceOnCcwArc(layout.fromConn, layout.toConn, spliceConn, n);
 	layout.startId = edgeState.getName();
@@ -416,7 +413,8 @@ GraphValues TemplateMatcher::getGraphValues(int graphIndex) const {
 			site.kind = GraphValues::Site::Spliced;
 			if (auto layout = spliceLayout(j, vertexValue[j])) {
 				site.spliceOnRight = layout->onRight;
-				site.spliceIsAtStart = (templateGraph.edges[layout->spliceEdge].start == j);
+				const int spliceEdge = templateVertex.connections[layout->spliceConn];
+				site.spliceIsAtStart = (templateGraph.edges[spliceEdge].start == j);
 			}
 		} else if (!templateVertex.boundaryId.empty()) {
 			site.kind = GraphValues::Site::Boundary;

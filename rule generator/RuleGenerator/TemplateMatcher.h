@@ -23,6 +23,7 @@ public:
 		int typeValue = 0;
 		enum Kind { Interior, Boundary, Spliced } kind = Interior;
 		bool spliceOnRight = false;
+		// True if this spliced vertex is the start of its splice edge.
 		bool spliceIsAtStart = true;
 	};
 	vector<Site> vertices;
@@ -75,7 +76,6 @@ private:
 		int fromConn = -1;
 		int toConn = -1;
 		int spliceConn = -1;
-		int spliceEdge = -1;
 		bool onRight = false;
 		string startId;
 		string endId;

@@ -19,12 +19,11 @@ using namespace std;
 struct PrimitiveGraphs {
 	vector<unique_ptr<Graph>> vertexGraphs;
 	vector<unique_ptr<Graph>> edgeGraphs;
-	// Indexed as 4 * edgeTypeIndex + 2 * (spliceOnRight ? 1 : 0) + (spliceIsAtStart ? 1 : 0).
 	vector<unique_ptr<Graph>> splicedGraphs;
 };
 
-int splicedPoolIndex(int eTypeIndex, bool onRight, bool atStart) {
-	return 4 * eTypeIndex + 2 * (onRight ? 1 : 0) + (atStart ? 1 : 0);
+int splicedPoolIndex(int eTypeIndex, bool onRight) {
+	return 2 * eTypeIndex + (onRight ? 1 : 0);
 }
 
 struct GlueTrack {
@@ -594,24 +593,42 @@ Graph* createSplicedVertexGraph(
 	return createStarGraph(centerType, ccw);
 }
 
-Graph* getPrimitiveGraph(
+unique_ptr<Graph> instantiatePrimitiveGraph(
 	const GraphValues& graphValues,
 	size_t index,
-	const PrimitiveGraphs& graphs
+	const PrimitiveGraphs& graphs,
+	Primitives* primitives
 ) {
 	const auto& site = graphValues.vertices[index];
 	if (site.kind == GraphValues::Site::Spliced) {
-		const int poolIndex = splicedPoolIndex(site.typeValue, site.spliceOnRight, site.spliceIsAtStart);
+		const int poolIndex = splicedPoolIndex(site.typeValue, site.spliceOnRight);
 		if (poolIndex < 0 || poolIndex >= (int)graphs.splicedGraphs.size() ||
 			!graphs.splicedGraphs[poolIndex]) {
-			throw runtime_error("getPrimitiveGraph: missing spliced primitive");
+			throw runtime_error("instantiatePrimitiveGraph: missing spliced primitive");
 		}
-		return graphs.splicedGraphs[poolIndex].get();
+		if (!site.spliceIsAtStart) {
+			return unique_ptr<Graph>(graphs.splicedGraphs[poolIndex]->copy());
+		}
+		EdgeType* segment = primitives->edgeTypes[site.typeValue];
+		FaceType* faceType = nullptr;
+		for (const auto& fd : segment->getFaceData()) {
+			if (fd.onRight == site.spliceOnRight) {
+				faceType = fd.type;
+				break;
+			}
+		}
+		if (!faceType) {
+			throw runtime_error("instantiatePrimitiveGraph: splice side has no face");
+		}
+		EdgeType* splicedEdge = findOrCreateSplicedEdgeType(primitives, faceType);
+		return unique_ptr<Graph>(createSplicedVertexGraph(
+			primitives, segment, site.spliceOnRight, site.spliceIsAtStart, splicedEdge
+		));
 	}
-	const auto& primitives = (site.kind == GraphValues::Site::Boundary)
+	const auto& typeGraphs = (site.kind == GraphValues::Site::Boundary)
 		? graphs.edgeGraphs
 		: graphs.vertexGraphs;
-	return primitives[site.typeValue].get();
+	return unique_ptr<Graph>(typeGraphs[site.typeValue]->copy());
 }
 
 PrimitiveGraphs createPrimitiveGraphs(Primitives* primitives, bool buildSpliced) {
@@ -631,7 +648,7 @@ PrimitiveGraphs createPrimitiveGraphs(Primitives* primitives, bool buildSpliced)
 	}
 
 	const size_t numOriginalEdgeTypes = primitives->edgeTypes.size();
-	result.splicedGraphs.resize(numOriginalEdgeTypes * 4);
+	result.splicedGraphs.resize(numOriginalEdgeTypes * 2);
 	for (size_t i = 0; i < numOriginalEdgeTypes; i++) {
 		EdgeType* eType = primitives->edgeTypes[i];
 		if (eType->getSpliced()) {
@@ -650,13 +667,10 @@ PrimitiveGraphs createPrimitiveGraphs(Primitives* primitives, bool buildSpliced)
 				continue;
 			}
 			EdgeType* splicedEdge = findOrCreateSplicedEdgeType(primitives, faceType);
-			for (int atStart = 0; atStart < 2; atStart++) {
-				const bool spliceIsAtStart = atStart == 1;
-				auto* splicedGraph = createSplicedVertexGraph(
-					primitives, eType, onRight, spliceIsAtStart, splicedEdge
-				);
-				result.splicedGraphs[splicedPoolIndex((int)i, onRight, spliceIsAtStart)] = unique_ptr<Graph>(splicedGraph);
-			}
+			auto* splicedGraph = createSplicedVertexGraph(
+				primitives, eType, onRight, false, splicedEdge
+			);
+			result.splicedGraphs[splicedPoolIndex((int)i, onRight)] = unique_ptr<Graph>(splicedGraph);
 		}
 	}
 
@@ -680,7 +694,8 @@ Graph* releaseInstance(vector<unique_ptr<Graph>>& instances, Graph* graph) {
 
 Graph* buildGraphFromValues(
 	const GraphValues& graphValues,
-	const PrimitiveGraphs& graphs
+	const PrimitiveGraphs& graphs,
+	Primitives* primitives
 ) {
 	if (graphValues.edges.empty() && graphValues.vertices.size() == 0) {
 		return new Graph();
@@ -689,8 +704,7 @@ Graph* buildGraphFromValues(
 	vector<unique_ptr<Graph>> instances;
 	instances.reserve(graphValues.vertices.size());
 	for (size_t i = 0; i < graphValues.vertices.size(); i++) {
-		Graph* prototype = getPrimitiveGraph(graphValues, i, graphs);
-		instances.push_back(unique_ptr<Graph>(prototype->copy()));
+		instances.push_back(instantiatePrimitiveGraph(graphValues, i, graphs, primitives));
 	}
 
 	unordered_map<string, string> matchToNetwork;
@@ -916,7 +930,7 @@ void RuleExporter::exportGroups(
 		for (int i = 0; i < numGraphs; i++) {
 			for (int index : group.graphIndices[i]) {
 				auto graphValues = matchers[i].getGraphValues(index);
-				auto graphA = unique_ptr<Graph>(buildGraphFromValues(graphValues, primitiveGraphs));
+				auto graphA = unique_ptr<Graph>(buildGraphFromValues(graphValues, primitiveGraphs, primitives));
 				auto vertexTypeIdsA = getVertexTypeIds(graphA.get());
 				if (loopsAreValid(graphA.get()) &&
 					!isDuplicateGraph(graphA.get(), vertexTypeIdsA, graphs[i], vertexTypeIds[i])) {
