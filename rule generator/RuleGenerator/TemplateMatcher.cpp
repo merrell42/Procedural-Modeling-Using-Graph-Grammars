@@ -4,6 +4,7 @@
 #include "../../cpp_version/primitives/face_type.h"
 #include <set>
 #include <iostream>
+#include <optional>
 #include <utility>
 
 using namespace std;
@@ -91,30 +92,36 @@ string TemplateMatcher::faceTypeId(FaceType* type) {
 	return "F:" + to_string(reinterpret_cast<uintptr_t>(type));
 }
 
-bool TemplateMatcher::orientedNormalWalk(
+optional<TemplateMatcher::SpliceLayout> TemplateMatcher::spliceLayout(
 	int vIndex,
-	int stateIndex,
-	int& fromConn,
-	int& toConn
+	int stateIndex
 ) const {
 	const auto& vertex = templateGraph.vertices[vIndex];
 	const int n = (int)vertex.connections.size();
 	if (!vertex.spliced || stateIndex < 0 || stateIndex >= numEdgeStates) {
-		return false;
+		return nullopt;
 	}
 
 	int normalConns[2] = { -1, -1 };
+	int spliceConn = -1;
+	int spliceEdge = -1;
 	int normalCount = 0;
 	for (int i = 0; i < n; i++) {
-		if (!templateGraph.edges[vertex.connections[i]].spliced) {
+		int e = vertex.connections[i];
+		if (templateGraph.edges[e].spliced) {
+			if (spliceConn < 0) {
+				spliceConn = i;
+				spliceEdge = e;
+			}
+		} else {
 			if (normalCount < 2) {
 				normalConns[normalCount] = i;
 			}
 			normalCount++;
 		}
 	}
-	if (normalCount != 2) {
-		return false;
+	if (normalCount != 2 || spliceConn < 0) {
+		return nullopt;
 	}
 
 	int neigh[2];
@@ -124,53 +131,49 @@ bool TemplateMatcher::orientedNormalWalk(
 		neigh[k] = (ends[0] == vIndex) ? ends[1] : ends[0];
 	}
 
-	fromConn = normalConns[0];
-	toConn = normalConns[1];
-	if (neigh[0] > neigh[1]) {
-		fromConn = normalConns[1];
-		toConn = normalConns[0];
-	} else if (neigh[0] == neigh[1] && normalConns[0] > normalConns[1]) {
-		fromConn = normalConns[1];
-		toConn = normalConns[0];
+	SpliceLayout layout;
+	layout.fromConn = normalConns[0];
+	layout.toConn = normalConns[1];
+	if (neigh[0] > neigh[1] || (neigh[0] == neigh[1] && normalConns[0] > normalConns[1])) {
+		layout.fromConn = normalConns[1];
+		layout.toConn = normalConns[0];
 	}
 
-	if (edgeStates[stateIndex].GetConnectionIndex(fromConn) == 1) {
-		std::swap(fromConn, toConn);
-	}
-	return true;
-}
-
-bool TemplateMatcher::selectSplicedFaceSide(
-	int vIndex,
-	int stateIndex,
-	int connIndex,
-	bool& onRightOut
-) const {
-	const auto& vertex = templateGraph.vertices[vIndex];
-	const int n = (int)vertex.connections.size();
-	if (!vertex.spliced || connIndex < 0 || connIndex >= n) {
-		return false;
+	const EdgeState& edgeState = edgeStates[stateIndex];
+	if (edgeState.GetConnectionIndex(layout.fromConn) == 1) {
+		std::swap(layout.fromConn, layout.toConn);
 	}
 
-	const int edgeIndex = vertex.connections[connIndex];
-	if (!templateGraph.edges[edgeIndex].spliced) {
-		return false;
-	}
-
-	int fromConn = -1;
-	int toConn = -1;
-	if (!orientedNormalWalk(vIndex, stateIndex, fromConn, toConn)) {
-		return false;
-	}
-
+	layout.spliceConn = spliceConn;
+	layout.spliceEdge = spliceEdge;
 	// CCW side of the oriented walk → left (onRight=false); CW side → right.
-	const bool onCcw = spliceOnCcwArc(fromConn, toConn, connIndex, n);
-	onRightOut = !onCcw;
-	return true;
+	layout.onRight = !spliceOnCcwArc(layout.fromConn, layout.toConn, spliceConn, n);
+	layout.startId = edgeState.getName();
+	layout.endId = edgeState.GetConnectionId(layout.toConn);
+	layout.startB = edgeState.GetConnectionIndex(layout.fromConn);
+	layout.endB = 1 - layout.startB;
+
+	EdgeType* eType = edgeTypes[edgeState.getTypeValue()];
+	for (const auto& faceDatum : eType->getFaceData()) {
+		if (faceDatum.onRight == layout.onRight) {
+			layout.faceId = faceTypeId(faceDatum.type);
+			break;
+		}
+	}
+	return layout;
 }
 
-string TemplateMatcher::connectionIdAt(int vIndex, int stateIndex, int connIndex) const {
+string TemplateMatcher::advertisedId(int vIndex, int stateIndex, int connIndex) const {
 	const auto& vertex = templateGraph.vertices[vIndex];
+	if (connIndex >= 0 && connIndex < (int)vertex.connections.size() &&
+		templateGraph.edges[vertex.connections[connIndex]].spliced) {
+		auto layout = spliceLayout(vIndex, stateIndex);
+		if (!layout || connIndex != layout->spliceConn) {
+			return "";
+		}
+		return layout->faceId;
+	}
+
 	if (!vertex.spliced) {
 		return getState(vIndex, stateIndex).GetConnectionId(connIndex);
 	}
@@ -178,73 +181,39 @@ string TemplateMatcher::connectionIdAt(int vIndex, int stateIndex, int connIndex
 	// Spliced vertex: one edge state spans both normal half-edges.
 	// Start-side advertises id; end-side advertises oppositeId — so a
 	// boundary S and boundary E can both attach to the same mid-edge state.
-	int fromConn = -1;
-	int toConn = -1;
-	if (!orientedNormalWalk(vIndex, stateIndex, fromConn, toConn)) {
+	auto layout = spliceLayout(vIndex, stateIndex);
+	if (!layout) {
 		return getState(vIndex, stateIndex).GetConnectionId(connIndex);
 	}
-	const EdgeState& edgeState = edgeStates[stateIndex];
-	if (connIndex == fromConn) {
-		return edgeState.getName();
+	if (connIndex == layout->fromConn) {
+		return layout->startId;
 	}
-	if (connIndex == toConn) {
-		return edgeState.GetConnectionId(connIndex);
+	if (connIndex == layout->toConn) {
+		return layout->endId;
 	}
-	// Spliced half-edge — callers should use faceIdForSplicedConnection instead.
 	return getState(vIndex, stateIndex).GetConnectionId(connIndex);
 }
 
-int TemplateMatcher::connectionIndexAt(int vIndex, int stateIndex, int connIndex) const {
+int TemplateMatcher::advertisedBIndex(int vIndex, int stateIndex, int connIndex) const {
 	const auto& vertex = templateGraph.vertices[vIndex];
 	if (!vertex.spliced) {
 		return getState(vIndex, stateIndex).GetConnectionIndex(connIndex);
 	}
 
-	const int edgeIndex = vertex.connections[connIndex];
-	if (templateGraph.edges[edgeIndex].spliced) {
-		// Fixed slot in createSplicedVertexGraph: bVertices[2] = splice.
-		return 2;
-	}
-
-	int fromConn = -1;
-	int toConn = -1;
-	if (!orientedNormalWalk(vIndex, stateIndex, fromConn, toConn)) {
+	auto layout = spliceLayout(vIndex, stateIndex);
+	if (!layout) {
 		return getState(vIndex, stateIndex).GetConnectionIndex(connIndex);
 	}
-	const EdgeState& edgeState = edgeStates[stateIndex];
-	// bVertices[0] = segment start, bVertices[1] = segment end.
-	if (connIndex == fromConn) {
-		return edgeState.GetConnectionIndex(connIndex);
+	if (connIndex == layout->spliceConn) {
+		return SpliceLayout::spliceB;
 	}
-	if (connIndex == toConn) {
-		return 1 - edgeState.GetConnectionIndex(connIndex);
+	if (connIndex == layout->fromConn) {
+		return layout->startB;
 	}
-	return edgeState.GetConnectionIndex(connIndex);
-}
-
-bool TemplateMatcher::splicedFaceOnRight(
-	int vIndex,
-	int stateIndex,
-	int connIndex,
-	bool& onRightOut
-) const {
-	return selectSplicedFaceSide(vIndex, stateIndex, connIndex, onRightOut);
-}
-
-string TemplateMatcher::faceIdForSplicedConnection(int vIndex, int stateIndex, int connIndex) const {
-	bool onRight = false;
-	if (!selectSplicedFaceSide(vIndex, stateIndex, connIndex, onRight)) {
-		return "";
+	if (connIndex == layout->toConn) {
+		return layout->endB;
 	}
-
-	const EdgeState& edgeState = edgeStates[stateIndex];
-	EdgeType* eType = edgeTypes[edgeState.getTypeValue()];
-	for (const auto& faceDatum : eType->getFaceData()) {
-		if (faceDatum.onRight == onRight) {
-			return faceTypeId(faceDatum.type);
-		}
-	}
-	return "";
+	return getState(vIndex, stateIndex).GetConnectionIndex(connIndex);
 }
 
 void TemplateMatcher::match() {
@@ -321,26 +290,19 @@ bool TemplateMatcher::propagate() {
 			const bool splicedEdge = templateGraph.edges[vConnection].spliced;
 			int numStates = numStatesAtVertex(updateIndex);
 
-			if (splicedEdge) {
-				for (int j = 0; j < numStates; j++) {
-					if (rejectionStep[updateIndex][j] == -1) {
-						string faceId = faceIdForSplicedConnection(updateIndex, j, i);
-						if (faceId.empty()) {
-							reject(updateIndex, j);
-						}
-						else {
-							neighborIds.insert(faceId);
-						}
-					}
+			for (int j = 0; j < numStates; j++) {
+				if (rejectionStep[updateIndex][j] != -1) {
+					continue;
 				}
-			}
-			else {
-				for (int j = 0; j < numStates; j++) {
-					if (rejectionStep[updateIndex][j] == -1) {
-						string connectionId = connectionIdAt(updateIndex, j, i);
-						string neighborId = HalfEdgeType::oppositeId(connectionId);
-						neighborIds.insert(neighborId);
+				string id = advertisedId(updateIndex, j, i);
+				if (splicedEdge) {
+					if (id.empty()) {
+						reject(updateIndex, j);
+					} else {
+						neighborIds.insert(id);
 					}
+				} else {
+					neighborIds.insert(HalfEdgeType::oppositeId(id));
 				}
 			}
 
@@ -358,9 +320,7 @@ bool TemplateMatcher::propagate() {
 			int neighborStates = numStatesAtVertex(neighbor);
 			for (int j = 0; j < neighborStates; j++) {
 				if (rejectionStep[neighbor][j] == -1) {
-					string connectionId = splicedEdge
-						? faceIdForSplicedConnection(neighbor, j, cIndex)
-						: connectionIdAt(neighbor, j, cIndex);
+					string connectionId = advertisedId(neighbor, j, cIndex);
 					auto it = neighborIds.find(connectionId);
 					if (it != neighborIds.end()) {
 						hasMatch = true;
@@ -449,32 +409,19 @@ GraphValues TemplateMatcher::getGraphValues(int graphIndex) const {
 	for (int j = 0; j < (int)vertexValue.size(); j++) {
 		const auto& templateVertex = templateGraph.vertices[j];
 		templateToMatch[j] = (int)graphValues.vertices.size();
-		graphValues.vertices.push_back(getState(j, vertexValue[j]).getTypeValue());
 
-		const bool spliced = templateVertex.spliced;
-		graphValues.vertexSpliced.push_back(spliced);
-		graphValues.vertexOnBoundary.push_back(!spliced && !templateVertex.boundaryId.empty());
-
-		bool onRight = false;
-		bool spliceIsAtStart = true;
-		if (spliced) {
-			int spliceConn = -1;
-			int spliceEdge = -1;
-			for (int c = 0; c < (int)templateVertex.connections.size(); c++) {
-				int e = templateVertex.connections[c];
-				if (templateGraph.edges[e].spliced) {
-					spliceConn = c;
-					spliceEdge = e;
-					break;
-				}
+		GraphValues::Site site;
+		site.typeValue = getState(j, vertexValue[j]).getTypeValue();
+		if (templateVertex.spliced) {
+			site.kind = GraphValues::Site::Spliced;
+			if (auto layout = spliceLayout(j, vertexValue[j])) {
+				site.spliceOnRight = layout->onRight;
+				site.spliceIsAtStart = (templateGraph.edges[layout->spliceEdge].start == j);
 			}
-			if (spliceConn >= 0) {
-				splicedFaceOnRight(j, vertexValue[j], spliceConn, onRight);
-				spliceIsAtStart = (templateGraph.edges[spliceEdge].start == j);
-			}
+		} else if (!templateVertex.boundaryId.empty()) {
+			site.kind = GraphValues::Site::Boundary;
 		}
-		graphValues.spliceOnRight.push_back(onRight);
-		graphValues.spliceIsAtStart.push_back(spliceIsAtStart);
+		graphValues.vertices.push_back(site);
 	}
 
 	vector<array<int, 4>> normalEdges;
@@ -505,7 +452,7 @@ GraphValues TemplateMatcher::getGraphValues(int graphIndex) const {
 		for (int vIdx : vIndices) {
 			int cIndex = ConnectionIndex(vIdx, j, -1);
 			edge[edgeIndex++] = templateToMatch[vIdx];
-			edge[edgeIndex++] = connectionIndexAt(vIdx, vertexValue[vIdx], cIndex);
+			edge[edgeIndex++] = advertisedBIndex(vIdx, vertexValue[vIdx], cIndex);
 		}
 		if (templateGraph.edges[j].spliced) {
 			splicedEdges.push_back(edge);

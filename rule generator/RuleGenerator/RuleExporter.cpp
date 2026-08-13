@@ -19,9 +19,13 @@ using namespace std;
 struct PrimitiveGraphs {
 	vector<unique_ptr<Graph>> vertexGraphs;
 	vector<unique_ptr<Graph>> edgeGraphs;
-	// Indexed as 2 * edgeTypeIndex + (spliceOnRight ? 1 : 0). Null if N/A.
+	// Indexed as 4 * edgeTypeIndex + 2 * (spliceOnRight ? 1 : 0) + (spliceIsAtStart ? 1 : 0).
 	vector<unique_ptr<Graph>> splicedGraphs;
 };
+
+int splicedPoolIndex(int eTypeIndex, bool onRight, bool atStart) {
+	return 4 * eTypeIndex + 2 * (onRight ? 1 : 0) + (atStart ? 1 : 0);
+}
 
 struct GlueTrack {
 	vector<int> aDest;
@@ -348,54 +352,65 @@ pair<unique_ptr<Graph>, GlueTrack> copyAndGlue(
 	return { std::move(copyA), track };
 }
 
-Graph* createVertexGraph(VertexType* vType) {
-	auto* graph = new Graph();
-	const auto& halfEdgeTypes = vType->getHalfEdgeTypes();
-	unordered_map<int, FaceBuildInfo> faceInfos;
-	vector<GraphVertex*> bVertices;
-	GraphVertex* center = nullptr;
+struct Spoke {
+	EdgeType* edge = nullptr;
+	bool isAtStart = false;
+	int bSlot = 0;
+};
 
-	const size_t connectionCount = halfEdgeTypes.size();
+Graph* createStarGraph(VertexType* centerType, const vector<Spoke>& spokes) {
+	auto* graph = new Graph();
+	const size_t connectionCount = spokes.size();
+	if (connectionCount == 0) {
+		return graph;
+	}
+
+	auto* center = (new GraphVertex())->connectGraph(graph);
+	center->setType(centerType);
+
 	vector<vector<int>> connectionFaceIds(connectionCount);
+	int maxSlot = 0;
 	for (size_t i = 0; i < connectionCount; i++) {
 		vector<int> faceIds = { (int)i, (int)((i + 1) % connectionCount) };
-		if (!halfEdgeTypes[i].isAtStart) {
+		if (!spokes[i].isAtStart) {
 			reverse(faceIds.begin(), faceIds.end());
 		}
 		connectionFaceIds[i] = std::move(faceIds);
+		if (spokes[i].bSlot > maxSlot) {
+			maxSlot = spokes[i].bSlot;
+		}
 	}
 
+	vector<GraphVertex*> bVertices(maxSlot + 1, nullptr);
+	unordered_map<int, FaceBuildInfo> faceInfos;
+
 	for (size_t connIndex = 0; connIndex < connectionCount; connIndex++) {
-		const auto& connection = halfEdgeTypes[connIndex];
-		EdgeType* edgeType = connection.edge;
-		bool isAtStart = connection.isAtStart;
+		const auto& spoke = spokes[connIndex];
+		bool isAtStart = spoke.isAtStart;
 
 		auto* graphEdge = (new GraphEdge())->connectGraph(graph);
-		graphEdge->setType(edgeType);
+		graphEdge->setType(spoke.edge);
 
 		auto* bVertex = (new GraphVertex())->connectGraph(graph);
 		bVertex->setType(edgeVertexType());
-		bVertices.push_back(bVertex);
+		bVertices[spoke.bSlot] = bVertex;
 
-		if (!center) {
-			center = (new GraphVertex())->connectGraph(graph);
-			center->setType(vType);
-		}
-
-		const auto& faceData = edgeType->getFaceData();
+		const auto& faceData = spoke.edge->getFaceData();
 		for (size_t faceIndex = 0; faceIndex < faceData.size(); faceIndex++) {
 			const auto& faceDatum = faceData[faceIndex];
 			int position = faceDatum.onRight ^ isAtStart;
 			bool forward = !faceDatum.onRight;
 			auto* half = (new GraphHalfEdge(forward))->connectGraph(graph);
 			half->connectEdge(graphEdge, (int)faceIndex);
-			int faceId = connectionFaceIds[connIndex][faceIndex];
+			// Pick angular sector by onRight, not faceData array index — array order varies.
+			const int sideIndex = faceDatum.onRight ? 0 : 1;
+			int faceId = connectionFaceIds[connIndex][sideIndex];
 			auto& faceInfo = faceInfos[faceId];
 			if (!faceInfo.type) {
 				faceInfo.type = faceDatum.type;
 			}
 			if (faceInfo.hEdges[position]) {
-				throw runtime_error("createVertexGraph: multiple faces with the same ID within a primitive");
+				throw runtime_error("createStarGraph: multiple faces with the same ID within a primitive");
 			}
 			faceInfo.hEdges[position] = half;
 
@@ -410,10 +425,16 @@ Graph* createVertexGraph(VertexType* vType) {
 		}
 	}
 
+	for (auto* bVertex : bVertices) {
+		if (!bVertex) {
+			throw runtime_error("createStarGraph: missing boundary vertex");
+		}
+	}
+
 	for (auto& entry : faceInfos) {
 		auto& faceInfo = entry.second;
 		if (!faceInfo.hEdges[0] || !faceInfo.hEdges[1] || !faceInfo.hEdges[2]) {
-			throw runtime_error("createVertexGraph: missing half-edge for face");
+			throw runtime_error("createStarGraph: missing half-edge for face");
 		}
 		auto* face = (new GraphFace())->connectGraph(graph);
 		face->setType(faceInfo.type);
@@ -429,6 +450,16 @@ Graph* createVertexGraph(VertexType* vType) {
 
 	graph->setBVertices(bVertices);
 	return graph;
+}
+
+Graph* createVertexGraph(VertexType* vType) {
+	const auto& halfEdgeTypes = vType->getHalfEdgeTypes();
+	vector<Spoke> spokes;
+	spokes.reserve(halfEdgeTypes.size());
+	for (int i = 0; i < (int)halfEdgeTypes.size(); i++) {
+		spokes.push_back({ halfEdgeTypes[i].edge, halfEdgeTypes[i].isAtStart, i });
+	}
+	return createStarGraph(vType, spokes);
 }
 
 Graph* createEdgeGraph(EdgeType* eType) {
@@ -541,21 +572,12 @@ Graph* createSplicedVertexGraph(
 	bool spliceIsAtStart,
 	EdgeType* splicedEdgeType
 ) {
-	auto* graph = new Graph();
 	auto* centerType = findOrCreateSplitVertexType(primitives, segmentType);
-	auto* center = (new GraphVertex())->connectGraph(graph);
-	center->setType(centerType);
-
-	struct Spoke {
-		EdgeType* edge = nullptr;
-		bool isAtStart = false;
-		int bSlot = 0;
-	};
 
 	// CCW fan: end, then start; splice on left/right of start→end.
 	// !spliceIsAtStart keeps splice.fwd == next.fwd after gluing (see H.json).
-	vector<Spoke> ccw;
 	const bool spliceSpokeAtStart = !spliceIsAtStart;
+	vector<Spoke> ccw;
 	if (!spliceOnRight) {
 		ccw = {
 			{ segmentType, false, 1 },
@@ -569,86 +591,7 @@ Graph* createSplicedVertexGraph(
 			{ segmentType, true, 0 }
 		};
 	}
-
-	const size_t connectionCount = ccw.size();
-	vector<vector<int>> connectionFaceIds(connectionCount);
-	for (size_t i = 0; i < connectionCount; i++) {
-		vector<int> faceIds = { (int)i, (int)((i + 1) % connectionCount) };
-		if (!ccw[i].isAtStart) {
-			reverse(faceIds.begin(), faceIds.end());
-		}
-		connectionFaceIds[i] = std::move(faceIds);
-	}
-
-	vector<GraphVertex*> bVertices(3, nullptr);
-	unordered_map<int, FaceBuildInfo> faceInfos;
-
-	for (size_t connIndex = 0; connIndex < connectionCount; connIndex++) {
-		const auto& spoke = ccw[connIndex];
-		bool isAtStart = spoke.isAtStart;
-
-		auto* graphEdge = (new GraphEdge())->connectGraph(graph);
-		graphEdge->setType(spoke.edge);
-
-		auto* bVertex = (new GraphVertex())->connectGraph(graph);
-		bVertex->setType(edgeVertexType());
-		bVertices[spoke.bSlot] = bVertex;
-
-		const auto& faceData = spoke.edge->getFaceData();
-		for (size_t faceIndex = 0; faceIndex < faceData.size(); faceIndex++) {
-			const auto& faceDatum = faceData[faceIndex];
-			int position = faceDatum.onRight ^ isAtStart;
-			bool forward = !faceDatum.onRight;
-			auto* half = (new GraphHalfEdge(forward))->connectGraph(graph);
-			half->connectEdge(graphEdge, (int)faceIndex);
-			// Pick angular sector by onRight, not faceData array index — array order varies.
-			const int sideIndex = faceDatum.onRight ? 0 : 1;
-			int faceId = connectionFaceIds[connIndex][sideIndex];
-			auto& faceInfo = faceInfos[faceId];
-			if (!faceInfo.type) {
-				faceInfo.type = faceDatum.type;
-			}
-			if (faceInfo.hEdges[position]) {
-				throw runtime_error("createSplicedVertexGraph: multiple faces with the same ID within a primitive");
-			}
-			faceInfo.hEdges[position] = half;
-
-			if (position == 0) {
-				half->connectVertex(bVertex, -1);
-			} else {
-				half->connectVertex(center, -1);
-				auto* bonusHalf = (new GraphHalfEdge(false))->connectGraph(graph);
-				bonusHalf->connectVertex(bVertex, -1);
-				faceInfo.hEdges[2] = bonusHalf;
-			}
-		}
-	}
-
-	for (auto* bVertex : bVertices) {
-		if (!bVertex) {
-			throw runtime_error("createSplicedVertexGraph: missing boundary vertex");
-		}
-	}
-
-	for (auto& entry : faceInfos) {
-		auto& faceInfo = entry.second;
-		if (!faceInfo.hEdges[0] || !faceInfo.hEdges[1] || !faceInfo.hEdges[2]) {
-			throw runtime_error("createSplicedVertexGraph: missing half-edge for face");
-		}
-		auto* face = (new GraphFace())->connectGraph(graph);
-		face->setType(faceInfo.type);
-		face->setOuterComponent(faceInfo.hEdges[0]);
-		faceInfo.hEdges[0]->connectNext(faceInfo.hEdges[1]);
-		faceInfo.hEdges[1]->connectNext(faceInfo.hEdges[2]);
-		for (auto* half : faceInfo.hEdges) {
-			if (half) {
-				half->setFace(face);
-			}
-		}
-	}
-
-	graph->setBVertices(bVertices);
-	return graph;
+	return createStarGraph(centerType, ccw);
 }
 
 Graph* getPrimitiveGraph(
@@ -656,20 +599,19 @@ Graph* getPrimitiveGraph(
 	size_t index,
 	const PrimitiveGraphs& graphs
 ) {
-	if (graphValues.vertexSpliced[index]) {
-		const int eTypeIndex = graphValues.vertices[index];
-		const int poolIndex = 4 * eTypeIndex
-			+ 2 * (graphValues.spliceOnRight[index] ? 1 : 0)
-			+ (graphValues.spliceIsAtStart[index] ? 1 : 0);
+	const auto& site = graphValues.vertices[index];
+	if (site.kind == GraphValues::Site::Spliced) {
+		const int poolIndex = splicedPoolIndex(site.typeValue, site.spliceOnRight, site.spliceIsAtStart);
 		if (poolIndex < 0 || poolIndex >= (int)graphs.splicedGraphs.size() ||
 			!graphs.splicedGraphs[poolIndex]) {
 			throw runtime_error("getPrimitiveGraph: missing spliced primitive");
 		}
 		return graphs.splicedGraphs[poolIndex].get();
 	}
-	const bool onBoundary = graphValues.vertexOnBoundary[index];
-	const auto& primitives = onBoundary ? graphs.edgeGraphs : graphs.vertexGraphs;
-	return primitives[graphValues.vertices[index]].get();
+	const auto& primitives = (site.kind == GraphValues::Site::Boundary)
+		? graphs.edgeGraphs
+		: graphs.vertexGraphs;
+	return primitives[site.typeValue].get();
 }
 
 PrimitiveGraphs createPrimitiveGraphs(Primitives* primitives, bool buildSpliced) {
@@ -713,7 +655,7 @@ PrimitiveGraphs createPrimitiveGraphs(Primitives* primitives, bool buildSpliced)
 				auto* splicedGraph = createSplicedVertexGraph(
 					primitives, eType, onRight, spliceIsAtStart, splicedEdge
 				);
-				result.splicedGraphs[4 * i + 2 * side + atStart] = unique_ptr<Graph>(splicedGraph);
+				result.splicedGraphs[splicedPoolIndex((int)i, onRight, spliceIsAtStart)] = unique_ptr<Graph>(splicedGraph);
 			}
 		}
 	}
@@ -957,18 +899,13 @@ void RuleExporter::exportGroups(
 	const vector<TemplateMatcher>& matchers,
 	Primitives* primitives
 ) {
-	bool needSpliced = false;
-	for (const auto& matcher : matchers) {
-		for (const auto& vertex : matcher.templateGraph.vertices) {
-			if (vertex.spliced) {
-				needSpliced = true;
-				break;
-			}
-		}
-		if (needSpliced) {
-			break;
-		}
-	}
+	const bool needSpliced = any_of(matchers.begin(), matchers.end(), [](const TemplateMatcher& matcher) {
+		return any_of(
+			matcher.templateGraph.vertices.begin(),
+			matcher.templateGraph.vertices.end(),
+			[](const TemplateVertex& vertex) { return vertex.spliced; }
+		);
+	});
 
 	auto primitiveGraphs = createPrimitiveGraphs(primitives, needSpliced);
 	for (const auto& group : groups) {
@@ -978,18 +915,13 @@ void RuleExporter::exportGroups(
 
 		for (int i = 0; i < numGraphs; i++) {
 			for (int index : group.graphIndices[i]) {
-				try {
-					auto graphValues = matchers[i].getGraphValues(index);
-					auto graphA = unique_ptr<Graph>(buildGraphFromValues(graphValues, primitiveGraphs));
-					auto vertexTypeIdsA = getVertexTypeIds(graphA.get());
-					if (loopsAreValid(graphA.get()) &&
-						!isDuplicateGraph(graphA.get(), vertexTypeIdsA, graphs[i], vertexTypeIds[i])) {
-						graphs[i].push_back(std::move(graphA));
-						vertexTypeIds[i].push_back(std::move(vertexTypeIdsA));
-					}
-				} catch (const exception& e) {
-					cerr << "    buildGraphFromValues failed (graph " << i
-						 << " match " << index << "): " << e.what() << "\n";
+				auto graphValues = matchers[i].getGraphValues(index);
+				auto graphA = unique_ptr<Graph>(buildGraphFromValues(graphValues, primitiveGraphs));
+				auto vertexTypeIdsA = getVertexTypeIds(graphA.get());
+				if (loopsAreValid(graphA.get()) &&
+					!isDuplicateGraph(graphA.get(), vertexTypeIdsA, graphs[i], vertexTypeIds[i])) {
+					graphs[i].push_back(std::move(graphA));
+					vertexTypeIds[i].push_back(std::move(vertexTypeIdsA));
 				}
 			}
 		}
@@ -997,11 +929,7 @@ void RuleExporter::exportGroups(
 		// Assumes there are only two graphs in the template set.
 		for (const auto& left : graphs[0]) {
 			for (const auto& right : graphs[1]) {
-				try {
-					exportRule(&grammar, left->copy(), right->copy());
-				} catch (const exception& e) {
-					cerr << "    exportRule copy failed: " << e.what() << "\n";
-				}
+				exportRule(&grammar, left->copy(), right->copy());
 			}
 		}
 	}
