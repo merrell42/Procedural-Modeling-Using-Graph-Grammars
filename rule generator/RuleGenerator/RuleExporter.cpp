@@ -316,46 +316,46 @@ pair<unique_ptr<Graph>, GlueTrack> copyAndGlue(
 	return { std::move(copyA), track };
 }
 
-struct Connection {
+struct HalfEdgeBinding {
 	EdgeType* edge = nullptr;
 	bool isAtStart = false;
 	int bSlot = 0;
 };
 
-Graph* createStarGraph(VertexType* centerType, const vector<Connection>& connections) {
+Graph* createStarGraph(VertexType* centerType, const vector<HalfEdgeBinding>& halfEdgeBindings) {
 	auto* graph = new Graph();
-	const size_t connectionCount = connections.size();
-	if (connectionCount == 0) {
+	const size_t halfEdgeCount = halfEdgeBindings.size();
+	if (halfEdgeCount == 0) {
 		return graph;
 	}
 
 	auto* center = (new GraphVertex())->connectGraph(graph);
 	center->setType(centerType);
 
-	vector<vector<int>> connectionFaceIds(connectionCount);
-	for (size_t i = 0; i < connectionCount; i++) {
-		vector<int> faceIds = { (int)i, (int)((i + 1) % connectionCount) };
-		if (!connections[i].isAtStart) {
+	vector<vector<int>> halfEdgeFaceIds(halfEdgeCount);
+	for (size_t i = 0; i < halfEdgeCount; i++) {
+		vector<int> faceIds = { (int)i, (int)((i + 1) % halfEdgeCount) };
+		if (!halfEdgeBindings[i].isAtStart) {
 			reverse(faceIds.begin(), faceIds.end());
 		}
-		connectionFaceIds[i] = std::move(faceIds);
+		halfEdgeFaceIds[i] = std::move(faceIds);
 	}
 
-	vector<GraphVertex*> bVertices(connectionCount, nullptr);
+	vector<GraphVertex*> bVertices(halfEdgeCount, nullptr);
 	unordered_map<int, FaceBuildInfo> faceInfos;
 
-	for (size_t connIndex = 0; connIndex < connectionCount; connIndex++) {
-		const auto& connection = connections[connIndex];
-		bool isAtStart = connection.isAtStart;
+	for (size_t halfEdgeIndex = 0; halfEdgeIndex < halfEdgeCount; halfEdgeIndex++) {
+		const auto& halfEdgeBinding = halfEdgeBindings[halfEdgeIndex];
+		bool isAtStart = halfEdgeBinding.isAtStart;
 
 		auto* graphEdge = (new GraphEdge())->connectGraph(graph);
-		graphEdge->setType(connection.edge);
+		graphEdge->setType(halfEdgeBinding.edge);
 
 		auto* bVertex = (new GraphVertex())->connectGraph(graph);
 		bVertex->setType(edgeVertexType());
-		bVertices[connection.bSlot] = bVertex;
+		bVertices[halfEdgeBinding.bSlot] = bVertex;
 
-		const auto& faceData = connection.edge->getFaceData();
+		const auto& faceData = halfEdgeBinding.edge->getFaceData();
 		for (size_t faceIndex = 0; faceIndex < faceData.size(); faceIndex++) {
 			const auto& faceDatum = faceData[faceIndex];
 			int position = faceDatum.onRight ^ isAtStart;
@@ -364,7 +364,7 @@ Graph* createStarGraph(VertexType* centerType, const vector<Connection>& connect
 			half->connectEdge(graphEdge, (int)faceIndex);
 			// Pick angular sector by onRight, not faceData array index — array order varies.
 			const int sideIndex = faceDatum.onRight ? 0 : 1;
-			int faceId = connectionFaceIds[connIndex][sideIndex];
+			int faceId = halfEdgeFaceIds[halfEdgeIndex][sideIndex];
 			auto& faceInfo = faceInfos[faceId];
 			if (!faceInfo.type) {
 				faceInfo.type = faceDatum.type;
@@ -413,13 +413,13 @@ Graph* createStarGraph(VertexType* centerType, const vector<Connection>& connect
 }
 
 Graph* createVertexGraph(VertexType* vType) {
-	const auto& halfEdgeTypes = vType->getHalfEdgeTypes();
-	vector<Connection> connections;
-	connections.reserve(halfEdgeTypes.size());
-	for (int i = 0; i < (int)halfEdgeTypes.size(); i++) {
-		connections.push_back({ halfEdgeTypes[i].edge, halfEdgeTypes[i].isAtStart, i });
+	const auto& vertexHalfEdgeTypes = vType->getHalfEdgeTypes();
+	vector<HalfEdgeBinding> halfEdgeBindings;
+	halfEdgeBindings.reserve(vertexHalfEdgeTypes.size());
+	for (int i = 0; i < (int)vertexHalfEdgeTypes.size(); i++) {
+		halfEdgeBindings.push_back({ vertexHalfEdgeTypes[i].edge, vertexHalfEdgeTypes[i].isAtStart, i });
 	}
-	return createStarGraph(vType, connections);
+	return createStarGraph(vType, halfEdgeBindings);
 }
 
 Graph* createEdgeGraph(EdgeType* eType) {
@@ -524,7 +524,7 @@ EdgeType* findOrCreateSplicedEdgeType(Primitives* primitives, FaceType* faceType
 }
 
 // Mid-edge splice site: center is a spliced VertexType for the segment;
-// bVertices[0]=start, [1]=end, [2]=splice. Splice connection uses splicedEdgeType.
+// bVertices[0]=start, [1]=end, [2]=splice. Splice half-edge uses splicedEdgeType.
 Graph* createSplicedVertexGraph(
 	Primitives* primitives,
 	EdgeType* segmentType,
@@ -536,22 +536,22 @@ Graph* createSplicedVertexGraph(
 
 	// CCW fan: end, then start; splice on left/right of start→end.
 	// !spliceIsAtStart keeps splice.fwd == next.fwd after gluing (see H.json).
-	const bool spliceConnectionAtStart = !spliceIsAtStart;
-	vector<Connection> ccw;
+	const bool spliceHalfEdgeAtStart = !spliceIsAtStart;
+	vector<HalfEdgeBinding> halfEdgeBindings;
 	if (!spliceOnRight) {
-		ccw = {
+		halfEdgeBindings = {
 			{ segmentType, false, 1 },
 			{ segmentType, true, 0 },
-			{ splicedEdgeType, spliceConnectionAtStart, 2 }
+			{ splicedEdgeType, spliceHalfEdgeAtStart, 2 }
 		};
 	} else {
-		ccw = {
+		halfEdgeBindings = {
 			{ segmentType, false, 1 },
-			{ splicedEdgeType, spliceConnectionAtStart, 2 },
+			{ splicedEdgeType, spliceHalfEdgeAtStart, 2 },
 			{ segmentType, true, 0 }
 		};
 	}
-	return createStarGraph(centerType, ccw);
+	return createStarGraph(centerType, halfEdgeBindings);
 }
 
 unique_ptr<Graph> instantiatePrimitiveGraph(
