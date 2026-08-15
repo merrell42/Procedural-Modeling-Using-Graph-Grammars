@@ -60,52 +60,18 @@ void updateBoundaryVertices(Graph* graph) {
 	graph->setBVertices(bVertices);
 }
 
-GraphHalfEdge* findBoundaryHalfEdge(const vector<GraphHalfEdge*>& halfEdges) {
-	for (auto* half : halfEdges) {
-		if (half && !half->getEdge()) {
-			return half;
-		}
-	}
-	return nullptr;
-}
-
-GraphHalfEdge* findInteriorHalfEdge(const vector<GraphHalfEdge*>& halfEdges) {
-	for (auto* half : halfEdges) {
-		if (half && half->getEdge()) {
-			return half;
-		}
-	}
-	return nullptr;
-}
-
-// Like web getConnectors. Walks edgeless face half-edges to collect the
-// boundary, then rotates to a canonical start so left/right graphs of a rule
-// share the same bVertices[i] / bHalfEdges[i] numbering. RuleApplier uses
-// those paired indices as the morphism; a shifted cycle maps the wrong connectors.
-void setBoundaryFromWalk(Graph* graph) {
+// Update the graph boundary to put it in a canonical order.
+void updateGraphBoundary(Graph* graph) {
 	vector<GraphVertex*> boundaryVertices;
 	vector<GraphHalfEdge*> boundaryHalfs;
-	vector<GraphHalfEdge*> interiorHalfs;
-	unordered_set<GraphVertex*> visited;
 
 	for (auto* face : graph->getFaces()) {
 		for (auto* half : face->getOuterHalfEdges()) {
 			if (!half || half->getEdge()) {
 				continue;
 			}
-			GraphVertex* vertex = half->getVertex();
-			if (!vertex || visited.count(vertex) > 0) {
-				continue;
-			}
-			GraphHalfEdge* interiorHalf = findInteriorHalfEdge(vertex->getHalfEdges());
-			GraphHalfEdge* boundaryHalf = findBoundaryHalfEdge(vertex->getHalfEdges());
-			if (!interiorHalf || !boundaryHalf) {
-				throw runtime_error("setBoundaryFromWalk: boundary vertex missing half-edge");
-			}
-			visited.insert(vertex);
-			boundaryVertices.push_back(vertex);
-			interiorHalfs.push_back(interiorHalf);
-			boundaryHalfs.push_back(boundaryHalf);
+			boundaryVertices.push_back(half->getVertex());
+			boundaryHalfs.push_back(half);
 		}
 	}
 
@@ -116,9 +82,9 @@ void setBoundaryFromWalk(Graph* graph) {
 		vector<pair<int, int>> signature;
 		signature.reserve(n);
 		for (int i = 0; i < n; i++) {
-			GraphHalfEdge* half = interiorHalfs[(i + offset) % n];
-			int eTypeId = half->getEdge()->getType()->getId();
-			int direction = half->getForward() ? 1 : 0;
+			GraphHalfEdge* prev = boundaryHalfs[(i + offset) % n]->getPrev();
+			int eTypeId = prev->getEdge()->getType()->getId();
+			int direction = prev->getForward() ? 1 : 0;
 			signature.push_back({ eTypeId, direction });
 		}
 		return signature;
@@ -134,7 +100,6 @@ void setBoundaryFromWalk(Graph* graph) {
 	}
 	if (bestOffset != 0) {
 		rotate(boundaryVertices.begin(), boundaryVertices.begin() + bestOffset, boundaryVertices.end());
-		rotate(interiorHalfs.begin(), interiorHalfs.begin() + bestOffset, interiorHalfs.end());
 		rotate(boundaryHalfs.begin(), boundaryHalfs.begin() + bestOffset, boundaryHalfs.end());
 	}
 
@@ -728,7 +693,7 @@ Graph* buildGraphFromValues(
 
 	if (edgeQueue.empty()) {
 		Graph* result = instances[0].release();
-		setBoundaryFromWalk(result);
+		updateGraphBoundary(result);
 		return result;
 	}
 
@@ -811,7 +776,7 @@ Graph* buildGraphFromValues(
 	if (!finalResult) {
 		throw runtime_error("buildGraphFromValues: no result");
 	}
-	setBoundaryFromWalk(finalResult);
+	updateGraphBoundary(finalResult);
 	return releaseInstance(instances, finalResult);
 }
 

@@ -288,16 +288,16 @@
           "morphism": {
             "faces": [],
             "halfs": [
-              0,
-              1,
               8,
-              11
+              11,
+              0,
+              1
             ],
             "vertices": [
-              0,
-              1,
               4,
-              5
+              5,
+              0,
+              1
             ]
           },
           "vertexTypes": [
@@ -594,16 +594,16 @@
           "morphism": {
             "faces": [],
             "halfs": [
-              11,
-              5,
               1,
-              7
+              7,
+              11,
+              5
             ],
             "vertices": [
-              5,
-              2,
               1,
-              4
+              4,
+              5,
+              2
             ]
           },
           "vertexTypes": [
