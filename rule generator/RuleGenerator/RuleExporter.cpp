@@ -325,11 +325,9 @@ struct HalfEdgeBinding {
 Graph* createStarGraph(VertexType* centerType, const vector<HalfEdgeBinding>& halfEdgeBindings) {
 	auto* graph = new Graph();
 	const size_t halfEdgeCount = halfEdgeBindings.size();
-	if (halfEdgeCount == 0) {
-		return graph;
-	}
 
-	auto* center = (new GraphVertex())->connectGraph(graph);
+	auto* center = new GraphVertex();
+	center->connectGraph(graph);
 	center->setType(centerType);
 
 	vector<vector<int>> halfEdgeFaceIds(halfEdgeCount);
@@ -345,24 +343,23 @@ Graph* createStarGraph(VertexType* centerType, const vector<HalfEdgeBinding>& ha
 	unordered_map<int, FaceBuildInfo> faceInfos;
 
 	for (size_t halfEdgeIndex = 0; halfEdgeIndex < halfEdgeCount; halfEdgeIndex++) {
-		const auto& halfEdgeBinding = halfEdgeBindings[halfEdgeIndex];
-		bool isAtStart = halfEdgeBinding.isAtStart;
+		const auto& binding = halfEdgeBindings[halfEdgeIndex];
+		bool isAtStart = binding.isAtStart;
 
 		auto* graphEdge = (new GraphEdge())->connectGraph(graph);
-		graphEdge->setType(halfEdgeBinding.edge);
+		graphEdge->setType(binding.edge);
 
 		auto* bVertex = (new GraphVertex())->connectGraph(graph);
 		bVertex->setType(edgeVertexType());
-		bVertices[halfEdgeBinding.bSlot] = bVertex;
+		bVertices[binding.bSlot] = bVertex;
 
-		const auto& faceData = halfEdgeBinding.edge->getFaceData();
+		const auto& faceData = binding.edge->getFaceData();
 		for (size_t faceIndex = 0; faceIndex < faceData.size(); faceIndex++) {
 			const auto& faceDatum = faceData[faceIndex];
 			int position = faceDatum.onRight ^ isAtStart;
 			bool forward = !faceDatum.onRight;
 			auto* half = (new GraphHalfEdge(forward))->connectGraph(graph);
 			half->connectEdge(graphEdge, (int)faceIndex);
-			// Pick angular sector by onRight, not faceData array index — array order varies.
 			const int sideIndex = faceDatum.onRight ? 0 : 1;
 			int faceId = halfEdgeFaceIds[halfEdgeIndex][sideIndex];
 			auto& faceInfo = faceInfos[faceId];
@@ -413,11 +410,11 @@ Graph* createStarGraph(VertexType* centerType, const vector<HalfEdgeBinding>& ha
 }
 
 Graph* createVertexGraph(VertexType* vType) {
-	const auto& vertexHalfEdgeTypes = vType->getHalfEdgeTypes();
+	const auto& halfEdgeTypes = vType->getHalfEdgeTypes();
 	vector<HalfEdgeBinding> halfEdgeBindings;
-	halfEdgeBindings.reserve(vertexHalfEdgeTypes.size());
-	for (int i = 0; i < (int)vertexHalfEdgeTypes.size(); i++) {
-		halfEdgeBindings.push_back({ vertexHalfEdgeTypes[i].edge, vertexHalfEdgeTypes[i].isAtStart, i });
+	halfEdgeBindings.reserve(halfEdgeTypes.size());
+	for (int i = 0; i < (int)halfEdgeTypes.size(); i++) {
+		halfEdgeBindings.push_back({ halfEdgeTypes[i].edge, halfEdgeTypes[i].isAtStart, i });
 	}
 	return createStarGraph(vType, halfEdgeBindings);
 }
@@ -462,14 +459,14 @@ bool isSplitVertexTypeForEdge(VertexType* vType, EdgeType* segmentType) {
 	if (!vType || !vType->getSpliced()) {
 		return false;
 	}
-	const auto& hets = vType->getHalfEdgeTypes();
-	if (hets.size() != 2) {
+	const auto& types = vType->getHalfEdgeTypes();
+	if (types.size() != 2) {
 		return false;
 	}
-	if (hets[0].edge != segmentType || hets[1].edge != segmentType) {
+	if (types[0].edge != segmentType || types[1].edge != segmentType) {
 		return false;
 	}
-	return hets[0].isAtStart != hets[1].isAtStart;
+	return types[0].isAtStart != types[1].isAtStart;
 }
 
 // Mid-edge vertex created when an edge is split for a splice. Must live in
@@ -554,6 +551,32 @@ Graph* createSplicedVertexGraph(
 	return createStarGraph(centerType, halfEdgeBindings);
 }
 
+unique_ptr<Graph> instantiateSplicedGraph(
+	const GraphValues::Site& site,
+	const PrimitiveGraphs& graphs,
+	Primitives* primitives
+) {
+	const int graphIndex = splicedGraphIndex(site.typeValue, site.spliceOnRight);
+	if (!site.spliceIsAtStart) {
+		return unique_ptr<Graph>(graphs.splicedGraphs[graphIndex]->copy());
+	}
+	EdgeType* segment = primitives->edgeTypes[site.typeValue];
+	FaceType* faceType = nullptr;
+	for (const auto& fd : segment->getFaceData()) {
+		if (fd.onRight == site.spliceOnRight) {
+			faceType = fd.type;
+			break;
+		}
+	}
+	if (!faceType) {
+		throw runtime_error("instantiateSplicedGraph: splice side has no face");
+	}
+	EdgeType* splicedEdge = findOrCreateSplicedEdgeType(primitives, faceType);
+	return unique_ptr<Graph>(createSplicedVertexGraph(
+		primitives, segment, site.spliceOnRight, site.spliceIsAtStart, splicedEdge
+	));
+}
+
 unique_ptr<Graph> instantiatePrimitiveGraph(
 	const GraphValues& graphValues,
 	size_t index,
@@ -561,32 +584,11 @@ unique_ptr<Graph> instantiatePrimitiveGraph(
 	Primitives* primitives
 ) {
 	const auto& site = graphValues.vertices[index];
-	if (site.kind == GraphValues::Site::Spliced) {
-		const int graphIndex = splicedGraphIndex(site.typeValue, site.spliceOnRight);
-		if (graphIndex < 0 || graphIndex >= (int)graphs.splicedGraphs.size() ||
-			!graphs.splicedGraphs[graphIndex]) {
-			throw runtime_error("instantiatePrimitiveGraph: missing spliced primitive");
-		}
-		if (!site.spliceIsAtStart) {
-			return unique_ptr<Graph>(graphs.splicedGraphs[graphIndex]->copy());
-		}
-		EdgeType* segment = primitives->edgeTypes[site.typeValue];
-		FaceType* faceType = nullptr;
-		for (const auto& fd : segment->getFaceData()) {
-			if (fd.onRight == site.spliceOnRight) {
-				faceType = fd.type;
-				break;
-			}
-		}
-		if (!faceType) {
-			throw runtime_error("instantiatePrimitiveGraph: splice side has no face");
-		}
-		EdgeType* splicedEdge = findOrCreateSplicedEdgeType(primitives, faceType);
-		return unique_ptr<Graph>(createSplicedVertexGraph(
-			primitives, segment, site.spliceOnRight, site.spliceIsAtStart, splicedEdge
-		));
+	const auto& kind = site.kind;
+	if (kind == GraphValues::Site::Spliced) {
+		return instantiateSplicedGraph(site, graphs, primitives);
 	}
-	const auto& typeGraphs = (site.kind == GraphValues::Site::Boundary)
+	const auto& typeGraphs = (kind == GraphValues::Site::Boundary)
 		? graphs.edgeGraphs
 		: graphs.vertexGraphs;
 	return unique_ptr<Graph>(typeGraphs[site.typeValue]->copy());
