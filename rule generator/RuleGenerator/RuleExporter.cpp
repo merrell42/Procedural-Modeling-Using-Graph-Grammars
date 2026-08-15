@@ -333,19 +333,15 @@ Graph* createStarGraph(VertexType* centerType, const vector<Connection>& connect
 	center->setType(centerType);
 
 	vector<vector<int>> connectionFaceIds(connectionCount);
-	int maxSlot = 0;
 	for (size_t i = 0; i < connectionCount; i++) {
 		vector<int> faceIds = { (int)i, (int)((i + 1) % connectionCount) };
 		if (!connections[i].isAtStart) {
 			reverse(faceIds.begin(), faceIds.end());
 		}
 		connectionFaceIds[i] = std::move(faceIds);
-		if (connections[i].bSlot > maxSlot) {
-			maxSlot = connections[i].bSlot;
-		}
 	}
 
-	vector<GraphVertex*> bVertices(maxSlot + 1, nullptr);
+	vector<GraphVertex*> bVertices(connectionCount, nullptr);
 	unordered_map<int, FaceBuildInfo> faceInfos;
 
 	for (size_t connIndex = 0; connIndex < connectionCount; connIndex++) {
