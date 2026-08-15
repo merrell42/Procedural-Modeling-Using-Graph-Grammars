@@ -585,13 +585,16 @@ unique_ptr<Graph> instantiatePrimitiveGraph(
 ) {
 	const auto& site = graphValues.vertices[index];
 	const auto& kind = site.kind;
-	if (kind == GraphValues::Site::Spliced) {
-		return instantiateSplicedGraph(site, graphs, primitives);
+	switch (kind) {	
+		case GraphValues::Site::Spliced:
+			return instantiateSplicedGraph(site, graphs, primitives);
+		case GraphValues::Site::Boundary:
+			return unique_ptr<Graph>(graphs.edgeGraphs[site.typeValue]->copy());
+		case GraphValues::Site::Interior:
+			return unique_ptr<Graph>(graphs.vertexGraphs[site.typeValue]->copy());
+		default:
+			throw runtime_error("instantiatePrimitiveGraph: invalid site kind");
 	}
-	const auto& typeGraphs = (kind == GraphValues::Site::Boundary)
-		? graphs.edgeGraphs
-		: graphs.vertexGraphs;
-	return unique_ptr<Graph>(typeGraphs[site.typeValue]->copy());
 }
 
 PrimitiveGraphs createPrimitiveGraphs(Primitives* primitives, bool buildSpliced) {
