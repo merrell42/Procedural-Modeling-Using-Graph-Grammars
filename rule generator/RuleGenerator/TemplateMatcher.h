@@ -88,7 +88,7 @@ private:
 	// Boundary or spliced vertices are assigned edge states.
 	bool usesEdgeState(int vIndex) const;
 	optional<SpliceLayout> spliceLayout(int vIndex, int stateIndex) const;
-	// Half-edge id (or face id on a spliced spoke) advertised at a connection.
+	// Half-edge id (or face id on a spliced connection) advertised at a connection.
 	string advertisedId(int vIndex, int stateIndex, int connIndex) const;
 	// bVertex / half index at a connection (spliced-aware).
 	int advertisedBIndex(int vIndex, int stateIndex, int connIndex) const;

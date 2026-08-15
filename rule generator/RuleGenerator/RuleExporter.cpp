@@ -316,15 +316,15 @@ pair<unique_ptr<Graph>, GlueTrack> copyAndGlue(
 	return { std::move(copyA), track };
 }
 
-struct Spoke {
+struct Connection {
 	EdgeType* edge = nullptr;
 	bool isAtStart = false;
 	int bSlot = 0;
 };
 
-Graph* createStarGraph(VertexType* centerType, const vector<Spoke>& spokes) {
+Graph* createStarGraph(VertexType* centerType, const vector<Connection>& connections) {
 	auto* graph = new Graph();
-	const size_t connectionCount = spokes.size();
+	const size_t connectionCount = connections.size();
 	if (connectionCount == 0) {
 		return graph;
 	}
@@ -336,12 +336,12 @@ Graph* createStarGraph(VertexType* centerType, const vector<Spoke>& spokes) {
 	int maxSlot = 0;
 	for (size_t i = 0; i < connectionCount; i++) {
 		vector<int> faceIds = { (int)i, (int)((i + 1) % connectionCount) };
-		if (!spokes[i].isAtStart) {
+		if (!connections[i].isAtStart) {
 			reverse(faceIds.begin(), faceIds.end());
 		}
 		connectionFaceIds[i] = std::move(faceIds);
-		if (spokes[i].bSlot > maxSlot) {
-			maxSlot = spokes[i].bSlot;
+		if (connections[i].bSlot > maxSlot) {
+			maxSlot = connections[i].bSlot;
 		}
 	}
 
@@ -349,17 +349,17 @@ Graph* createStarGraph(VertexType* centerType, const vector<Spoke>& spokes) {
 	unordered_map<int, FaceBuildInfo> faceInfos;
 
 	for (size_t connIndex = 0; connIndex < connectionCount; connIndex++) {
-		const auto& spoke = spokes[connIndex];
-		bool isAtStart = spoke.isAtStart;
+		const auto& connection = connections[connIndex];
+		bool isAtStart = connection.isAtStart;
 
 		auto* graphEdge = (new GraphEdge())->connectGraph(graph);
-		graphEdge->setType(spoke.edge);
+		graphEdge->setType(connection.edge);
 
 		auto* bVertex = (new GraphVertex())->connectGraph(graph);
 		bVertex->setType(edgeVertexType());
-		bVertices[spoke.bSlot] = bVertex;
+		bVertices[connection.bSlot] = bVertex;
 
-		const auto& faceData = spoke.edge->getFaceData();
+		const auto& faceData = connection.edge->getFaceData();
 		for (size_t faceIndex = 0; faceIndex < faceData.size(); faceIndex++) {
 			const auto& faceDatum = faceData[faceIndex];
 			int position = faceDatum.onRight ^ isAtStart;
@@ -418,12 +418,12 @@ Graph* createStarGraph(VertexType* centerType, const vector<Spoke>& spokes) {
 
 Graph* createVertexGraph(VertexType* vType) {
 	const auto& halfEdgeTypes = vType->getHalfEdgeTypes();
-	vector<Spoke> spokes;
-	spokes.reserve(halfEdgeTypes.size());
+	vector<Connection> connections;
+	connections.reserve(halfEdgeTypes.size());
 	for (int i = 0; i < (int)halfEdgeTypes.size(); i++) {
-		spokes.push_back({ halfEdgeTypes[i].edge, halfEdgeTypes[i].isAtStart, i });
+		connections.push_back({ halfEdgeTypes[i].edge, halfEdgeTypes[i].isAtStart, i });
 	}
-	return createStarGraph(vType, spokes);
+	return createStarGraph(vType, connections);
 }
 
 Graph* createEdgeGraph(EdgeType* eType) {
@@ -528,7 +528,7 @@ EdgeType* findOrCreateSplicedEdgeType(Primitives* primitives, FaceType* faceType
 }
 
 // Mid-edge splice site: center is a spliced VertexType for the segment;
-// bVertices[0]=start, [1]=end, [2]=splice. Splice spoke uses splicedEdgeType.
+// bVertices[0]=start, [1]=end, [2]=splice. Splice connection uses splicedEdgeType.
 Graph* createSplicedVertexGraph(
 	Primitives* primitives,
 	EdgeType* segmentType,
@@ -540,18 +540,18 @@ Graph* createSplicedVertexGraph(
 
 	// CCW fan: end, then start; splice on left/right of start→end.
 	// !spliceIsAtStart keeps splice.fwd == next.fwd after gluing (see H.json).
-	const bool spliceSpokeAtStart = !spliceIsAtStart;
-	vector<Spoke> ccw;
+	const bool spliceConnectionAtStart = !spliceIsAtStart;
+	vector<Connection> ccw;
 	if (!spliceOnRight) {
 		ccw = {
 			{ segmentType, false, 1 },
 			{ segmentType, true, 0 },
-			{ splicedEdgeType, spliceSpokeAtStart, 2 }
+			{ splicedEdgeType, spliceConnectionAtStart, 2 }
 		};
 	} else {
 		ccw = {
 			{ segmentType, false, 1 },
-			{ splicedEdgeType, spliceSpokeAtStart, 2 },
+			{ splicedEdgeType, spliceConnectionAtStart, 2 },
 			{ segmentType, true, 0 }
 		};
 	}
