@@ -4,6 +4,7 @@
 #include "primitives.h"
 #include "../util/util.h"
 #include "../util/binary_stream.h"
+#include <algorithm>
 
 VertexType::VertexType() : spliced(false), ruleGeneratorId(0) {
 }
@@ -46,6 +47,10 @@ VertexType* VertexType::import(const Json& json, Primitives* shape) {
         HalfEdgeType halfEdgeType;
         halfEdgeType.edge = shape->edgeTypes[halfEdgeTypeJson["edge"].get<int>()];
         halfEdgeType.isAtStart = halfEdgeTypeJson["isAtStart"];
+        for (const auto& faceDatum : halfEdgeType.edge->getFaceData()) {
+            halfEdgeType.faceIds.push_back(
+                (int)indexOf(shape->faceTypes, faceDatum.type));
+        }
         if (!spliced) {
             halfEdgeType.dir = halfEdgeTypeJson.contains("dir") ? 
                 Vec3::import(halfEdgeTypeJson["dir"]) : Vec3();
@@ -53,13 +58,29 @@ VertexType* VertexType::import(const Json& json, Primitives* shape) {
         result->halfEdgeTypes.push_back(halfEdgeType);
     }
 
+    if (result->spliced) {
+        result->computeFaceIdsForSpliced();
+    }
+
     return result;
 }
 
-HalfEdgeType::HalfEdgeType(EdgeType* newEdge, bool newIsAtStart, const vector<int>& faceIds)
+void VertexType::computeFaceIdsForSpliced() {
+    const size_t N = halfEdgeTypes.size();
+    for (size_t i = 0; i < N; i++) {
+        vector<int> faceIds = { (int)i, (int)((i + 1) % N) };
+        if (!halfEdgeTypes[i].isAtStart) {
+            reverse(faceIds.begin(), faceIds.end());
+        }
+        halfEdgeTypes[i].faceIds = std::move(faceIds);
+    }
+}
+
+HalfEdgeType::HalfEdgeType(EdgeType* newEdge, bool newIsAtStart, const vector<int>& newFaceIds)
     : dir()
     , edge(newEdge)
-    , isAtStart(newIsAtStart) {}
+    , isAtStart(newIsAtStart)
+    , faceIds(newFaceIds) {}
 
 string HalfEdgeType::getId() const {
     return edge->getRuleGeneratorId() + (isAtStart ? "S" : "E");
@@ -88,6 +109,9 @@ VertexType* VertexType::binaryDeserialize(std::istream& in, Primitives* shape) {
         het.isAtStart = isAtStart;
         het.dir       = dir;
         result->halfEdgeTypes.push_back(het);
+    }
+    if (result->spliced) {
+        result->computeFaceIdsForSpliced();
     }
     return result;
 }

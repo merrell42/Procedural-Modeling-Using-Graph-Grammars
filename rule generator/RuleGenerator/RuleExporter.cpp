@@ -292,20 +292,10 @@ Graph* createVertexGraph(VertexType* vType) {
 	vector<GraphVertex*> bVertices;
 	GraphVertex* center = nullptr;
 
-	const size_t connectionCount = halfEdgeTypes.size();
-	vector<vector<int>> connectionFaceIds(connectionCount);
-	for (size_t i = 0; i < connectionCount; i++) {
-		vector<int> faceIds = { (int)i, (int)((i + 1) % connectionCount) };
-		if (!halfEdgeTypes[i].isAtStart) {
-			reverse(faceIds.begin(), faceIds.end());
-		}
-		connectionFaceIds[i] = std::move(faceIds);
-	}
-
-	for (size_t connIndex = 0; connIndex < connectionCount; connIndex++) {
-		const auto& connection = halfEdgeTypes[connIndex];
-		EdgeType* edgeType = connection.edge;
-		bool isAtStart = connection.isAtStart;
+	for (size_t i = 0; i < halfEdgeTypes.size(); i++) {
+		const auto& halfEdgeType = halfEdgeTypes[i];
+		EdgeType* edgeType = halfEdgeType.edge;
+		bool isAtStart = halfEdgeType.isAtStart;
 
 		auto* graphEdge = (new GraphEdge())->connectGraph(graph);
 		graphEdge->setType(edgeType);
@@ -322,11 +312,12 @@ Graph* createVertexGraph(VertexType* vType) {
 		const auto& faceData = edgeType->getFaceData();
 		for (size_t faceIndex = 0; faceIndex < faceData.size(); faceIndex++) {
 			const auto& faceDatum = faceData[faceIndex];
-			int position = faceDatum.onRight ^ isAtStart;
 			bool forward = !faceDatum.onRight;
 			auto* half = (new GraphHalfEdge(forward))->connectGraph(graph);
 			half->connectEdge(graphEdge, (int)faceIndex);
-			int faceId = connectionFaceIds[connIndex][faceIndex];
+
+			int position = faceDatum.onRight ^ isAtStart;
+			int faceId = halfEdgeType.faceIds[(int)faceIndex];
 			auto& faceInfo = faceInfos[faceId];
 			if (!faceInfo.type) {
 				faceInfo.type = faceDatum.type;
@@ -350,7 +341,7 @@ Graph* createVertexGraph(VertexType* vType) {
 	for (auto& entry : faceInfos) {
 		auto& faceInfo = entry.second;
 		if (!faceInfo.hEdges[0] || !faceInfo.hEdges[1] || !faceInfo.hEdges[2]) {
-			throw runtime_error("createVertexGraph: missing half-edge for face");
+			throw runtime_error("createVertexGraph: missing half-edge for a face");
 		}
 		auto* face = (new GraphFace())->connectGraph(graph);
 		face->setType(faceInfo.type);

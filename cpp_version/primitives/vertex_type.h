@@ -21,6 +21,7 @@ struct HalfEdgeType {
     Vec3 dir;
     EdgeType* edge;
     bool isAtStart;
+    vector<int> faceIds;
     
     // RuleGenerator support - get ID for half-edge matching.
     string getId() const;
@@ -63,6 +64,8 @@ public:
     double desirability = 0.0;
 
 private:
+    void computeFaceIdsForSpliced();
+
     vector<HalfEdgeType> halfEdgeTypes;
     bool spliced;
     // RuleGenerator fields.
