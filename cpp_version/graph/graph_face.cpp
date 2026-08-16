@@ -83,7 +83,7 @@ int GraphFace::computeTurns() const {
     vector<double> angles;
     angles.reserve(faceHalfs.size());
     for (auto* half : faceHalfs) {
-        angles.push_back(half->getAngle());
+        angles.push_back(type->angle(half->getDir()));
     }
     reverse(angles.begin(), angles.end());
     auto oppositeAngle = [](double angle) {
