@@ -16,12 +16,11 @@ class EdgeType;
 class Primitives;
 
 struct HalfEdgeType {
-    HalfEdgeType(EdgeType* newEdge = nullptr, bool newIsAtStart = false, const vector<int>& faceIds = {});
+    HalfEdgeType(EdgeType* newEdge = nullptr, bool newIsAtStart = false);
 
     Vec3 dir;
     EdgeType* edge;
     bool isAtStart;
-    vector<int> faceIds;
     
     // RuleGenerator support - get ID for half-edge matching.
     string getId() const;

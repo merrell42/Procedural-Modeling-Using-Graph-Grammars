@@ -26,10 +26,36 @@ struct GlueTrack {
 	vector<int> bDest;
 };
 
-struct FaceBuildInfo {
-	FaceType* type = nullptr;
-	GraphHalfEdge* hEdges[3] = { nullptr, nullptr, nullptr };
+struct HalfEdgeFaceSlot {
+	double angle = 0.0;
+	bool intoVertex = false;
+	GraphHalfEdge* halfEdge = nullptr;
 };
+
+static bool compareHalfEdgeFaceSlots(const HalfEdgeFaceSlot& a, const HalfEdgeFaceSlot& b) {
+	if (a.angle != b.angle) {
+		return a.angle < b.angle;
+	}
+	if (a.intoVertex != b.intoVertex) {
+		return a.intoVertex < b.intoVertex;
+	}
+	return false;
+}
+
+// Find the outward facing partner half-edge for a slot facing into the vertex.
+// Slots are sorted by increasing face angle (CCW on the face).
+static GraphHalfEdge* findOutwardPartner(
+	const vector<HalfEdgeFaceSlot>& halfEdgeSlots,
+	size_t inwardIndex
+) {
+	const size_t n = halfEdgeSlots.size();
+	const size_t nextIndex = (inwardIndex + 1) % n;
+	const auto& nextSlot = halfEdgeSlots[nextIndex];
+	if (!nextSlot.intoVertex) {
+		return nextSlot.halfEdge;
+	}
+	throw runtime_error("createVertexGraph: no outOfVertex partner for intoVertex slot");
+}
 
 VertexType* edgeVertexType() {
 	static VertexType* type = new VertexType();
@@ -288,14 +314,14 @@ pair<unique_ptr<Graph>, GlueTrack> copyAndGlue(
 Graph* createVertexGraph(VertexType* vType) {
 	auto* graph = new Graph();
 	const auto& halfEdgeTypes = vType->getHalfEdgeTypes();
-	unordered_map<int, FaceBuildInfo> faceInfos;
+	unordered_map<FaceType*, vector<HalfEdgeFaceSlot>> halfEdgesByFaceType;
 	vector<GraphVertex*> bVertices;
-	GraphVertex* center = nullptr;
+	GraphVertex* center = (new GraphVertex())->connectGraph(graph);
+	center->setType(vType);
 
 	for (size_t i = 0; i < halfEdgeTypes.size(); i++) {
 		const auto& halfEdgeType = halfEdgeTypes[i];
 		EdgeType* edgeType = halfEdgeType.edge;
-		bool isAtStart = halfEdgeType.isAtStart;
 
 		auto* graphEdge = (new GraphEdge())->connectGraph(graph);
 		graphEdge->setType(edgeType);
@@ -304,54 +330,62 @@ Graph* createVertexGraph(VertexType* vType) {
 		bVertex->setType(edgeVertexType());
 		bVertices.push_back(bVertex);
 
-		if (!center) {
-			center = (new GraphVertex())->connectGraph(graph);
-			center->setType(vType);
-		}
-
 		const auto& faceData = edgeType->getFaceData();
 		for (size_t faceIndex = 0; faceIndex < faceData.size(); faceIndex++) {
 			const auto& faceDatum = faceData[faceIndex];
+			const auto& faceType = faceDatum.type;
 			bool forward = !faceDatum.onRight;
 			auto* half = (new GraphHalfEdge(forward))->connectGraph(graph);
 			half->connectEdge(graphEdge, (int)faceIndex);
 
-			int position = faceDatum.onRight ^ isAtStart;
-			int faceId = halfEdgeType.faceIds[(int)faceIndex];
-			auto& faceInfo = faceInfos[faceId];
-			if (!faceInfo.type) {
-				faceInfo.type = faceDatum.type;
-			}
-			if (faceInfo.hEdges[position]) {
-				throw runtime_error("createVertexGraph: multiple faces with the same ID within a primitive");
-			}
-			faceInfo.hEdges[position] = half;
-
-			if (position == 0) {
+			// Each face has three half-edges:
+			//   0. inwardHalf: intoVertex = true and it is going from a boundary vertex to the center node.
+			//   1. outwardHalf: intoVertex = false and it is going from the center node to a boundary vertex.
+			//   2. bonusHalf: Its vertex is a boundary vertex and it leads nowhere.
+			bool intoVertex = !(faceDatum.onRight ^ halfEdgeType.isAtStart);
+			GraphHalfEdge* bonusHalf = nullptr;
+			if (intoVertex) {
 				half->connectVertex(bVertex, -1);
 			} else {
 				half->connectVertex(center, -1);
-				auto* bonusHalf = (new GraphHalfEdge(false))->connectGraph(graph);
+				bonusHalf = (new GraphHalfEdge(false))->connectGraph(graph);
 				bonusHalf->connectVertex(bVertex, -1);
-				faceInfo.hEdges[2] = bonusHalf;
+				half->connectNext(bonusHalf);
 			}
+
+			// Add half-edge to halfEdgesByFaceType with angle and intoVertex.
+			double angle = faceType->angle(halfEdgeType.dir);
+			halfEdgesByFaceType[faceType].push_back({angle, intoVertex, half});
 		}
 	}
+	// Sort half-edges by their face angle.
+	for (auto& entry : halfEdgesByFaceType) {
+		stable_sort(entry.second.begin(), entry.second.end(), compareHalfEdgeFaceSlots);
+	}
 
-	for (auto& entry : faceInfos) {
-		auto& faceInfo = entry.second;
-		if (!faceInfo.hEdges[0] || !faceInfo.hEdges[1] || !faceInfo.hEdges[2]) {
-			throw runtime_error("createVertexGraph: missing half-edge for a face");
-		}
-		auto* face = (new GraphFace())->connectGraph(graph);
-		face->setType(faceInfo.type);
-		face->setOuterComponent(faceInfo.hEdges[0]);
-		faceInfo.hEdges[0]->connectNext(faceInfo.hEdges[1]);
-		faceInfo.hEdges[1]->connectNext(faceInfo.hEdges[2]);
-		for (auto* half : faceInfo.hEdges) {
-			if (half) {
-				half->setFace(face);
+	// For each inward facing half-edge, find it's outward facing partner and create a face.
+	for (const auto& entry : halfEdgesByFaceType) {
+		FaceType* faceType = entry.first;
+		const auto& faceSlots = entry.second;
+		for (size_t i = 0; i < faceSlots.size(); i++) {
+			const auto& inwardSlot = faceSlots[i];
+			if (!inwardSlot.intoVertex) {
+				// Skip outward half-edges. They'll be paired with an inward half-edge later.
+				continue;
 			}
+			auto* inwardHalf = inwardSlot.halfEdge;
+			auto* outwardHalf = findOutwardPartner(faceSlots, i);
+			auto* bonusHalf = outwardHalf->getNext();
+
+			inwardHalf->connectNext(outwardHalf);
+
+			auto* face = (new GraphFace())->connectGraph(graph);
+			face->setType(faceType);
+			face->setOuterComponent(inwardHalf);
+
+			inwardHalf->setFace(face);
+			outwardHalf->setFace(face);
+			bonusHalf->setFace(face);
 		}
 	}
 

@@ -46,25 +46,18 @@ VertexType* VertexType::import(const Json& json, Primitives* shape) {
         HalfEdgeType halfEdgeType;
         halfEdgeType.edge = shape->edgeTypes[halfEdgeTypeJson["edge"].get<int>()];
         halfEdgeType.isAtStart = halfEdgeTypeJson["isAtStart"];
-        for (const auto& faceDatum : halfEdgeType.edge->getFaceData()) {
-            halfEdgeType.faceIds.push_back(
-                (int)indexOf(shape->faceTypes, faceDatum.type));
-        }
-        if (!spliced) {
-            halfEdgeType.dir = halfEdgeTypeJson.contains("dir") ? 
-                Vec3::import(halfEdgeTypeJson["dir"]) : Vec3();
-        }
+        halfEdgeType.dir = halfEdgeTypeJson.contains("dir") ? 
+            Vec3::import(halfEdgeTypeJson["dir"]) : Vec3();
         result->halfEdgeTypes.push_back(halfEdgeType);
     }
 
     return result;
 }
 
-HalfEdgeType::HalfEdgeType(EdgeType* newEdge, bool newIsAtStart, const vector<int>& newFaceIds)
+HalfEdgeType::HalfEdgeType(EdgeType* newEdge, bool newIsAtStart)
     : dir()
     , edge(newEdge)
-    , isAtStart(newIsAtStart)
-    , faceIds(newFaceIds) {}
+    , isAtStart(newIsAtStart) {}
 
 string HalfEdgeType::getId() const {
     return edge->getRuleGeneratorId() + (isAtStart ? "S" : "E");
