@@ -164,35 +164,32 @@ int GenerateRules(
 		Json parsed = readJsonFile(primitivesPath);
 		Primitives* primitives = Primitives::import(parsed["types"]);
 		GraphGrammar grammar(primitives);
-		
-		// Set ruleGeneratorId on edges if present in JSON, otherwise generate from index.
-		Json types = parsed["types"];
+
 		vector<EdgeType*> eTypes;
 		for (size_t i = 0; i < primitives->edgeTypes.size(); i++) {
 			EdgeType* eType = primitives->edgeTypes[i];
-			if (types["edgeTypes"][i].contains("id")) {
-				eType->setRuleGeneratorId(types["edgeTypes"][i]["id"].get<string>());
-			} else {
-				// Generate ID from index if not present in JSON.
-				eType->setRuleGeneratorId("edge" + to_string(i));
-			}
+			eType->setRuleGeneratorId("edge" + to_string(i));
 			eTypes.push_back(eType);
 		}
 		
-		// Set ruleGeneratorId on vertices if present in JSON.
-		vector<VertexType*> vTypes;
+		// Filter out spliced vertex types.
+		vector<VertexType*> vertexTypes;
+		vector<size_t> jsonIndices;
+		vertexTypes.reserve(primitives->vertexTypes.size());
+		jsonIndices.reserve(primitives->vertexTypes.size());
 		for (size_t i = 0; i < primitives->vertexTypes.size(); i++) {
 			VertexType* vType = primitives->vertexTypes[i];
-			
-			// Set ruleGeneratorId if present in JSON.
-			if (types["vertexTypes"][i].contains("id")) {
-				vType->setRuleGeneratorId(types["vertexTypes"][i]["id"].get<int>());
-			} else {
-				// Generate ID from index if not present in JSON.
-				vType->setRuleGeneratorId((int)i);
+			if (vType->getSpliced()) {
+				continue;
 			}
-			
-			vTypes.push_back(vType);
+			vertexTypes.push_back(vType);
+			jsonIndices.push_back(i);
+		}
+		primitives->vertexTypes = std::move(vertexTypes);
+
+		for (size_t i = 0; i < primitives->vertexTypes.size(); i++) {
+			VertexType* vType = primitives->vertexTypes[i];
+			vType->setRuleGeneratorId((int)i);
 		}
 
 		auto templateGraphSets = importTemplateGraphs(templatesPath);
@@ -211,7 +208,7 @@ int GenerateRules(
 				continue;
 			}
 			for (int j = 0; j < numGraphs; j++) {
-				matchers.push_back(TemplateMatcher(templateGraphSets[i].graphs[j], vTypes, eTypes));
+				matchers.push_back(TemplateMatcher(templateGraphSets[i].graphs[j], primitives->vertexTypes, eTypes));
 			}
 			vector<vector<vector<int>>> allBoundaryValues;
 			vector<string> boundaryIds = collectBoundaryIds(templateGraphSets[i].graphs[0]);

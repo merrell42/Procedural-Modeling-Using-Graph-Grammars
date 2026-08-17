@@ -64,8 +64,6 @@ public:
     double desirability = 0.0;
 
 private:
-    void computeFaceIdsForSpliced();
-
     vector<HalfEdgeType> halfEdgeTypes;
     bool spliced;
     // RuleGenerator fields.

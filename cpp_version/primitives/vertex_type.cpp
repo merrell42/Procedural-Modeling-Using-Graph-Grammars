@@ -4,7 +4,6 @@
 #include "primitives.h"
 #include "../util/util.h"
 #include "../util/binary_stream.h"
-#include <algorithm>
 
 VertexType::VertexType() : spliced(false), ruleGeneratorId(0) {
 }
@@ -58,22 +57,7 @@ VertexType* VertexType::import(const Json& json, Primitives* shape) {
         result->halfEdgeTypes.push_back(halfEdgeType);
     }
 
-    if (result->spliced) {
-        result->computeFaceIdsForSpliced();
-    }
-
     return result;
-}
-
-void VertexType::computeFaceIdsForSpliced() {
-    const size_t N = halfEdgeTypes.size();
-    for (size_t i = 0; i < N; i++) {
-        vector<int> faceIds = { (int)i, (int)((i + 1) % N) };
-        if (!halfEdgeTypes[i].isAtStart) {
-            reverse(faceIds.begin(), faceIds.end());
-        }
-        halfEdgeTypes[i].faceIds = std::move(faceIds);
-    }
 }
 
 HalfEdgeType::HalfEdgeType(EdgeType* newEdge, bool newIsAtStart, const vector<int>& newFaceIds)
@@ -109,9 +93,6 @@ VertexType* VertexType::binaryDeserialize(std::istream& in, Primitives* shape) {
         het.isAtStart = isAtStart;
         het.dir       = dir;
         result->halfEdgeTypes.push_back(het);
-    }
-    if (result->spliced) {
-        result->computeFaceIdsForSpliced();
     }
     return result;
 }
