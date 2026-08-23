@@ -48,6 +48,10 @@ bool ProductionRule::isGround() const {
     return ground;
 }
 
+void ProductionRule::setGround(bool ground_) {
+    ground = ground_;
+}
+
 int ProductionRule::getId() const {
     return id;
 }

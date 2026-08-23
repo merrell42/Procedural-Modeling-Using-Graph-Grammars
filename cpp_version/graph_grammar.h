@@ -37,6 +37,8 @@ public:
     // Add a production rule. Takes ownership of the rule.
     void addRule(ProductionRule* rule);
     void addStarterRule(ProductionRule* rule);
+    void addGroundRule(ProductionRule* rule);
+    void prepareGroundPlane(FaceType* face);
 
     // Serialize the whole grammar (primitives + rules + emptyGraph) to a binary stream.
     // The output of serialize() can be replayed by deserialize() to obtain an

@@ -4,6 +4,7 @@
 #include "TemplateMatcher.h"
 #include "RuleExporter.h"
 #include "FixHalfEdgeOrder.h"
+#include "CreateGroundRule.h"
 #include "../../cpp_version/json versioning/read_json_file.h"
 #include "../../cpp_version/primitives/primitives.h"
 #include "../../cpp_version/primitives/vertex_type.h"
@@ -176,6 +177,7 @@ int GenerateRules(
 
 		fixHalfEdgeOrder(primitives->vertexTypes);
 		GraphGrammar grammar(primitives);
+		tryCreateGroundRule(grammar, primitives);
 
 		vector<EdgeType*> eTypes;
 		for (size_t i = 0; i < primitives->edgeTypes.size(); i++) {
