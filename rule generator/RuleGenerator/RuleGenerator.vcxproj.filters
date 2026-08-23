@@ -42,6 +42,9 @@
     <ClInclude Include="State.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="FixHalfEdgeOrder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\cpp_version\primitives\edge_type.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -123,6 +126,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="State.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FixHalfEdgeOrder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

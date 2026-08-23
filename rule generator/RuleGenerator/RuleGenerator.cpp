@@ -3,13 +3,13 @@
 #include "TemplateGraph.h"
 #include "TemplateMatcher.h"
 #include "RuleExporter.h"
+#include "FixHalfEdgeOrder.h"
 #include "../../cpp_version/json versioning/read_json_file.h"
 #include "../../cpp_version/primitives/primitives.h"
 #include "../../cpp_version/primitives/vertex_type.h"
 #include "../../cpp_version/primitives/edge_type.h"
 #include "../../cpp_version/graph_grammar.h"
 
-#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -163,6 +163,18 @@ int GenerateRules(
 	try {
 		Json parsed = readJsonFile(primitivesPath);
 		Primitives* primitives = Primitives::import(parsed["types"]);
+
+		vector<VertexType*> vertexTypes;
+		vertexTypes.reserve(primitives->vertexTypes.size());
+		for (VertexType* vType : primitives->vertexTypes) {
+			if (vType->getSpliced()) {
+				continue;
+			}
+			vertexTypes.push_back(vType);
+		}
+		primitives->vertexTypes = std::move(vertexTypes);
+
+		fixHalfEdgeOrder(primitives->vertexTypes);
 		GraphGrammar grammar(primitives);
 
 		vector<EdgeType*> eTypes;
@@ -171,21 +183,6 @@ int GenerateRules(
 			eType->setRuleGeneratorId("edge" + to_string(i));
 			eTypes.push_back(eType);
 		}
-		
-		// Filter out spliced vertex types.
-		vector<VertexType*> vertexTypes;
-		vector<size_t> jsonIndices;
-		vertexTypes.reserve(primitives->vertexTypes.size());
-		jsonIndices.reserve(primitives->vertexTypes.size());
-		for (size_t i = 0; i < primitives->vertexTypes.size(); i++) {
-			VertexType* vType = primitives->vertexTypes[i];
-			if (vType->getSpliced()) {
-				continue;
-			}
-			vertexTypes.push_back(vType);
-			jsonIndices.push_back(i);
-		}
-		primitives->vertexTypes = std::move(vertexTypes);
 
 		for (size_t i = 0; i < primitives->vertexTypes.size(); i++) {
 			VertexType* vType = primitives->vertexTypes[i];

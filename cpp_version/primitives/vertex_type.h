@@ -47,6 +47,7 @@ public:
     Json exportJson(const Primitives* shape) const;
 
     const vector<HalfEdgeType>& getHalfEdgeTypes() const;
+    void setHalfEdgeTypes(vector<HalfEdgeType> halfEdgeTypes);
     bool getSpliced() const;
     void setSpliced(bool spliced);
 

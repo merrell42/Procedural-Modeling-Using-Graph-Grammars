@@ -17,7 +17,8 @@ class State {
 
 class VertexState : public State {
 	public:
-		VertexState(VertexType* type_, int typeValue_, int edge0_) : type(type_), typeValue(typeValue_), edge0(edge0_) {}
+		VertexState(VertexType* type_, int typeValue_, int edge0_)
+			: type(type_), typeValue(typeValue_), edge0(edge0_) {}
 		// Get the edge signature for a given connection.
 		string GetConnectionId(int connectionIndex) const override;
 		int getRuleGeneratorId() const override { return type->getRuleGeneratorId(); }
@@ -50,4 +51,3 @@ class EdgeState : public State {
 		int typeValue;
 		int halfEdgeIndex;
 };
-

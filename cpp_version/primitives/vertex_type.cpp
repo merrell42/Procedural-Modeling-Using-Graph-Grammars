@@ -12,6 +12,10 @@ const vector<HalfEdgeType>& VertexType::getHalfEdgeTypes() const {
     return halfEdgeTypes;
 }
 
+void VertexType::setHalfEdgeTypes(vector<HalfEdgeType> newHalfEdgeTypes) {
+    halfEdgeTypes = std::move(newHalfEdgeTypes);
+}
+
 bool VertexType::getSpliced() const {
     return spliced;
 }

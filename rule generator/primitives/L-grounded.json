@@ -1,0 +1,1072 @@
+{
+  "types": {
+    "edgeTypes": [
+      {
+        "dir": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.2,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 0
+          },
+          {
+            "onRight": false,
+            "type": 2
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": -1,
+          "y": 0,
+          "z": 0
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.2,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 0
+          },
+          {
+            "onRight": false,
+            "type": 3
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0,
+          "y": -1,
+          "z": 0
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.2,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 0
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 1,
+          "y": 0,
+          "z": 0
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.2,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 0
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.2,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 0
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": -1,
+          "y": 0,
+          "z": 0
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.2,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 0
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 1,
+          "y": 0,
+          "z": 0
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.2,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 0
+          },
+          {
+            "onRight": false,
+            "type": 1
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0,
+          "y": -1,
+          "z": 0
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.2,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 0
+          },
+          {
+            "onRight": false,
+            "type": 4
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": -1,
+          "y": 0,
+          "z": 0
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.2,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 0
+          },
+          {
+            "onRight": false,
+            "type": 1
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0,
+          "y": 0,
+          "z": 1
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.2,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 1
+          },
+          {
+            "onRight": false,
+            "type": 4
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0,
+          "y": 0,
+          "z": -1
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.2,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 1
+          },
+          {
+            "onRight": false,
+            "type": 2
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 1,
+          "y": 0,
+          "z": 0
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.2,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 0
+          },
+          {
+            "onRight": false,
+            "type": 3
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.2,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 0
+          },
+          {
+            "onRight": false,
+            "type": 4
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0,
+          "y": -1,
+          "z": 0
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.2,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 0
+          },
+          {
+            "onRight": false,
+            "type": 2
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0,
+          "y": 0,
+          "z": -1
+        },
+        "edgeSettings": {
+          "Max Length": 1,
+          "Min Length": 0.2,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 2
+          },
+          {
+            "onRight": false,
+            "type": 3
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0,
+          "y": 0,
+          "z": 1
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.2,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 2
+          },
+          {
+            "onRight": false,
+            "type": 3
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0,
+          "y": 0,
+          "z": -1
+        },
+        "edgeSettings": {
+          "Max Length": 4,
+          "Min Length": 0.2,
+          "Rigid Tiled": false,
+          "Tile Length": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 3
+          },
+          {
+            "onRight": false,
+            "type": 4
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0,
+          "y": 0,
+          "z": 1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 2
+          },
+          {
+            "onRight": false,
+            "type": 2
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": true
+      },
+      {
+        "dir": {
+          "x": 0,
+          "y": 0,
+          "z": -1
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 3
+          },
+          {
+            "onRight": false,
+            "type": 3
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": true
+      }
+    ],
+    "faceTypes": [
+      {
+        "color": null,
+        "material": "wire_177028149",
+        "normal": {
+          "x": 0,
+          "y": 0,
+          "z": 1
+        }
+      },
+      {
+        "color": null,
+        "material": "wire_177028149",
+        "normal": {
+          "x": 0,
+          "y": -1,
+          "z": 0
+        }
+      },
+      {
+        "color": null,
+        "material": "wire_177028149",
+        "normal": {
+          "x": 1,
+          "y": 0,
+          "z": 0
+        }
+      },
+      {
+        "color": null,
+        "material": "wire_177028149",
+        "normal": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        }
+      },
+      {
+        "color": null,
+        "material": "wire_177028149",
+        "normal": {
+          "x": -1,
+          "y": 0,
+          "z": 0
+        }
+      }
+    ],
+    "vertexTypes": [
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 0,
+              "y": -1,
+              "z": 0
+            },
+            "edge": 0,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 0,
+              "y": 0,
+              "z": 1
+            },
+            "edge": 14,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": -1,
+              "y": 0,
+              "z": 0
+            },
+            "edge": 1,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 1,
+              "y": 0,
+              "z": 0
+            },
+            "edge": 1,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 0,
+              "y": 0,
+              "z": 1
+            },
+            "edge": 15,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "edge": 0,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 0,
+              "y": 0,
+              "z": 1
+            },
+            "edge": 10,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "edge": 0,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": -1,
+              "y": 0,
+              "z": 0
+            },
+            "edge": 6,
+            "isAtStart": false
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "edge": 2,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": -1,
+              "y": 0,
+              "z": 0
+            },
+            "edge": 5,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 0,
+              "y": -1,
+              "z": 0
+            },
+            "edge": 2,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": -1,
+              "y": 0,
+              "z": 0
+            },
+            "edge": 3,
+            "isAtStart": false
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 0,
+              "y": -1,
+              "z": 0
+            },
+            "edge": 4,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 1,
+              "y": 0,
+              "z": 0
+            },
+            "edge": 3,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 1,
+              "y": 0,
+              "z": 0
+            },
+            "edge": 5,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "edge": 4,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 1,
+              "y": 0,
+              "z": 0
+            },
+            "edge": 6,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": 0,
+              "y": 0,
+              "z": 1
+            },
+            "edge": 9,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "edge": 7,
+            "isAtStart": false
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 0,
+              "y": -1,
+              "z": 0
+            },
+            "edge": 7,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": 1,
+              "y": 0,
+              "z": 0
+            },
+            "edge": 1,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 0,
+              "y": 0,
+              "z": 1
+            },
+            "edge": 16,
+            "isAtStart": false
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "edge": 13,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": -1,
+              "y": 0,
+              "z": 0
+            },
+            "edge": 8,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": 0,
+              "y": 0,
+              "z": -1
+            },
+            "edge": 10,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 1,
+              "y": 0,
+              "z": 0
+            },
+            "edge": 8,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "edge": 12,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": 0,
+              "y": 0,
+              "z": -1
+            },
+            "edge": 9,
+            "isAtStart": false
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 0,
+              "y": -1,
+              "z": 0
+            },
+            "edge": 13,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": -1,
+              "y": 0,
+              "z": 0
+            },
+            "edge": 11,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 0,
+              "y": 0,
+              "z": -1
+            },
+            "edge": 14,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 0,
+              "y": -1,
+              "z": 0
+            },
+            "edge": 12,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 1,
+              "y": 0,
+              "z": 0
+            },
+            "edge": 11,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": 0,
+              "y": 0,
+              "z": -1
+            },
+            "edge": 16,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 1,
+              "y": 0,
+              "z": 0
+            },
+            "edge": 11,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "edge": 13,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 0,
+              "y": 0,
+              "z": -1
+            },
+            "edge": 15,
+            "isAtStart": false
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 0,
+              "y": -1,
+              "z": 0
+            },
+            "edge": 0,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "edge": 0,
+            "isAtStart": true
+          }
+        ],
+        "spliced": true
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 0,
+              "y": 0,
+              "z": 1
+            },
+            "edge": 17,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": 0,
+              "y": 0,
+              "z": -1
+            },
+            "edge": 17,
+            "isAtStart": false
+          }
+        ],
+        "spliced": true
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 0,
+              "y": -1,
+              "z": 0
+            },
+            "edge": 13,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "edge": 13,
+            "isAtStart": false
+          }
+        ],
+        "spliced": true
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 1,
+              "y": 0,
+              "z": 0
+            },
+            "edge": 11,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": -1,
+              "y": 0,
+              "z": 0
+            },
+            "edge": 11,
+            "isAtStart": false
+          }
+        ],
+        "spliced": true
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 0,
+              "y": 0,
+              "z": -1
+            },
+            "edge": 18,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": 0,
+              "y": 0,
+              "z": 1
+            },
+            "edge": 18,
+            "isAtStart": false
+          }
+        ],
+        "spliced": true
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 1,
+              "y": 0,
+              "z": 0
+            },
+            "edge": 1,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": -1,
+              "y": 0,
+              "z": 0
+            },
+            "edge": 1,
+            "isAtStart": true
+          }
+        ],
+        "spliced": true
+      }
+    ]
+  },
+  "version": 1
+}

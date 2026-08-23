@@ -185,6 +185,15 @@ class TemplateEditor {
         this.refreshTemplate();
     }
     
+    // Graph space has +Y up (same as primitives). Canvas pixels have +Y down.
+    toScreen(x, y) {
+        return { x, y: this.canvas.height - y };
+    }
+
+    fromScreen(x, y) {
+        return { x, y: this.canvas.height - y };
+    }
+
     // Check if a point is within a vertex's radius.
     isPointInVertex(x, y, vertex) {
         const dx = x - vertex.position.x;
@@ -260,6 +269,7 @@ class TemplateEditor {
                 ? existingEdge.end
                 : existingEdge.start;
             const otherVertex = this.graphTemplate.vertices[otherVertexIndex];
+            // Graph +Y is up, so increasing atan2 is CCW, matching primitives.
             const existingAngle = Math.atan2(
                 otherVertex.position.y - vertex.position.y,
                 otherVertex.position.x - vertex.position.x
@@ -290,10 +300,8 @@ class TemplateEditor {
         const scaleX = this.canvas.width / rect.width;
         const scaleY = this.canvas.height / rect.height;
         
-        // Calculate position in canvas coordinate space.
-        const x = clampedX * scaleX;
-        const y = clampedY * scaleY;
-        return { x, y };
+        // Canvas pixels are Y-down; convert to graph space (+Y up).
+        return this.fromScreen(clampedX * scaleX, clampedY * scaleY);
     }
     
     // Handle canvas mouse move for preview.
@@ -515,9 +523,11 @@ class TemplateEditor {
             const vStart = this.graphTemplate.vertices[edge.start];
             const vEnd = this.graphTemplate.vertices[edge.end];
             if (!vStart || !vEnd) continue;
+            const start = this.toScreen(vStart.position.x, vStart.position.y);
+            const end = this.toScreen(vEnd.position.x, vEnd.position.y);
             this.ctx.beginPath();
-            this.ctx.moveTo(vStart.position.x, vStart.position.y);
-            this.ctx.lineTo(vEnd.position.x, vEnd.position.y);
+            this.ctx.moveTo(start.x, start.y);
+            this.ctx.lineTo(end.x, end.y);
             this.ctx.strokeStyle = '#0066FF';
             this.ctx.lineWidth = 1;
             this.ctx.stroke();
@@ -526,9 +536,11 @@ class TemplateEditor {
         // Draw splices connecting disconnected edge components.
         this.ctx.setLineDash([4, 4]);
         for (const splice of this.graphTemplate.splices || []) {
+            const a = this.toScreen(splice.pointA.x, splice.pointA.y);
+            const b = this.toScreen(splice.pointB.x, splice.pointB.y);
             this.ctx.beginPath();
-            this.ctx.moveTo(splice.pointA.x, splice.pointA.y);
-            this.ctx.lineTo(splice.pointB.x, splice.pointB.y);
+            this.ctx.moveTo(a.x, a.y);
+            this.ctx.lineTo(b.x, b.y);
             this.ctx.strokeStyle = '#888888';
             this.ctx.lineWidth = 1;
             this.ctx.stroke();
@@ -537,8 +549,7 @@ class TemplateEditor {
         
         // Draw existing vertices.
         this.graphTemplate.vertices.forEach((vertex, index) => {
-            const x = vertex.position.x;
-            const y = vertex.position.y;
+            const { x, y } = this.toScreen(vertex.position.x, vertex.position.y);
             
             // Determine vertex color based on state.
             let fillColor = VERTEX_COLOR;
@@ -567,8 +578,7 @@ class TemplateEditor {
         
         // Draw preview vertex if hovering (only if not over a vertex).
         if (this.hoverPosition && this.hoveredVertexIndex === null) {
-            const x = this.hoverPosition.x;
-            const y = this.hoverPosition.y;
+            const { x, y } = this.toScreen(this.hoverPosition.x, this.hoverPosition.y);
             
             // Draw preview vertex circle with semi-transparent fill.
             this.ctx.beginPath();
@@ -583,9 +593,11 @@ class TemplateEditor {
         // Draw line from selected vertex to cursor if in edge creation mode.
         if (this.selectedVertexIndex !== null && this.hoverPosition) {
             const selectedVertex = this.graphTemplate.vertices[this.selectedVertexIndex];
+            const from = this.toScreen(selectedVertex.position.x, selectedVertex.position.y);
+            const to = this.toScreen(this.hoverPosition.x, this.hoverPosition.y);
             this.ctx.beginPath();
-            this.ctx.moveTo(selectedVertex.position.x, selectedVertex.position.y);
-            this.ctx.lineTo(this.hoverPosition.x, this.hoverPosition.y);
+            this.ctx.moveTo(from.x, from.y);
+            this.ctx.lineTo(to.x, to.y);
             this.ctx.strokeStyle = 'rgba(187, 102, 255, 0.5)'; // Purple-blue to match vertex colors
             this.ctx.lineWidth = 2;
             this.ctx.setLineDash([4, 4]);
