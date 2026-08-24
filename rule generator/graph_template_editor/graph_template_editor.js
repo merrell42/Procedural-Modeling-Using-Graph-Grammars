@@ -21,6 +21,7 @@ const History = {
             sel1: window.editor1.selectedVertexIndex,
             sel2: window.editor2.selectedVertexIndex,
             library: structuredClone(window.library || []),
+            includeGround: !!window.includeGround,
             activeIdx: typeof window.activeIdx === 'number' ? window.activeIdx : -1,
         };
     },
@@ -57,6 +58,7 @@ const History = {
             window.editor1.selectedVertexIndex = clampSelection(snap.sel1, snap.e1.vertices.length);
             window.editor2.selectedVertexIndex = clampSelection(snap.sel2, snap.e2.vertices.length);
             window.library = structuredClone(snap.library);
+            window.includeGround = !!snap.includeGround;
             window.activeIdx = clampActive(snap.activeIdx, window.library.length);
             window.editor1.refreshTemplate();
             window.editor2.refreshTemplate();
@@ -718,6 +720,7 @@ let editor1, editor2;
 // moment it was last saved/loaded, used to detect unsaved edits on nav.
 window.library = [];
 window.activeIdx = -1;
+window.includeGround = false;
 let cleanState = null;
 
 function getPairSerialized() {
@@ -748,11 +751,12 @@ function clearBothCanvases() {
     editor2.refreshTemplate();
 }
 
-// Distinguish the three import shapes the editor accepts:
-//   library      : array of { comment?, graphs: [...] }
+// Distinguish the import shapes the editor accepts:
+//   library      : { includeGround?, templates: [...] } or array of { comment?, graphs: [...] }
 //   per-pair     : array of length 2 of { vertices, edges }
 //   single       : object with { vertices, edges }
 function detectImportShape(data) {
+    if (data && Array.isArray(data.templates)) return 'library';
     if (Array.isArray(data)) {
         if (data.length > 0 && data[0] && Array.isArray(data[0].graphs)) return 'library';
         if (data.length >= 1 && data[0] && Array.isArray(data[0].vertices)) return 'pair';
@@ -760,6 +764,12 @@ function detectImportShape(data) {
     }
     if (data && Array.isArray(data.vertices)) return 'single';
     return 'unknown';
+}
+
+function libraryEntries(data) {
+    if (data && Array.isArray(data.templates)) return data.templates;
+    if (Array.isArray(data)) return data;
+    return [];
 }
 
 function loadLibraryEntry(idx) {
@@ -794,6 +804,7 @@ function updateLibraryUI() {
     const next = document.getElementById('libNextBtn');
     const del = document.getElementById('libDeleteBtn');
     const comment = document.getElementById('libComment');
+    const includeGround = document.getElementById('includeGround');
     if (!status) return;
 
     const n = window.library.length;
@@ -815,6 +826,9 @@ function updateLibraryUI() {
         if (document.activeElement !== comment) comment.value = c;
     } else {
         comment.value = '';
+    }
+    if (includeGround && document.activeElement !== includeGround) {
+        includeGround.checked = !!window.includeGround;
     }
 }
 
@@ -877,6 +891,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const libNewBtn = document.getElementById('libNewBtn');
     const libDeleteBtn = document.getElementById('libDeleteBtn');
     const libComment = document.getElementById('libComment');
+    const includeGround = document.getElementById('includeGround');
 
     clearAllBtn.addEventListener('click', () => {
         History.commit();
@@ -888,18 +903,19 @@ document.addEventListener('DOMContentLoaded', () => {
     // exporting just that pair as a one-entry library so the file is never
     // empty when something useful is on the canvas.
     exportAllBtn.addEventListener('click', () => {
-        let out;
-        if (window.library.length === 0) {
-            out = [{
+        const entries = window.library.length === 0
+            ? [{
                 comment: '',
                 graphs: [
                     exportGraphWithSplices(editor1.graphTemplate),
                     exportGraphWithSplices(editor2.graphTemplate),
                 ],
-            }];
-        } else {
-            out = window.library.map(serializeLibraryEntryForExport);
-        }
+            }]
+            : window.library.map(serializeLibraryEntryForExport);
+        const out = {
+            includeGround: !!window.includeGround,
+            templates: entries,
+        };
         const json = JSON.stringify(out, null, 2);
         const blob = new Blob([json], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
@@ -944,7 +960,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     const imported = JSON.parse(e.target.result);
                     const shape = detectImportShape(imported);
                     if (shape === 'library') {
-                        window.library = imported.map(entry => serializeLibraryEntry({
+                        window.includeGround = !!(imported && imported.includeGround);
+                        window.library = libraryEntries(imported).map(entry => serializeLibraryEntry({
                             comment: typeof entry.comment === 'string' ? entry.comment : '',
                             graphs: Array.isArray(entry.graphs) ? entry.graphs : [],
                         }));
@@ -1089,6 +1106,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (window.activeIdx < 0 || window.activeIdx >= window.library.length) return;
         window.library[window.activeIdx].comment = libComment.value;
     });
+
+    if (includeGround) {
+        includeGround.addEventListener('change', () => {
+            History.commit();
+            window.includeGround = includeGround.checked;
+        });
+    }
 
     // Keyboard shortcuts for undo/redo. Skip when typing in an input.
     window.addEventListener('keydown', (event) => {

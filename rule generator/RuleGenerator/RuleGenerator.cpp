@@ -178,10 +178,6 @@ int GenerateRules(
 
 		fixHalfEdgeOrder(primitives->vertexTypes);
 		GraphGrammar grammar(primitives);
-		ProductionRule* groundRule = createGroundRule(primitives);
-		if (groundRule) {
-			grammar.addGroundRule(groundRule);
-		}
 
 		vector<EdgeType*> eTypes;
 		for (size_t i = 0; i < primitives->edgeTypes.size(); i++) {
@@ -195,7 +191,16 @@ int GenerateRules(
 			vType->setRuleGeneratorId((int)i);
 		}
 
-		auto templateGraphSets = importTemplateGraphs(templatesPath);
+		auto library = importTemplateGraphs(templatesPath);
+		if (library.includeGround) {
+			ProductionRule* groundRule = createGroundRule(primitives);
+			if (groundRule) {
+				grammar.addGroundRule(groundRule);
+			} else {
+				cerr << "Warning: includeGround is set but no ground rule was found\n";
+			}
+		}
+		const auto& templateGraphSets = library.sets;
 		cout << "match:\n"
 			<< "  primitives: " << primitivesPath << "\n"
 			<< "  library   : " << templatesPath << "\n"

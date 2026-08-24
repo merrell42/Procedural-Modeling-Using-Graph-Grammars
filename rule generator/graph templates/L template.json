@@ -1,4 +1,6 @@
-[
+{
+  "includeGround": true,
+  "templates": [
   {
     "comment": "Box",
     "graphs": [
@@ -427,3 +429,4 @@
     ]
   }
 ]
+}

@@ -28,9 +28,9 @@ Json loadRawJson(const string& path) {
 int runRoundtrip(const string& libPath) {
     try {
         // Import via our TemplateGraph reader, export to sibling file.
-        auto sets = importTemplateGraphs(libPath);
+        auto library = importTemplateGraphs(libPath);
         string outPath = libPath + ".roundtrip.json";
-        if (!exportTemplateGraphs(outPath, sets)) {
+        if (!exportTemplateGraphs(outPath, library)) {
             cerr << "FAIL: exportTemplateGraphs could not write " << outPath << endl;
             return 1;
         }
@@ -39,30 +39,36 @@ int runRoundtrip(const string& libPath) {
         // structural and order-insensitive on object keys; arrays are
         // order-sensitive (which is correct for vertices / graphs).
         Json original = loadRawJson(libPath);
+        if (original.is_array()) {
+            original = Json{
+                {"includeGround", false},
+                {"templates", original}
+            };
+        }
         Json roundtrip = loadRawJson(outPath);
 
         cout << "round-trip:\n"
              << "  library      : " << libPath << "\n"
              << "  roundtrip out: " << outPath << "\n"
-             << "  entries      : " << sets.size() << "\n";
+             << "  entries      : " << library.sets.size() << "\n";
 
-        // Field-level summary so a failure is easy to localize.
-        if (original.is_array() && roundtrip.is_array()
-            && original.size() == roundtrip.size()) {
-            for (size_t i = 0; i < original.size(); ++i) {
-                bool same = (original[i] == roundtrip[i]);
+        Json originalEntries = original.contains("templates") ? original["templates"] : Json::array();
+        Json roundtripEntries = roundtrip.contains("templates") ? roundtrip["templates"] : Json::array();
+        if (originalEntries.is_array() && roundtripEntries.is_array()
+            && originalEntries.size() == roundtripEntries.size()) {
+            for (size_t i = 0; i < originalEntries.size(); ++i) {
+                bool same = (originalEntries[i] == roundtripEntries[i]);
                 cout << "  entry " << i << "      : "
                      << (same ? "MATCH" : "DIFF") << "\n";
                 if (!same) {
-                    // Dump a short diff hint (compact form, capped).
-                    string a = original[i].dump();
-                    string b = roundtrip[i].dump();
+                    string a = originalEntries[i].dump();
+                    string b = roundtripEntries[i].dump();
                     cout << "    original : " << a.substr(0, 200) << (a.size() > 200 ? "..." : "") << "\n";
                     cout << "    roundtrip: " << b.substr(0, 200) << (b.size() > 200 ? "..." : "") << "\n";
                 }
             }
         } else {
-            cout << "  shape        : DIFF (root must be same-length array)\n";
+            cout << "  shape        : DIFF (templates must be same-length arrays)\n";
         }
 
         bool ok = (original == roundtrip);
