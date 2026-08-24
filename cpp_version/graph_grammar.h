@@ -38,7 +38,6 @@ public:
     void addRule(ProductionRule* rule);
     void addStarterRule(ProductionRule* rule);
     void addGroundRule(ProductionRule* rule);
-    void prepareGroundPlane(FaceType* face);
 
     // Serialize the whole grammar (primitives + rules + emptyGraph) to a binary stream.
     // The output of serialize() can be replayed by deserialize() to obtain an
@@ -73,6 +72,5 @@ private:
 
     // True if there is a ground plane for this model.
     bool grounded;
-    FaceType* groundFace = nullptr;
 };
 

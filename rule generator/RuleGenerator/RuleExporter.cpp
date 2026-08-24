@@ -1,9 +1,9 @@
 #include "pch.h"
 #include "RuleExporter.h"
-#include "CreateGroundRule.h"
 #include "isIsomorphic.h"
 
 #include "../../cpp_version/graph/graph.h"
+#include "../../cpp_version/graph/graph_face.h"
 #include "../../cpp_version/util/util.h"
 #include "../../cpp_version/graph_grammar.h"
 #include "../../cpp_version/grammar_rules/production_rule.h"
@@ -601,7 +601,7 @@ bool isDuplicateGraph(
 	return false;
 }
 
-bool loopsAreValid(Graph* graph, FaceType* groundFace) {
+bool loopsAreValid(Graph* graph) {
 	bool hasOuterLoop = false;
 	for (int i = 0; i < graph->getFaces().size(); i++) {
 		auto* face = graph->getFaces()[i];
@@ -620,13 +620,35 @@ bool loopsAreValid(Graph* graph, FaceType* groundFace) {
 					return false;
 				}
 				hasOuterLoop = true;
-				if (groundFace != nullptr && face->getType() != groundFace) {
-					return false;
-				}
 			}
 		}
 	}
 	return true;
+}
+
+Graph* createGroundOnlyGraph(FaceType* face) {
+	Graph* graph = new Graph();
+	auto* graphFace = (new GraphFace())->connectGraph(graph);
+	graphFace->setType(face);
+	graphFace->setOuterComponent(nullptr);
+	graph->setBFaces({ graphFace });
+	graph->setBHalfEdges({ nullptr });
+	return graph;
+}
+
+void setGroundBoundaryFace(Graph* graph, FaceType* groundFace) {
+	if (!graph || !groundFace) {
+		return;
+	}
+	for (auto* face : graph->getFaces()) {
+		if (!face->getOuterComponent() || !face->isLoopy()) {
+			continue;
+		}
+		if (face->computeTurns() == 1 && face->getType() == groundFace) {
+			graph->setBFaces({ face });
+			return;
+		}
+	}
 }
 
 void exportRule(
@@ -684,7 +706,6 @@ void RuleExporter::exportGroups(
 	Primitives* primitives
 ) {
 	auto primitiveGraphs = createPrimitiveGraphs(primitives);
-	FaceType* groundFace = grammar.getGroundFaceType();
 	for (const auto& group : groups) {
 		const int numGraphs = (int)group.graphIndices.size();
 		vector<vector<unique_ptr<Graph>>> graphs(numGraphs);
@@ -695,7 +716,7 @@ void RuleExporter::exportGroups(
 				auto graphValues = matchers[i].getGraphValues(index);
 				auto graphA = unique_ptr<Graph>(buildGraphFromValues(graphValues, primitiveGraphs));
 				auto vertexTypeIdsA = getVertexTypeIds(graphA.get());
-				if (loopsAreValid(graphA.get(), groundFace) &&
+				if (loopsAreValid(graphA.get()) &&
 					!isDuplicateGraph(graphA.get(), vertexTypeIdsA, graphs[i], vertexTypeIds[i])) {
 					graphs[i].push_back(std::move(graphA));
 					vertexTypeIds[i].push_back(std::move(vertexTypeIdsA));
