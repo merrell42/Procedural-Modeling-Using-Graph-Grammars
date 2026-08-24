@@ -64,6 +64,12 @@ void GraphGrammar::addStarterRule(ProductionRule* rule) {
     starterRules.push_back(rule);
 }
 
+void GraphGrammar::addGroundRule(ProductionRule* rule) {
+    rule->setGround(true);
+    groundRules.push_back(rule);
+    grounded = true;
+}
+
 // Randomly pick one of the normal production rules.
 Production GraphGrammar::getProduction() {
     ProductionRule* rule = rules.empty() ? nullptr : Util::pick<ProductionRule*>(rules);

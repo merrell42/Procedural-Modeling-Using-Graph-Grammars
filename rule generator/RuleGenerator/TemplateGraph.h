@@ -60,10 +60,18 @@ struct TemplateGraphSet {
     Json toJson() const;
 };
 
-// Reads the library JSON at `path` and returns every entry. Throws on I/O or
-// schema errors. The JSON root must be an array of entries.
-std::vector<TemplateGraphSet> importTemplateGraphs(const std::string& path);
+// A template library file: every graph-template entry plus a file-level
+// flag for whether a ground rule should be generated.
+struct TemplateLibrary {
+    bool includeGround = false;
+    std::vector<TemplateGraphSet> sets;
+};
 
-// Symmetric writer. Serializes `sets` as a JSON array, two-space indented.
+// Reads the library JSON at `path`. Accepts a bare array of entries
+// (includeGround defaults to false) or an object with `includeGround`
+// and `templates`. Throws on I/O or schema errors.
+TemplateLibrary importTemplateGraphs(const std::string& path);
+
+// Symmetric writer. Serializes as `{ includeGround, templates }`.
 // Returns false on I/O failure.
-bool exportTemplateGraphs(const std::string& path, const std::vector<TemplateGraphSet>& sets);
+bool exportTemplateGraphs(const std::string& path, const TemplateLibrary& library);

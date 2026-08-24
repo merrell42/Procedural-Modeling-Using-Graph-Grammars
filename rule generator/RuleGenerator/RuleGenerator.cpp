@@ -4,11 +4,13 @@
 #include "TemplateMatcher.h"
 #include "RuleExporter.h"
 #include "FixHalfEdgeOrder.h"
+#include "CreateGroundRule.h"
 #include "../../cpp_version/json versioning/read_json_file.h"
 #include "../../cpp_version/primitives/primitives.h"
 #include "../../cpp_version/primitives/vertex_type.h"
 #include "../../cpp_version/primitives/edge_type.h"
 #include "../../cpp_version/graph_grammar.h"
+#include "../../cpp_version/grammar_rules/production_rule.h"
 
 #include <fstream>
 #include <iostream>
@@ -189,7 +191,16 @@ int GenerateRules(
 			vType->setRuleGeneratorId((int)i);
 		}
 
-		auto templateGraphSets = importTemplateGraphs(templatesPath);
+		auto library = importTemplateGraphs(templatesPath);
+		if (library.includeGround) {
+			ProductionRule* groundRule = createGroundRule(primitives);
+			if (groundRule) {
+				grammar.addGroundRule(groundRule);
+			} else {
+				cerr << "Warning: includeGround is set but no ground rule was found\n";
+			}
+		}
+		const auto& templateGraphSets = library.sets;
 		cout << "match:\n"
 			<< "  primitives: " << primitivesPath << "\n"
 			<< "  library   : " << templatesPath << "\n"

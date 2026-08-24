@@ -4,7 +4,6 @@
 #include <map>
 #include <iosfwd>
 #include "third_party/json.h"
-#include "primitives/face_type.h"
 #include "primitives/primitives.h"
 #include "graph_morphism/morphism.h"
 
@@ -37,6 +36,7 @@ public:
     // Add a production rule. Takes ownership of the rule.
     void addRule(ProductionRule* rule);
     void addStarterRule(ProductionRule* rule);
+    void addGroundRule(ProductionRule* rule);
 
     // Serialize the whole grammar (primitives + rules + emptyGraph) to a binary stream.
     // The output of serialize() can be replayed by deserialize() to obtain an

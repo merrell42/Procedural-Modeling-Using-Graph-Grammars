@@ -3,6 +3,7 @@
 #include "isIsomorphic.h"
 
 #include "../../cpp_version/graph/graph.h"
+#include "../../cpp_version/graph/graph_face.h"
 #include "../../cpp_version/util/util.h"
 #include "../../cpp_version/graph_grammar.h"
 #include "../../cpp_version/grammar_rules/production_rule.h"
@@ -625,6 +626,35 @@ bool loopsAreValid(Graph* graph) {
 	return true;
 }
 
+GraphFace* findOuterLoopFace(Graph* graph) {
+	for (auto* face : graph->getFaces()) {
+		if (face->getOuterComponent() && face->isLoopy() && face->computeTurns() == 1) {
+			return face;
+		}
+	}
+	return nullptr;
+}
+
+Graph* createFaceGraph(FaceType* face) {
+	Graph* graph = new Graph();
+	auto* graphFace = (new GraphFace())->connectGraph(graph);
+	graphFace->setType(face);
+	graphFace->setOuterComponent(nullptr);
+	graph->setBFaces({ graphFace });
+	graph->setBHalfEdges({ nullptr });
+	return graph;
+}
+
+// Add a boundary face to both graphs, if the filled graph has an outer loop.
+void maybeAddBFace(Graph*& graph, Graph* filledGraph) {
+	GraphFace* outerFace = findOuterLoopFace(filledGraph);
+	if (outerFace) {
+		delete graph;
+		graph = createFaceGraph(outerFace->getType());
+		filledGraph->setBFaces({ outerFace });
+	}
+}
+
 void exportRule(
 	GraphGrammar* grammar,
 	Graph* leftGraph,
@@ -637,6 +667,11 @@ void exportRule(
 		const int numRightEdges = (int)rightGraph->getEdges().size();
 		const bool leftEmpty = numLeftVertices == 0 && numLeftEdges == 0;
 		const bool rightEmpty = numRightVertices == 0 && numRightEdges == 0;
+		if (leftEmpty) {
+			maybeAddBFace(leftGraph, rightGraph);
+		} else if (rightEmpty) {
+			maybeAddBFace(rightGraph, leftGraph);
+		}
         // If a graph is empty, it should go first.
 		vector<Graph*> graphs = rightEmpty
 			? vector<Graph*>{ rightGraph, leftGraph }

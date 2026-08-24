@@ -101,7 +101,7 @@ Json TemplateGraphSet::toJson() const {
     return j;
 }
 
-std::vector<TemplateGraphSet> importTemplateGraphs(const std::string& path) {
+TemplateLibrary importTemplateGraphs(const std::string& path) {
     std::ifstream in(path);
     if (!in) {
         throw std::runtime_error("importTemplateGraphs: cannot open " + path);
@@ -110,20 +110,36 @@ std::vector<TemplateGraphSet> importTemplateGraphs(const std::string& path) {
     buf << in.rdbuf();
     Json root = Json::parse(buf.str());
 
-    std::vector<TemplateGraphSet> out;
+    TemplateLibrary library;
+    const Json* entries = nullptr;
     if (root.is_array()) {
-        for (const auto& e : root) out.push_back(TemplateGraphSet::import(e));
-    } else {
-        throw std::runtime_error(
-            "importTemplateGraphs: root must be array in " + path);
+        entries = &root;
+    } else if (root.is_object()) {
+        if (root.contains("includeGround") && root["includeGround"].is_boolean()) {
+            library.includeGround = root["includeGround"].get<bool>();
+        }
+        if (root.contains("templates") && root["templates"].is_array()) {
+            entries = &root["templates"];
+        }
     }
-    return out;
+    if (!entries) {
+        throw std::runtime_error(
+            "importTemplateGraphs: root must be an array or { templates } in " + path);
+    }
+    for (const auto& e : *entries) {
+        library.sets.push_back(TemplateGraphSet::import(e));
+    }
+    return library;
 }
 
-bool exportTemplateGraphs(const std::string& path,
-                          const std::vector<TemplateGraphSet>& sets) {
-    Json root = Json::array();
-    for (const auto& s : sets) root.push_back(s.toJson());
+bool exportTemplateGraphs(const std::string& path, const TemplateLibrary& library) {
+    Json root;
+    root["includeGround"] = library.includeGround;
+    Json templates = Json::array();
+    for (const auto& s : library.sets) {
+        templates.push_back(s.toJson());
+    }
+    root["templates"] = templates;
     std::ofstream out(path);
     if (!out) return false;
     out << root.dump(2);

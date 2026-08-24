@@ -30,6 +30,7 @@ public:
     const vector<Graph*>& getStartGraphs() const;
     const vector<Graph*>& getEndGraphs() const;
     bool isGround() const;
+    void setGround(bool ground);
     int getId() const;
 
 private:

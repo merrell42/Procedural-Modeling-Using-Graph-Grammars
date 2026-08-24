@@ -184,6 +184,7 @@
     <ClInclude Include="RuleExporter.h" />
     <ClInclude Include="RuleGenerator.h" />
     <ClInclude Include="State.h" />
+    <ClInclude Include="CreateGroundRule.h" />
     <ClInclude Include="FixHalfEdgeOrder.h" />
     <ClInclude Include="TemplateGraph.h" />
     <ClInclude Include="TemplateMatcher.h" />
@@ -257,6 +258,7 @@
     <ClCompile Include="RuleExporter.cpp" />
     <ClCompile Include="RuleGenerator.cpp" />
     <ClCompile Include="State.cpp" />
+    <ClCompile Include="CreateGroundRule.cpp" />
     <ClCompile Include="FixHalfEdgeOrder.cpp" />
     <ClCompile Include="TemplateMatcher.cpp" />
   </ItemGroup>
