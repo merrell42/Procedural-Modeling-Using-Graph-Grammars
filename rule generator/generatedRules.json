@@ -221,8 +221,8 @@
             13
           ],
           "faceTypes": [
-            2,
             0,
+            2,
             0,
             3,
             4,
@@ -353,10 +353,10 @@
             ],
             "faces": [
               {
-                "outerComponent": 23
+                "outerComponent": 6
               },
               {
-                "outerComponent": 6
+                "outerComponent": 23
               },
               {
                 "outerComponent": 20
@@ -375,7 +375,7 @@
               {
                 "edge": 1,
                 "edgeIndex": 0,
-                "face": 1,
+                "face": 0,
                 "forward": false,
                 "next": 2,
                 "prev": 6,
@@ -395,7 +395,7 @@
               {
                 "edge": 2,
                 "edgeIndex": 0,
-                "face": 1,
+                "face": 0,
                 "forward": false,
                 "next": 4,
                 "prev": 0,
@@ -415,7 +415,7 @@
               {
                 "edge": 3,
                 "edgeIndex": 0,
-                "face": 1,
+                "face": 0,
                 "forward": false,
                 "next": 6,
                 "prev": 2,
@@ -435,7 +435,7 @@
               {
                 "edge": 4,
                 "edgeIndex": 0,
-                "face": 1,
+                "face": 0,
                 "forward": false,
                 "next": 0,
                 "prev": 4,
@@ -445,7 +445,7 @@
               {
                 "edge": 4,
                 "edgeIndex": 1,
-                "face": 0,
+                "face": 1,
                 "forward": true,
                 "next": 8,
                 "prev": 23,
@@ -455,7 +455,7 @@
               {
                 "edge": 5,
                 "edgeIndex": 0,
-                "face": 0,
+                "face": 1,
                 "forward": false,
                 "next": 21,
                 "prev": 7,
@@ -585,7 +585,7 @@
               {
                 "edge": 11,
                 "edgeIndex": 1,
-                "face": 0,
+                "face": 1,
                 "forward": true,
                 "next": 23,
                 "prev": 8,
@@ -605,7 +605,7 @@
               {
                 "edge": 0,
                 "edgeIndex": 1,
-                "face": 0,
+                "face": 1,
                 "forward": true,
                 "next": 7,
                 "prev": 21,
@@ -674,7 +674,7 @@
           },
           "morphism": {
             "faces": [
-              1
+              0
             ],
             "halfs": [],
             "vertices": []
