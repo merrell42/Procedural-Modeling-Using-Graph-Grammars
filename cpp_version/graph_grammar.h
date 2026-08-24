@@ -4,7 +4,6 @@
 #include <map>
 #include <iosfwd>
 #include "third_party/json.h"
-#include "primitives/face_type.h"
 #include "primitives/primitives.h"
 #include "graph_morphism/morphism.h"
 
@@ -52,7 +51,6 @@ public:
 
     bool isGrounded() const;
     bool hasStarterRules(bool useGround) const;
-    FaceType* getGroundFaceType() const;
 
     // Get the number of dimensions of the graph.
     int getDims() const { return primitives->dims; }

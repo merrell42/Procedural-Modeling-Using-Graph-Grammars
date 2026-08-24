@@ -654,7 +654,8 @@ void setGroundBoundaryFace(Graph* graph, FaceType* groundFace) {
 void exportRule(
 	GraphGrammar* grammar,
 	Graph* leftGraph,
-	Graph* rightGraph
+	Graph* rightGraph,
+	FaceType* groundFace
 ) {
 	try {
 		const int numLeftVertices = (int)leftGraph->getVertices().size();
@@ -663,7 +664,6 @@ void exportRule(
 		const int numRightEdges = (int)rightGraph->getEdges().size();
 		const bool leftEmpty = numLeftVertices == 0 && numLeftEdges == 0;
 		const bool rightEmpty = numRightVertices == 0 && numRightEdges == 0;
-		FaceType* groundFace = grammar->getGroundFaceType();
 		if (groundFace != nullptr) {
 			if (leftEmpty) {
 				delete leftGraph;
@@ -703,7 +703,8 @@ void RuleExporter::exportGroups(
 	GraphGrammar& grammar,
 	const vector<GraphGroup>& groups,
 	const vector<TemplateMatcher>& matchers,
-	Primitives* primitives
+	Primitives* primitives,
+	FaceType* groundFace
 ) {
 	auto primitiveGraphs = createPrimitiveGraphs(primitives);
 	for (const auto& group : groups) {
@@ -727,7 +728,7 @@ void RuleExporter::exportGroups(
 		// Assumes there are only two graphs in the template set.
 		for (const auto& left : graphs[0]) {
 			for (const auto& right : graphs[1]) {
-				exportRule(&grammar, left->copy(), right->copy());
+				exportRule(&grammar, left->copy(), right->copy(), groundFace);
 			}
 		}
 	}

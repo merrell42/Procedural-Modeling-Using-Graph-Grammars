@@ -6,6 +6,7 @@
 
 class Graph;
 class GraphGrammar;
+class FaceType;
 
 struct GraphGroup {
 	vector<int> boundaryValues;
@@ -18,6 +19,7 @@ public:
 		GraphGrammar& grammar,
 		const vector<GraphGroup>& groups,
 		const vector<TemplateMatcher>& matchers,
-		Primitives* primitives
+		Primitives* primitives,
+		FaceType* groundFace
 	);
 };

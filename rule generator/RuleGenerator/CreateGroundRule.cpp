@@ -165,6 +165,7 @@ Graph* buildRectangleGraph(
 	auto* graphFace = (new GraphFace())->connectGraph(graph);
 	graphFace->setType(face);
 	graphFace->setOuterComponent(halfEdges[0]);
+	graph->setBFaces({ graphFace });
 	for (int i = 0; i < 4; i++) {
 		halfEdges[i]->setFace(graphFace);
 		halfEdges[i]->connectNext(halfEdges[(i + 1) % 4]);
@@ -172,9 +173,19 @@ Graph* buildRectangleGraph(
 	return graph;
 }
 
+Graph* buildGroundFaceGraph(FaceType* face) {
+	Graph* graph = new Graph();
+	auto* graphFace = (new GraphFace())->connectGraph(graph);
+	graphFace->setType(face);
+	graphFace->setOuterComponent(nullptr);
+	graph->setBFaces({ graphFace });
+	graph->setBHalfEdges({ nullptr });
+	return graph;
 }
 
-void tryCreateGroundRule(GraphGrammar& grammar, Primitives* primitives) {
+}
+
+FaceType* tryCreateGroundRule(GraphGrammar& grammar, Primitives* primitives) {
 	vector<VertexType*> corners;
 	FaceType* face = nullptr;
 	for (VertexType* vertexType : primitives->vertexTypes) {
@@ -194,12 +205,12 @@ void tryCreateGroundRule(GraphGrammar& grammar, Primitives* primitives) {
 	array<EdgeType*, 4> orderedEdges;
 	if (!walkRectangle(corners, orderedCorners, orderedEdges)) {
 		cout << "  ground rule: skipped\n";
-		return;
+		return nullptr;
 	}
 
-	Graph* emptyGraph = new Graph();
+	Graph* groundFaceGraph = buildGroundFaceGraph(face);
 	Graph* rectangleGraph = buildRectangleGraph(orderedCorners, orderedEdges, face);
-	grammar.addGroundRule(new ProductionRule({ emptyGraph, rectangleGraph }));
+	grammar.addGroundRule(new ProductionRule({ groundFaceGraph, rectangleGraph }));
 
 	cout << "  ground rule: created rectangle with vertex types [";
 	for (int i = 0; i < 4; i++) {
@@ -209,4 +220,5 @@ void tryCreateGroundRule(GraphGrammar& grammar, Primitives* primitives) {
 		cout << indexOf(primitives->vertexTypes, orderedCorners[i]);
 	}
 	cout << "]\n";
+	return face;
 }

@@ -177,7 +177,7 @@ int GenerateRules(
 
 		fixHalfEdgeOrder(primitives->vertexTypes);
 		GraphGrammar grammar(primitives);
-		tryCreateGroundRule(grammar, primitives);
+		FaceType* groundFace = tryCreateGroundRule(grammar, primitives);
 
 		vector<EdgeType*> eTypes;
 		for (size_t i = 0; i < primitives->edgeTypes.size(); i++) {
@@ -219,7 +219,7 @@ int GenerateRules(
 				printBoundaryValues(boundaryValues);
 			}
 			auto graphGroups = filterEmptyGraphGroups(groupGraphs(allBoundaryValues));
-			RuleExporter::exportGroups(grammar, graphGroups, matchers, primitives);
+			RuleExporter::exportGroups(grammar, graphGroups, matchers, primitives, groundFace);
 			cout << "    boundary values groups across graphs:\n";
 			printGraphGroups(graphGroups);
 		}

@@ -68,27 +68,6 @@ void GraphGrammar::addGroundRule(ProductionRule* rule) {
     rule->setGround(true);
     groundRules.push_back(rule);
     grounded = true;
-    FaceType* face = getGroundFaceType();
-    if (face && emptyGraph->getFaces().empty()) {
-        auto* graphFace = (new GraphFace())->connectGraph(emptyGraph);
-        graphFace->setType(face);
-        graphFace->setOuterComponent(nullptr);
-    }
-}
-
-FaceType* GraphGrammar::getGroundFaceType() const {
-    if (groundRules.empty()) {
-        return nullptr;
-    }
-    const auto& graphs = groundRules[0]->getStartGraphs();
-    if (graphs.size() < 2) {
-        return nullptr;
-    }
-    const auto& faces = graphs[1]->getFaces();
-    if (faces.empty()) {
-        return nullptr;
-    }
-    return faces[0]->getType();
 }
 
 // Randomly pick one of the normal production rules.
