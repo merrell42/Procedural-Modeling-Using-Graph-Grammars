@@ -1,10 +1,8 @@
 #pragma once
 
-class FaceType;
-class GraphGrammar;
 class Primitives;
+class ProductionRule;
 
 // If the primitives contain four corner vertex types that form a ground
-// rectangle, create a ground rule and add it to the grammar.
-// Returns the ground face type, or nullptr if no ground rule was created.
-FaceType* tryCreateGroundRule(GraphGrammar& grammar, Primitives* primitives);
+// rectangle, return a ground rule. Otherwise return nullptr.
+ProductionRule* createGroundRule(Primitives* primitives);

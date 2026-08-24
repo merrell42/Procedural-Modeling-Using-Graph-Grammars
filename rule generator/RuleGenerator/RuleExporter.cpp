@@ -626,7 +626,16 @@ bool loopsAreValid(Graph* graph) {
 	return true;
 }
 
-Graph* createGroundOnlyGraph(FaceType* face) {
+GraphFace* findOuterLoopFace(Graph* graph) {
+	for (auto* face : graph->getFaces()) {
+		if (face->getOuterComponent() && face->isLoopy() && face->computeTurns() == 1) {
+			return face;
+		}
+	}
+	return nullptr;
+}
+
+Graph* createFaceGraph(FaceType* face) {
 	Graph* graph = new Graph();
 	auto* graphFace = (new GraphFace())->connectGraph(graph);
 	graphFace->setType(face);
@@ -636,26 +645,20 @@ Graph* createGroundOnlyGraph(FaceType* face) {
 	return graph;
 }
 
-void setGroundBoundaryFace(Graph* graph, FaceType* groundFace) {
-	if (!graph || !groundFace) {
+void applyOuterLoopToEmptyGraph(Graph*& emptyGraph, Graph* filledGraph) {
+	GraphFace* outerFace = findOuterLoopFace(filledGraph);
+	if (!outerFace) {
 		return;
 	}
-	for (auto* face : graph->getFaces()) {
-		if (!face->getOuterComponent() || !face->isLoopy()) {
-			continue;
-		}
-		if (face->computeTurns() == 1 && face->getType() == groundFace) {
-			graph->setBFaces({ face });
-			return;
-		}
-	}
+	delete emptyGraph;
+	emptyGraph = createFaceGraph(outerFace->getType());
+	filledGraph->setBFaces({ outerFace });
 }
 
 void exportRule(
 	GraphGrammar* grammar,
 	Graph* leftGraph,
-	Graph* rightGraph,
-	FaceType* groundFace
+	Graph* rightGraph
 ) {
 	try {
 		const int numLeftVertices = (int)leftGraph->getVertices().size();
@@ -664,16 +667,10 @@ void exportRule(
 		const int numRightEdges = (int)rightGraph->getEdges().size();
 		const bool leftEmpty = numLeftVertices == 0 && numLeftEdges == 0;
 		const bool rightEmpty = numRightVertices == 0 && numRightEdges == 0;
-		if (groundFace != nullptr) {
-			if (leftEmpty) {
-				delete leftGraph;
-				leftGraph = createGroundOnlyGraph(groundFace);
-				setGroundBoundaryFace(rightGraph, groundFace);
-			} else if (rightEmpty) {
-				delete rightGraph;
-				rightGraph = createGroundOnlyGraph(groundFace);
-				setGroundBoundaryFace(leftGraph, groundFace);
-			}
+		if (leftEmpty) {
+			applyOuterLoopToEmptyGraph(leftGraph, rightGraph);
+		} else if (rightEmpty) {
+			applyOuterLoopToEmptyGraph(rightGraph, leftGraph);
 		}
         // If a graph is empty, it should go first.
 		vector<Graph*> graphs = rightEmpty
@@ -703,8 +700,7 @@ void RuleExporter::exportGroups(
 	GraphGrammar& grammar,
 	const vector<GraphGroup>& groups,
 	const vector<TemplateMatcher>& matchers,
-	Primitives* primitives,
-	FaceType* groundFace
+	Primitives* primitives
 ) {
 	auto primitiveGraphs = createPrimitiveGraphs(primitives);
 	for (const auto& group : groups) {
@@ -728,7 +724,7 @@ void RuleExporter::exportGroups(
 		// Assumes there are only two graphs in the template set.
 		for (const auto& left : graphs[0]) {
 			for (const auto& right : graphs[1]) {
-				exportRule(&grammar, left->copy(), right->copy(), groundFace);
+				exportRule(&grammar, left->copy(), right->copy());
 			}
 		}
 	}

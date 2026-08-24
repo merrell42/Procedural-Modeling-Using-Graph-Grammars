@@ -6,7 +6,6 @@
 #include "../../cpp_version/graph/graph_edge.h"
 #include "../../cpp_version/graph/graph_half_edge.h"
 #include "../../cpp_version/graph/graph_face.h"
-#include "../../cpp_version/graph_grammar.h"
 #include "../../cpp_version/grammar_rules/production_rule.h"
 #include "../../cpp_version/primitives/primitives.h"
 #include "../../cpp_version/primitives/vertex_type.h"
@@ -165,7 +164,6 @@ Graph* buildRectangleGraph(
 	auto* graphFace = (new GraphFace())->connectGraph(graph);
 	graphFace->setType(face);
 	graphFace->setOuterComponent(halfEdges[0]);
-	graph->setBFaces({ graphFace });
 	for (int i = 0; i < 4; i++) {
 		halfEdges[i]->setFace(graphFace);
 		halfEdges[i]->connectNext(halfEdges[(i + 1) % 4]);
@@ -173,19 +171,9 @@ Graph* buildRectangleGraph(
 	return graph;
 }
 
-Graph* buildGroundFaceGraph(FaceType* face) {
-	Graph* graph = new Graph();
-	auto* graphFace = (new GraphFace())->connectGraph(graph);
-	graphFace->setType(face);
-	graphFace->setOuterComponent(nullptr);
-	graph->setBFaces({ graphFace });
-	graph->setBHalfEdges({ nullptr });
-	return graph;
 }
 
-}
-
-FaceType* tryCreateGroundRule(GraphGrammar& grammar, Primitives* primitives) {
+ProductionRule* createGroundRule(Primitives* primitives) {
 	vector<VertexType*> corners;
 	FaceType* face = nullptr;
 	for (VertexType* vertexType : primitives->vertexTypes) {
@@ -208,9 +196,8 @@ FaceType* tryCreateGroundRule(GraphGrammar& grammar, Primitives* primitives) {
 		return nullptr;
 	}
 
-	Graph* groundFaceGraph = buildGroundFaceGraph(face);
+	Graph* emptyGraph = new Graph();
 	Graph* rectangleGraph = buildRectangleGraph(orderedCorners, orderedEdges, face);
-	grammar.addGroundRule(new ProductionRule({ groundFaceGraph, rectangleGraph }));
 
 	cout << "  ground rule: created rectangle with vertex types [";
 	for (int i = 0; i < 4; i++) {
@@ -220,5 +207,5 @@ FaceType* tryCreateGroundRule(GraphGrammar& grammar, Primitives* primitives) {
 		cout << indexOf(primitives->vertexTypes, orderedCorners[i]);
 	}
 	cout << "]\n";
-	return face;
+	return new ProductionRule({ emptyGraph, rectangleGraph });
 }

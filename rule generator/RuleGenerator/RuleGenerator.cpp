@@ -10,6 +10,7 @@
 #include "../../cpp_version/primitives/vertex_type.h"
 #include "../../cpp_version/primitives/edge_type.h"
 #include "../../cpp_version/graph_grammar.h"
+#include "../../cpp_version/grammar_rules/production_rule.h"
 
 #include <fstream>
 #include <iostream>
@@ -177,7 +178,10 @@ int GenerateRules(
 
 		fixHalfEdgeOrder(primitives->vertexTypes);
 		GraphGrammar grammar(primitives);
-		FaceType* groundFace = tryCreateGroundRule(grammar, primitives);
+		ProductionRule* groundRule = createGroundRule(primitives);
+		if (groundRule) {
+			grammar.addGroundRule(groundRule);
+		}
 
 		vector<EdgeType*> eTypes;
 		for (size_t i = 0; i < primitives->edgeTypes.size(); i++) {
@@ -219,7 +223,7 @@ int GenerateRules(
 				printBoundaryValues(boundaryValues);
 			}
 			auto graphGroups = filterEmptyGraphGroups(groupGraphs(allBoundaryValues));
-			RuleExporter::exportGroups(grammar, graphGroups, matchers, primitives, groundFace);
+			RuleExporter::exportGroups(grammar, graphGroups, matchers, primitives);
 			cout << "    boundary values groups across graphs:\n";
 			printGraphGroups(graphGroups);
 		}

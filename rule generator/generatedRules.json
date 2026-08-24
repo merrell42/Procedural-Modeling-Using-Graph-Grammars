@@ -1,16 +1,10 @@
 {
   "emptyGraph": {
     "edgeTypes": [],
-    "faceTypes": [
-      0
-    ],
+    "faceTypes": [],
     "interior": {
       "edges": [],
-      "faces": [
-        {
-          "outerComponent": -1
-        }
-      ],
+      "faces": [],
       "halfEdges": [],
       "vertices": []
     },
