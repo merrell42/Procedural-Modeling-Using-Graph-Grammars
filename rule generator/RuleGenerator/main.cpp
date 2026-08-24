@@ -28,7 +28,7 @@ using namespace std;
 
 namespace {
 
-const char* kDefaultLibrary = "../graph templates/graph_templates (7).json";
+const char* kDefaultLibrary = "../graph templates/L template.json";
 constexpr const char* kDefaultPrimitives = "../primitives/L-grounded.json";
 
 // constexpr const char* kDefaultLibrary = "../graph templates/graph_template_diagonal.json";
