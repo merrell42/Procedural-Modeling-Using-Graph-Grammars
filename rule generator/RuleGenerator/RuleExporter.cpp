@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "RuleExporter.h"
+#include "CreateGroundRule.h"
 #include "isIsomorphic.h"
 
 #include "../../cpp_version/graph/graph.h"
@@ -600,7 +601,7 @@ bool isDuplicateGraph(
 	return false;
 }
 
-bool loopsAreValid(Graph* graph) {
+bool loopsAreValid(Graph* graph, FaceType* groundFace) {
 	bool hasOuterLoop = false;
 	for (int i = 0; i < graph->getFaces().size(); i++) {
 		auto* face = graph->getFaces()[i];
@@ -619,6 +620,9 @@ bool loopsAreValid(Graph* graph) {
 					return false;
 				}
 				hasOuterLoop = true;
+				if (groundFace != nullptr && face->getType() != groundFace) {
+					return false;
+				}
 			}
 		}
 	}
@@ -637,6 +641,18 @@ void exportRule(
 		const int numRightEdges = (int)rightGraph->getEdges().size();
 		const bool leftEmpty = numLeftVertices == 0 && numLeftEdges == 0;
 		const bool rightEmpty = numRightVertices == 0 && numRightEdges == 0;
+		FaceType* groundFace = grammar->getGroundFaceType();
+		if (groundFace != nullptr) {
+			if (leftEmpty) {
+				delete leftGraph;
+				leftGraph = createGroundOnlyGraph(groundFace);
+				setGroundBoundaryFace(rightGraph, groundFace);
+			} else if (rightEmpty) {
+				delete rightGraph;
+				rightGraph = createGroundOnlyGraph(groundFace);
+				setGroundBoundaryFace(leftGraph, groundFace);
+			}
+		}
         // If a graph is empty, it should go first.
 		vector<Graph*> graphs = rightEmpty
 			? vector<Graph*>{ rightGraph, leftGraph }
@@ -668,6 +684,7 @@ void RuleExporter::exportGroups(
 	Primitives* primitives
 ) {
 	auto primitiveGraphs = createPrimitiveGraphs(primitives);
+	FaceType* groundFace = grammar.getGroundFaceType();
 	for (const auto& group : groups) {
 		const int numGraphs = (int)group.graphIndices.size();
 		vector<vector<unique_ptr<Graph>>> graphs(numGraphs);
@@ -678,7 +695,7 @@ void RuleExporter::exportGroups(
 				auto graphValues = matchers[i].getGraphValues(index);
 				auto graphA = unique_ptr<Graph>(buildGraphFromValues(graphValues, primitiveGraphs));
 				auto vertexTypeIdsA = getVertexTypeIds(graphA.get());
-				if (loopsAreValid(graphA.get()) &&
+				if (loopsAreValid(graphA.get(), groundFace) &&
 					!isDuplicateGraph(graphA.get(), vertexTypeIdsA, graphs[i], vertexTypeIds[i])) {
 					graphs[i].push_back(std::move(graphA));
 					vertexTypeIds[i].push_back(std::move(vertexTypeIdsA));

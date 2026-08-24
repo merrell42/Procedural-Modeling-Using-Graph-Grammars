@@ -187,16 +187,26 @@
       "n": [
         {
           "edgeTypes": [],
-          "faceTypes": [],
+          "faceTypes": [
+            0
+          ],
           "interior": {
             "edges": [],
-            "faces": [],
+            "faces": [
+              {
+                "outerComponent": -1
+              }
+            ],
             "halfEdges": [],
             "vertices": []
           },
           "morphism": {
-            "faces": [],
-            "halfs": [],
+            "faces": [
+              0
+            ],
+            "halfs": [
+              -1
+            ],
             "vertices": []
           },
           "vertexTypes": []
@@ -669,7 +679,9 @@
             ]
           },
           "morphism": {
-            "faces": [],
+            "faces": [
+              1
+            ],
             "halfs": [],
             "vertices": []
           },

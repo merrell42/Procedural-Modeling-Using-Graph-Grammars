@@ -58,6 +58,7 @@ public:
     void merge(Graph* other);
     void setBVertices(const vector<GraphVertex*>& verts);
     void setBHalfEdges(const vector<GraphHalfEdge*>& halfs);
+    void setBFaces(const vector<GraphFace*>& faces);
 
 private:
     vector<GraphVertex*> vertices;

@@ -53,6 +53,7 @@ public:
 
     bool isGrounded() const;
     bool hasStarterRules(bool useGround) const;
+    FaceType* getGroundFaceType() const;
 
     // Get the number of dimensions of the graph.
     int getDims() const { return primitives->dims; }
@@ -72,5 +73,6 @@ private:
 
     // True if there is a ground plane for this model.
     bool grounded;
+    FaceType* groundFace = nullptr;
 };
 

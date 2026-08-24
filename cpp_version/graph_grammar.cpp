@@ -71,11 +71,16 @@ void GraphGrammar::addGroundRule(ProductionRule* rule) {
 }
 
 void GraphGrammar::prepareGroundPlane(FaceType* face) {
+    groundFace = face;
     if (emptyGraph->getFaces().empty()) {
         auto* graphFace = (new GraphFace())->connectGraph(emptyGraph);
         graphFace->setType(face);
         graphFace->setOuterComponent(nullptr);
     }
+}
+
+FaceType* GraphGrammar::getGroundFaceType() const {
+    return groundFace;
 }
 
 // Randomly pick one of the normal production rules.

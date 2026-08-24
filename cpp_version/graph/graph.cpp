@@ -457,6 +457,10 @@ void Graph::setBHalfEdges(const vector<GraphHalfEdge*>& halfs) {
     bHalfEdges = halfs;
 }
 
+void Graph::setBFaces(const vector<GraphFace*>& faces) {
+    bFaces = faces;
+}
+
 void Graph::merge(Graph* other) {
     if (!other || other == this) {
         return;
