@@ -645,14 +645,14 @@ Graph* createFaceGraph(FaceType* face) {
 	return graph;
 }
 
-void applyOuterLoopToEmptyGraph(Graph*& emptyGraph, Graph* filledGraph) {
+// Add a boundary face to both graphs, if the filled graph has an outer loop.
+void maybeAddBFace(Graph*& graph, Graph* filledGraph) {
 	GraphFace* outerFace = findOuterLoopFace(filledGraph);
-	if (!outerFace) {
-		return;
+	if (outerFace) {
+		delete graph;
+		graph = createFaceGraph(outerFace->getType());
+		filledGraph->setBFaces({ outerFace });
 	}
-	delete emptyGraph;
-	emptyGraph = createFaceGraph(outerFace->getType());
-	filledGraph->setBFaces({ outerFace });
 }
 
 void exportRule(
@@ -668,9 +668,9 @@ void exportRule(
 		const bool leftEmpty = numLeftVertices == 0 && numLeftEdges == 0;
 		const bool rightEmpty = numRightVertices == 0 && numRightEdges == 0;
 		if (leftEmpty) {
-			applyOuterLoopToEmptyGraph(leftGraph, rightGraph);
+			maybeAddBFace(leftGraph, rightGraph);
 		} else if (rightEmpty) {
-			applyOuterLoopToEmptyGraph(rightGraph, leftGraph);
+			maybeAddBFace(rightGraph, leftGraph);
 		}
         // If a graph is empty, it should go first.
 		vector<Graph*> graphs = rightEmpty
