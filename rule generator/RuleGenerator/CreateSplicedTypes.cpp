@@ -105,6 +105,10 @@ void createSplicedTypes(Primitives* primitives) {
 	map<FaceType*, EdgeType*> splicedEdgeByFace;
 	for (int i = 0; i < numNormalEdges; i++) {
 		EdgeType* eType = primitives->edgeTypes[i];
+		// Ignore ground plane edges with one half-edge.
+		if (eType->getFaceData().size() < 2) {
+			continue;
+		}
 		for (const FaceData& faceDatum : eType->getFaceData()) {
 			FaceType* face = faceDatum.type;
 			if (!face || splicedEdgeByFace.count(face)) {
@@ -123,6 +127,10 @@ void createSplicedTypes(Primitives* primitives) {
 
 	for (int i = 0; i < numNormalEdges; i++) {
 		EdgeType* eType = primitives->edgeTypes[i];
+		// Ignore ground plane edges with one half-edge.
+		if (eType->getFaceData().size() < 2) {
+			continue;
+		}
 		for (const FaceData& faceDatum : eType->getFaceData()) {
 			FaceType* face = faceDatum.type;
 			if (!face) {

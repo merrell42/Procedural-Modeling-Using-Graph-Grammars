@@ -28,8 +28,10 @@ public:
 
 class TemplateMatcher {
 public:
-	// The possible states at each vertex.
+	// The possible states at each non-spliced vertex.
 	vector<VertexState> vertexStates;
+	// The possible states at each spliced vertex.
+	vector<VertexState> splicedVertexStates;
 	// The possible states at each edge.
 	vector<EdgeState> edgeStates;
 	// The list of decisions.
@@ -45,6 +47,7 @@ public:
 	vector<vector<int>> eConnections;
 	int numTemplateVertices;
 	int numVertexStates;
+	int numSplicedVertexStates;
 	int numEdgeStates;
 	// Our current position within the vertices.
 	int vIndex;

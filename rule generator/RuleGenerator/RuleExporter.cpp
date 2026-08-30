@@ -444,9 +444,7 @@ PrimitiveGraphs createPrimitiveGraphs(Primitives* primitives) {
 	PrimitiveGraphs result;
 	result.vertexGraphs.reserve(primitives->vertexTypes.size());
 	for (auto* vType : primitives->vertexTypes) {
-		// if (!vType->getSpliced()) {
-			result.vertexGraphs.push_back(unique_ptr<Graph>(createVertexGraph(vType)));
-		// }
+		result.vertexGraphs.push_back(unique_ptr<Graph>(createVertexGraph(vType)));
 	}
 
 	result.edgeGraphs.reserve(primitives->edgeTypes.size());
@@ -642,17 +640,20 @@ Graph* createFaceGraph(FaceType* face) {
 	auto* graphFace = (new GraphFace())->connectGraph(graph);
 	graphFace->setType(face);
 	graphFace->setOuterComponent(nullptr);
-	graph->setBFaces({ graphFace });
 	graph->setBHalfEdges({ nullptr });
 	return graph;
 }
 
 // Add a boundary face to both graphs, if the filled graph has an outer loop.
-void maybeAddBFace(Graph*& graph, Graph* filledGraph) {
+void maybeAddBFace(Graph*& graph, Graph* filledGraph, bool addBFaces) {
 	GraphFace* outerFace = findOuterLoopFace(filledGraph);
-	if (outerFace) {
-		delete graph;
-		graph = createFaceGraph(outerFace->getType());
+	if (!outerFace) {
+		return;
+	}
+	delete graph;
+	graph = createFaceGraph(outerFace->getType());
+	if (addBFaces) {
+		graph->setBFaces({ graph->getFaces()[0] });
 		filledGraph->setBFaces({ outerFace });
 	}
 }
@@ -669,10 +670,14 @@ void exportRule(
 		const int numRightEdges = (int)rightGraph->getEdges().size();
 		const bool leftEmpty = numLeftVertices == 0 && numLeftEdges == 0;
 		const bool rightEmpty = numRightVertices == 0 && numRightEdges == 0;
+
+		// TODO: The last parameter should probably be removed. It there because
+		// we do not have any faces for 2D graphs to be attached to. In the future,
+		// we should create a default ground plane for them.
 		if (leftEmpty) {
-			maybeAddBFace(leftGraph, rightGraph);
+			maybeAddBFace(leftGraph, rightGraph, grammar->isGrounded());
 		} else if (rightEmpty) {
-			maybeAddBFace(rightGraph, leftGraph);
+			maybeAddBFace(rightGraph, leftGraph, grammar->isGrounded());
 		}
         // If a graph is empty, it should go first.
 		vector<Graph*> graphs = rightEmpty
