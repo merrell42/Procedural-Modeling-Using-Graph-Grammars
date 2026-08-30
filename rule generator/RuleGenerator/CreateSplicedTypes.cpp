@@ -7,7 +7,6 @@
 #include "../../cpp_version/primitives/face_type.h"
 #include "../../cpp_version/geometry/vec3.h"
 
-#include <cmath>
 #include <map>
 
 using namespace std;
@@ -15,17 +14,6 @@ using namespace std;
 namespace {
 
 constexpr double kDirEps = 1e-10;
-
-Vec3 facePlaneAxis(FaceType* face) {
-	const Vec3& n = face->getNormal();
-	Vec3 q = Vec3::X_AXIS;
-	if (fabs(n.dot(q)) > 0.9) {
-		q = Vec3::Y_AXIS;
-	}
-	Vec3 axis = n.cross(q);
-	axis.normalize();
-	return axis;
-}
 
 Vec3 intoFaceDir(const Vec3& edgeDir, FaceType* face, bool onRight) {
 	const Vec3& n = face->getNormal();
@@ -40,7 +28,6 @@ Vec3 intoFaceDir(const Vec3& edgeDir, FaceType* face, bool onRight) {
 VertexType* createSplicedVertexType(
 	EdgeType* edgeType,
 	EdgeType* splicedEdge,
-	FaceType* face,
 	bool faceOnRight
 ) {
 	auto* vType = new VertexType();
@@ -60,13 +47,6 @@ VertexType* createSplicedVertexType(
 		vType->addHalfEdge(splicedEdge, false);
 	}
 
-	Vec3 into = intoFaceDir(edgeType->getDir(), face, faceOnRight);
-	if (into.length2() >= kDirEps) {
-		vector<HalfEdgeType> halfEdges = vType->getHalfEdgeTypes();
-		const int splicedIndex = faceOnRight ? 1 : 2;
-		halfEdges[splicedIndex].dir = into;
-		vType->setHalfEdgeTypes(std::move(halfEdges));
-	}
 	return vType;
 }
 
@@ -102,46 +82,39 @@ void createSplicedTypes(Primitives* primitives) {
 	}
 
 	const int numNormalEdges = (int)primitives->edgeTypes.size();
-	map<FaceType*, EdgeType*> splicedEdgeByFace;
 	for (int i = 0; i < numNormalEdges; i++) {
 		EdgeType* eType = primitives->edgeTypes[i];
 		// Ignore ground plane edges with one half-edge.
 		if (eType->getFaceData().size() < 2) {
 			continue;
 		}
-		for (const FaceData& faceDatum : eType->getFaceData()) {
-			FaceType* face = faceDatum.type;
-			if (!face || splicedEdgeByFace.count(face)) {
-				continue;
-			}
-			vector<FaceData> faceData = {
-				{face, true},
-				{face, false}
-			};
-			auto* splicedEdge = new EdgeType(faceData, facePlaneAxis(face), false);
-			splicedEdge->setSpliced(true);
-			splicedEdgeByFace[face] = splicedEdge;
-			primitives->edgeTypes.push_back(splicedEdge);
-		}
-	}
-
-	for (int i = 0; i < numNormalEdges; i++) {
-		EdgeType* eType = primitives->edgeTypes[i];
-		// Ignore ground plane edges with one half-edge.
-		if (eType->getFaceData().size() < 2) {
-			continue;
-		}
+		map<FaceType*, EdgeType*> splicedEdgeByFace;
 		for (const FaceData& faceDatum : eType->getFaceData()) {
 			FaceType* face = faceDatum.type;
 			if (!face) {
 				continue;
 			}
+			EdgeType* splicedEdge = nullptr;
 			auto it = splicedEdgeByFace.find(face);
 			if (it == splicedEdgeByFace.end()) {
-				continue;
+				vector<FaceData> faceData = {
+					{face, true},
+					{face, false}
+				};
+				splicedEdge = new EdgeType(
+					faceData,
+					intoFaceDir(eType->getDir(), face, faceDatum.onRight),
+					false
+				);
+				splicedEdge->setSpliced(true);
+				splicedEdgeByFace[face] = splicedEdge;
+				primitives->edgeTypes.push_back(splicedEdge);
+			} else {
+				splicedEdge = it->second;
 			}
-			VertexType* vType = createSplicedVertexType(eType, it->second, face, faceDatum.onRight);
-			primitives->vertexTypes.push_back(vType);
+			primitives->vertexTypes.push_back(
+				createSplicedVertexType(eType, splicedEdge, faceDatum.onRight)
+			);
 		}
 	}
 }
