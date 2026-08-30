@@ -1,9 +1,42 @@
 #include "pch.h"
 #include "TemplateMatcher.h"
+#include "../../cpp_version/primitives/edge_type.h"
 #include <set>
 #include <iostream>
 
 using namespace std;
+
+namespace {
+
+int splicedConnectionIndex(const TemplateGraph& graph, const TemplateVertex& vertex) {
+	for (int i = 0; i < (int)vertex.connections.size(); i++) {
+		const int edgeIndex = vertex.connections[i];
+		if (edgeIndex >= 0 && edgeIndex < (int)graph.edges.size() && graph.edges[edgeIndex].spliced) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+bool halfEdgeIsSpliced(const VertexState& state, int halfEdgeIndex) {
+	const auto& halfEdges = state.getType()->getHalfEdgeTypes();
+	if (halfEdgeIndex < 0 || halfEdgeIndex >= (int)halfEdges.size()) {
+		return false;
+	}
+	return halfEdges[halfEdgeIndex].edge && halfEdges[halfEdgeIndex].edge->getSpliced();
+}
+
+void addVertexStates(vector<VertexState>& states, const vector<VertexType*>& vTypes) {
+	for (VertexType* vType : vTypes) {
+		const int typeValue = vType->getRuleGeneratorId();
+		const int n = (int)vType->getHalfEdgeTypes().size();
+		for (int j = 0; j < n; j++) {
+			states.push_back(VertexState(vType, typeValue, j));
+		}
+	}
+}
+
+}
 
 TemplateMatcher::TemplateMatcher(
 	TemplateGraph templateGraph_,
@@ -11,13 +44,8 @@ TemplateMatcher::TemplateMatcher(
 	vector<EdgeType*> eTypes
 ) : templateGraph(templateGraph_) {
 	counter = 0;
-	for (int i = 0; i < vTypes.size(); i++) {
-		VertexType* vType = vTypes[i];
-		for (int j = 0; j < vType->getHalfEdgeTypes().size(); j++) {
-			vertexStates.push_back(VertexState(vType, i, j));
-		}
-	}
-	for (int i = 0; i < eTypes.size(); i++) {
+	addVertexStates(vertexStates, vTypes);
+	for (int i = 0; i < (int)eTypes.size(); i++) {
 		EdgeType* eType = eTypes[i];
 		string id = eType->getRuleGeneratorId();
 		edgeStates.push_back(EdgeState(id + "S", i, 0));
@@ -36,16 +64,28 @@ TemplateMatcher::TemplateMatcher(
 	inQueue = new bool[numTemplateVertices];
 	for (int i = 0; i < numTemplateVertices; i++) {
 		inQueue[i] = false;
-		vector <int> rejectStepOneVertex;
+		vector<int> rejectStepOneVertex;
 		const auto& templateVertex = templateGraph.vertices[i];
 		const int numConnections = (int)templateVertex.connections.size();
 		const bool onBoundary = !templateVertex.boundaryId.empty();
+		const int splicedConn = templateVertex.spliced
+			? splicedConnectionIndex(templateGraph, templateVertex)
+			: -1;
 		int numStates = numStatesAtVertex(i);
 		for (int j = 0; j < numStates; j++) {
 			int rejectAt = -1;
-			// Immediately reject any state that does not have the correct number of edges.
-			if (!onBoundary && vertexStates[j].getType()->getHalfEdgeTypes().size() != numConnections) {
-				rejectAt = 0;
+			if (!onBoundary) {
+				const auto& state = static_cast<const VertexState&>(getState(i, j));
+				if (state.getType()->getSpliced() != templateVertex.spliced) {
+					rejectAt = 0;
+				} else if (state.getType()->getHalfEdgeTypes().size() != numConnections) {
+					rejectAt = 0;
+				} else if (templateVertex.spliced) {
+					if (splicedConn < 0 ||
+						!halfEdgeIsSpliced(state, state.GetConnectionIndex(splicedConn))) {
+						rejectAt = 0;
+					}
+				}
 			}
 			rejectStepOneVertex.push_back(rejectAt);
 		}

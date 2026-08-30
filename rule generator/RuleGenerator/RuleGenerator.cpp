@@ -4,6 +4,7 @@
 #include "TemplateMatcher.h"
 #include "RuleExporter.h"
 #include "FixHalfEdgeOrder.h"
+#include "CreateSplicedTypes.h"
 #include "CreateGroundRule.h"
 #include "../../cpp_version/json versioning/read_json_file.h"
 #include "../../cpp_version/primitives/primitives.h"
@@ -166,24 +167,19 @@ int GenerateRules(
 		Json parsed = readJsonFile(primitivesPath);
 		Primitives* primitives = Primitives::import(parsed["types"]);
 
-		vector<VertexType*> vertexTypes;
-		vertexTypes.reserve(primitives->vertexTypes.size());
-		for (VertexType* vType : primitives->vertexTypes) {
-			if (vType->getSpliced()) {
-				continue;
-			}
-			vertexTypes.push_back(vType);
-		}
-		primitives->vertexTypes = std::move(vertexTypes);
-
-		fixHalfEdgeOrder(primitives->vertexTypes);
+		filterSplicedTypes(primitives);
+		vector<VertexType*> vertexTypes = primitives->vertexTypes;
+		createSplicedTypes(primitives);
+		fixHalfEdgeOrder(vertexTypes);
 		GraphGrammar grammar(primitives);
 
 		vector<EdgeType*> eTypes;
 		for (size_t i = 0; i < primitives->edgeTypes.size(); i++) {
 			EdgeType* eType = primitives->edgeTypes[i];
 			eType->setRuleGeneratorId("edge" + to_string(i));
-			eTypes.push_back(eType);
+			if (!eType->getSpliced()) {
+				eTypes.push_back(eType);
+			}
 		}
 
 		for (size_t i = 0; i < primitives->vertexTypes.size(); i++) {
@@ -216,7 +212,11 @@ int GenerateRules(
 				continue;
 			}
 			for (int j = 0; j < numGraphs; j++) {
-				matchers.push_back(TemplateMatcher(templateGraphSets[i].graphs[j], primitives->vertexTypes, eTypes));
+				matchers.push_back(TemplateMatcher(
+					templateGraphSets[i].graphs[j],
+					primitives->vertexTypes,
+					eTypes
+				));
 			}
 			vector<vector<vector<int>>> allBoundaryValues;
 			vector<string> boundaryIds = collectBoundaryIds(templateGraphSets[i].graphs[0]);

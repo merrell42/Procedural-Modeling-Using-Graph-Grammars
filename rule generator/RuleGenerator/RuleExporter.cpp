@@ -444,7 +444,9 @@ PrimitiveGraphs createPrimitiveGraphs(Primitives* primitives) {
 	PrimitiveGraphs result;
 	result.vertexGraphs.reserve(primitives->vertexTypes.size());
 	for (auto* vType : primitives->vertexTypes) {
-		result.vertexGraphs.push_back(unique_ptr<Graph>(createVertexGraph(vType)));
+		// if (!vType->getSpliced()) {
+			result.vertexGraphs.push_back(unique_ptr<Graph>(createVertexGraph(vType)));
+		// }
 	}
 
 	result.edgeGraphs.reserve(primitives->edgeTypes.size());
