@@ -40,7 +40,7 @@ public:
 	// If it is at -1, the state has not been rejected.
 	vector<vector<int>> rejectionStep;
 	// If each vertex is in the updateQueue.
-	bool* inQueue;
+	vector<bool> inQueue;
 	vector<int> updateQueue;
 	TemplateGraph templateGraph;
 	// Edge connections: which vertices are connected to each edge.
@@ -62,6 +62,7 @@ public:
 	GraphValues getGraphValues(int graphIndex) const;
 
 private:
+	void addVertexStates(const vector<VertexType*>& vTypes);
 	void applyDecision();
 	bool propagate();
 	vector<int> findChoices();

@@ -212,16 +212,14 @@ int GenerateRules(
 				continue;
 			}
 			for (int j = 0; j < numGraphs; j++) {
-				matchers.push_back(TemplateMatcher(
-					templateGraphSets[i].graphs[j],
-					primitives->vertexTypes,
-					eTypes
-				));
+				const auto& templateGraph = templateGraphSets[i].graphs[j];
+				matchers.push_back(TemplateMatcher(templateGraph, primitives->vertexTypes, eTypes));
 			}
 			vector<vector<vector<int>>> allBoundaryValues;
 			vector<string> boundaryIds = collectBoundaryIds(templateGraphSets[i].graphs[0]);
 			for (int j = 0; j < numGraphs; j++) {
 				matchers[j].match();
+				totalMatches += matchers[j].vertexValues.size();
 				auto boundaryValues = findBoundaryValues(matchers[j], boundaryIds);
 				allBoundaryValues.push_back(boundaryValues);
 				cout << "    graph " << j << " allBoundaryValues:\n";

@@ -15,48 +15,39 @@ namespace {
 
 constexpr double kDirEps = 1e-10;
 
-Vec3 intoFaceDir(const Vec3& edgeDir, FaceType* face, bool onRight) {
+Vec3 splicedDir(const Vec3& edgeDir, FaceType* face, bool onRight) {
 	const Vec3& n = face->getNormal();
-	Vec3 into = onRight ? edgeDir.cross(n) : n.cross(edgeDir);
-	if (into.length2() < kDirEps) {
-		return Vec3();
-	}
-	into.normalize();
-	return into;
+	Vec3 dir = onRight ? edgeDir.cross(n) : n.cross(edgeDir);
+	dir.normalize();
+	return dir;
 }
 
 VertexType* createSplicedVertexType(
 	EdgeType* edgeType,
-	EdgeType* splicedEdge,
+	EdgeType* splicedType,
 	bool faceOnRight
 ) {
 	auto* vType = new VertexType();
 	vType->setSpliced(true);
 
-	// CCW around the vertex. The two T half-edges point opposite ways.
-	// The spliced half-edge sits between them on the side of this face:
-	//   right face: T-end, spliced, T-start
-	//   left face:  T-end, T-start, spliced
+	// Half-edges are ordered counterclockwise around the vertex.
+	// Two opposite pointing half-edges are based on the edgeType.
 	if (faceOnRight) {
 		vType->addHalfEdge(edgeType, false);
-		vType->addHalfEdge(splicedEdge, true);
+		vType->addHalfEdge(splicedType, true);
 		vType->addHalfEdge(edgeType, true);
 	} else {
 		vType->addHalfEdge(edgeType, false);
 		vType->addHalfEdge(edgeType, true);
-		vType->addHalfEdge(splicedEdge, false);
+		vType->addHalfEdge(splicedType, false);
 	}
-
 	return vType;
 }
 
 }
 
 void filterSplicedTypes(Primitives* primitives) {
-	if (!primitives) {
-		return;
-	}
-
+	// Remove spliced vertex types.
 	vector<VertexType*> vertexTypes;
 	vertexTypes.reserve(primitives->vertexTypes.size());
 	for (VertexType* vType : primitives->vertexTypes) {
@@ -66,6 +57,7 @@ void filterSplicedTypes(Primitives* primitives) {
 	}
 	primitives->vertexTypes = std::move(vertexTypes);
 
+	// Remove spliced edge types.
 	vector<EdgeType*> edgeTypes;
 	edgeTypes.reserve(primitives->edgeTypes.size());
 	for (EdgeType* eType : primitives->edgeTypes) {
@@ -77,10 +69,6 @@ void filterSplicedTypes(Primitives* primitives) {
 }
 
 void createSplicedTypes(Primitives* primitives) {
-	if (!primitives) {
-		return;
-	}
-
 	const int numNormalEdges = (int)primitives->edgeTypes.size();
 	for (int i = 0; i < numNormalEdges; i++) {
 		EdgeType* eType = primitives->edgeTypes[i];
@@ -88,33 +76,32 @@ void createSplicedTypes(Primitives* primitives) {
 		if (eType->getFaceData().size() < 2) {
 			continue;
 		}
-		map<FaceType*, EdgeType*> splicedEdgeByFace;
+
+		// Cache of the spliced edge type for each face.
+		map<FaceType*, EdgeType*> splicedTypeByFace;
 		for (const FaceData& faceDatum : eType->getFaceData()) {
 			FaceType* face = faceDatum.type;
+			bool onRight = faceDatum.onRight;
 			if (!face) {
 				continue;
 			}
-			EdgeType* splicedEdge = nullptr;
-			auto it = splicedEdgeByFace.find(face);
-			if (it == splicedEdgeByFace.end()) {
-				vector<FaceData> faceData = {
-					{face, true},
-					{face, false}
-				};
-				splicedEdge = new EdgeType(
-					faceData,
-					intoFaceDir(eType->getDir(), face, faceDatum.onRight),
-					false
-				);
-				splicedEdge->setSpliced(true);
-				splicedEdgeByFace[face] = splicedEdge;
-				primitives->edgeTypes.push_back(splicedEdge);
+
+			// Create spliced edge type if it doesn't exist.
+			EdgeType* splicedType = nullptr;
+			auto it = splicedTypeByFace.find(face);
+			if (it == splicedTypeByFace.end()) {
+				vector<FaceData> faceData = {{face, true}, {face, false}};
+				auto dir = splicedDir(eType->getDir(), face, onRight);
+				splicedType = new EdgeType(faceData, dir, false);
+				splicedType->setSpliced(true);
+				splicedTypeByFace[face] = splicedType;
+				primitives->edgeTypes.push_back(splicedType);
 			} else {
-				splicedEdge = it->second;
+				splicedType = it->second;
 			}
-			primitives->vertexTypes.push_back(
-				createSplicedVertexType(eType, splicedEdge, faceDatum.onRight)
-			);
+
+			auto splicedVertexType = createSplicedVertexType(eType, splicedType, onRight);
+			primitives->vertexTypes.push_back(splicedVertexType);
 		}
 	}
 }

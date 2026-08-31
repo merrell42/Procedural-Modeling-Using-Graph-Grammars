@@ -672,14 +672,13 @@ Graph* createFaceGraph(FaceType* face) {
 // Add a boundary face to both graphs, if the filled graph has an outer loop.
 void maybeAddBFace(Graph*& graph, Graph* filledGraph, bool addBFaces) {
 	GraphFace* outerFace = findOuterLoopFace(filledGraph);
-	if (!outerFace) {
-		return;
-	}
-	delete graph;
-	graph = createFaceGraph(outerFace->getType());
-	if (addBFaces) {
-		graph->setBFaces({ graph->getFaces()[0] });
-		filledGraph->setBFaces({ outerFace });
+	if (outerFace) {
+		delete graph;
+		graph = createFaceGraph(outerFace->getType());
+		if (addBFaces) {
+			graph->setBFaces({graph->getFaces()[0]});
+			filledGraph->setBFaces({ outerFace });
+		}
 	}
 }
 
