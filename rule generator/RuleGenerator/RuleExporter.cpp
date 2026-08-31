@@ -33,6 +33,7 @@ struct HalfEdgeFaceSlot {
 	GraphHalfEdge* halfEdge = nullptr;
 };
 
+// Sort half-edge face slots by angle.
 static bool compareHalfEdgeFaceSlots(const HalfEdgeFaceSlot& a, const HalfEdgeFaceSlot& b) {
 	if (a.angle != b.angle) {
 		return a.angle < b.angle;
@@ -41,6 +42,29 @@ static bool compareHalfEdgeFaceSlots(const HalfEdgeFaceSlot& a, const HalfEdgeFa
 		return a.intoVertex < b.intoVertex;
 	}
 	return false;
+}
+
+// We cannot decide the order of two half-edges based on angle if they have the same angle.
+// Instead, we look at the previous slot. intoVertex should alternate between true and false.
+// Choose the order that accomplishes this.
+static void orderSameAnglePairs(vector<HalfEdgeFaceSlot>& slots) {
+	const size_t n = slots.size();
+	if (n < 2) {
+		return;
+	}
+	for (size_t i = 0; i + 1 < n; ) {
+		if (slots[i].angle == slots[i + 1].angle) {
+			const size_t prev = (i + n - 1) % n;
+			const bool prevIntoVertex = slots[prev].intoVertex;
+			// If the current slot matches the previous slot, swap the current and next slots.
+			if (slots[i].intoVertex == prevIntoVertex) {
+				swap(slots[i], slots[i + 1]);
+			}
+			i += 2;
+		} else {
+			i++;
+		}
+	}
 }
 
 // Find the outward facing partner half-edge for a slot facing into the vertex.
@@ -362,6 +386,7 @@ Graph* createVertexGraph(VertexType* vType) {
 	// Sort half-edges by their face angle.
 	for (auto& entry : halfEdgesByFaceType) {
 		stable_sort(entry.second.begin(), entry.second.end(), compareHalfEdgeFaceSlots);
+		orderSameAnglePairs(entry.second);
 	}
 
 	// For each inward facing half-edge, find it's outward facing partner and create a face.
@@ -640,18 +665,20 @@ Graph* createFaceGraph(FaceType* face) {
 	auto* graphFace = (new GraphFace())->connectGraph(graph);
 	graphFace->setType(face);
 	graphFace->setOuterComponent(nullptr);
-	graph->setBFaces({ graphFace });
 	graph->setBHalfEdges({ nullptr });
 	return graph;
 }
 
 // Add a boundary face to both graphs, if the filled graph has an outer loop.
-void maybeAddBFace(Graph*& graph, Graph* filledGraph) {
+void maybeAddBFace(Graph*& graph, Graph* filledGraph, bool addBFaces) {
 	GraphFace* outerFace = findOuterLoopFace(filledGraph);
 	if (outerFace) {
 		delete graph;
 		graph = createFaceGraph(outerFace->getType());
-		filledGraph->setBFaces({ outerFace });
+		if (addBFaces) {
+			graph->setBFaces({graph->getFaces()[0]});
+			filledGraph->setBFaces({ outerFace });
+		}
 	}
 }
 
@@ -667,10 +694,14 @@ void exportRule(
 		const int numRightEdges = (int)rightGraph->getEdges().size();
 		const bool leftEmpty = numLeftVertices == 0 && numLeftEdges == 0;
 		const bool rightEmpty = numRightVertices == 0 && numRightEdges == 0;
+
+		// TODO: The last parameter should probably be removed. It there because
+		// we do not have any faces for 2D graphs to be attached to. In the future,
+		// we should create a default ground plane for them.
 		if (leftEmpty) {
-			maybeAddBFace(leftGraph, rightGraph);
+			maybeAddBFace(leftGraph, rightGraph, grammar->isGrounded());
 		} else if (rightEmpty) {
-			maybeAddBFace(rightGraph, leftGraph);
+			maybeAddBFace(rightGraph, leftGraph, grammar->isGrounded());
 		}
         // If a graph is empty, it should go first.
 		vector<Graph*> graphs = rightEmpty
