@@ -18,7 +18,6 @@ public:
 		GraphGrammar& grammar,
 		const vector<GraphGroup>& groups,
 		const vector<TemplateMatcher>& matchers,
-		Primitives* matchPrimitives,
-		Primitives* exportPrimitives
+		Primitives* primitives
 	);
 };
