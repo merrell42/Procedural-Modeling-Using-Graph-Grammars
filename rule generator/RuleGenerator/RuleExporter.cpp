@@ -7,6 +7,7 @@
 #include "../../cpp_version/util/util.h"
 #include "../../cpp_version/graph_grammar.h"
 #include "../../cpp_version/grammar_rules/production_rule.h"
+#include "../../cpp_version/geometry/vec3.h"
 
 #include <algorithm>
 #include <iostream>
@@ -16,6 +17,167 @@
 #include <unordered_set>
 
 using namespace std;
+
+namespace {
+
+constexpr double kTypeDirEps = 1e-9;
+
+struct ExportTypeMaps {
+	unordered_map<VertexType*, VertexType*> vertices;
+	unordered_map<EdgeType*, EdgeType*> edges;
+};
+
+bool dirsMatch(const Vec3& a, const Vec3& b) {
+	return (a - b).length2() < kTypeDirEps;
+}
+
+int faceTypeIndex(const Primitives* shape, FaceType* face) {
+	return indexOf(shape->faceTypes, face);
+}
+
+EdgeType* findBaseEdge(const VertexType* vertexType) {
+	for (const auto& halfEdge : vertexType->getHalfEdgeTypes()) {
+		if (halfEdge.edge && !halfEdge.edge->getSpliced()) {
+			return halfEdge.edge;
+		}
+	}
+	return nullptr;
+}
+
+bool isAuthoredSpliceOnBaseEdge(const VertexType* vertexType, EdgeType* baseEdge) {
+	const auto& halfEdges = vertexType->getHalfEdgeTypes();
+	if (halfEdges.size() != 2) {
+		return false;
+	}
+	return halfEdges[0].edge == baseEdge && halfEdges[1].edge == baseEdge;
+}
+
+bool sameSplicedEdgeSignature(
+	EdgeType* expandedEdge,
+	EdgeType* authoredEdge,
+	const Primitives* expandedShape,
+	const Primitives* authoredShape
+) {
+	if (!expandedEdge->getSpliced() || !authoredEdge->getSpliced()) {
+		return false;
+	}
+	if (!dirsMatch(expandedEdge->getDir(), authoredEdge->getDir())) {
+		return false;
+	}
+	const auto& expandedFaces = expandedEdge->getFaceData();
+	const auto& authoredFaces = authoredEdge->getFaceData();
+	if (expandedFaces.size() != authoredFaces.size()) {
+		return false;
+	}
+	for (size_t i = 0; i < expandedFaces.size(); i++) {
+		if (expandedFaces[i].onRight != authoredFaces[i].onRight) {
+			return false;
+		}
+		if (faceTypeIndex(expandedShape, expandedFaces[i].type)
+			!= faceTypeIndex(authoredShape, authoredFaces[i].type)) {
+			return false;
+		}
+	}
+	return true;
+}
+
+ExportTypeMaps buildExportTypeMaps(Primitives* matchPrimitives, Primitives* exportPrimitives) {
+	ExportTypeMaps maps;
+
+	size_t nonSplicedEdge = 0;
+	for (EdgeType* edgeType : matchPrimitives->edgeTypes) {
+		if (edgeType->getSpliced()) {
+			continue;
+		}
+		if (nonSplicedEdge < exportPrimitives->edgeTypes.size()
+			&& !exportPrimitives->edgeTypes[nonSplicedEdge]->getSpliced()) {
+			maps.edges[edgeType] = exportPrimitives->edgeTypes[nonSplicedEdge];
+		}
+		nonSplicedEdge++;
+	}
+
+	for (EdgeType* expandedEdge : matchPrimitives->edgeTypes) {
+		if (!expandedEdge->getSpliced()) {
+			continue;
+		}
+		for (EdgeType* authoredEdge : exportPrimitives->edgeTypes) {
+			if (sameSplicedEdgeSignature(
+				expandedEdge,
+				authoredEdge,
+				matchPrimitives,
+				exportPrimitives
+			)) {
+				maps.edges[expandedEdge] = authoredEdge;
+				break;
+			}
+		}
+	}
+
+	size_t nonSplicedVertex = 0;
+	for (VertexType* vertexType : matchPrimitives->vertexTypes) {
+		if (vertexType->getSpliced()) {
+			continue;
+		}
+		if (nonSplicedVertex < exportPrimitives->vertexTypes.size()
+			&& !exportPrimitives->vertexTypes[nonSplicedVertex]->getSpliced()) {
+			maps.vertices[vertexType] = exportPrimitives->vertexTypes[nonSplicedVertex];
+		}
+		nonSplicedVertex++;
+	}
+
+	unordered_map<EdgeType*, EdgeType*> baseEdgeMap;
+	for (const auto& entry : maps.edges) {
+		if (!entry.first->getSpliced() && !entry.second->getSpliced()) {
+			baseEdgeMap[entry.first] = entry.second;
+		}
+	}
+
+	for (VertexType* expandedVertex : matchPrimitives->vertexTypes) {
+		if (!expandedVertex->getSpliced()) {
+			continue;
+		}
+		EdgeType* expandedBaseEdge = findBaseEdge(expandedVertex);
+		if (!expandedBaseEdge) {
+			continue;
+		}
+		auto baseIt = baseEdgeMap.find(expandedBaseEdge);
+		if (baseIt == baseEdgeMap.end()) {
+			continue;
+		}
+		EdgeType* authoredBaseEdge = baseIt->second;
+		for (VertexType* authoredVertex : exportPrimitives->vertexTypes) {
+			if (isAuthoredSpliceOnBaseEdge(authoredVertex, authoredBaseEdge)) {
+				maps.vertices[expandedVertex] = authoredVertex;
+				break;
+			}
+		}
+	}
+
+	return maps;
+}
+
+void remapGraphTypes(Graph* graph, const ExportTypeMaps& maps) {
+	for (auto* vertex : graph->getVertices()) {
+		if (!vertex || !vertex->getType()) {
+			continue;
+		}
+		auto it = maps.vertices.find(vertex->getType());
+		if (it != maps.vertices.end()) {
+			vertex->setType(it->second);
+		}
+	}
+	for (auto* edge : graph->getEdges()) {
+		if (!edge) {
+			continue;
+		}
+		auto it = maps.edges.find(edge->getType());
+		if (it != maps.edges.end()) {
+			edge->setType(it->second);
+		}
+	}
+}
+
+}  // namespace
 
 struct PrimitiveGraphs {
 	vector<unique_ptr<Graph>> vertexGraphs;
@@ -731,9 +893,11 @@ void RuleExporter::exportGroups(
 	GraphGrammar& grammar,
 	const vector<GraphGroup>& groups,
 	const vector<TemplateMatcher>& matchers,
-	Primitives* primitives
+	Primitives* matchPrimitives,
+	Primitives* exportPrimitives
 ) {
-	auto primitiveGraphs = createPrimitiveGraphs(primitives);
+	auto primitiveGraphs = createPrimitiveGraphs(matchPrimitives);
+	auto exportTypeMaps = buildExportTypeMaps(matchPrimitives, exportPrimitives);
 	for (const auto& group : groups) {
 		const int numGraphs = (int)group.graphIndices.size();
 		vector<vector<unique_ptr<Graph>>> graphs(numGraphs);
@@ -755,7 +919,11 @@ void RuleExporter::exportGroups(
 		// Assumes there are only two graphs in the template set.
 		for (const auto& left : graphs[0]) {
 			for (const auto& right : graphs[1]) {
-				exportRule(&grammar, left->copy(), right->copy());
+				Graph* leftGraph = left->copy();
+				Graph* rightGraph = right->copy();
+				remapGraphTypes(leftGraph, exportTypeMaps);
+				remapGraphTypes(rightGraph, exportTypeMaps);
+				exportRule(&grammar, leftGraph, rightGraph);
 			}
 		}
 	}

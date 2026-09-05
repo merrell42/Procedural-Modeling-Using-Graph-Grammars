@@ -165,31 +165,32 @@ int GenerateRules(
 ) {
 	try {
 		Json parsed = readJsonFile(primitivesPath);
-		Primitives* primitives = Primitives::import(parsed["types"]);
+		Primitives* exportPrimitives = Primitives::import(parsed["types"]);
+		Primitives* matchPrimitives = Primitives::import(parsed["types"]);
 
-		filterSplicedTypes(primitives);
-		vector<VertexType*> vertexTypes = primitives->vertexTypes;
-		createSplicedTypes(primitives);
+		filterSplicedTypes(matchPrimitives);
+		vector<VertexType*> vertexTypes = matchPrimitives->vertexTypes;
+		createSplicedTypes(matchPrimitives);
 		fixHalfEdgeOrder(vertexTypes);
-		GraphGrammar grammar(primitives);
+		GraphGrammar grammar(exportPrimitives);
 
 		vector<EdgeType*> eTypes;
-		for (size_t i = 0; i < primitives->edgeTypes.size(); i++) {
-			EdgeType* eType = primitives->edgeTypes[i];
+		for (size_t i = 0; i < matchPrimitives->edgeTypes.size(); i++) {
+			EdgeType* eType = matchPrimitives->edgeTypes[i];
 			eType->setRuleGeneratorId("edge" + to_string(i));
 			if (!eType->getSpliced()) {
 				eTypes.push_back(eType);
 			}
 		}
 
-		for (size_t i = 0; i < primitives->vertexTypes.size(); i++) {
-			VertexType* vType = primitives->vertexTypes[i];
+		for (size_t i = 0; i < matchPrimitives->vertexTypes.size(); i++) {
+			VertexType* vType = matchPrimitives->vertexTypes[i];
 			vType->setRuleGeneratorId((int)i);
 		}
 
 		auto library = importTemplateGraphs(templatesPath);
 		if (library.includeGround) {
-			ProductionRule* groundRule = createGroundRule(primitives);
+			ProductionRule* groundRule = createGroundRule(exportPrimitives);
 			if (groundRule) {
 				grammar.addGroundRule(groundRule);
 			} else {
@@ -213,7 +214,7 @@ int GenerateRules(
 			}
 			for (int j = 0; j < numGraphs; j++) {
 				const auto& templateGraph = templateGraphSets[i].graphs[j];
-				matchers.push_back(TemplateMatcher(templateGraph, primitives->vertexTypes, eTypes));
+				matchers.push_back(TemplateMatcher(templateGraph, matchPrimitives->vertexTypes, eTypes));
 			}
 			vector<vector<vector<int>>> allBoundaryValues;
 			vector<string> boundaryIds = collectBoundaryIds(templateGraphSets[i].graphs[0]);
@@ -226,7 +227,7 @@ int GenerateRules(
 				printBoundaryValues(boundaryValues);
 			}
 			auto graphGroups = filterEmptyGraphGroups(groupGraphs(allBoundaryValues));
-			RuleExporter::exportGroups(grammar, graphGroups, matchers, primitives);
+			RuleExporter::exportGroups(grammar, graphGroups, matchers, matchPrimitives, exportPrimitives);
 			cout << "    boundary values groups across graphs:\n";
 			printGraphGroups(graphGroups);
 		}
