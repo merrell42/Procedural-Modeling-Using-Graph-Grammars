@@ -7,13 +7,38 @@
 #include "../../cpp_version/primitives/face_type.h"
 #include "../../cpp_version/geometry/vec3.h"
 
+#include <cmath>
 #include <map>
 
 using namespace std;
 
 namespace {
 
-constexpr double kDirEps = 1e-10;
+constexpr double kRadToDeg = 180.0 / 3.14159265358979323846;
+
+struct SplicedEdgeKey {
+	FaceType* face = nullptr;
+	int edgeAngleDeg = 0;
+
+	bool operator<(const SplicedEdgeKey& other) const {
+		if (face != other.face) {
+			return face < other.face;
+		}
+		return edgeAngleDeg < other.edgeAngleDeg;
+	}
+};
+
+int undirectedFaceAngleDegrees(FaceType* face, const Vec3& dir) {
+	int deg = (int)round(face->angle(dir) * kRadToDeg);
+	deg %= 360;
+	if (deg < 0) {
+		deg += 360;
+	}
+	if (deg >= 180) {
+		deg -= 180;
+	}
+	return deg;
+}
 
 Vec3 splicedDir(const Vec3& edgeDir, FaceType* face, bool onRight) {
 	const Vec3& n = face->getNormal();
@@ -76,8 +101,8 @@ void filterSplicedTypes(Primitives* primitives) {
 }
 
 void createSplicedTypes(Primitives* primitives) {
-	// One spliced edge type per face, shared by all base edges on that face.
-	map<FaceType*, EdgeType*> splicedTypeByFace;
+	// One spliced edge type per face and undirected splice direction.
+	map<SplicedEdgeKey, EdgeType*> splicedTypeByKey;
 	const int numNormalEdges = (int)primitives->edgeTypes.size();
 	for (int i = 0; i < numNormalEdges; i++) {
 		EdgeType* eType = primitives->edgeTypes[i];
@@ -93,15 +118,23 @@ void createSplicedTypes(Primitives* primitives) {
 				continue;
 			}
 
+			// Key by face and undirected splice-arm direction (not base edge angle).
+			// Bend Wall corners on the same face share one spliced edge type.
+			const Vec3 spliceArm = splicedDir(eType->getDir(), face, onRight);
+			SplicedEdgeKey key{
+				face,
+				undirectedFaceAngleDegrees(face, spliceArm)
+			};
+
 			// Create spliced edge type if it doesn't exist.
 			EdgeType* splicedType = nullptr;
-			auto it = splicedTypeByFace.find(face);
-			if (it == splicedTypeByFace.end()) {
+			auto it = splicedTypeByKey.find(key);
+			if (it == splicedTypeByKey.end()) {
 				vector<FaceData> faceData = {{face, true}, {face, false}};
 				auto dir = splicedDir(eType->getDir(), face, onRight);
 				splicedType = new EdgeType(faceData, dir, false);
 				splicedType->setSpliced(true);
-				splicedTypeByFace[face] = splicedType;
+				splicedTypeByKey[key] = splicedType;
 				primitives->edgeTypes.push_back(splicedType);
 			} else {
 				splicedType = it->second;
