@@ -28,7 +28,6 @@ struct SplicedEdgeKey {
 	}
 };
 
-// 
 int horizontalOrVerticalBin(FaceType* face, const Vec3& dir) {
 	double angle = fabs(face->angle(dir));
 	if (angle >= kPi / 4.0 && angle <= 3.0 * kPi / 4.0) {
