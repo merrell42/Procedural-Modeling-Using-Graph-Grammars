@@ -14,7 +14,7 @@ using namespace std;
 
 namespace {
 
-constexpr double kRadToDeg = 180.0 / 3.14159265358979323846;
+constexpr double kPi = 3.14159265358979323846;
 
 struct SplicedEdgeKey {
 	FaceType* face = nullptr;
@@ -28,16 +28,13 @@ struct SplicedEdgeKey {
 	}
 };
 
-int undirectedFaceAngleDegrees(FaceType* face, const Vec3& dir) {
-	int deg = (int)round(face->angle(dir) * kRadToDeg);
-	deg %= 360;
-	if (deg < 0) {
-		deg += 360;
+// 
+int horizontalOrVerticalBin(FaceType* face, const Vec3& dir) {
+	double angle = fabs(face->angle(dir));
+	if (angle >= kPi / 4.0 && angle <= 3.0 * kPi / 4.0) {
+		return 90; // vertical
 	}
-	if (deg >= 180) {
-		deg -= 180;
-	}
-	return deg;
+	return 0; // horizontal
 }
 
 Vec3 splicedDir(const Vec3& edgeDir, FaceType* face, bool onRight) {
@@ -118,12 +115,14 @@ void createSplicedTypes(Primitives* primitives) {
 				continue;
 			}
 
-			// Key by face and undirected splice-arm direction (not base edge angle).
-			// Bend Wall corners on the same face share one spliced edge type.
-			const Vec3 spliceArm = splicedDir(eType->getDir(), face, onRight);
+			// Key by face and spliced direction.
+			// We bin the spliced direction into horizontal or vertical angles.
+			// This could be made less restrictive. Any splice direction that's not
+			// parallel to the edge is acceptable. We could allow multiple splice directions.
+			const Vec3 spliceDir = splicedDir(eType->getDir(), face, onRight);
 			SplicedEdgeKey key{
 				face,
-				undirectedFaceAngleDegrees(face, spliceArm)
+				horizontalOrVerticalBin(face, spliceDir)
 			};
 
 			// Create spliced edge type if it doesn't exist.
