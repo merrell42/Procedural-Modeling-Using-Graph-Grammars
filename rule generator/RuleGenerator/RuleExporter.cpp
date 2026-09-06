@@ -33,6 +33,11 @@ struct HalfEdgeFaceSlot {
 	GraphHalfEdge* halfEdge = nullptr;
 };
 
+enum PartnerDirection {
+	NEXT,
+	PREV
+};
+
 // Sort half-edge face slots by angle.
 static bool compareHalfEdgeFaceSlots(const HalfEdgeFaceSlot& a, const HalfEdgeFaceSlot& b) {
 	if (a.angle != b.angle) {
@@ -67,17 +72,37 @@ static void orderSameAnglePairs(vector<HalfEdgeFaceSlot>& slots) {
 	}
 }
 
+// Decide which direction to use based on the first inward slot.
+// If the next slot has the same angle, use the previous slot.
+// Otherwise use the next slot.
+static PartnerDirection partnerDirection(const vector<HalfEdgeFaceSlot>& halfEdgeSlots) {
+	const size_t n = halfEdgeSlots.size();
+	for (size_t i = 0; i < n; i++) {
+		if (halfEdgeSlots[i].intoVertex) {		
+			const size_t nextIndex = (i + 1) % n;
+			if (halfEdgeSlots[nextIndex].angle == halfEdgeSlots[i].angle) {
+				return PREV;
+			}
+			return NEXT;
+		}
+	}
+	return NEXT;
+}
+
 // Find the outward facing partner half-edge for a slot facing into the vertex.
 // Slots are sorted by increasing face angle (CCW on the face).
 static GraphHalfEdge* findOutwardPartner(
 	const vector<HalfEdgeFaceSlot>& halfEdgeSlots,
-	size_t inwardIndex
+	size_t inwardIndex,
+	PartnerDirection direction
 ) {
 	const size_t n = halfEdgeSlots.size();
-	const size_t nextIndex = (inwardIndex + 1) % n;
-	const auto& nextSlot = halfEdgeSlots[nextIndex];
-	if (!nextSlot.intoVertex) {
-		return nextSlot.halfEdge;
+	const size_t partnerIndex = direction == PREV
+		? (inwardIndex + n - 1) % n
+		: (inwardIndex + 1) % n;
+	const auto& partnerSlot = halfEdgeSlots[partnerIndex];
+	if (!partnerSlot.intoVertex) {
+		return partnerSlot.halfEdge;
 	}
 	throw runtime_error("createVertexGraph: no outOfVertex partner for intoVertex slot");
 }
@@ -240,8 +265,8 @@ GraphHalfEdge* glueHalfEdges(GraphHalfEdge* half0, GraphHalfEdge* half1, Graph* 
 GlueTrack glueVertices(
 	GraphVertex* vertexA,
 	GraphVertex* vertexB,
-	Graph* netA,
-	Graph* netB,
+	Graph* graphA,
+	Graph* graphB,
 	const vector<GraphVertex*>& bVerticesA,
 	const vector<GraphVertex*>& bVerticesB,
 	bool loopGluing
@@ -257,12 +282,12 @@ GlueTrack glueVertices(
 
 	auto halfEdgesA = edgeA->getHalfEdges();
 	auto halfEdgesB = edgeB->getHalfEdges();
-	// Copy before merge: netA->merge clears netB's bVertices vector.
+	// Copy before merge: graphA->merge clears graphB's bVertices vector.
 	vector<GraphVertex*> savedBVerticesA(bVerticesA.begin(), bVerticesA.end());
 	vector<GraphVertex*> savedBVerticesB(bVerticesB.begin(), bVerticesB.end());
 
 	if (!loopGluing) {
-		netA->merge(netB);
+		graphA->merge(graphB);
 	}
 
 	for (auto& halfBs : halfEdgesB) {
@@ -272,7 +297,7 @@ GlueTrack glueVertices(
 			}
 		}
 	}
-	netA->removeEdge(edgeB);
+	graphA->removeEdge(edgeB);
 
 	for (size_t i = 0; i < halfEdgesA.size(); i++) {
 		bool aOnBoundary = halfEdgesA[i][0] && halfEdgesA[i][0]->getVertex() == vertexA;
@@ -280,16 +305,16 @@ GlueTrack glueVertices(
 		auto* half1 = aOnBoundary ? halfEdgesA[i][0] : halfEdgesB[i][0];
 		if (half0 && half1) {
 			GraphHalfEdge* halfToRemove = half0->getNext();
-			glueHalfEdges(half0, half1, netA);
-			removeHalfEdge(halfToRemove, netA);
+			glueHalfEdges(half0, half1, graphA);
+			removeHalfEdge(halfToRemove, graphA);
 		}
 	}
 
-	netA->removeVertex(vertexA);
-	netA->removeVertex(vertexB);
-	updateBoundaryVertices(netA);
+	graphA->removeVertex(vertexA);
+	graphA->removeVertex(vertexB);
+	updateBoundaryVertices(graphA);
 
-	const auto& newBVertices = netA->getBVertices();
+	const auto& newBVertices = graphA->getBVertices();
 	GlueTrack track;
 	for (auto* a : savedBVerticesA) {
 		track.aDest.push_back(indexOf(newBVertices, a));
@@ -393,6 +418,7 @@ Graph* createVertexGraph(VertexType* vType) {
 	for (const auto& entry : halfEdgesByFaceType) {
 		FaceType* faceType = entry.first;
 		const auto& faceSlots = entry.second;
+		const PartnerDirection direction = partnerDirection(faceSlots);
 		for (size_t i = 0; i < faceSlots.size(); i++) {
 			const auto& inwardSlot = faceSlots[i];
 			if (!inwardSlot.intoVertex) {
@@ -400,7 +426,7 @@ Graph* createVertexGraph(VertexType* vType) {
 				continue;
 			}
 			auto* inwardHalf = inwardSlot.halfEdge;
-			auto* outwardHalf = findOutwardPartner(faceSlots, i);
+			auto* outwardHalf = findOutwardPartner(faceSlots, i, direction);
 			auto* bonusHalf = outwardHalf->getNext();
 
 			inwardHalf->connectNext(outwardHalf);
