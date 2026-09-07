@@ -492,6 +492,10 @@ namespace Grammar {
                 IterateSteps(1);
             }
 
+            if (GUILayout.Button("Show Grammar")) {
+                GrammarSceneView.Show(grammarName);
+            }
+
             EditorGUI.EndDisabledGroup();
             EditorGUILayout.EndFoldoutHeaderGroup();
             EditorGUILayout.EndVertical();

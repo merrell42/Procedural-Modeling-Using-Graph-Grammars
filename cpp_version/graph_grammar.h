@@ -52,6 +52,10 @@ public:
     bool isGrounded() const;
     bool hasStarterRules(bool useGround) const;
 
+    const vector<ProductionRule*>& getNormalRules() const { return rules; }
+    const vector<ProductionRule*>& getStarterRules() const { return starterRules; }
+    const vector<ProductionRule*>& getGroundRules() const { return groundRules; }
+
     // Get the number of dimensions of the graph.
     int getDims() const { return primitives->dims; }
 
