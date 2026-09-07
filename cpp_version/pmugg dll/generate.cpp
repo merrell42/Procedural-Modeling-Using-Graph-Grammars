@@ -13,7 +13,7 @@
 #include "../settings.h"
 #include "../json versioning/read_json_file.h"
 #include "../util/diagnostics.h"
-#include "../graph/graph_layout.h"
+#include "../graph/debug_mesh.h"
 #include "../grammar_rules/production_rule.h"
 
 using namespace std;
@@ -183,7 +183,7 @@ int getProductionRuleGraphCount(int category, int ruleIndex) {
 
 MeshCpp getProductionRuleGraphMesh(int category, int ruleIndex, int graphIndex) {
 	try {
-		return exportGraphMesh(getProductionRuleGraph(category, ruleIndex, graphIndex));
+		return createDebugMesh(getProductionRuleGraph(category, ruleIndex, graphIndex));
 	} catch (...) {
 		MeshCpp mesh{};
 		mesh.submeshes = nullptr;

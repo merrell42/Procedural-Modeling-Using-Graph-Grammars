@@ -170,7 +170,7 @@
     <ClInclude Include="..\graph\graph_edge.h" />
     <ClInclude Include="..\graph\graph_face.h" />
     <ClInclude Include="..\graph\graph_half_edge.h" />
-    <ClInclude Include="..\graph\graph_layout.h" />
+    <ClInclude Include="..\graph\debug_mesh.h" />
     <ClInclude Include="..\graph\graph_vertex.h" />
     <ClInclude Include="..\graph_drawing\bsp_node.h" />
     <ClInclude Include="..\graph_drawing\edge.h" />
@@ -224,7 +224,7 @@
     <ClCompile Include="..\graph\graph_edge.cpp" />
     <ClCompile Include="..\graph\graph_face.cpp" />
     <ClCompile Include="..\graph\graph_half_edge.cpp" />
-    <ClCompile Include="..\graph\graph_layout.cpp" />
+    <ClCompile Include="..\graph\debug_mesh.cpp" />
     <ClCompile Include="..\graph\graph_vertex.cpp" />
     <ClCompile Include="..\graph_drawing\bsp_node.cpp" />
     <ClCompile Include="..\graph_drawing\edge.cpp" />

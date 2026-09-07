@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "graph_layout.h"
+#include "debug_mesh.h"
 #include "graph.h"
 #include "graph_edge.h"
 #include "graph_half_edge.h"
@@ -268,8 +268,8 @@ Vec3 intoFaceDirectionForFaceData(
         return intoFaceDirectionForHalf(half->getDir(), faceData.type->getNormal());
     }
 
-    Vec3 layoutEdge = end - start;
-    Vec3 tangent = layoutEdge - normal * normal.dot(layoutEdge);
+    Vec3 meshEdge = end - start;
+    Vec3 tangent = meshEdge - normal * normal.dot(meshEdge);
     tangent = normalizeOrZero(tangent, axisU);
     Vec3 leftOfEdge = normal.cross(tangent);
     leftOfEdge = normalizeOrZero(leftOfEdge, axisV);
@@ -319,7 +319,7 @@ void addFaceRectangleForFaceData(
     addFaceRectangle(positions, normals, triangles, start, end, intoFace, width, faceNormal);
 }
 
-void addFaceRectangleLayoutFallback(
+void addFaceRectangleFallback(
     std::vector<Vec3>& positions,
     std::vector<Vec3>& normals,
     std::vector<int>& triangles,
@@ -332,9 +332,9 @@ void addFaceRectangleLayoutFallback(
         return;
     }
     axis.normalize();
-    const Vec3 layoutNormal = Vec3(0, 0, 1, false);
+    const Vec3 debugNormal = Vec3(0, 0, 1, false);
     const Vec3 intoFace = computeRightInPlane(axis);
-    addFaceRectangle(positions, normals, triangles, start, end, intoFace, width, layoutNormal);
+    addFaceRectangle(positions, normals, triangles, start, end, intoFace, width, debugNormal);
 }
 
 Vec3 computePlaneNormal(const Vec3& axis, const Vec3& right) {
@@ -424,7 +424,7 @@ void normalizePositions(std::unordered_map<GraphVertex*, Vec3>& positions) {
     }
 }
 
-void layoutComponent(
+void layoutDebugMeshComponent(
     GraphVertex* startVertex,
     const Vec3& origin,
     std::unordered_map<GraphVertex*, Vec3>& positions
@@ -480,7 +480,7 @@ void layoutComponent(
     }
 }
 
-std::unordered_map<GraphVertex*, Vec3> layoutGraphPositions(const Graph* graph) {
+std::unordered_map<GraphVertex*, Vec3> computeDebugMeshVertexPositions(const Graph* graph) {
     std::unordered_map<GraphVertex*, Vec3> positions;
     if (!graph) {
         return positions;
@@ -496,7 +496,7 @@ std::unordered_map<GraphVertex*, Vec3> layoutGraphPositions(const Graph* graph) 
         }
 
         const Vec3 componentOrigin(componentIndex * COMPONENT_SPACING, 0.0, 0.0, false);
-        layoutComponent(vertex, componentOrigin, positions);
+        layoutDebugMeshComponent(vertex, componentOrigin, positions);
         componentIndex++;
     }
 
@@ -588,7 +588,7 @@ MeshCpp createFaceOnlyGraphMesh(const Graph* graph) {
 
 } // namespace
 
-MeshCpp exportGraphMesh(const Graph* graph) {
+MeshCpp createDebugMesh(const Graph* graph) {
     if (!graph) {
         return createEmptyGraphMesh();
     }
@@ -601,7 +601,7 @@ MeshCpp exportGraphMesh(const Graph* graph) {
         return createEmptyGraphMesh();
     }
 
-    const auto positions = layoutGraphPositions(graph);
+    const auto positions = computeDebugMeshVertexPositions(graph);
     if (positions.empty()) {
         return createEmptyGraphMesh();
     }
@@ -643,8 +643,8 @@ MeshCpp exportGraphMesh(const Graph* graph) {
             continue;
         }
         axis.normalize();
-        const Vec3 layoutRight = computeRightInPlane(axis);
-        const Vec3 planeNormal = computePlaneNormal(axis, layoutRight);
+        const Vec3 meshRight = computeRightInPlane(axis);
+        const Vec3 planeNormal = computePlaneNormal(axis, meshRight);
         const Vec3 edgeLift = planeNormal * EDGE_LINE_LIFT;
 
         if (!edge->getType()) {
@@ -655,7 +655,7 @@ MeshCpp exportGraphMesh(const Graph* graph) {
         if (faceData.empty()) {
             ColorKey color = {0.11f, 0.24f, 0.42f};
             auto& geometry = groups[color];
-            addFaceRectangleLayoutFallback(
+            addFaceRectangleFallback(
                 std::get<0>(geometry),
                 std::get<1>(geometry),
                 std::get<2>(geometry),
@@ -690,7 +690,7 @@ MeshCpp exportGraphMesh(const Graph* graph) {
             std::get<2>(edgeGeometry),
             start,
             end,
-            layoutRight,
+            meshRight,
             edgeLift
         );
     }
