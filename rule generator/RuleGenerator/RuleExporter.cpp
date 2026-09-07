@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "RuleExporter.h"
 #include "isIsomorphic.h"
+#include "OuterBoundaryOrder.h"
 
 #include "../../cpp_version/graph/graph.h"
 #include "../../cpp_version/graph/graph_face.h"
@@ -781,6 +782,10 @@ void RuleExporter::exportGroups(
 		// Assumes there are only two graphs in the template set.
 		for (const auto& left : graphs[0]) {
 			for (const auto& right : graphs[1]) {
+				if (!equalBoundaries(left.get(), right.get())) {
+					cout << "    rejected: boundary vertex order does not match\n";
+					continue;
+				}
 				exportRule(&grammar, left->copy(), right->copy());
 			}
 		}
