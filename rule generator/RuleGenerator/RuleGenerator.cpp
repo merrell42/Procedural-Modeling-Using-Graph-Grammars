@@ -220,6 +220,15 @@ int GenerateRules(
 			for (int j = 0; j < numGraphs; j++) {
 				matchers[j].match();
 				totalMatches += matchers[j].vertexValues.size();
+				for (int m = 0; m < (int)matchers[j].vertexValues.size(); m++) {
+					auto graphValues = matchers[j].getGraphValues(m);
+					for (size_t v = 0; v < graphValues.vertices.size(); v++) {
+						if (!graphValues.vertexOnBoundary[v] && graphValues.vertices[v] == 15) {
+							cout << "    v15 match: graph " << j << " match " << m
+								<< " vertex " << v << "\n";
+						}
+					}
+				}
 				auto boundaryValues = findBoundaryValues(matchers[j], boundaryIds);
 				allBoundaryValues.push_back(boundaryValues);
 				cout << "    graph " << j << " allBoundaryValues:\n";

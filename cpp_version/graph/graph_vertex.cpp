@@ -5,6 +5,8 @@
 #include "../util/util.h"
 #include "../util/binary_stream.h"
 
+#include <algorithm>
+
 std::atomic<int> GraphVertex::nextId{0};
 
 GraphVertex::GraphVertex()
@@ -64,8 +66,16 @@ void GraphVertex::import(const Json& json) {
 
 Json GraphVertex::exportJson(const vector<GraphHalfEdge*>& graphHalfEdges) const {
     Json json;
+    vector<GraphHalfEdge*> ordered = halfEdges;
+    if (type && type->getSpliced()) {
+        sort(ordered.begin(), ordered.end(), [this](GraphHalfEdge* a, GraphHalfEdge* b) {
+            const int ia = a ? type->exportedConnectionIndex(a->getVertexIndex()) : -1;
+            const int ib = b ? type->exportedConnectionIndex(b->getVertexIndex()) : -1;
+            return ia < ib;
+        });
+    }
     Json halfEdgesJson = Json::array();
-    for (auto* half : halfEdges) {
+    for (auto* half : ordered) {
         halfEdgesJson.push_back(half ? indexOf(graphHalfEdges, half) : -1);
     }
     json["halfEdges"] = halfEdgesJson;
@@ -87,6 +97,6 @@ void GraphVertex::setType(VertexType* newType) {
     type = newType;
 }
 
-VertexType* GraphVertex::getType() {
+VertexType* GraphVertex::getType() const {
     return type;
 }

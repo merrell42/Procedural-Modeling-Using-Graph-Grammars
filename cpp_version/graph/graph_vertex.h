@@ -25,7 +25,7 @@ public:
     Json exportJson(const vector<GraphHalfEdge*>& graphHalfEdges) const;
 
     const vector<GraphHalfEdge*>& getHalfEdges() const { return halfEdges; }
-    VertexType* getType();
+    VertexType* getType() const;
     void setType(VertexType* newType);
     // The index of the vertex on the graph boundary.
     int boundaryIndex() const;

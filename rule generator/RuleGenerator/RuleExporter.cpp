@@ -5,6 +5,7 @@
 
 #include "../../cpp_version/graph/graph.h"
 #include "../../cpp_version/graph/graph_face.h"
+#include "../../cpp_version/primitives/edge_type.h"
 #include "../../cpp_version/util/util.h"
 #include "../../cpp_version/graph_grammar.h"
 #include "../../cpp_version/grammar_rules/production_rule.h"
@@ -709,6 +710,18 @@ void maybeAddBFace(Graph*& graph, Graph* filledGraph, bool addBFaces) {
 	}
 }
 
+bool graphHasSplices(Graph* graph) {
+	if (!graph) {
+		return false;
+	}
+	for (auto* edge : graph->getEdges()) {
+		if (edge && edge->getType() && edge->getType()->getSpliced()) {
+			return true;
+		}
+	}
+	return false;
+}
+
 void exportRule(
 	GraphGrammar* grammar,
 	Graph* leftGraph,
@@ -730,11 +743,17 @@ void exportRule(
 		} else if (rightEmpty) {
 			maybeAddBFace(rightGraph, leftGraph, grammar->isGrounded());
 		}
-        // If a graph is empty, it should go first.
-		vector<Graph*> graphs = rightEmpty
-			? vector<Graph*>{ rightGraph, leftGraph }
-			: vector<Graph*>{ leftGraph, rightGraph };
-		// TODO: Handle rules with splices in them.
+		// Empty graphs go first (starter / ground).
+		// Spliced graphs go first: start graphs are matched, end graphs are
+		// instantiated with splices removed.
+		const bool leftSpliced = graphHasSplices(leftGraph);
+		const bool rightSpliced = graphHasSplices(rightGraph);
+		vector<Graph*> graphs;
+		if (rightEmpty || (!leftEmpty && !leftSpliced && rightSpliced)) {
+			graphs = { rightGraph, leftGraph };
+		} else {
+			graphs = { leftGraph, rightGraph };
+		}
 		ProductionRule* rule = new ProductionRule(graphs);
 		if (leftEmpty || rightEmpty) {
 			grammar->addStarterRule(rule);

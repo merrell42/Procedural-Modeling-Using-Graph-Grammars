@@ -131,7 +131,11 @@ Json GraphHalfEdge::exportJson(const Graph* graph) const {
     Json json;
     json["forward"] = forward;
     json["edgeIndex"] = edgeIndex;
-    json["vertexIndex"] = vertexIndex;
+    int exportedVertexIndex = vertexIndex;
+    if (vertex && vertex->getType() && vertex->getType()->getSpliced()) {
+        exportedVertexIndex = vertex->getType()->exportedConnectionIndex(vertexIndex);
+    }
+    json["vertexIndex"] = exportedVertexIndex;
     json["vertex"] = vertex ? indexOf(vertices, vertex) : -1;
     json["edge"] = edge ? indexOf(edges, edge) : -1;
     json["prev"] = prev ? indexOf(halfEdges, prev) : -1;
