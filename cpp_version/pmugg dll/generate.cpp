@@ -13,12 +13,52 @@
 #include "../settings.h"
 #include "../json versioning/read_json_file.h"
 #include "../util/diagnostics.h"
+#include "../graph/debug_mesh.h"
+#include "../grammar_rules/production_rule.h"
 
 using namespace std;
 using Json = nlohmann::json;
 
 Model* model;
 Mutator* mutator;
+GraphGrammar* grammar;
+
+namespace {
+
+const vector<ProductionRule*>& getRulesByCategory(int category) {
+    if (!grammar) {
+        throw runtime_error("No grammar loaded.");
+    }
+    switch (category) {
+        case 0: return grammar->getNormalRules();
+        case 1: return grammar->getStarterRules();
+        case 2: return grammar->getGroundRules();
+        default: throw runtime_error("Invalid production rule category.");
+    }
+}
+
+const Graph* getProductionRuleGraph(int category, int ruleIndex, int graphIndex) {
+    const auto& rules = getRulesByCategory(category);
+    if (ruleIndex < 0 || ruleIndex >= (int)rules.size()) {
+        throw runtime_error("Production rule index out of range.");
+    }
+    const auto& graphs = rules[ruleIndex]->getStartGraphs();
+    if (graphIndex < 0 || graphIndex >= (int)graphs.size()) {
+        throw runtime_error("Production rule graph index out of range.");
+    }
+    return graphs[graphIndex];
+}
+
+void resetGenerationState() {
+    delete mutator;
+    mutator = nullptr;
+    delete model;
+    model = nullptr;
+    delete grammar;
+    grammar = nullptr;
+}
+
+} // namespace
 
 // Cross-platform safe string copy
 void safeCopy(char* dest, int len, const char* src) {
@@ -46,10 +86,11 @@ void getLastWarning(char* result, int len) {
 void initialize(const char* filePath, char* result, int len, int seed) {
 	resetRandom(seed);
 	Diagnostics::clearWarning();
+	resetGenerationState();
 
 	try {
 		Json parsed = readJsonFile(filePath);
-		auto grammar = GraphGrammar::import(parsed);
+		grammar = GraphGrammar::import(parsed);
 		logDllWarningFromGrammar(grammar);
 		model = new Model();
 		mutator = new Mutator(model, grammar);
@@ -118,4 +159,35 @@ void setSize(float x, float y, float z) {
 // Free memory for the mesh.
 void destroyMesh(MeshCpp& mesh) {
 	freeMeshMemory(mesh);
+}
+
+int getNumProductionRules(int category) {
+	try {
+		return (int)getRulesByCategory(category).size();
+	} catch (...) {
+		return 0;
+	}
+}
+
+int getProductionRuleGraphCount(int category, int ruleIndex) {
+	try {
+		const auto& rules = getRulesByCategory(category);
+		if (ruleIndex < 0 || ruleIndex >= (int)rules.size()) {
+		 return 0;
+		}
+		return (int)rules[ruleIndex]->getStartGraphs().size();
+	} catch (...) {
+		return 0;
+	}
+}
+
+MeshCpp getProductionRuleGraphMesh(int category, int ruleIndex, int graphIndex) {
+	try {
+		return createDebugMesh(getProductionRuleGraph(category, ruleIndex, graphIndex));
+	} catch (...) {
+		MeshCpp mesh{};
+		mesh.submeshes = nullptr;
+		mesh.numSubmeshes = 0;
+		return mesh;
+	}
 }

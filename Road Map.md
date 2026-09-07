@@ -7,7 +7,7 @@ These are roughly in priority order weighing cost vs benefits.
 * Better control the length of the edges.
 * Get optimizer working like the web version.
 * Implement on Houdini and 3DS Max.
-* Display the grammars and example models.
+* Display the grammars and example models. (working on Unity, add to other engines)
 * Add tests.
 * Cut holes so they appear in Unity.
 

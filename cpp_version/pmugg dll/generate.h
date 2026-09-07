@@ -24,4 +24,9 @@ extern "C" {
     GENERATE_API MeshCpp getMesh();
     GENERATE_API void setSize(float x, float y, float z);
     GENERATE_API void destroyMesh(MeshCpp& mesh);
+
+    // Production rule categories: 0 = rules, 1 = starterRules, 2 = groundRules.
+    GENERATE_API int getNumProductionRules(int category);
+    GENERATE_API int getProductionRuleGraphCount(int category, int ruleIndex);
+    GENERATE_API MeshCpp getProductionRuleGraphMesh(int category, int ruleIndex, int graphIndex);
 }

@@ -70,6 +70,11 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <IntDir>$(SolutionDir)$(Platform)\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
@@ -165,6 +170,7 @@
     <ClInclude Include="..\graph\graph_edge.h" />
     <ClInclude Include="..\graph\graph_face.h" />
     <ClInclude Include="..\graph\graph_half_edge.h" />
+    <ClInclude Include="..\graph\debug_mesh.h" />
     <ClInclude Include="..\graph\graph_vertex.h" />
     <ClInclude Include="..\graph_drawing\bsp_node.h" />
     <ClInclude Include="..\graph_drawing\edge.h" />
@@ -218,6 +224,7 @@
     <ClCompile Include="..\graph\graph_edge.cpp" />
     <ClCompile Include="..\graph\graph_face.cpp" />
     <ClCompile Include="..\graph\graph_half_edge.cpp" />
+    <ClCompile Include="..\graph\debug_mesh.cpp" />
     <ClCompile Include="..\graph\graph_vertex.cpp" />
     <ClCompile Include="..\graph_drawing\bsp_node.cpp" />
     <ClCompile Include="..\graph_drawing\edge.cpp" />
