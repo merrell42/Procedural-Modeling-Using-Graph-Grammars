@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "OuterBoundaryOrder.h"
+#include "graphBoundary.h"
 
 #include "../../cpp_version/graph/graph.h"
 #include "../../cpp_version/graph/graph_edge.h"

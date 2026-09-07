@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "RuleExporter.h"
 #include "isIsomorphic.h"
-#include "OuterBoundaryOrder.h"
+#include "graphBoundary.h"
 
 #include "../../cpp_version/graph/graph.h"
 #include "../../cpp_version/graph/graph_face.h"
