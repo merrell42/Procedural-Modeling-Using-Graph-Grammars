@@ -87,6 +87,7 @@ namespace Grammar {
         private string grammarName = "";
         private int iterationCount = 0;
         private bool isAnimating = false;
+        private bool showGrammarOnLoad = false;
         private int seed = 0;
         private Vector3 size = new Vector3(30, 20, 10);
         private Vector3 previousSize;
@@ -434,6 +435,14 @@ namespace Grammar {
             GetWindow<GrammarEditorWindow>().IterateSteps(100);
         }
 
+        private void UpdateDebugMeshVisibility() {
+            if (showGrammarOnLoad && !string.IsNullOrEmpty(grammarName)) {
+                GrammarSceneView.Show(grammarName);
+            } else {
+                GrammarSceneView.Hide();
+            }
+        }
+
         void OnGUI() {
             EditorGUILayout.BeginVertical();
 
@@ -455,6 +464,14 @@ namespace Grammar {
             if (EditorGUI.EndChangeCheck()) {
                 HandleSizeChange();
             }
+            EditorGUILayout.BeginHorizontal(GUILayout.ExpandWidth(false));
+            EditorGUI.BeginChangeCheck();
+            showGrammarOnLoad = EditorGUILayout.Toggle(showGrammarOnLoad, GUILayout.Width(14f));
+            if (EditorGUI.EndChangeCheck()) {
+                UpdateDebugMeshVisibility();
+            }
+            GUILayout.Label("Show Grammar", GUILayout.ExpandWidth(false));
+            EditorGUILayout.EndHorizontal();
             EditorGUILayout.EndHorizontal();
 
             if (GUILayout.Button("Load Grammar")) {
@@ -492,10 +509,6 @@ namespace Grammar {
                 IterateSteps(1);
             }
 
-            if (GUILayout.Button("Show Grammar")) {
-                GrammarSceneView.Show(grammarName);
-            }
-
             EditorGUI.EndDisabledGroup();
             EditorGUILayout.EndFoldoutHeaderGroup();
             EditorGUILayout.EndVertical();
@@ -509,6 +522,7 @@ namespace Grammar {
                 iterationCount = 0;
                 LogDllWarning();
                 UpdateMesh();
+                UpdateDebugMeshVisibility();
             } else {
                 grammarName = "";
                 Debug.LogError(sb.ToString());

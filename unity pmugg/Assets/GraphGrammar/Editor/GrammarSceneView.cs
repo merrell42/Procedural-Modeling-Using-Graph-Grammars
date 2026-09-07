@@ -27,11 +27,10 @@ namespace Grammar {
                     row++;
                 }
             }
+        }
 
-            Selection.activeGameObject = root;
-            if (SceneView.lastActiveSceneView != null) {
-                SceneView.lastActiveSceneView.FrameSelected();
-            }
+        public static void Hide() {
+            ClearExisting();
         }
 
         private static void ClearExisting() {
