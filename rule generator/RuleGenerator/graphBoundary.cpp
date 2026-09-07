@@ -17,16 +17,16 @@ using namespace std;
 
 namespace {
 
-struct BoundaryVertexKey {
+struct BoundaryKey {
 	int edgeTypeId = -1;
 	bool forward = false;
 
-	bool operator==(const BoundaryVertexKey& other) const {
+	bool operator==(const BoundaryKey& other) const {
 		return edgeTypeId == other.edgeTypeId && forward == other.forward;
 	}
 };
 
-BoundaryVertexKey boundaryVertexKey(GraphVertex* vertex) {
+BoundaryKey boundaryKey(GraphVertex* vertex) {
 	GraphHalfEdge* half = vertex ? vertex->interiorHalfEdge() : nullptr;
 	GraphEdge* edge = vertex ? vertex->interiorEdge() : nullptr;
 	if (!half || !edge || !edge->getType()) {
@@ -35,22 +35,13 @@ BoundaryVertexKey boundaryVertexKey(GraphVertex* vertex) {
 	return { edge->getType()->getId(), half->getForward() };
 }
 
-vector<BoundaryVertexKey> boundaryVertexKeys(const vector<GraphVertex*>& vertices) {
-	vector<BoundaryVertexKey> keys;
+vector<BoundaryKey> boundaryKeys(const vector<GraphVertex*>& vertices) {
+	vector<BoundaryKey> keys;
 	keys.reserve(vertices.size());
 	for (auto* vertex : vertices) {
-		keys.push_back(boundaryVertexKey(vertex));
+		keys.push_back(boundaryKey(vertex));
 	}
 	return keys;
-}
-
-GraphHalfEdge* findStartHalfEdge(GraphVertex* vertex) {
-	for (auto* half : vertex->getHalfEdges()) {
-		if (half->getNext()) {
-			return half;
-		}
-	}
-	return nullptr;
 }
 
 GraphHalfEdge* walkOneFace(GraphHalfEdge* half) {
@@ -70,8 +61,14 @@ vector<GraphVertex*> walkOuterBoundary(Graph* graph) {
 
 	GraphVertex* startVertex = bVertices[0];
 	vector<GraphVertex*> order = {};
-	GraphHalfEdge* start = findStartHalfEdge(startVertex);
+	GraphHalfEdge* start = startVertex->interiorHalfEdge();
+	if (!start) {
+		cout << "no start half-edge\n";
+		return {};
+	}
 	GraphHalfEdge* current = start;
+
+	// Walk each face until we return to the start.
 	current = walkOneFace(current);
 	order.push_back(current->getVertex());
 	while (current != start) {
@@ -81,15 +78,14 @@ vector<GraphVertex*> walkOuterBoundary(Graph* graph) {
 	return order;
 }
 
-void printKeys(const char* label, const vector<BoundaryVertexKey>& keys) {
-	cout << "      " << label << " [";
+void printKeys(const vector<BoundaryKey>& keys) {
 	for (size_t i = 0; i < keys.size(); i++) {
 		if (i > 0) {
 			cout << ", ";
 		}
 		cout << keys[i].edgeTypeId << (keys[i].forward ? "F" : "B");
 	}
-	cout << "]\n";
+	cout << "\n";
 }
 
 }
@@ -105,12 +101,12 @@ bool equalBoundaries(Graph* left, Graph* right) {
 		return true;
 	}
 
-	auto leftKeys = boundaryVertexKeys(leftOrder);
-	auto rightKeys = boundaryVertexKeys(rightOrder);
-	printKeys("left keys:", leftKeys);
-	printKeys("right keys:", rightKeys);
-	int offset = -1;
+	auto leftKeys = boundaryKeys(leftOrder);
+	auto rightKeys = boundaryKeys(rightOrder);
+	// cout << "left keys: ";	printKeys(leftKeys);
+	// cout << "right keys: ";	printKeys(rightKeys);
 	for (int start = 0; start < n; start++) {
+		// Check if all the keys match when shifted by start.
 		bool match = true;
 		for (int i = 0; i < n; i++) {
 			if (!(leftKeys[i] == rightKeys[(i + start) % n])) {
@@ -119,12 +115,8 @@ bool equalBoundaries(Graph* left, Graph* right) {
 			}
 		}
 		if (match) {
-			offset = start;
-			break;
+			return true;
 		}
 	}
-	if (offset < 0) {
-		return false;
-	}
-	return true;
+	return false;
 }
