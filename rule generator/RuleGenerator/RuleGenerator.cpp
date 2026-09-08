@@ -13,6 +13,7 @@
 #include "../../cpp_version/graph_grammar.h"
 #include "../../cpp_version/grammar_rules/production_rule.h"
 
+#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -29,25 +30,74 @@ void writeStringToFile(const string& filename, const string& content) {
 	file << content;
 }
 
-vector<string> collectBoundaryIds(const TemplateGraph& graph) {
-	vector<string> boundaryIds;
-	for (const auto& vertex : graph.vertices) {
-		if (!vertex.boundaryId.empty()) {
-			boundaryIds.push_back(vertex.boundaryId);
+struct BoundaryIdLayout {
+	vector<string> ids;
+	bool pairedStubs = false;
+};
+
+// Two host stubs of one spliced vertex are one pair. Listing start then end
+// vs end then start of a split must not produce two grouping keys.
+BoundaryIdLayout collectBoundaryIdLayout(const TemplateGraphSet& set) {
+	BoundaryIdLayout layout;
+	for (const auto& graph : set.graphs) {
+		for (int v = 0; v < (int)graph.vertices.size(); v++) {
+			if (!graph.vertices[v].spliced) {
+				continue;
+			}
+			vector<string> stubs;
+			for (int eIdx : graph.vertices[v].connections) {
+				if (eIdx < 0 || eIdx >= (int)graph.edges.size()) {
+					continue;
+				}
+				if (graph.edges[eIdx].spliced) {
+					continue;
+				}
+				const TemplateEdge& edge = graph.edges[eIdx];
+				int other = edge.start == v ? edge.end : edge.start;
+				if (other < 0 || other >= (int)graph.vertices.size()) {
+					continue;
+				}
+				const string& id = graph.vertices[other].boundaryId;
+				if (!id.empty()) {
+					stubs.push_back(id);
+				}
+			}
+			if (stubs.size() == 2) {
+				layout.ids.push_back(stubs[0]);
+				layout.ids.push_back(stubs[1]);
+				layout.pairedStubs = true;
+			}
+		}
+		if (layout.pairedStubs) {
+			return layout;
 		}
 	}
-	return boundaryIds;
+	if (!set.graphs.empty()) {
+		for (const auto& vertex : set.graphs[0].vertices) {
+			if (!vertex.boundaryId.empty()) {
+				layout.ids.push_back(vertex.boundaryId);
+			}
+		}
+	}
+	return layout;
+}
+
+void sortPairedBoundaryValues(vector<int>& values) {
+	for (size_t i = 0; i + 1 < values.size(); i += 2) {
+		if (values[i] > values[i + 1]) {
+			swap(values[i], values[i + 1]);
+		}
+	}
 }
 
 vector<vector<int>> findBoundaryValues(
 	const TemplateMatcher& matcher,
-	const vector<string>& boundaryIds
+	const BoundaryIdLayout& layout
 ) {
-	int n = (int)boundaryIds.size();
-	// Maps from each boundary ID to a vertex index in the template graph.
+	int n = (int)layout.ids.size();
 	vector<int> vertexIndices;
 	vertexIndices.reserve(n);
-	for (const string& boundaryId : boundaryIds) {
+	for (const string& boundaryId : layout.ids) {
 		int vertexIndex = -1;
 		for (int v = 0; v < (int)matcher.templateGraph.vertices.size(); v++) {
 			if (matcher.templateGraph.vertices[v].boundaryId == boundaryId) {
@@ -64,6 +114,9 @@ vector<vector<int>> findBoundaryValues(
 		boundaryValues.reserve(n);
 		for (int vertexIndex : vertexIndices) {
 			boundaryValues.push_back(vertexValues[vertexIndex]);
+		}
+		if (layout.pairedStubs) {
+			sortPairedBoundaryValues(boundaryValues);
 		}
 		allBoundaryValues.push_back(boundaryValues);
 	}
@@ -216,7 +269,7 @@ int GenerateRules(
 				matchers.push_back(TemplateMatcher(templateGraph, primitives->vertexTypes, eTypes));
 			}
 			vector<vector<vector<int>>> allBoundaryValues;
-			vector<string> boundaryIds = collectBoundaryIds(templateGraphSets[i].graphs[0]);
+			BoundaryIdLayout boundaryIds = collectBoundaryIdLayout(templateGraphSets[i]);
 			for (int j = 0; j < numGraphs; j++) {
 				matchers[j].match();
 				totalMatches += matchers[j].vertexValues.size();
@@ -231,6 +284,58 @@ int GenerateRules(
 				}
 				auto boundaryValues = findBoundaryValues(matchers[j], boundaryIds);
 				allBoundaryValues.push_back(boundaryValues);
+				if (j == 0) {
+					const vector<int> targetBoundary = {0, 1, 26, 27};
+					for (int m = 0; m < (int)boundaryValues.size(); m++) {
+						auto graphValues = matchers[j].getGraphValues(m);
+						bool hasV0 = false;
+						bool hasV1 = false;
+						bool hasV11 = false;
+						bool hasV13 = false;
+						int interiorCount = 0;
+						for (size_t v = 0; v < graphValues.vertices.size(); v++) {
+							if (graphValues.vertexOnBoundary[v]) {
+								continue;
+							}
+							interiorCount++;
+							const int t = graphValues.vertices[v];
+							if (t == 0) {
+								hasV0 = true;
+							} else if (t == 1) {
+								hasV1 = true;
+							} else if (t == 11) {
+								hasV11 = true;
+							} else if (t == 13) {
+								hasV13 = true;
+							}
+						}
+						auto printVertices = [&]() {
+							for (size_t v = 0; v < graphValues.vertices.size(); v++) {
+								cout << " v" << v << "="
+									<< (graphValues.vertexOnBoundary[v] ? "e" : "v")
+									<< graphValues.vertices[v];
+							}
+							cout << " boundary [";
+							for (size_t b = 0; b < boundaryValues[m].size(); b++) {
+								if (b > 0) {
+									cout << ", ";
+								}
+								cout << boundaryValues[m][b];
+							}
+							cout << "]\n";
+						};
+						if (boundaryValues[m] == targetBoundary) {
+							cout << "    graph 0 match " << m
+								<< " boundary [0, 1, 26, 27] vertices:";
+							printVertices();
+						}
+						if (interiorCount == 4 && hasV0 && hasV1 && hasV11 && hasV13) {
+							cout << "    graph 0 match " << m
+								<< " uses v0,v1,v11,v13 vertices:";
+							printVertices();
+						}
+					}
+				}
 				cout << "    graph " << j << " allBoundaryValues:\n";
 				printBoundaryValues(boundaryValues);
 			}

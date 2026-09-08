@@ -94,6 +94,8 @@ bool equalBoundaries(Graph* left, Graph* right) {
 	vector<GraphVertex*> leftOrder = walkOuterBoundary(left);
 	vector<GraphVertex*> rightOrder = walkOuterBoundary(right);
 	if (leftOrder.size() != rightOrder.size()) {
+		cout << "left order: " << leftOrder.size() << " ";
+		cout << "right order: " << rightOrder.size() << " ";
 		return false;
 	}
 	const int n = (int)leftOrder.size();
@@ -103,8 +105,8 @@ bool equalBoundaries(Graph* left, Graph* right) {
 
 	auto leftKeys = boundaryKeys(leftOrder);
 	auto rightKeys = boundaryKeys(rightOrder);
-	// cout << "left keys: ";	printKeys(leftKeys);
-	// cout << "right keys: ";	printKeys(rightKeys);
+	cout << "left keys: ";	printKeys(leftKeys);
+	cout << "right keys: ";	printKeys(rightKeys);
 	for (int start = 0; start < n; start++) {
 		// Check if all the keys match when shifted by start.
 		bool match = true;
