@@ -710,18 +710,6 @@ void maybeAddBFace(Graph*& graph, Graph* filledGraph, bool addBFaces) {
 	}
 }
 
-bool graphHasSplices(Graph* graph) {
-	if (!graph) {
-		return false;
-	}
-	for (auto* edge : graph->getEdges()) {
-		if (edge && edge->getType() && edge->getType()->getSpliced()) {
-			return true;
-		}
-	}
-	return false;
-}
-
 void exportRule(
 	GraphGrammar* grammar,
 	Graph* leftGraph,
@@ -746,17 +734,10 @@ void exportRule(
 		alignBoundaries(leftGraph, rightGraph);
 		updateBoundaryHalfEdges(leftGraph);
 		updateBoundaryHalfEdges(rightGraph);
-		// Empty graphs go first (starter / ground).
-		// Spliced graphs go first: start graphs are matched, end graphs are
-		// instantiated with splices removed.
-		const bool leftSpliced = graphHasSplices(leftGraph);
-		const bool rightSpliced = graphHasSplices(rightGraph);
-		vector<Graph*> graphs;
-		if (rightEmpty || (!leftEmpty && !leftSpliced && rightSpliced)) {
-			graphs = { rightGraph, leftGraph };
-		} else {
-			graphs = { leftGraph, rightGraph };
-		}
+		// If a graph is empty, it should go first.
+		vector<Graph*> graphs = rightEmpty
+			? vector<Graph*>{ rightGraph, leftGraph }
+			: vector<Graph*>{ leftGraph, rightGraph };
 		ProductionRule* rule = new ProductionRule(graphs);
 		if (leftEmpty || rightEmpty) {
 			grammar->addStarterRule(rule);
