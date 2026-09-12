@@ -202,6 +202,7 @@ int GenerateRules(
 			<< "  library   : " << templatesPath << "\n"
 			<< "  entries   : " << templateGraphSets.size() << "\n";
 
+		auto primitiveGraphs = createPrimitiveGraphs(primitives);
 		size_t totalMatches = 0;
 		for (size_t i = 0; i < templateGraphSets.size(); i++) {
 			cout << "  [" << i << "] \"" << templateGraphSets[i].comment << "\"  ";
@@ -226,7 +227,7 @@ int GenerateRules(
 				printBoundaryValues(boundaryValues);
 			}
 			auto graphGroups = filterEmptyGraphGroups(groupGraphs(allBoundaryValues));
-			RuleExporter::exportGroups(grammar, graphGroups, matchers, primitives);
+			RuleExporter::exportGroups(grammar, graphGroups, matchers, primitiveGraphs);
 			cout << "    boundary values groups across graphs:\n";
 			printGraphGroups(graphGroups);
 		}

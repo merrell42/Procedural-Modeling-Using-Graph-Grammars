@@ -18,11 +18,6 @@
 
 using namespace std;
 
-struct PrimitiveGraphs {
-	vector<unique_ptr<Graph>> vertexGraphs;
-	vector<unique_ptr<Graph>> edgeGraphs;
-};
-
 struct GlueTrack {
 	vector<int> aDest;
 	vector<int> bDest;
@@ -73,19 +68,24 @@ static void orderSameAnglePairs(vector<HalfEdgeFaceSlot>& slots) {
 	}
 }
 
-// Decide which direction to use based on the first inward slot.
-// If the next slot has the same angle, use the previous slot.
-// Otherwise use the next slot.
+// Find the first pair of slots with the same angle, then pick the direction
+// that does not make them partners.
 static PartnerDirection partnerDirection(const vector<HalfEdgeFaceSlot>& halfEdgeSlots) {
 	const size_t n = halfEdgeSlots.size();
+	if (n < 2) {
+		return NEXT;
+	}
 	for (size_t i = 0; i < n; i++) {
-		if (halfEdgeSlots[i].intoVertex) {		
-			const size_t nextIndex = (i + 1) % n;
-			if (halfEdgeSlots[nextIndex].angle == halfEdgeSlots[i].angle) {
-				return PREV;
-			}
-			return NEXT;
+		const size_t nextIndex = (i + 1) % n;
+		if (halfEdgeSlots[i].angle != halfEdgeSlots[nextIndex].angle) {
+			continue;
 		}
+		// NEXT pairs i with nextIndex when i is inward.
+		// PREV pairs nextIndex with i when nextIndex is inward.
+		if (halfEdgeSlots[i].intoVertex) {
+			return PREV;
+		}
+		return NEXT;
 	}
 	return NEXT;
 }
@@ -531,20 +531,20 @@ Graph* buildGraphFromValues(
 		instances.push_back(unique_ptr<Graph>(prototype->copy()));
 	}
 
-	unordered_map<string, string> matchToNetwork;
-	unordered_map<string, string> networkToMatch;
-	unordered_map<int, Graph*> networkMap;
+	unordered_map<string, string> matchToGraph;
+	unordered_map<string, string> graphToMatch;
+	unordered_map<int, Graph*> graphMap;
 
 	for (size_t i = 0; i < instances.size(); i++) {
 		auto* graph = instances[i].get();
 		const auto& bVertices = graph->getBVertices();
 		for (size_t j = 0; j < bVertices.size(); j++) {
 			string matchKey = to_string(i) + "," + to_string(j);
-			string netKey = to_string(graph->getId()) + "," + to_string(j);
-			matchToNetwork[matchKey] = netKey;
-			networkToMatch[netKey] = matchKey;
+			string graphKey = to_string(graph->getId()) + "," + to_string(j);
+			matchToGraph[matchKey] = graphKey;
+			graphToMatch[graphKey] = matchKey;
 		}
-		networkMap[graph->getId()] = graph;
+		graphMap[graph->getId()] = graph;
 	}
 
 	vector<array<int, 4>> edgeQueue = graphValues.edges;
@@ -566,19 +566,19 @@ Graph* buildGraphFromValues(
 
 			string keyA = to_string(vertexA) + "," + to_string(bVertexIndexA);
 			string keyB = to_string(vertexB) + "," + to_string(bVertexIndexB);
-			auto netKeyA = matchToNetwork[keyA];
-			auto netKeyB = matchToNetwork[keyB];
-			auto commaA = netKeyA.find(',');
-			auto commaB = netKeyB.find(',');
-			int netA = stoi(netKeyA.substr(0, commaA));
-			int nBVertA = stoi(netKeyA.substr(commaA + 1));
-			int netB = stoi(netKeyB.substr(0, commaB));
-			int nBVertB = stoi(netKeyB.substr(commaB + 1));
+			auto graphKeyA = matchToGraph[keyA];
+			auto graphKeyB = matchToGraph[keyB];
+			auto commaA = graphKeyA.find(',');
+			auto commaB = graphKeyB.find(',');
+			int graphIdA = stoi(graphKeyA.substr(0, commaA));
+			int nBVertA = stoi(graphKeyA.substr(commaA + 1));
+			int graphIdB = stoi(graphKeyB.substr(0, commaB));
+			int nBVertB = stoi(graphKeyB.substr(commaB + 1));
 
-			auto* graphA = networkMap[netA];
-			auto* graphB = networkMap[netB];
+			auto* graphA = graphMap[graphIdA];
+			auto* graphB = graphMap[graphIdB];
 
-			if (netA == netB) {
+			if (graphIdA == graphIdB) {
 				auto loopables = findLoopables(graphA);
 				bool canLoop = false;
 				auto* bVertexA = graphA->getBVertices()[nBVertA];
@@ -596,33 +596,33 @@ Graph* buildGraphFromValues(
 				}
 			}
 
-			auto outcome = copyAndGlue(*graphA, nBVertA, *graphB, nBVertB, netA == netB);
+			auto outcome = copyAndGlue(*graphA, nBVertA, *graphB, nBVertB, graphIdA == graphIdB);
 			auto& track = outcome.second;
 			Graph* merged = outcome.first.get();
 			int mergedId = merged->getId();
 
 			for (size_t index = 0; index < track.aDest.size(); index++) {
 				if (track.aDest[index] >= 0) {
-					string oldMatchKey = networkToMatch[to_string(netA) + "," + to_string(index)];
-					string newNetKey = to_string(mergedId) + "," + to_string(track.aDest[index]);
-					matchToNetwork[oldMatchKey] = newNetKey;
-					networkToMatch[newNetKey] = oldMatchKey;
+					string oldMatchKey = graphToMatch[to_string(graphIdA) + "," + to_string(index)];
+					string newGraphKey = to_string(mergedId) + "," + to_string(track.aDest[index]);
+					matchToGraph[oldMatchKey] = newGraphKey;
+					graphToMatch[newGraphKey] = oldMatchKey;
 				}
 			}
-			if (netA != netB) {
+			if (graphIdA != graphIdB) {
 				for (size_t index = 0; index < track.bDest.size(); index++) {
 					if (track.bDest[index] >= 0) {
-						string oldMatchKey = networkToMatch[to_string(netB) + "," + to_string(index)];
-						string newNetKey = to_string(mergedId) + "," + to_string(track.bDest[index]);
-						matchToNetwork[oldMatchKey] = newNetKey;
-						networkToMatch[newNetKey] = oldMatchKey;
+						string oldMatchKey = graphToMatch[to_string(graphIdB) + "," + to_string(index)];
+						string newGraphKey = to_string(mergedId) + "," + to_string(track.bDest[index]);
+						matchToGraph[oldMatchKey] = newGraphKey;
+						graphToMatch[newGraphKey] = oldMatchKey;
 					}
 				}
-				networkMap.erase(netB);
+				graphMap.erase(graphIdB);
 			}
 
 			finalResult = merged;
-			networkMap[mergedId] = finalResult;
+			graphMap[mergedId] = finalResult;
 			instances.push_back(std::move(outcome.first));
 		}
 
@@ -758,9 +758,8 @@ void RuleExporter::exportGroups(
 	GraphGrammar& grammar,
 	const vector<GraphGroup>& groups,
 	const vector<TemplateMatcher>& matchers,
-	Primitives* primitives
+	const PrimitiveGraphs& primitiveGraphs
 ) {
-	auto primitiveGraphs = createPrimitiveGraphs(primitives);
 	for (const auto& group : groups) {
 		const int numGraphs = (int)group.graphIndices.size();
 		vector<vector<unique_ptr<Graph>>> graphs(numGraphs);
