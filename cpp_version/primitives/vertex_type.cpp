@@ -102,13 +102,12 @@ Json VertexType::exportJson(const Primitives* shape) const {
     }
     Json halfEdgeTypesJson = Json::array();
     for (const auto& halfEdgeType : halfEdgeTypes) {
-        if (spliced && halfEdgeType.edge && halfEdgeType.edge->getSpliced()) {
-            continue;
-        }
         Json halfEdgeTypeJson;
         halfEdgeTypeJson["edge"] = indexOf(shape->edgeTypes, halfEdgeType.edge);
         halfEdgeTypeJson["isAtStart"] = halfEdgeType.isAtStart;
-        halfEdgeTypeJson["dir"] = halfEdgeType.dir.exportJson();
+        if (!spliced) {
+            halfEdgeTypeJson["dir"] = halfEdgeType.dir.exportJson();
+        }
         halfEdgeTypesJson.push_back(std::move(halfEdgeTypeJson));
     }
     json["halfEdgeTypes"] = halfEdgeTypesJson;
