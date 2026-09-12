@@ -78,15 +78,11 @@ static PartnerDirection partnerDirection(const vector<HalfEdgeFaceSlot>& halfEdg
 	}
 	for (size_t i = 0; i < n; i++) {
 		const size_t nextIndex = (i + 1) % n;
-		if (halfEdgeSlots[i].angle != halfEdgeSlots[nextIndex].angle) {
-			continue;
+		if (halfEdgeSlots[i].angle == halfEdgeSlots[nextIndex].angle) {
+			// We are trying to find the partner direction for inward half-edges.
+			// If the next slot has the same angle, we go in the opposite direction PREV.
+			return halfEdgeSlots[i].intoVertex ? PREV : NEXT;
 		}
-		// NEXT pairs i with nextIndex when i is inward.
-		// PREV pairs nextIndex with i when nextIndex is inward.
-		if (halfEdgeSlots[i].intoVertex) {
-			return PREV;
-		}
-		return NEXT;
 	}
 	return NEXT;
 }
