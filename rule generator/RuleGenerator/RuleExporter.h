@@ -8,11 +8,6 @@
 
 class GraphGrammar;
 
-struct GraphGroup {
-	vector<int> boundaryValues;
-	vector<vector<int>> graphIndices;
-};
-
 struct PrimitiveGraphs {
 	vector<unique_ptr<Graph>> vertexGraphs;
 	vector<unique_ptr<Graph>> edgeGraphs;
@@ -22,9 +17,8 @@ PrimitiveGraphs createPrimitiveGraphs(Primitives* primitives);
 
 class RuleExporter {
 public:
-	static void exportGroups(
+	static void exportRules(
 		GraphGrammar& grammar,
-		const vector<GraphGroup>& groups,
 		const vector<TemplateMatcher>& matchers,
 		const PrimitiveGraphs& primitiveGraphs
 	);

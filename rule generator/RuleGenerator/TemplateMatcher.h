@@ -60,6 +60,9 @@ public:
 	TemplateMatcher(TemplateGraph templateGraph_, vector<VertexType*> vTypes, vector<EdgeType*> eTypes);
 	void match();
 	GraphValues getGraphValues(int graphIndex) const;
+	// After gluing, the remaining stub for this template boundary vertex is
+	// bVertices[slot] of the primitive instance for `instance` (a template vertex).
+	bool remainingStub(int matchIndex, int boundaryVertex, int& instance, int& slot) const;
 
 private:
 	void addVertexStates(const vector<VertexType*>& vTypes);

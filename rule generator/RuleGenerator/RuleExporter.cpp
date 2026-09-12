@@ -1,10 +1,12 @@
 #include "pch.h"
 #include "RuleExporter.h"
 #include "isIsomorphic.h"
-#include "graphBoundary.h"
 
 #include "../../cpp_version/graph/graph.h"
+#include "../../cpp_version/graph/graph_edge.h"
 #include "../../cpp_version/graph/graph_face.h"
+#include "../../cpp_version/graph/graph_half_edge.h"
+#include "../../cpp_version/graph/graph_vertex.h"
 #include "../../cpp_version/primitives/edge_type.h"
 #include "../../cpp_version/util/util.h"
 #include "../../cpp_version/graph_grammar.h"
@@ -12,8 +14,10 @@
 
 #include <algorithm>
 #include <iostream>
+#include <map>
 #include <memory>
 #include <stdexcept>
+#include <string>
 #include <unordered_map>
 #include <unordered_set>
 
@@ -258,6 +262,89 @@ GraphHalfEdge* glueHalfEdges(GraphHalfEdge* half0, GraphHalfEdge* half1, Graph* 
 	half1->disconnectEdge();
 
 	return replacement;
+}
+
+bool parseIndexPair(const string& key, int& a, int& b) {
+	auto comma = key.find(',');
+	if (comma == string::npos) {
+		return false;
+	}
+	a = stoi(key.substr(0, comma));
+	b = stoi(key.substr(comma + 1));
+	return true;
+}
+
+GraphVertex* liveStub(
+	const unordered_map<string, string>& matchToGraph,
+	Graph* result,
+	int instance,
+	int preferredSlot
+) {
+	const int resultId = result->getId();
+	const auto& bVertices = result->getBVertices();
+	auto atSlot = [&](int slot) -> GraphVertex* {
+		auto it = matchToGraph.find(to_string(instance) + "," + to_string(slot));
+		if (it == matchToGraph.end()) {
+			return nullptr;
+		}
+		int graphId = 0;
+		int bIndex = 0;
+		if (!parseIndexPair(it->second, graphId, bIndex)) {
+			return nullptr;
+		}
+		if (graphId != resultId || bIndex < 0 || bIndex >= (int)bVertices.size()) {
+			return nullptr;
+		}
+		return bVertices[bIndex];
+	};
+	if (auto* vertex = atSlot(preferredSlot)) {
+		return vertex;
+	}
+	for (const auto& entry : matchToGraph) {
+		int inst = 0;
+		int slot = 0;
+		if (!parseIndexPair(entry.first, inst, slot) || inst != instance) {
+			continue;
+		}
+		if (auto* vertex = atSlot(slot)) {
+			return vertex;
+		}
+	}
+	return nullptr;
+}
+
+void setBVerticesFromTemplate(
+	Graph* result,
+	const unordered_map<string, string>& matchToGraph,
+	const TemplateMatcher& matcher,
+	int matchIndex,
+	const vector<string>& boundaryIds
+) {
+	if (!result || boundaryIds.empty()) {
+		return;
+	}
+	vector<GraphVertex*> ordered;
+	ordered.reserve(boundaryIds.size());
+	for (const string& boundaryId : boundaryIds) {
+		int templateVertex = -1;
+		for (int v = 0; v < (int)matcher.templateGraph.vertices.size(); v++) {
+			if (matcher.templateGraph.vertices[v].boundaryId == boundaryId) {
+				templateVertex = v;
+				break;
+			}
+		}
+		int instance = -1;
+		int slot = -1;
+		GraphVertex* stub = nullptr;
+		if (templateVertex >= 0 && matcher.remainingStub(matchIndex, templateVertex, instance, slot)) {
+			stub = liveStub(matchToGraph, result, instance, slot);
+		}
+		if (!stub) {
+			throw runtime_error("buildGraphFromValues: no remaining stub for boundaryId " + boundaryId);
+		}
+		ordered.push_back(stub);
+	}
+	result->setBVertices(ordered);
 }
 
 GlueTrack glueVertices(
@@ -514,7 +601,10 @@ Graph* releaseInstance(vector<unique_ptr<Graph>>& instances, Graph* graph) {
 
 Graph* buildGraphFromValues(
 	const GraphValues& graphValues,
-	const PrimitiveGraphs& graphs
+	const PrimitiveGraphs& graphs,
+	const TemplateMatcher& matcher,
+	int matchIndex,
+	const vector<string>& boundaryIds
 ) {
 	if (graphValues.edges.empty() && graphValues.vertices.size() == 0) {
 		// return Graph::createEmpty(primitives);
@@ -549,6 +639,7 @@ Graph* buildGraphFromValues(
 
 	if (edgeQueue.empty()) {
 		Graph* result = instances[0].release();
+		setBVerticesFromTemplate(result, matchToGraph, matcher, matchIndex, boundaryIds);
 		updateBoundaryHalfEdges(result);
 		return result;
 	}
@@ -632,22 +723,9 @@ Graph* buildGraphFromValues(
 	if (!finalResult) {
 		throw runtime_error("buildGraphFromValues: no result");
 	}
+	setBVerticesFromTemplate(finalResult, matchToGraph, matcher, matchIndex, boundaryIds);
 	updateBoundaryHalfEdges(finalResult);
 	return releaseInstance(instances, finalResult);
-}
-
-bool isDuplicateGraph(
-	Graph* graph,
-	const vector<int>& vertexTypeIds,
-	const vector<unique_ptr<Graph>>& existingGraphs,
-	const vector<vector<int>>& existingVertexTypeIds
-) {
-	for (size_t j = 0; j < existingGraphs.size(); j++) {
-		if (isIsomorphic(graph, vertexTypeIds, existingGraphs[j].get(), existingVertexTypeIds[j])) {
-			return true;
-		}
-	}
-	return false;
 }
 
 bool loopsAreValid(Graph* graph) {
@@ -706,6 +784,8 @@ void maybeAddBFace(Graph*& graph, Graph* filledGraph, bool addBFaces) {
 	}
 }
 
+void alignBoundaryCycle(Graph* left, Graph* right);
+
 void exportRule(
 	GraphGrammar* grammar,
 	Graph* leftGraph,
@@ -727,7 +807,9 @@ void exportRule(
 		} else if (rightEmpty) {
 			maybeAddBFace(rightGraph, leftGraph, grammar->isGrounded());
 		}
-		alignBoundaries(leftGraph, rightGraph);
+		if (!leftEmpty && !rightEmpty) {
+			alignBoundaryCycle(leftGraph, rightGraph);
+		}
 		updateBoundaryHalfEdges(leftGraph);
 		updateBoundaryHalfEdges(rightGraph);
 		// If a graph is empty, it should go first.
@@ -753,37 +835,246 @@ void exportRule(
 	}
 }
 
-void RuleExporter::exportGroups(
+struct BoundaryKey {
+	int edgeTypeId = -1;
+	bool forward = false;
+
+	bool operator==(const BoundaryKey& other) const {
+		return edgeTypeId == other.edgeTypeId && forward == other.forward;
+	}
+
+	bool operator<(const BoundaryKey& other) const {
+		if (edgeTypeId != other.edgeTypeId) {
+			return edgeTypeId < other.edgeTypeId;
+		}
+		return forward < other.forward;
+	}
+};
+
+BoundaryKey stubKey(GraphVertex* vertex) {
+	GraphHalfEdge* half = vertex ? vertex->interiorHalfEdge() : nullptr;
+	GraphEdge* edge = vertex ? vertex->interiorEdge() : nullptr;
+	if (!half || !edge || !edge->getType()) {
+		return {};
+	}
+	return { edge->getType()->getId(), half->getForward() };
+}
+
+GraphHalfEdge* walkOneFace(GraphHalfEdge* half) {
+	while (half->getNext()) {
+		half = half->getNext();
+	}
+	return half->getPrev()->getTwin();
+}
+
+// Cycle order of the stubs GlueTrack already put in bVertices.
+vector<GraphVertex*> boundaryCycle(Graph* graph) {
+	const auto& bVertices = graph->getBVertices();
+	if (bVertices.empty()) {
+		return {};
+	}
+	GraphHalfEdge* start = bVertices[0]->interiorHalfEdge();
+	if (!start) {
+		return {};
+	}
+	vector<GraphVertex*> order;
+	GraphHalfEdge* current = walkOneFace(start);
+	order.push_back(current->getVertex());
+	while (current != start) {
+		current = walkOneFace(current);
+		order.push_back(current->getVertex());
+	}
+	return order;
+}
+
+bool keysMatchShifted(
+	const vector<BoundaryKey>& leftKeys,
+	const vector<BoundaryKey>& rightKeys,
+	int start
+) {
+	const int n = (int)leftKeys.size();
+	for (int i = 0; i < n; i++) {
+		if (!(leftKeys[i] == rightKeys[(i + start) % n])) {
+			return false;
+		}
+	}
+	return true;
+}
+
+int findCycleShift(const vector<BoundaryKey>& leftKeys, const vector<BoundaryKey>& rightKeys) {
+	const int n = (int)leftKeys.size();
+	for (int start = 0; start < n; start++) {
+		if (keysMatchShifted(leftKeys, rightKeys, start)) {
+			return start;
+		}
+	}
+	return -1;
+}
+
+vector<BoundaryKey> cycleKeys(const vector<GraphVertex*>& order) {
+	vector<BoundaryKey> keys;
+	keys.reserve(order.size());
+	for (auto* vertex : order) {
+		keys.push_back(stubKey(vertex));
+	}
+	return keys;
+}
+
+void alignBoundaryCycle(Graph* left, Graph* right) {
+	auto leftOrder = boundaryCycle(left);
+	auto rightOrder = boundaryCycle(right);
+	if (leftOrder.size() != rightOrder.size() || leftOrder.empty()) {
+		return;
+	}
+	const int start = findCycleShift(cycleKeys(leftOrder), cycleKeys(rightOrder));
+	if (start < 0) {
+		return;
+	}
+	left->setBVertices(leftOrder);
+	vector<GraphVertex*> rotated;
+	rotated.reserve(rightOrder.size());
+	for (size_t i = 0; i < rightOrder.size(); i++) {
+		rotated.push_back(rightOrder[(i + start) % rightOrder.size()]);
+	}
+	right->setBVertices(rotated);
+}
+
+vector<string> collectBoundaryIds(const vector<TemplateMatcher>& matchers) {
+	for (const auto& matcher : matchers) {
+		vector<string> ids;
+		for (const auto& vertex : matcher.templateGraph.vertices) {
+			if (!vertex.boundaryId.empty()) {
+				ids.push_back(vertex.boundaryId);
+			}
+		}
+		if (!ids.empty()) {
+			return ids;
+		}
+	}
+	return {};
+}
+
+string boundaryTypeKey(Graph* graph) {
+	auto keys = cycleKeys(boundaryCycle(graph));
+	const int n = (int)keys.size();
+	if (n == 0) {
+		return {};
+	}
+	int best = 0;
+	for (int start = 1; start < n; start++) {
+		for (int i = 0; i < n; i++) {
+			const auto& a = keys[(best + i) % n];
+			const auto& b = keys[(start + i) % n];
+			if (b < a) {
+				best = start;
+				break;
+			}
+			if (a < b) {
+				break;
+			}
+		}
+	}
+	string key;
+	for (int i = 0; i < n; i++) {
+		if (i > 0) {
+			key += ",";
+		}
+		const auto& k = keys[(best + i) % n];
+		key += to_string(k.edgeTypeId);
+		key += k.forward ? "F" : "B";
+	}
+	return key;
+}
+
+bool graphIsEmpty(Graph* graph) {
+	return graph->getVertices().empty() && graph->getEdges().empty();
+}
+
+void RuleExporter::exportRules(
 	GraphGrammar& grammar,
-	const vector<GraphGroup>& groups,
 	const vector<TemplateMatcher>& matchers,
 	const PrimitiveGraphs& primitiveGraphs
 ) {
-	for (const auto& group : groups) {
-		const int numGraphs = (int)group.graphIndices.size();
-		vector<vector<unique_ptr<Graph>>> graphs(numGraphs);
-		vector<vector<vector<int>>> vertexTypeIds(numGraphs);
+	if (matchers.size() < 2) {
+		return;
+	}
+	vector<string> boundaryIds = collectBoundaryIds(matchers);
+	const int numGraphs = (int)matchers.size();
+	vector<vector<unique_ptr<Graph>>> graphs(numGraphs);
+	vector<vector<vector<int>>> vertexTypeIds(numGraphs);
+	vector<vector<string>> typeKeys(numGraphs);
 
-		for (int i = 0; i < numGraphs; i++) {
-			for (int index : group.graphIndices[i]) {
-				auto graphValues = matchers[i].getGraphValues(index);
-				auto graphA = unique_ptr<Graph>(buildGraphFromValues(graphValues, primitiveGraphs));
-				auto vertexTypeIdsA = getVertexTypeIds(graphA.get());
-				if (loopsAreValid(graphA.get()) &&
-					!isDuplicateGraph(graphA.get(), vertexTypeIdsA, graphs[i], vertexTypeIds[i])) {
-					graphs[i].push_back(std::move(graphA));
-					vertexTypeIds[i].push_back(std::move(vertexTypeIdsA));
-				}
+	for (int i = 0; i < numGraphs; i++) {
+		for (int index = 0; index < (int)matchers[i].vertexValues.size(); index++) {
+			auto graphValues = matchers[i].getGraphValues(index);
+			auto graph = unique_ptr<Graph>(buildGraphFromValues(
+				graphValues, primitiveGraphs, matchers[i], index, boundaryIds));
+			if (!loopsAreValid(graph.get())) {
+				continue;
 			}
-		}
-
-		// Assumes there are only two graphs in the template set.
-		for (const auto& left : graphs[0]) {
-			for (const auto& right : graphs[1]) {
-				if (!equalBoundaries(left.get(), right.get())) {
-					cout << "    rejected: boundary vertex order does not match\n";
+			auto ids = getVertexTypeIds(graph.get());
+			string key = boundaryTypeKey(graph.get());
+			bool duplicate = false;
+			for (size_t j = 0; j < graphs[i].size(); j++) {
+				if (typeKeys[i][j] != key) {
 					continue;
 				}
+				if (isIsomorphic(graph.get(), ids, graphs[i][j].get(), vertexTypeIds[i][j])) {
+					duplicate = true;
+					break;
+				}
+			}
+			if (!duplicate) {
+				graphs[i].push_back(std::move(graph));
+				vertexTypeIds[i].push_back(std::move(ids));
+				typeKeys[i].push_back(std::move(key));
+			}
+		}
+	}
+
+	bool anyEmptyLeft = false;
+	bool anyEmptyRight = false;
+	for (const auto& left : graphs[0]) {
+		if (graphIsEmpty(left.get())) {
+			anyEmptyLeft = true;
+		}
+	}
+	for (const auto& right : graphs[1]) {
+		if (graphIsEmpty(right.get())) {
+			anyEmptyRight = true;
+		}
+	}
+	if (anyEmptyLeft || anyEmptyRight) {
+		for (const auto& left : graphs[0]) {
+			for (const auto& right : graphs[1]) {
+				if (graphIsEmpty(left.get()) == graphIsEmpty(right.get())) {
+					continue;
+				}
+				exportRule(&grammar, left->copy(), right->copy());
+			}
+		}
+		return;
+	}
+
+	map<string, vector<Graph*>> leftByKey;
+	map<string, vector<Graph*>> rightByKey;
+	for (size_t i = 0; i < graphs[0].size(); i++) {
+		if (!typeKeys[0][i].empty()) {
+			leftByKey[typeKeys[0][i]].push_back(graphs[0][i].get());
+		}
+	}
+	for (size_t i = 0; i < graphs[1].size(); i++) {
+		if (!typeKeys[1][i].empty()) {
+			rightByKey[typeKeys[1][i]].push_back(graphs[1][i].get());
+		}
+	}
+	for (const auto& entry : leftByKey) {
+		auto found = rightByKey.find(entry.first);
+		if (found == rightByKey.end()) {
+			continue;
+		}
+		for (auto* left : entry.second) {
+			for (auto* right : found->second) {
 				exportRule(&grammar, left->copy(), right->copy());
 			}
 		}

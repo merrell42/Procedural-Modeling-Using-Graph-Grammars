@@ -328,3 +328,53 @@ GraphValues TemplateMatcher::getGraphValues(int graphIndex) const {
 	}
 	return graphValues;
 }
+
+bool TemplateMatcher::remainingStub(
+	int matchIndex,
+	int boundaryVertex,
+	int& instance,
+	int& slot
+) const {
+	if (matchIndex < 0 || matchIndex >= (int)vertexValues.size()) {
+		return false;
+	}
+	if (boundaryVertex < 0 || boundaryVertex >= (int)templateGraph.vertices.size()) {
+		return false;
+	}
+	const auto& values = vertexValues[matchIndex];
+	const auto& vertex = templateGraph.vertices[boundaryVertex];
+	for (int eIdx : vertex.connections) {
+		if (eIdx < 0 || eIdx >= (int)eConnections.size()) {
+			continue;
+		}
+		const auto& ends = eConnections[eIdx];
+		if (ends.size() != 2) {
+			continue;
+		}
+		int other = ends[0] == boundaryVertex ? ends[1] : ends[0];
+		if (other < 0 || other >= (int)templateGraph.vertices.size()) {
+			continue;
+		}
+		if (!templateGraph.vertices[other].boundaryId.empty()) {
+			continue;
+		}
+		int cIndex = ConnectionIndex(other, eIdx, -1);
+		if (cIndex < 0 || other >= (int)values.size()) {
+			return false;
+		}
+		instance = other;
+		slot = getState(other, values[other]).GetConnectionIndex(cIndex);
+		return true;
+	}
+	if (vertex.connections.empty() || boundaryVertex >= (int)values.size()) {
+		return false;
+	}
+	int eIdx = vertex.connections[0];
+	int cIndex = ConnectionIndex(boundaryVertex, eIdx, -1);
+	if (cIndex < 0) {
+		return false;
+	}
+	instance = boundaryVertex;
+	slot = getState(boundaryVertex, values[boundaryVertex]).GetConnectionIndex(cIndex);
+	return true;
+}

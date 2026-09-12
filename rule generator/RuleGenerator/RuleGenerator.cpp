@@ -13,7 +13,6 @@
 #include "../../cpp_version/graph_grammar.h"
 #include "../../cpp_version/grammar_rules/production_rule.h"
 
-#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -28,209 +27,6 @@ void writeStringToFile(const string& filename, const string& content) {
 		throw runtime_error("cannot write " + filename);
 	}
 	file << content;
-}
-
-struct BoundaryIdLayout {
-	// Boundary IDs in grouping-key order. If pairedStubs is true, consecutive
-	// IDs are the two stubs of one split.
-	vector<string> ids;
-	bool pairedStubs = false;
-};
-
-int otherVertex(const TemplateEdge& edge, int vertex) {
-	return edge.start == vertex ? edge.end : edge.start;
-}
-
-// The two boundary stubs attached to a spliced vertex by ordinary (non-spliced)
-// connections. Those stubs are the two ends of the split.
-vector<string> hostStubIds(const TemplateGraph& graph, int vertex) {
-	vector<string> stubs;
-	for (int eIdx : graph.vertices[vertex].connections) {
-		if (eIdx < 0 || eIdx >= (int)graph.edges.size()) {
-			continue;
-		}
-		const TemplateEdge& edge = graph.edges[eIdx];
-		if (edge.spliced) {
-			continue;
-		}
-		int other = otherVertex(edge, vertex);
-		if (other < 0 || other >= (int)graph.vertices.size()) {
-			continue;
-		}
-		const string& id = graph.vertices[other].boundaryId;
-		if (!id.empty()) {
-			stubs.push_back(id);
-		}
-	}
-	return stubs;
-}
-
-vector<string> boundaryIdsInVertexOrder(const TemplateGraph& graph) {
-	vector<string> ids;
-	for (const auto& vertex : graph.vertices) {
-		if (!vertex.boundaryId.empty()) {
-			ids.push_back(vertex.boundaryId);
-		}
-	}
-	return ids;
-}
-
-// Grouping key for a template set. For a spliced graph, list each split as a
-// pair of stub IDs so findBoundaryValues can sort start/end inside the pair.
-BoundaryIdLayout collectBoundaryIdLayout(const TemplateGraphSet& set) {
-	for (const auto& graph : set.graphs) {
-		BoundaryIdLayout layout;
-		for (int v = 0; v < (int)graph.vertices.size(); v++) {
-			if (!graph.vertices[v].spliced) {
-				continue;
-			}
-			vector<string> stubs = hostStubIds(graph, v);
-			if (stubs.size() != 2) {
-				continue;
-			}
-			layout.ids.push_back(stubs[0]);
-			layout.ids.push_back(stubs[1]);
-			layout.pairedStubs = true;
-		}
-		if (layout.pairedStubs) {
-			return layout;
-		}
-	}
-
-	BoundaryIdLayout layout;
-	if (!set.graphs.empty()) {
-		layout.ids = boundaryIdsInVertexOrder(set.graphs[0]);
-	}
-	return layout;
-}
-
-void sortPairedBoundaryValues(vector<int>& values) {
-	for (size_t i = 0; i + 1 < values.size(); i += 2) {
-		if (values[i] > values[i + 1]) {
-			swap(values[i], values[i + 1]);
-		}
-	}
-}
-
-vector<vector<int>> findBoundaryValues(
-	const TemplateMatcher& matcher,
-	const BoundaryIdLayout& layout
-) {
-	int n = (int)layout.ids.size();
-	vector<int> vertexIndices;
-	vertexIndices.reserve(n);
-	for (const string& boundaryId : layout.ids) {
-		int vertexIndex = -1;
-		for (int v = 0; v < (int)matcher.templateGraph.vertices.size(); v++) {
-			if (matcher.templateGraph.vertices[v].boundaryId == boundaryId) {
-				vertexIndex = v;
-				break;
-			}
-		}
-		vertexIndices.push_back(vertexIndex);
-	}
-
-	vector<vector<int>> allBoundaryValues;
-	for (const auto& vertexValues : matcher.vertexValues) {
-		vector<int> boundaryValues;
-		boundaryValues.reserve(n);
-		for (int vertexIndex : vertexIndices) {
-			boundaryValues.push_back(vertexValues[vertexIndex]);
-		}
-		if (layout.pairedStubs) {
-			sortPairedBoundaryValues(boundaryValues);
-		}
-		allBoundaryValues.push_back(boundaryValues);
-	}
-	return allBoundaryValues;
-}
-
-void printBoundaryValues(const vector<vector<int>>& boundaryValues) {
-	for (size_t m = 0; m < boundaryValues.size(); m++) {
-		cout << "      boundary " << m << ": [";
-		for (size_t b = 0; b < boundaryValues[m].size(); b++) {
-			if (b > 0) {
-				cout << ", ";
-			}
-			cout << boundaryValues[m][b];
-		}
-		cout << "]\n";
-	}
-}
-
-// Group graph values by their boundary values.
-vector<GraphGroup> groupGraphs(
-	// boundary values per graph per graph state per boundary ID.
-	const vector<vector<vector<int>>>& boundaryValues
-) {
-	vector<GraphGroup> groups;
-	int numGraphs = (int)boundaryValues.size();
-	for (int g = 0; g < numGraphs; g++) {
-		for (int m = 0; m < (int)boundaryValues[g].size(); m++) {
-			const vector<int>& values = boundaryValues[g][m];
-			int groupIndex = -1;
-			// Search for a group with the same boundary values.
-			for (int j = 0; j < (int)groups.size(); j++) {
-				if (groups[j].boundaryValues == values) {
-					groupIndex = j;
-					break;
-				}
-			}
-			// If no such group exists, create it.
-			if (groupIndex == -1) {
-				GraphGroup group;
-				group.boundaryValues = values;
-				group.graphIndices.assign(numGraphs, {});
-				groupIndex = (int)groups.size();
-				groups.push_back(std::move(group));
-			}
-			// Add the index to the group.
-			groups[groupIndex].graphIndices[g].push_back(m);
-		}
-	}
-	return groups;
-}
-
-// Every grammar rule must have a left graph and a right graph.
-// Filter out any groups that do not have graphs for multiple graph templates.
-vector<GraphGroup> filterEmptyGraphGroups(vector<GraphGroup> groups) {
-	groups.erase(
-		remove_if(groups.begin(), groups.end(), [](const GraphGroup& group) {
-			int templatesWithMatches = 0;
-			for (const vector<int>& graphIndices : group.graphIndices) {
-				if (!graphIndices.empty()) {
-					templatesWithMatches++;
-				}
-			}
-			return templatesWithMatches < 2;
-		}),
-		groups.end()
-	);
-	return groups;
-}
-
-void printGraphGroups(const vector<GraphGroup>& groups) {
-	for (size_t k = 0; k < groups.size(); k++) {
-		const auto& group = groups[k];
-		cout << "      values [";
-		for (size_t b = 0; b < group.boundaryValues.size(); b++) {
-			if (b > 0) {
-				cout << ", ";
-			}
-			cout << group.boundaryValues[b];
-		}
-		cout << "]\n";
-		for (size_t g = 0; g < group.graphIndices.size(); g++) {
-			cout << "        graph " << g << " matches [";
-			for (size_t m = 0; m < group.graphIndices[g].size(); m++) {
-				if (m > 0) {
-					cout << ", ";
-				}
-				cout << group.graphIndices[g][m];
-			}
-			cout << "]\n";
-		}
-	}
 }
 
 int GenerateRules(
@@ -282,29 +78,21 @@ int GenerateRules(
 		for (size_t i = 0; i < templateGraphSets.size(); i++) {
 			cout << "  [" << i << "] \"" << templateGraphSets[i].comment << "\"  ";
 			int numGraphs = (int)templateGraphSets[i].graphs.size();
-			vector<TemplateMatcher> matchers;
 			if (numGraphs <= 1) {
 				cout << "skipped (two or more graphs required)\n";
 				continue;
 			}
+			vector<TemplateMatcher> matchers;
 			for (int j = 0; j < numGraphs; j++) {
-				const auto& templateGraph = templateGraphSets[i].graphs[j];
-				matchers.push_back(TemplateMatcher(templateGraph, primitives->vertexTypes, eTypes));
+				matchers.push_back(TemplateMatcher(
+					templateGraphSets[i].graphs[j],
+					primitives->vertexTypes,
+					eTypes
+				));
+				matchers.back().match();
+				totalMatches += matchers.back().vertexValues.size();
 			}
-			vector<vector<vector<int>>> allBoundaryValues;
-			BoundaryIdLayout boundaryIds = collectBoundaryIdLayout(templateGraphSets[i]);
-			for (int j = 0; j < numGraphs; j++) {
-				matchers[j].match();
-				totalMatches += matchers[j].vertexValues.size();
-				auto boundaryValues = findBoundaryValues(matchers[j], boundaryIds);
-				allBoundaryValues.push_back(boundaryValues);
-				cout << "    graph " << j << " allBoundaryValues:\n";
-				printBoundaryValues(boundaryValues);
-			}
-			auto graphGroups = filterEmptyGraphGroups(groupGraphs(allBoundaryValues));
-			RuleExporter::exportGroups(grammar, graphGroups, matchers, primitiveGraphs);
-			cout << "    boundary values groups across graphs:\n";
-			printGraphGroups(graphGroups);
+			RuleExporter::exportRules(grammar, matchers, primitiveGraphs);
 		}
 		cout << "  total     : " << totalMatches << " match(es) across "
 			 << templateGraphSets.size() << " entries" << endl;
