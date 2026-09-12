@@ -88,6 +88,43 @@ void printKeys(const vector<BoundaryKey>& keys) {
 	cout << "\n";
 }
 
+bool keysMatchShifted(
+	const vector<BoundaryKey>& leftKeys,
+	const vector<BoundaryKey>& rightKeys,
+	int start
+) {
+	const int n = (int)leftKeys.size();
+	for (int i = 0; i < n; i++) {
+		if (!(leftKeys[i] == rightKeys[(i + start) % n])) {
+			return false;
+		}
+	}
+	return true;
+}
+
+int findBoundaryShift(
+	const vector<BoundaryKey>& leftKeys,
+	const vector<BoundaryKey>& rightKeys
+) {
+	const int n = (int)leftKeys.size();
+	for (int start = 0; start < n; start++) {
+		if (keysMatchShifted(leftKeys, rightKeys, start)) {
+			return start;
+		}
+	}
+	return -1;
+}
+
+vector<GraphVertex*> rotatedOrder(const vector<GraphVertex*>& order, int start) {
+	const int n = (int)order.size();
+	vector<GraphVertex*> rotated;
+	rotated.reserve(n);
+	for (int i = 0; i < n; i++) {
+		rotated.push_back(order[(i + start) % n]);
+	}
+	return rotated;
+}
+
 }
 
 bool equalBoundaries(Graph* left, Graph* right) {
@@ -107,18 +144,22 @@ bool equalBoundaries(Graph* left, Graph* right) {
 	auto rightKeys = boundaryKeys(rightOrder);
 	cout << "left keys: ";	printKeys(leftKeys);
 	cout << "right keys: ";	printKeys(rightKeys);
-	for (int start = 0; start < n; start++) {
-		// Check if all the keys match when shifted by start.
-		bool match = true;
-		for (int i = 0; i < n; i++) {
-			if (!(leftKeys[i] == rightKeys[(i + start) % n])) {
-				match = false;
-				break;
-			}
-		}
-		if (match) {
-			return true;
-		}
+	return findBoundaryShift(leftKeys, rightKeys) >= 0;
+}
+
+void alignBoundaries(Graph* left, Graph* right) {
+	vector<GraphVertex*> leftOrder = walkOuterBoundary(left);
+	vector<GraphVertex*> rightOrder = walkOuterBoundary(right);
+	if (leftOrder.size() != rightOrder.size() || leftOrder.empty()) {
+		return;
 	}
-	return false;
+
+	const int start = findBoundaryShift(boundaryKeys(leftOrder), boundaryKeys(rightOrder));
+	if (start < 0) {
+		return;
+	}
+
+	left->setBVertices(leftOrder);
+	right->setBVertices(rotatedOrder(rightOrder, start));
+	cout << "    aligned boundary vertices with shift " << start << "\n";
 }

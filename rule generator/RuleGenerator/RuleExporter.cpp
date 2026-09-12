@@ -19,11 +19,6 @@
 
 using namespace std;
 
-struct PrimitiveGraphs {
-	vector<unique_ptr<Graph>> vertexGraphs;
-	vector<unique_ptr<Graph>> edgeGraphs;
-};
-
 struct GlueTrack {
 	vector<int> aDest;
 	vector<int> bDest;
@@ -766,6 +761,9 @@ void exportRule(
 		} else if (rightEmpty) {
 			maybeAddBFace(rightGraph, leftGraph, grammar->isGrounded());
 		}
+		alignBoundaries(leftGraph, rightGraph);
+		updateBoundaryHalfEdges(leftGraph);
+		updateBoundaryHalfEdges(rightGraph);
 		// Empty graphs go first (starter / ground).
 		// Spliced graphs go first: start graphs are matched, end graphs are
 		// instantiated with splices removed.
@@ -800,9 +798,8 @@ void RuleExporter::exportGroups(
 	GraphGrammar& grammar,
 	const vector<GraphGroup>& groups,
 	const vector<TemplateMatcher>& matchers,
-	Primitives* primitives
+	const PrimitiveGraphs& primitiveGraphs
 ) {
-	auto primitiveGraphs = createPrimitiveGraphs(primitives);
 	for (const auto& group : groups) {
 		const int numGraphs = (int)group.graphIndices.size();
 		vector<vector<unique_ptr<Graph>>> graphs(numGraphs);
