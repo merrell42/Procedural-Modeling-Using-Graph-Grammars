@@ -45,10 +45,6 @@ public:
     static VertexType* import(const Json& json, Primitives* shape);
     static VertexType* binaryDeserialize(std::istream& in, Primitives* shape);
     Json exportJson(const Primitives* shape) const;
-    // Spliced types are stored with three half-edges but exported with only
-    // the two unspliced ones. Maps an in-memory slot to the exported index
-    // (the splice arm becomes 2).
-    int exportedConnectionIndex(int typeSlot) const;
 
     const vector<HalfEdgeType>& getHalfEdgeTypes() const;
     void setHalfEdgeTypes(vector<HalfEdgeType> halfEdgeTypes);

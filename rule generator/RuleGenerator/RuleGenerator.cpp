@@ -31,53 +31,75 @@ void writeStringToFile(const string& filename, const string& content) {
 }
 
 struct BoundaryIdLayout {
+	// Boundary IDs in grouping-key order. If pairedStubs is true, consecutive
+	// IDs are the two stubs of one split.
 	vector<string> ids;
 	bool pairedStubs = false;
 };
 
-// Two host stubs of one spliced vertex are one pair. Listing start then end
-// vs end then start of a split must not produce two grouping keys.
+int otherVertex(const TemplateEdge& edge, int vertex) {
+	return edge.start == vertex ? edge.end : edge.start;
+}
+
+// The two boundary stubs attached to a spliced vertex by ordinary (non-spliced)
+// connections. Those stubs are the two ends of the split.
+vector<string> hostStubIds(const TemplateGraph& graph, int vertex) {
+	vector<string> stubs;
+	for (int eIdx : graph.vertices[vertex].connections) {
+		if (eIdx < 0 || eIdx >= (int)graph.edges.size()) {
+			continue;
+		}
+		const TemplateEdge& edge = graph.edges[eIdx];
+		if (edge.spliced) {
+			continue;
+		}
+		int other = otherVertex(edge, vertex);
+		if (other < 0 || other >= (int)graph.vertices.size()) {
+			continue;
+		}
+		const string& id = graph.vertices[other].boundaryId;
+		if (!id.empty()) {
+			stubs.push_back(id);
+		}
+	}
+	return stubs;
+}
+
+vector<string> boundaryIdsInVertexOrder(const TemplateGraph& graph) {
+	vector<string> ids;
+	for (const auto& vertex : graph.vertices) {
+		if (!vertex.boundaryId.empty()) {
+			ids.push_back(vertex.boundaryId);
+		}
+	}
+	return ids;
+}
+
+// Grouping key for a template set. For a spliced graph, list each split as a
+// pair of stub IDs so findBoundaryValues can sort start/end inside the pair.
 BoundaryIdLayout collectBoundaryIdLayout(const TemplateGraphSet& set) {
-	BoundaryIdLayout layout;
 	for (const auto& graph : set.graphs) {
+		BoundaryIdLayout layout;
 		for (int v = 0; v < (int)graph.vertices.size(); v++) {
 			if (!graph.vertices[v].spliced) {
 				continue;
 			}
-			vector<string> stubs;
-			for (int eIdx : graph.vertices[v].connections) {
-				if (eIdx < 0 || eIdx >= (int)graph.edges.size()) {
-					continue;
-				}
-				if (graph.edges[eIdx].spliced) {
-					continue;
-				}
-				const TemplateEdge& edge = graph.edges[eIdx];
-				int other = edge.start == v ? edge.end : edge.start;
-				if (other < 0 || other >= (int)graph.vertices.size()) {
-					continue;
-				}
-				const string& id = graph.vertices[other].boundaryId;
-				if (!id.empty()) {
-					stubs.push_back(id);
-				}
+			vector<string> stubs = hostStubIds(graph, v);
+			if (stubs.size() != 2) {
+				continue;
 			}
-			if (stubs.size() == 2) {
-				layout.ids.push_back(stubs[0]);
-				layout.ids.push_back(stubs[1]);
-				layout.pairedStubs = true;
-			}
+			layout.ids.push_back(stubs[0]);
+			layout.ids.push_back(stubs[1]);
+			layout.pairedStubs = true;
 		}
 		if (layout.pairedStubs) {
 			return layout;
 		}
 	}
+
+	BoundaryIdLayout layout;
 	if (!set.graphs.empty()) {
-		for (const auto& vertex : set.graphs[0].vertices) {
-			if (!vertex.boundaryId.empty()) {
-				layout.ids.push_back(vertex.boundaryId);
-			}
-		}
+		layout.ids = boundaryIdsInVertexOrder(set.graphs[0]);
 	}
 	return layout;
 }

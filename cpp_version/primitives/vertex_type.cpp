@@ -94,32 +94,6 @@ VertexType* VertexType::binaryDeserialize(std::istream& in, Primitives* shape) {
     return result;
 }
 
-int VertexType::exportedConnectionIndex(int typeSlot) const {
-    if (!spliced) {
-        return typeSlot;
-    }
-    const int n = (int)halfEdgeTypes.size();
-    if (typeSlot < 0 || typeSlot >= n) {
-        return typeSlot;
-    }
-    int unsplicedCount = 0;
-    for (const auto& het : halfEdgeTypes) {
-        if (!het.edge || !het.edge->getSpliced()) {
-            unsplicedCount++;
-        }
-    }
-    if (halfEdgeTypes[typeSlot].edge && halfEdgeTypes[typeSlot].edge->getSpliced()) {
-        return unsplicedCount;
-    }
-    int index = 0;
-    for (int i = 0; i < typeSlot; i++) {
-        if (!halfEdgeTypes[i].edge || !halfEdgeTypes[i].edge->getSpliced()) {
-            index++;
-        }
-    }
-    return index;
-}
-
 Json VertexType::exportJson(const Primitives* shape) const {
     Json json;
     json["spliced"] = spliced;
