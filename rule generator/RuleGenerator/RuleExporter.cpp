@@ -74,19 +74,24 @@ static void orderSameAnglePairs(vector<HalfEdgeFaceSlot>& slots) {
 	}
 }
 
-// Decide which direction to use based on the first inward slot.
-// If the next slot has the same angle, use the previous slot.
-// Otherwise use the next slot.
+// Find the first pair of slots with the same angle, then pick the direction
+// that does not make them partners.
 static PartnerDirection partnerDirection(const vector<HalfEdgeFaceSlot>& halfEdgeSlots) {
 	const size_t n = halfEdgeSlots.size();
+	if (n < 2) {
+		return NEXT;
+	}
 	for (size_t i = 0; i < n; i++) {
-		if (halfEdgeSlots[i].intoVertex) {		
-			const size_t nextIndex = (i + 1) % n;
-			if (halfEdgeSlots[nextIndex].angle == halfEdgeSlots[i].angle) {
-				return PREV;
-			}
-			return NEXT;
+		const size_t nextIndex = (i + 1) % n;
+		if (halfEdgeSlots[i].angle != halfEdgeSlots[nextIndex].angle) {
+			continue;
 		}
+		// NEXT pairs i with nextIndex when i is inward.
+		// PREV pairs nextIndex with i when nextIndex is inward.
+		if (halfEdgeSlots[i].intoVertex) {
+			return PREV;
+		}
+		return NEXT;
 	}
 	return NEXT;
 }
@@ -363,7 +368,24 @@ pair<unique_ptr<Graph>, GlueTrack> copyAndGlue(
 	return { std::move(copyA), track };
 }
 
+static void printFaceHalfEdgeDirections(Graph* graph, VertexType* vType) {
+	cout << "createVertexGraph v" << vType->getRuleGeneratorId()
+		<< (vType->getSpliced() ? " spliced" : " not spliced") << "\n";
+	for (auto* face : graph->getFaces()) {
+		cout << "  face:\n";
+		GraphHalfEdge* half = face->getOuterComponent();
+		while (half) {
+			const Vec3 dir = half->getDir();
+			cout << "    " << dir.getX() << " " << dir.getY() << " " << dir.getZ() << "\n";
+			half = half->getNext();
+		}
+	}
+}
+
 Graph* createVertexGraph(VertexType* vType) {
+	if (vType->getRuleGeneratorId() == 33) {
+		cout << "create 33" << endl;
+	}
 	auto* graph = new Graph();
 	const auto& halfEdgeTypes = vType->getHalfEdgeTypes();
 	unordered_map<FaceType*, vector<HalfEdgeFaceSlot>> halfEdgesByFaceType;
@@ -444,6 +466,7 @@ Graph* createVertexGraph(VertexType* vType) {
 	}
 
 	graph->setBVertices(bVertices);
+	printFaceHalfEdgeDirections(graph, vType);
 	return graph;
 }
 
