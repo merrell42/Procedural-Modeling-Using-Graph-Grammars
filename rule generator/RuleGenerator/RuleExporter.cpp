@@ -1,12 +1,10 @@
 #include "pch.h"
 #include "RuleExporter.h"
 #include "isIsomorphic.h"
+#include "graphBoundary.h"
 
 #include "../../cpp_version/graph/graph.h"
-#include "../../cpp_version/graph/graph_edge.h"
 #include "../../cpp_version/graph/graph_face.h"
-#include "../../cpp_version/graph/graph_half_edge.h"
-#include "../../cpp_version/graph/graph_vertex.h"
 #include "../../cpp_version/primitives/edge_type.h"
 #include "../../cpp_version/util/util.h"
 #include "../../cpp_version/graph_grammar.h"
@@ -784,8 +782,6 @@ void maybeAddBFace(Graph*& graph, Graph* filledGraph, bool addBFaces) {
 	}
 }
 
-void alignBoundaryCycle(Graph* left, Graph* right);
-
 void exportRule(
 	GraphGrammar* grammar,
 	Graph* leftGraph,
@@ -808,7 +804,7 @@ void exportRule(
 			maybeAddBFace(rightGraph, leftGraph, grammar->isGrounded());
 		}
 		if (!leftEmpty && !rightEmpty) {
-			alignBoundaryCycle(leftGraph, rightGraph);
+			alignBoundaries(leftGraph, rightGraph);
 		}
 		updateBoundaryHalfEdges(leftGraph);
 		updateBoundaryHalfEdges(rightGraph);
@@ -835,110 +831,6 @@ void exportRule(
 	}
 }
 
-struct BoundaryKey {
-	int edgeTypeId = -1;
-	bool forward = false;
-
-	bool operator==(const BoundaryKey& other) const {
-		return edgeTypeId == other.edgeTypeId && forward == other.forward;
-	}
-
-	bool operator<(const BoundaryKey& other) const {
-		if (edgeTypeId != other.edgeTypeId) {
-			return edgeTypeId < other.edgeTypeId;
-		}
-		return forward < other.forward;
-	}
-};
-
-BoundaryKey stubKey(GraphVertex* vertex) {
-	GraphHalfEdge* half = vertex ? vertex->interiorHalfEdge() : nullptr;
-	GraphEdge* edge = vertex ? vertex->interiorEdge() : nullptr;
-	if (!half || !edge || !edge->getType()) {
-		return {};
-	}
-	return { edge->getType()->getId(), half->getForward() };
-}
-
-GraphHalfEdge* walkOneFace(GraphHalfEdge* half) {
-	while (half->getNext()) {
-		half = half->getNext();
-	}
-	return half->getPrev()->getTwin();
-}
-
-// Cycle order of the stubs GlueTrack already put in bVertices.
-vector<GraphVertex*> boundaryCycle(Graph* graph) {
-	const auto& bVertices = graph->getBVertices();
-	if (bVertices.empty()) {
-		return {};
-	}
-	GraphHalfEdge* start = bVertices[0]->interiorHalfEdge();
-	if (!start) {
-		return {};
-	}
-	vector<GraphVertex*> order;
-	GraphHalfEdge* current = walkOneFace(start);
-	order.push_back(current->getVertex());
-	while (current != start) {
-		current = walkOneFace(current);
-		order.push_back(current->getVertex());
-	}
-	return order;
-}
-
-bool keysMatchShifted(
-	const vector<BoundaryKey>& leftKeys,
-	const vector<BoundaryKey>& rightKeys,
-	int start
-) {
-	const int n = (int)leftKeys.size();
-	for (int i = 0; i < n; i++) {
-		if (!(leftKeys[i] == rightKeys[(i + start) % n])) {
-			return false;
-		}
-	}
-	return true;
-}
-
-int findCycleShift(const vector<BoundaryKey>& leftKeys, const vector<BoundaryKey>& rightKeys) {
-	const int n = (int)leftKeys.size();
-	for (int start = 0; start < n; start++) {
-		if (keysMatchShifted(leftKeys, rightKeys, start)) {
-			return start;
-		}
-	}
-	return -1;
-}
-
-vector<BoundaryKey> cycleKeys(const vector<GraphVertex*>& order) {
-	vector<BoundaryKey> keys;
-	keys.reserve(order.size());
-	for (auto* vertex : order) {
-		keys.push_back(stubKey(vertex));
-	}
-	return keys;
-}
-
-void alignBoundaryCycle(Graph* left, Graph* right) {
-	auto leftOrder = boundaryCycle(left);
-	auto rightOrder = boundaryCycle(right);
-	if (leftOrder.size() != rightOrder.size() || leftOrder.empty()) {
-		return;
-	}
-	const int start = findCycleShift(cycleKeys(leftOrder), cycleKeys(rightOrder));
-	if (start < 0) {
-		return;
-	}
-	left->setBVertices(leftOrder);
-	vector<GraphVertex*> rotated;
-	rotated.reserve(rightOrder.size());
-	for (size_t i = 0; i < rightOrder.size(); i++) {
-		rotated.push_back(rightOrder[(i + start) % rightOrder.size()]);
-	}
-	right->setBVertices(rotated);
-}
-
 vector<string> collectBoundaryIds(const vector<TemplateMatcher>& matchers) {
 	for (const auto& matcher : matchers) {
 		vector<string> ids;
@@ -952,38 +844,6 @@ vector<string> collectBoundaryIds(const vector<TemplateMatcher>& matchers) {
 		}
 	}
 	return {};
-}
-
-string boundaryTypeKey(Graph* graph) {
-	auto keys = cycleKeys(boundaryCycle(graph));
-	const int n = (int)keys.size();
-	if (n == 0) {
-		return {};
-	}
-	int best = 0;
-	for (int start = 1; start < n; start++) {
-		for (int i = 0; i < n; i++) {
-			const auto& a = keys[(best + i) % n];
-			const auto& b = keys[(start + i) % n];
-			if (b < a) {
-				best = start;
-				break;
-			}
-			if (a < b) {
-				break;
-			}
-		}
-	}
-	string key;
-	for (int i = 0; i < n; i++) {
-		if (i > 0) {
-			key += ",";
-		}
-		const auto& k = keys[(best + i) % n];
-		key += to_string(k.edgeTypeId);
-		key += k.forward ? "F" : "B";
-	}
-	return key;
 }
 
 bool graphIsEmpty(Graph* graph) {

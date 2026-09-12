@@ -21,6 +21,9 @@
     <ClInclude Include="isIsomorphic.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="graphBoundary.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -81,6 +84,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="isIsomorphic.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="graphBoundary.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RuleExporter.cpp">
