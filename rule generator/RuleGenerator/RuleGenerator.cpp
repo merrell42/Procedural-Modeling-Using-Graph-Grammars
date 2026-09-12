@@ -274,69 +274,8 @@ int GenerateRules(
 			for (int j = 0; j < numGraphs; j++) {
 				matchers[j].match();
 				totalMatches += matchers[j].vertexValues.size();
-				for (int m = 0; m < (int)matchers[j].vertexValues.size(); m++) {
-					auto graphValues = matchers[j].getGraphValues(m);
-					for (size_t v = 0; v < graphValues.vertices.size(); v++) {
-						if (!graphValues.vertexOnBoundary[v] && graphValues.vertices[v] == 15) {
-							cout << "    v15 match: graph " << j << " match " << m
-								<< " vertex " << v << "\n";
-						}
-					}
-				}
 				auto boundaryValues = findBoundaryValues(matchers[j], boundaryIds);
 				allBoundaryValues.push_back(boundaryValues);
-				if (j == 0) {
-					const vector<int> targetBoundary = {0, 1, 26, 27};
-					for (int m = 0; m < (int)boundaryValues.size(); m++) {
-						auto graphValues = matchers[j].getGraphValues(m);
-						bool hasV0 = false;
-						bool hasV1 = false;
-						bool hasV11 = false;
-						bool hasV13 = false;
-						int interiorCount = 0;
-						for (size_t v = 0; v < graphValues.vertices.size(); v++) {
-							if (graphValues.vertexOnBoundary[v]) {
-								continue;
-							}
-							interiorCount++;
-							const int t = graphValues.vertices[v];
-							if (t == 0) {
-								hasV0 = true;
-							} else if (t == 1) {
-								hasV1 = true;
-							} else if (t == 11) {
-								hasV11 = true;
-							} else if (t == 13) {
-								hasV13 = true;
-							}
-						}
-						auto printVertices = [&]() {
-							for (size_t v = 0; v < graphValues.vertices.size(); v++) {
-								cout << " v" << v << "="
-									<< (graphValues.vertexOnBoundary[v] ? "e" : "v")
-									<< graphValues.vertices[v];
-							}
-							cout << " boundary [";
-							for (size_t b = 0; b < boundaryValues[m].size(); b++) {
-								if (b > 0) {
-									cout << ", ";
-								}
-								cout << boundaryValues[m][b];
-							}
-							cout << "]\n";
-						};
-						if (boundaryValues[m] == targetBoundary) {
-							cout << "    graph 0 match " << m
-								<< " boundary [0, 1, 26, 27] vertices:";
-							printVertices();
-						}
-						if (interiorCount == 4 && hasV0 && hasV1 && hasV11 && hasV13) {
-							cout << "    graph 0 match " << m
-								<< " uses v0,v1,v11,v13 vertices:";
-							printVertices();
-						}
-					}
-				}
 				cout << "    graph " << j << " allBoundaryValues:\n";
 				printBoundaryValues(boundaryValues);
 			}

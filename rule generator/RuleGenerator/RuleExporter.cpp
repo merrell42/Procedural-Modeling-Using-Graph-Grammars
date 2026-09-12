@@ -363,24 +363,7 @@ pair<unique_ptr<Graph>, GlueTrack> copyAndGlue(
 	return { std::move(copyA), track };
 }
 
-static void printFaceHalfEdgeDirections(Graph* graph, VertexType* vType) {
-	cout << "createVertexGraph v" << vType->getRuleGeneratorId()
-		<< (vType->getSpliced() ? " spliced" : " not spliced") << "\n";
-	for (auto* face : graph->getFaces()) {
-		cout << "  face:\n";
-		GraphHalfEdge* half = face->getOuterComponent();
-		while (half) {
-			const Vec3 dir = half->getDir();
-			cout << "    " << dir.getX() << " " << dir.getY() << " " << dir.getZ() << "\n";
-			half = half->getNext();
-		}
-	}
-}
-
 Graph* createVertexGraph(VertexType* vType) {
-	if (vType->getRuleGeneratorId() == 33) {
-		cout << "create 33" << endl;
-	}
 	auto* graph = new Graph();
 	const auto& halfEdgeTypes = vType->getHalfEdgeTypes();
 	unordered_map<FaceType*, vector<HalfEdgeFaceSlot>> halfEdgesByFaceType;
@@ -461,7 +444,6 @@ Graph* createVertexGraph(VertexType* vType) {
 	}
 
 	graph->setBVertices(bVertices);
-	printFaceHalfEdgeDirections(graph, vType);
 	return graph;
 }
 
