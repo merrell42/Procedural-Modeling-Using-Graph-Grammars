@@ -2,6 +2,6 @@
 
 class Graph;
 
-// Walk both outer boundaries. True if the boundaries have the same vertices in the same order.
-// This assumes the boundaries are simple cycles, not a more complex graphs.
+// True if corresponding bVertices (same index on left and right) have the same
+// interior edge type and direction.
 bool equalBoundaries(Graph* left, Graph* right);

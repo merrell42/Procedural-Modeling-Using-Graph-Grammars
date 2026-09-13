@@ -263,6 +263,50 @@ GraphHalfEdge* glueHalfEdges(GraphHalfEdge* half0, GraphHalfEdge* half1, Graph* 
 	return replacement;
 }
 
+bool parseIndexPair(const string& key, int& a, int& b) {
+	auto comma = key.find(',');
+	if (comma == string::npos) {
+		return false;
+	}
+	a = stoi(key.substr(0, comma));
+	b = stoi(key.substr(comma + 1));
+	return true;
+}
+
+void setBVerticesFromStubs(
+	Graph* result,
+	const GraphValues& graphValues,
+	const unordered_map<string, string>& matchToGraph
+) {
+	if (graphValues.boundaryStubs.empty()) {
+		return;
+	}
+	const int resultId = result->getId();
+	const auto& bVertices = result->getBVertices();
+	vector<GraphVertex*> ordered;
+	ordered.reserve(graphValues.boundaryStubs.size());
+	for (const auto& stub : graphValues.boundaryStubs) {
+		const string matchKey = to_string(stub.instance) + "," + to_string(stub.slot);
+		auto it = matchToGraph.find(matchKey);
+		if (it == matchToGraph.end()) {
+			throw runtime_error("setBVerticesFromStubs: no entry for stub " + matchKey);
+		}
+		int graphId = 0;
+		int bIndex = 0;
+		if (!parseIndexPair(it->second, graphId, bIndex)) {
+			throw runtime_error("setBVerticesFromStubs: bad graph key " + it->second);
+		}
+		if (graphId != resultId || bIndex < 0 || bIndex >= (int)bVertices.size()) {
+			throw runtime_error("setBVerticesFromStubs: stub no longer on result graph");
+		}
+		ordered.push_back(bVertices[bIndex]);
+	}
+	if (ordered.size() != bVertices.size()) {
+		throw runtime_error("setBVerticesFromStubs: stub count mismatch");
+	}
+	result->setBVertices(ordered);
+}
+
 GlueTrack glueVertices(
 	GraphVertex* vertexA,
 	GraphVertex* vertexB,
@@ -552,6 +596,7 @@ Graph* buildGraphFromValues(
 
 	if (edgeQueue.empty()) {
 		Graph* result = instances[0].release();
+		setBVerticesFromStubs(result, graphValues, matchToGraph);
 		updateBoundaryHalfEdges(result);
 		return result;
 	}
@@ -635,6 +680,7 @@ Graph* buildGraphFromValues(
 	if (!finalResult) {
 		throw runtime_error("buildGraphFromValues: no result");
 	}
+	setBVerticesFromStubs(finalResult, graphValues, matchToGraph);
 	updateBoundaryHalfEdges(finalResult);
 	return releaseInstance(instances, finalResult);
 }
@@ -782,7 +828,7 @@ void RuleExporter::exportGroups(
 		for (const auto& left : graphs[0]) {
 			for (const auto& right : graphs[1]) {
 				if (!equalBoundaries(left.get(), right.get())) {
-					cout << "    rejected: boundary vertex order does not match\n";
+					cout << "    rejected: boundary slots do not match\n";
 					continue;
 				}
 				exportRule(&grammar, left->copy(), right->copy());
