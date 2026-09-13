@@ -1,5 +1,6 @@
 #pragma once
 #include <array>
+#include <string>
 #include <vector>
 #include "TemplateGraph.h"
 #include "json.h"
@@ -10,11 +11,18 @@ using namespace std;
 using Json = nlohmann::json;
 
 // Mirrors json.matches[i] from ms.networkHierarchy.partialImport.
+struct BoundaryStub {
+	string boundaryId;
+	int instance = -1;
+	int slot = -1;
+};
+
 class GraphValues {
 public:
 	vector<int> vertices;
 	vector<bool> vertexOnBoundary;
 	vector<array<int, 4>> edges;
+	vector<BoundaryStub> boundaryStubs;
 };
 
 class Decision {

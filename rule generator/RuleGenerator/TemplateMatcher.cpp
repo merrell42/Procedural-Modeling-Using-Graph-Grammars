@@ -314,6 +314,15 @@ GraphValues TemplateMatcher::getGraphValues(int graphIndex) const {
 		bool onBoundary0 = !templateGraph.vertices[vIndices[0]].boundaryId.empty();
 		bool onBoundary1 = !templateGraph.vertices[vIndices[1]].boundaryId.empty();
 		if (onBoundary0 != onBoundary1) {
+			const int interior = onBoundary0 ? vIndices[1] : vIndices[0];
+			const int boundary = onBoundary0 ? vIndices[0] : vIndices[1];
+			const int cIndex = ConnectionIndex(interior, j, -1);
+			const int slot = getState(interior, vertexValue[interior]).GetConnectionIndex(cIndex);
+			graphValues.boundaryStubs.push_back({
+				templateGraph.vertices[boundary].boundaryId,
+				interior,
+				slot
+			});
 			continue;
 		}
 

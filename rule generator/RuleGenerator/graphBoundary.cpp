@@ -3,14 +3,12 @@
 
 #include "../../cpp_version/graph/graph.h"
 #include "../../cpp_version/graph/graph_edge.h"
-#include "../../cpp_version/graph/graph_face.h"
 #include "../../cpp_version/graph/graph_half_edge.h"
 #include "../../cpp_version/graph/graph_vertex.h"
-#include "../../cpp_version/primitives/edge_type.h"
+#include "../../cpp_version/primitives/vertex_type.h"
 
-#include <iostream>
-#include <stdexcept>
-#include <unordered_set>
+#include <memory>
+#include <unordered_map>
 #include <vector>
 
 using namespace std;
@@ -49,27 +47,19 @@ GraphHalfEdge* walkOneFace(GraphHalfEdge* half) {
 		half = half->getNext();
 	}
 	return half->getPrev()->getTwin();
-
 }
 
 vector<GraphVertex*> walkOuterBoundary(Graph* graph) {
 	const auto& bVertices = graph->getBVertices();
-	const int n = (int)bVertices.size();
-	if (n == 0) {
+	if (bVertices.empty()) {
 		return {};
 	}
-
-	GraphVertex* startVertex = bVertices[0];
-	vector<GraphVertex*> order = {};
-	GraphHalfEdge* start = startVertex->interiorHalfEdge();
+	GraphHalfEdge* start = bVertices[0]->interiorHalfEdge();
 	if (!start) {
-		cout << "no start half-edge\n";
 		return {};
 	}
-	GraphHalfEdge* current = start;
-
-	// Walk each face until we return to the start.
-	current = walkOneFace(current);
+	vector<GraphVertex*> order;
+	GraphHalfEdge* current = walkOneFace(start);
 	order.push_back(current->getVertex());
 	while (current != start) {
 		current = walkOneFace(current);
@@ -78,45 +68,181 @@ vector<GraphVertex*> walkOuterBoundary(Graph* graph) {
 	return order;
 }
 
-void printKeys(const vector<BoundaryKey>& keys) {
-	for (size_t i = 0; i < keys.size(); i++) {
-		if (i > 0) {
-			cout << ", ";
+bool keysMatchShifted(
+	const vector<BoundaryKey>& leftKeys,
+	const vector<BoundaryKey>& rightKeys,
+	int start
+) {
+	const int n = (int)leftKeys.size();
+	for (int i = 0; i < n; i++) {
+		if (!(leftKeys[i] == rightKeys[(i + start) % n])) {
+			return false;
 		}
-		cout << keys[i].edgeTypeId << (keys[i].forward ? "F" : "B");
 	}
-	cout << "\n";
+	return true;
+}
+
+int findBoundaryShift(const vector<BoundaryKey>& leftKeys, const vector<BoundaryKey>& rightKeys) {
+	const int n = (int)leftKeys.size();
+	for (int start = 0; start < n; start++) {
+		if (keysMatchShifted(leftKeys, rightKeys, start)) {
+			return start;
+		}
+	}
+	return -1;
+}
+
+vector<GraphVertex*> rotatedOrder(const vector<GraphVertex*>& order, int start) {
+	const int n = (int)order.size();
+	vector<GraphVertex*> rotated;
+	rotated.reserve(n);
+	for (int i = 0; i < n; i++) {
+		rotated.push_back(order[(i + start) % n]);
+	}
+	return rotated;
 }
 
 }
 
 bool equalBoundaries(Graph* left, Graph* right) {
-	vector<GraphVertex*> leftOrder = walkOuterBoundary(left);
-	vector<GraphVertex*> rightOrder = walkOuterBoundary(right);
-	if (leftOrder.size() != rightOrder.size()) {
+	const auto& leftBVertices = left->getBVertices();
+	const auto& rightBVertices = right->getBVertices();
+	if (leftBVertices.size() != rightBVertices.size()) {
 		return false;
 	}
-	const int n = (int)leftOrder.size();
-	if (n == 0) {
-		return true;
+	for (size_t i = 0; i < leftBVertices.size(); i++) {
+		if (!(boundaryKey(leftBVertices[i]) == boundaryKey(rightBVertices[i]))) {
+			return false;
+		}
 	}
+	return true;
+}
 
-	auto leftKeys = boundaryKeys(leftOrder);
-	auto rightKeys = boundaryKeys(rightOrder);
-	// cout << "left keys: ";	printKeys(leftKeys);
-	// cout << "right keys: ";	printKeys(rightKeys);
-	for (int start = 0; start < n; start++) {
-		// Check if all the keys match when shifted by start.
-		bool match = true;
-		for (int i = 0; i < n; i++) {
-			if (!(leftKeys[i] == rightKeys[(i + start) % n])) {
-				match = false;
+void alignBoundaries(Graph* left, Graph* right) {
+	auto leftOrder = walkOuterBoundary(left);
+	auto rightOrder = walkOuterBoundary(right);
+	if (leftOrder.size() != rightOrder.size() || leftOrder.empty()) {
+		return;
+	}
+	const int start = findBoundaryShift(boundaryKeys(leftOrder), boundaryKeys(rightOrder));
+	if (start < 0) {
+		return;
+	}
+	left->setBVertices(leftOrder);
+	right->setBVertices(rotatedOrder(rightOrder, start));
+}
+
+void matchBoundaryOrder(Graph* source, Graph* pattern) {
+	const auto& patternVertices = pattern->getBVertices();
+	const auto& sourceVertices = source->getBVertices();
+	if (patternVertices.size() != sourceVertices.size()) {
+		return;
+	}
+	vector<GraphVertex*> ordered;
+	vector<bool> used(sourceVertices.size(), false);
+	for (GraphVertex* patternVertex : patternVertices) {
+		const BoundaryKey patternKey = boundaryKey(patternVertex);
+		GraphVertex* match = nullptr;
+		for (size_t i = 0; i < sourceVertices.size(); i++) {
+			if (used[i]) {
+				continue;
+			}
+			if (boundaryKey(sourceVertices[i]) == patternKey) {
+				match = sourceVertices[i];
+				used[i] = true;
 				break;
 			}
 		}
-		if (match) {
+		if (!match) {
+			return;
+		}
+		ordered.push_back(match);
+	}
+	source->setBVertices(ordered);
+}
+
+bool hasBoundaryHalfEdge(GraphVertex* vertex) {
+	if (!vertex) {
+		return false;
+	}
+	for (auto* half : vertex->getHalfEdges()) {
+		if (half && !half->getEdge()) {
 			return true;
 		}
 	}
 	return false;
+}
+
+bool assignBoundaryVerticesFromPattern(Graph* source, Graph* pattern) {
+	const auto& patternVertices = pattern->getBVertices();
+	const auto& sourceVertices = source->getVertices();
+	if (patternVertices.empty()) {
+		return true;
+	}
+	vector<GraphVertex*> ordered;
+	vector<bool> used(sourceVertices.size(), false);
+	for (GraphVertex* patternVertex : patternVertices) {
+		const BoundaryKey patternKey = boundaryKey(patternVertex);
+		GraphVertex* match = nullptr;
+		for (size_t i = 0; i < sourceVertices.size(); i++) {
+			if (used[i]) {
+				continue;
+			}
+			GraphVertex* candidate = sourceVertices[i];
+			if (candidate->getType()->getSpliced()) {
+				continue;
+			}
+			if (!hasBoundaryHalfEdge(candidate)) {
+				continue;
+			}
+			if (boundaryKey(candidate) == patternKey) {
+				match = candidate;
+				used[i] = true;
+				break;
+			}
+		}
+		if (!match) {
+			return false;
+		}
+		ordered.push_back(match);
+	}
+	source->setBVertices(ordered);
+	return true;
+}
+
+bool assignBoundaryVerticesFromSurvivors(Graph* source, Graph* pattern) {
+	const auto& patternVertices = pattern->getBVertices();
+	if (patternVertices.empty()) {
+		return true;
+	}
+
+	auto despliced = unique_ptr<Graph>(source->copy());
+	const vector<GraphVertex*> vertsBeforeRemoval = despliced->getVertices();
+	despliced->removeSplices();
+	matchBoundaryOrder(despliced.get(), pattern);
+	if (!equalBoundaries(despliced.get(), pattern)) {
+		return false;
+	}
+
+	unordered_map<GraphVertex*, int> vertexToIndex;
+	for (int i = 0; i < (int)vertsBeforeRemoval.size(); i++) {
+		vertexToIndex[vertsBeforeRemoval[i]] = i;
+	}
+
+	const auto& sourceVertices = source->getVertices();
+	vector<GraphVertex*> ordered;
+	ordered.reserve(patternVertices.size());
+	for (GraphVertex* desplicedVertex : despliced->getBVertices()) {
+		auto it = vertexToIndex.find(desplicedVertex);
+		if (it == vertexToIndex.end()) {
+			return false;
+		}
+		const int index = it->second;
+		if (index < 0 || index >= (int)sourceVertices.size()) {
+			return false;
+		}
+		ordered.push_back(sourceVertices[index]);
+	}
+	source->setBVertices(ordered);
+	return true;
 }

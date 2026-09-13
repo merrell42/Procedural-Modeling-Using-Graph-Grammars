@@ -227,7 +227,7 @@ int GenerateRules(
 				printBoundaryValues(boundaryValues);
 			}
 			auto graphGroups = filterEmptyGraphGroups(groupGraphs(allBoundaryValues));
-			RuleExporter::exportGroups(grammar, graphGroups, matchers, primitiveGraphs);
+			RuleExporter::exportGroups(grammar, graphGroups, matchers, primitiveGraphs, boundaryIds);
 			cout << "    boundary values groups across graphs:\n";
 			printGraphGroups(graphGroups);
 		}

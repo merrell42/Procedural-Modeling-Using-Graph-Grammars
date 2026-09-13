@@ -263,6 +263,61 @@ GraphHalfEdge* glueHalfEdges(GraphHalfEdge* half0, GraphHalfEdge* half1, Graph* 
 	return replacement;
 }
 
+bool parseIndexPair(const string& key, int& a, int& b) {
+	auto comma = key.find(',');
+	if (comma == string::npos) {
+		return false;
+	}
+	a = stoi(key.substr(0, comma));
+	b = stoi(key.substr(comma + 1));
+	return true;
+}
+
+void setBVerticesFromStubs(
+	Graph* result,
+	const GraphValues& graphValues,
+	const unordered_map<string, string>& matchToGraph,
+	const vector<string>& boundaryIds
+) {
+	if (graphValues.boundaryStubs.empty()) {
+		return;
+	}
+	const int resultId = result->getId();
+	const auto& bVertices = result->getBVertices();
+	vector<GraphVertex*> ordered;
+	ordered.reserve(boundaryIds.size());
+	for (const string& boundaryId : boundaryIds) {
+		const BoundaryStub* stub = nullptr;
+		for (const auto& candidate : graphValues.boundaryStubs) {
+			if (candidate.boundaryId == boundaryId) {
+				stub = &candidate;
+				break;
+			}
+		}
+		if (!stub) {
+			throw runtime_error("setBVerticesFromStubs: no stub for boundaryId " + boundaryId);
+		}
+		const string matchKey = to_string(stub->instance) + "," + to_string(stub->slot);
+		auto it = matchToGraph.find(matchKey);
+		if (it == matchToGraph.end()) {
+			throw runtime_error("setBVerticesFromStubs: no entry for stub " + matchKey);
+		}
+		int graphId = 0;
+		int bIndex = 0;
+		if (!parseIndexPair(it->second, graphId, bIndex)) {
+			throw runtime_error("setBVerticesFromStubs: bad graph key " + it->second);
+		}
+		if (graphId != resultId || bIndex < 0 || bIndex >= (int)bVertices.size()) {
+			throw runtime_error("setBVerticesFromStubs: stub no longer on result graph");
+		}
+		ordered.push_back(bVertices[bIndex]);
+	}
+	if (ordered.size() != bVertices.size()) {
+		throw runtime_error("setBVerticesFromStubs: stub count mismatch");
+	}
+	result->setBVertices(ordered);
+}
+
 GlueTrack glueVertices(
 	GraphVertex* vertexA,
 	GraphVertex* vertexB,
@@ -471,10 +526,23 @@ Graph* createEdgeGraph(EdgeType* eType) {
 		hStart->connectVertex(start0 ? bVertex0 : bVertex1, -1);
 		hEnd->connectVertex(start0 ? bVertex1 : bVertex0, -1);
 
+		auto* bonus0 = (new GraphHalfEdge(false))->connectGraph(graph);
+		bonus0->connectVertex(start0 ? bVertex0 : bVertex1, -1);
+		auto* bonus1 = (new GraphHalfEdge(false))->connectGraph(graph);
+		bonus1->connectVertex(start0 ? bVertex1 : bVertex0, -1);
+
+		hStart->connectNext(hEnd);
+		hEnd->connectNext(bonus1);
+		bonus1->connectNext(bonus0);
+		bonus0->connectNext(hStart);
+
 		auto* face = (new GraphFace())->connectGraph(graph);
 		face->setType(faceDatum.type);
 		face->setOuterComponent(hStart);
-		hStart->connectNext(hEnd);
+		hStart->setFace(face);
+		hEnd->setFace(face);
+		bonus0->setFace(face);
+		bonus1->setFace(face);
 	}
 
 	vector<GraphVertex*> bVertices = { bVertex0, bVertex1 };
@@ -517,7 +585,8 @@ Graph* releaseInstance(vector<unique_ptr<Graph>>& instances, Graph* graph) {
 
 Graph* buildGraphFromValues(
 	const GraphValues& graphValues,
-	const PrimitiveGraphs& graphs
+	const PrimitiveGraphs& graphs,
+	const vector<string>& boundaryIds
 ) {
 	if (graphValues.edges.empty() && graphValues.vertices.size() == 0) {
 		// return Graph::createEmpty(primitives);
@@ -552,6 +621,7 @@ Graph* buildGraphFromValues(
 
 	if (edgeQueue.empty()) {
 		Graph* result = instances[0].release();
+		setBVerticesFromStubs(result, graphValues, matchToGraph, boundaryIds);
 		updateBoundaryHalfEdges(result);
 		return result;
 	}
@@ -635,6 +705,7 @@ Graph* buildGraphFromValues(
 	if (!finalResult) {
 		throw runtime_error("buildGraphFromValues: no result");
 	}
+	setBVerticesFromStubs(finalResult, graphValues, matchToGraph, boundaryIds);
 	updateBoundaryHalfEdges(finalResult);
 	return releaseInstance(instances, finalResult);
 }
@@ -734,7 +805,6 @@ void exportRule(
 		vector<Graph*> graphs = rightEmpty
 			? vector<Graph*>{ rightGraph, leftGraph }
 			: vector<Graph*>{ leftGraph, rightGraph };
-		// TODO: Handle rules with splices in them.
 		ProductionRule* rule = new ProductionRule(graphs);
 		if (leftEmpty || rightEmpty) {
 			grammar->addStarterRule(rule);
@@ -758,7 +828,8 @@ void RuleExporter::exportGroups(
 	GraphGrammar& grammar,
 	const vector<GraphGroup>& groups,
 	const vector<TemplateMatcher>& matchers,
-	const PrimitiveGraphs& primitiveGraphs
+	const PrimitiveGraphs& primitiveGraphs,
+	const vector<string>& boundaryIds
 ) {
 	for (const auto& group : groups) {
 		const int numGraphs = (int)group.graphIndices.size();
@@ -768,7 +839,8 @@ void RuleExporter::exportGroups(
 		for (int i = 0; i < numGraphs; i++) {
 			for (int index : group.graphIndices[i]) {
 				auto graphValues = matchers[i].getGraphValues(index);
-				auto graphA = unique_ptr<Graph>(buildGraphFromValues(graphValues, primitiveGraphs));
+				auto graphA = unique_ptr<Graph>(buildGraphFromValues(
+					graphValues, primitiveGraphs, boundaryIds));
 				auto vertexTypeIdsA = getVertexTypeIds(graphA.get());
 				if (loopsAreValid(graphA.get()) &&
 					!isDuplicateGraph(graphA.get(), vertexTypeIdsA, graphs[i], vertexTypeIds[i])) {
@@ -779,13 +851,31 @@ void RuleExporter::exportGroups(
 		}
 
 		// Assumes there are only two graphs in the template set.
-		for (const auto& left : graphs[0]) {
-			for (const auto& right : graphs[1]) {
-				if (!equalBoundaries(left.get(), right.get())) {
-					cout << "    rejected: boundary vertex order does not match\n";
+		for (const auto& bent : graphs[0]) {
+			for (const auto& spliced : graphs[1]) {
+				auto bentCopy = unique_ptr<Graph>(bent->copy());
+				auto splicedCopy = unique_ptr<Graph>(spliced->copy());
+				auto endGraph = unique_ptr<Graph>(splicedCopy->copy());
+				endGraph->removeSplices();
+
+				alignBoundaries(bentCopy.get(), endGraph.get());
+				matchBoundaryOrder(bentCopy.get(), endGraph.get());
+				if (!equalBoundaries(bentCopy.get(), endGraph.get())) {
+					cout << "    rejected: boundary slots do not match after splice removal\n";
 					continue;
 				}
-				exportRule(&grammar, left->copy(), right->copy());
+
+				if (!assignBoundaryVerticesFromSurvivors(splicedCopy.get(), bentCopy.get())) {
+					cout << "    rejected: spliced graph has no boundary matching bent\n";
+					continue;
+				}
+				updateBoundaryHalfEdges(bentCopy.get());
+				updateBoundaryHalfEdges(splicedCopy.get());
+				if (!equalBoundaries(splicedCopy.get(), bentCopy.get())) {
+					cout << "    rejected: spliced and bent boundary slots do not match\n";
+					continue;
+				}
+				exportRule(&grammar, splicedCopy.release(), bentCopy.release());
 			}
 		}
 	}

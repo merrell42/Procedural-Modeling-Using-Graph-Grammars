@@ -26,6 +26,7 @@ public:
 		GraphGrammar& grammar,
 		const vector<GraphGroup>& groups,
 		const vector<TemplateMatcher>& matchers,
-		const PrimitiveGraphs& primitiveGraphs
+		const PrimitiveGraphs& primitiveGraphs,
+		const vector<string>& boundaryIds
 	);
 };
