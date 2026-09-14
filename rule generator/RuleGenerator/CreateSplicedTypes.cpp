@@ -7,7 +7,6 @@
 #include "../../cpp_version/primitives/face_type.h"
 #include "../../cpp_version/geometry/vec3.h"
 
-#include <algorithm>
 #include <cmath>
 #include <map>
 
@@ -59,21 +58,18 @@ VertexType* createSplicedVertexType(
 		faceOnRight
 	).dot(splicedType->getDir()) > 0;
 
-	// Half-edges are ordered counterclockwise around the vertex.
+	// Half-edges are ordered clockwise around the vertex.
 	// Two opposite pointing half-edges are based on the edgeType.
 	if (faceOnRight) {
-		vType->addHalfEdge(edgeType, false);
-		vType->addHalfEdge(splicedType, splicedAtStart);
 		vType->addHalfEdge(edgeType, true);
+		vType->addHalfEdge(splicedType, splicedAtStart);
+		vType->addHalfEdge(edgeType, false);
 	} else {
-		vType->addHalfEdge(edgeType, false);
-		vType->addHalfEdge(edgeType, true);
 		vType->addHalfEdge(splicedType, splicedAtStart);
+		vType->addHalfEdge(edgeType, true);
+		vType->addHalfEdge(edgeType, false);
 	}
 
-	vector<HalfEdgeType> halfEdges = vType->getHalfEdgeTypes();
-	std::reverse(halfEdges.begin(), halfEdges.end());
-	vType->setHalfEdgeTypes(std::move(halfEdges));
 	return vType;
 }
 

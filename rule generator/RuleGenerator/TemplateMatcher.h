@@ -10,13 +10,13 @@ using namespace std;
 
 using Json = nlohmann::json;
 
-// Mirrors json.matches[i] from ms.networkHierarchy.partialImport.
 struct BoundaryStub {
 	string boundaryId;
 	int instance = -1;
 	int slot = -1;
 };
 
+// Mirrors json.matches[i] from ms.networkHierarchy.partialImport.
 class GraphValues {
 public:
 	vector<int> vertices;
