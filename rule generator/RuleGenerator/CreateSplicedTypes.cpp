@@ -7,6 +7,7 @@
 #include "../../cpp_version/primitives/face_type.h"
 #include "../../cpp_version/geometry/vec3.h"
 
+#include <algorithm>
 #include <cmath>
 #include <map>
 
@@ -69,6 +70,10 @@ VertexType* createSplicedVertexType(
 		vType->addHalfEdge(edgeType, true);
 		vType->addHalfEdge(splicedType, splicedAtStart);
 	}
+
+	vector<HalfEdgeType> halfEdges = vType->getHalfEdgeTypes();
+	std::reverse(halfEdges.begin(), halfEdges.end());
+	vType->setHalfEdgeTypes(std::move(halfEdges));
 	return vType;
 }
 

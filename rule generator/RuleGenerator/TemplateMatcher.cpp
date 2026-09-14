@@ -345,3 +345,23 @@ GraphValues TemplateMatcher::getGraphValues(int graphIndex) const {
 	);
 	return graphValues;
 }
+
+int TemplateMatcher::matchVertexTypeValue(int graphIndex, int templateVertex) const {
+	if (graphIndex < 0 || graphIndex >= (int)vertexValues.size()) {
+		return -1;
+	}
+	const auto& vertexValue = vertexValues[graphIndex];
+	if (templateVertex < 0 || templateVertex >= (int)vertexValue.size()) {
+		return -1;
+	}
+	return getState(templateVertex, vertexValue[templateVertex]).getTypeValue();
+}
+
+bool TemplateMatcher::isV15V33Match(int graphIndex) const {
+	const int type4 = matchVertexTypeValue(graphIndex, 4);
+	const int type5 = matchVertexTypeValue(graphIndex, 5);
+	if (type4 < 0 || type5 < 0) {
+		return false;
+	}
+	return (type4 == 15 && type5 == 33) || (type4 == 33 && type5 == 15);
+}
