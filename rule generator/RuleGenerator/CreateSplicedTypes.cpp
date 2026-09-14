@@ -58,17 +58,18 @@ VertexType* createSplicedVertexType(
 		faceOnRight
 	).dot(splicedType->getDir()) > 0;
 
-	// Half-edges are ordered counterclockwise around the vertex.
+	// Half-edges are ordered clockwise around the vertex.
 	// Two opposite pointing half-edges are based on the edgeType.
 	if (faceOnRight) {
-		vType->addHalfEdge(edgeType, false);
-		vType->addHalfEdge(splicedType, splicedAtStart);
 		vType->addHalfEdge(edgeType, true);
+		vType->addHalfEdge(splicedType, splicedAtStart);
+		vType->addHalfEdge(edgeType, false);
 	} else {
-		vType->addHalfEdge(edgeType, false);
-		vType->addHalfEdge(edgeType, true);
 		vType->addHalfEdge(splicedType, splicedAtStart);
+		vType->addHalfEdge(edgeType, true);
+		vType->addHalfEdge(edgeType, false);
 	}
+
 	return vType;
 }
 
