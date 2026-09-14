@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "TemplateMatcher.h"
 #include "../../cpp_version/primitives/edge_type.h"
-#include <algorithm>
 #include <set>
 #include <iostream>
 
@@ -336,12 +335,19 @@ GraphValues TemplateMatcher::getGraphValues(int graphIndex) const {
 		}
 		graphValues.edges.push_back(edge);
 	}
-	sort(
-		graphValues.boundaryStubs.begin(),
-		graphValues.boundaryStubs.end(),
-		[](const BoundaryStub& a, const BoundaryStub& b) {
-			return a.boundaryId < b.boundaryId;
+
+	vector<BoundaryStub> orderedStubs;
+	for (const auto& vertex : templateGraph.vertices) {
+		if (vertex.boundaryId.empty()) {
+			continue;
 		}
-	);
+		for (const auto& stub : graphValues.boundaryStubs) {
+			if (stub.boundaryId == vertex.boundaryId) {
+				orderedStubs.push_back(stub);
+				break;
+			}
+		}
+	}
+	graphValues.boundaryStubs = std::move(orderedStubs);
 	return graphValues;
 }

@@ -28,8 +28,8 @@ using namespace std;
 
 namespace {
 
-const char* kDefaultLibrary = "../graph templates/L template.json";
-constexpr const char* kDefaultPrimitives = "../primitives/L-grounded.json";
+const char* kDefaultLibrary = "../graph templates/H.json";
+constexpr const char* kDefaultPrimitives = "../primitives/H.json";
 
 // constexpr const char* kDefaultLibrary = "../graph templates/graph_template_diagonal.json";
 // constexpr const char* kDefaultPrimitives = "../primitives/diagonal box.json";
