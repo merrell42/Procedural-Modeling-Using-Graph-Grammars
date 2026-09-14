@@ -273,100 +273,6 @@ bool parseIndexPair(const string& key, int& a, int& b) {
 	return true;
 }
 
-bool isV15V33GlueMatch(const TemplateMatcher& matcher, int graphIndex) {
-	return matcher.isV15V33Match(graphIndex);
-}
-
-void debugInspectGraph(const char* label, Graph* graph, int templateGraphIndex, int matchIndex) {
-	volatile Graph* inspectGraph = graph;
-	volatile const char* inspectLabel = label;
-	(void)inspectGraph;
-	(void)inspectLabel;
-	(void)templateGraphIndex;
-	(void)matchIndex;
-}
-
-#ifdef _DEBUG
-Graph* buildGraphFromValues(
-	const GraphValues& graphValues,
-	const PrimitiveGraphs& graphs
-);
-
-namespace {
-
-bool matchHasBoundaryTuple(
-	const TemplateMatcher& matcher,
-	int matchIndex,
-	const vector<string>& boundaryIds,
-	const vector<int>& target
-) {
-	if (matchIndex < 0 || matchIndex >= (int)matcher.vertexValues.size()) {
-		return false;
-	}
-	if (target.size() != boundaryIds.size()) {
-		return false;
-	}
-	const auto& vertexValue = matcher.vertexValues[matchIndex];
-	for (size_t b = 0; b < boundaryIds.size(); b++) {
-		int vertexIndex = -1;
-		for (int v = 0; v < (int)matcher.templateGraph.vertices.size(); v++) {
-			if (matcher.templateGraph.vertices[v].boundaryId == boundaryIds[b]) {
-				vertexIndex = v;
-				break;
-			}
-		}
-		if (vertexIndex < 0 || vertexIndex >= (int)vertexValue.size()) {
-			return false;
-		}
-		if (vertexValue[vertexIndex] != target[b]) {
-			return false;
-		}
-	}
-	return true;
-}
-
-void inspectBuiltMatch(
-	const char* label,
-	int templateGraphIndex,
-	const TemplateMatcher& matcher,
-	int matchIndex,
-	const PrimitiveGraphs& primitiveGraphs
-) {
-	auto graphValues = matcher.getGraphValues(matchIndex);
-	unique_ptr<Graph> graph(buildGraphFromValues(graphValues, primitiveGraphs));
-	debugInspectGraph(label, graph.get(), templateGraphIndex, matchIndex);
-}
-
-} // namespace
-
-void debugInspectBendWallMatches(
-	const vector<TemplateMatcher>& matchers,
-	const PrimitiveGraphs& primitiveGraphs,
-	const vector<string>& boundaryIds
-) {
-	if (matchers.size() < 2) {
-		return;
-	}
-	const vector<int> bentBoundary = { 1, 0, 26, 27 };
-	for (int m = 0; m < (int)matchers[0].vertexValues.size(); m++) {
-		if (!matchHasBoundaryTuple(matchers[0], m, boundaryIds, bentBoundary)) {
-			continue;
-		}
-		inspectBuiltMatch("bent [1,0,26,27]", 0, matchers[0], m, primitiveGraphs);
-	}
-	for (int m = 0; m < (int)matchers[1].vertexValues.size(); m++) {
-		if (!matchers[1].isV15V33Match(m)) {
-			continue;
-		}
-		try {
-			inspectBuiltMatch("v15/v33 spliced", 1, matchers[1], m, primitiveGraphs);
-		} catch (const exception&) {
-			debugInspectGraph("v15/v33 spliced (build failed)", nullptr, 1, m);
-		}
-	}
-}
-#endif
-
 void setBVerticesFromStubs(
 	Graph* result,
 	const GraphValues& graphValues,
@@ -908,15 +814,7 @@ void RuleExporter::exportGroups(
 		for (int i = 0; i < numGraphs; i++) {
 			for (int index : group.graphIndices[i]) {
 				auto graphValues = matchers[i].getGraphValues(index);
-				unique_ptr<Graph> graphA;
-				try {
-					graphA = unique_ptr<Graph>(buildGraphFromValues(graphValues, primitiveGraphs));
-				} catch (const exception& e) {
-					if (i == 1 && isV15V33GlueMatch(matchers[i], index)) {
-						cout << "    v15/v33 match " << index << " build failed: " << e.what() << "\n";
-					}
-					throw;
-				}
+				auto graphA = unique_ptr<Graph>(buildGraphFromValues(graphValues, primitiveGraphs));
 				auto vertexTypeIdsA = getVertexTypeIds(graphA.get());
 				if (loopsAreValid(graphA.get()) &&
 					!isDuplicateGraph(graphA.get(), vertexTypeIdsA, graphs[i], vertexTypeIds[i])) {

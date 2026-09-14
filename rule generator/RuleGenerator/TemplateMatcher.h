@@ -68,10 +68,6 @@ public:
 	TemplateMatcher(TemplateGraph templateGraph_, vector<VertexType*> vTypes, vector<EdgeType*> eTypes);
 	void match();
 	GraphValues getGraphValues(int graphIndex) const;
-	// Primitive ruleGeneratorId at a template vertex for a completed match.
-	int matchVertexTypeValue(int graphIndex, int templateVertex) const;
-	// Template instances 4 and 5 use the e0/e13 vertical splice pair (types 15 and 33).
-	bool isV15V33Match(int graphIndex) const;
 
 private:
 	void addVertexStates(const vector<VertexType*>& vTypes);
