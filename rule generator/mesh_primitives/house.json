@@ -878,12 +878,30 @@
             },
             "edge": 15,
             "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": -1.0,
+              "y": -0.0,
+              "z": -0.0
+            },
+            "edge": 18,
+            "isAtStart": false
           }
         ],
         "spliced": false
       },
       {
         "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": -0.0,
+              "y": -1.0,
+              "z": -0.0
+            },
+            "edge": 15,
+            "isAtStart": false
+          },
           {
             "dir": {
               "x": -1.0,
@@ -900,6 +918,15 @@
         "halfEdgeTypes": [
           {
             "dir": {
+              "x": 1.0,
+              "y": -0.0,
+              "z": -0.0
+            },
+            "edge": 16,
+            "isAtStart": false
+          },
+          {
+            "dir": {
               "x": 0.0,
               "y": -1.0,
               "z": 0.0
@@ -912,6 +939,15 @@
       },
       {
         "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": -0.0,
+              "y": 1.0,
+              "z": -0.0
+            },
+            "edge": 17,
+            "isAtStart": false
+          },
           {
             "dir": {
               "x": 1.0,

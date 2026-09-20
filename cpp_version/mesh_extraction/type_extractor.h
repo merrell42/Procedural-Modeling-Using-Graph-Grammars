@@ -44,8 +44,9 @@ struct ExtractedTypes {
     // Vertex types. One per unique canonical σ — the
     // cyclic CCW sequence of incident (edgeType, isAtStart) pairs around a
     // vertex. We pick the lexicographically smallest rotation as the canonical
-    // form. Closed umbrellas and open (disk-like) fans are both handled;
-    // general non-manifold σ-graphs are a later TODO.
+    // form. Closed umbrellas and open (disk-like) fans are both handled,
+    // including single-face boundary corners (two connections, one face).
+    // General non-manifold σ-graphs are a later TODO.
     struct HalfEdgeType {
         int  edgeType;   // index into edgeTypes
         bool isAtStart;  // true if this halfEdge originates at the vertex's "start"

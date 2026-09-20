@@ -78,12 +78,56 @@ struct EdgeTypeKeyHash {
     }
 };
 
-// Walk around `vertex` to enumerate outgoing half-edges in order.
+bool fanHasEdge(const HalfEdgeMesh& mesh, const std::vector<int>& fan, int edgeIdx) {
+    for (int he : fan) {
+        if (mesh.halfEdges[he].edge == edgeIdx) {
+            return true;
+        }
+    }
+    return false;
+}
+
+// Boundary edges have no twin, so the dest vertex has no outgoing half along
+// that edge. A single-face corner (ground-plane rectangle) then looks like it
+// has only one connection. Insert the incoming boundary half at each open end
+// of the fan so both incident edges appear in the vertex type.
+void addIncomingBoundaryHalves(
+    const HalfEdgeMesh& mesh,
+    int vertexIdx,
+    std::vector<int>& fan
+) {
+    if (fan.empty()) {
+        return;
+    }
+    auto maybeAdd = [&](int neighborHe, bool atFront) {
+        int incoming = mesh.halfEdges[neighborHe].prev;
+        if (incoming < 0) {
+            return;
+        }
+        const auto& he = mesh.halfEdges[incoming];
+        if (he.dest != vertexIdx) {
+            return;
+        }
+        if (fanHasEdge(mesh, fan, he.edge)) {
+            return;
+        }
+        if (atFront) {
+            fan.insert(fan.begin(), incoming);
+        } else {
+            fan.push_back(incoming);
+        }
+    };
+    maybeAdd(fan.front(), true);
+    maybeAdd(fan.back(), false);
+}
+
+// Walk around `vertex` to enumerate incident half-edges in order.
 // `h.prev.twin` and `h.twin.next` step opposite ways around the vertex.
 // A closed umbrella loops back to the start. An open fan (boundary vertex
 // after deleted faces, ProBoolean leftovers, etc.) hits a missing twin on
-// both ends; we concatenate the two walks. Returns {} if the incident
-// halves are not a single fan.
+// both ends; we concatenate the two walks, then add the incoming boundary
+// half at each open end. Returns {} if the incident halves are not a
+// single fan.
 std::vector<int> walkVertexFan(const HalfEdgeMesh& mesh, int vertexIdx) {
     const auto& outgoing = mesh.vertexHalves[vertexIdx];
     if (outgoing.empty()) return {};
@@ -134,11 +178,12 @@ std::vector<int> walkVertexFan(const HalfEdgeMesh& mesh, int vertexIdx) {
     }
 
     std::vector<int> fan;
-    fan.reserve(before.size() + 1 + after.size());
+    fan.reserve(before.size() + 1 + after.size() + 2);
     for (int i = (int)before.size() - 1; i >= 0; --i) fan.push_back(before[i]);
     fan.push_back(start);
     fan.insert(fan.end(), after.begin(), after.end());
     if ((int)fan.size() != n) return {};
+    addIncomingBoundaryHalves(mesh, vertexIdx, fan);
     return fan;
 }
 
@@ -152,34 +197,17 @@ bool isSlitEdge(const HalfEdgeMesh& mesh, int edgeIdx) {
     return mesh.halfEdges[edge.halfA].face == mesh.halfEdges[edge.halfB].face;
 }
 
-// Each incident face should contribute one outgoing half-edge. A pinched
-// n-gon lists the same face twice; keep the half whose twin is a different
-// face (the real adjacency) and drop the slit.
-std::vector<int> uniqueFaceFan(const HalfEdgeMesh& mesh, const std::vector<int>& fan) {
-    const int nFaces = (int)mesh.faces.size();
-    std::vector<int> bestHe(nFaces, -1);
-    std::vector<int> bestScore(nFaces, -2);
-    std::vector<int> order;
-    for (int he : fan) {
-        const int face = mesh.halfEdges[he].face;
-        if (face < 0 || face >= nFaces) continue;
-        const int twin = mesh.halfEdges[he].twin;
-        int score = 0;
-        if (twin >= 0) {
-            score = (mesh.halfEdges[twin].face == face) ? -1 : 1;
-        }
-        if (bestHe[face] < 0) {
-            order.push_back(face);
-        }
-        if (score > bestScore[face]) {
-            bestHe[face] = he;
-            bestScore[face] = score;
-        }
-    }
+// Drop slit halves. Keep every other half, including two boundary edges of
+// the same face — a ground-plane corner has one incident face and two
+// connections. A pinched n-gon's slit is already not a real connection.
+std::vector<int> dropSlitHalves(const HalfEdgeMesh& mesh, const std::vector<int>& fan) {
     std::vector<int> kept;
-    kept.reserve(order.size());
-    for (int face : order) {
-        kept.push_back(bestHe[face]);
+    kept.reserve(fan.size());
+    for (int he : fan) {
+        if (isSlitEdge(mesh, mesh.halfEdges[he].edge)) {
+            continue;
+        }
+        kept.push_back(he);
     }
     return kept;
 }
@@ -288,7 +316,7 @@ bool extractTypes(const HalfEdgeMesh&         mesh,
             }
             return false;
         }
-        fan = uniqueFaceFan(mesh, fan);
+        fan = dropSlitHalves(mesh, fan);
 
         // Build raw token sequence (edgeType, isAtStart). Skip slit halves so
         // a pinched n-gon does not add a fourth connection at the cut vertex.
@@ -302,8 +330,10 @@ bool extractTypes(const HalfEdgeMesh&         mesh,
             if (isSlitEdge(mesh, edgeIdx)) continue;
             int etIdx = out.edgeTypeOfEdge[edgeIdx];
             if (etIdx < 0) continue;
-            // isAtStart = "this half-edge is the canonical (halfA) direction"
-            bool isAtStart = (mesh.edges[edgeIdx].halfA == he);
+            // isAtStart = this vertex is the origin of the canonical (halfA)
+            // direction. Incoming boundary halves originate elsewhere.
+            bool isAtStart =
+                (mesh.halfEdges[mesh.edges[edgeIdx].halfA].origin == v);
             rawSlots.push_back({etIdx, isAtStart ? 1 : 0});
             typedFan.push_back(he);
         }
@@ -354,10 +384,14 @@ bool extractTypes(const HalfEdgeMesh&         mesh,
 
         // Record per-original-halfedge slot index in the canonical vertex type.
         // halfEdgeSlotInVertex[he] = position of `he` after rotation.
+        // Incoming boundary halves belong to another origin; do not overwrite
+        // that vertex's slot.
         for (int k = 0; k < n; ++k) {
             int srcIdx = (best + k) % n;
             int he     = typedFan[srcIdx];
-            out.halfEdgeSlotInVertex[he] = k;
+            if (mesh.halfEdges[he].origin == v) {
+                out.halfEdgeSlotInVertex[he] = k;
+            }
         }
     }
 
