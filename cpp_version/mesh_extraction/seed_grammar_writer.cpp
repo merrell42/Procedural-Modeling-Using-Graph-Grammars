@@ -1,15 +1,17 @@
 #include "pch.h"
 #include "mesh_extraction/seed_grammar_writer.h"
 
+#include "json versioning/json_migrations.h"
+#include "json versioning/json_version_manager.h"
 #include "third_party/json.h"
 
 #include <fstream>
 
 namespace mesh_extraction {
 
-namespace {
-
 using Json = nlohmann::json;
+
+namespace {
 
 Json vec3ToJson(const Vec3d& v) {
     Json j;
@@ -140,21 +142,7 @@ Json buildEmptyGraphJson(const ExtractedTypes& /*types*/) {
     return g;
 }
 
-}  // namespace
-
-bool writeSeedGrammar(const HalfEdgeMesh&    mesh,
-                      const ExtractedTypes&  types,
-                      const std::string&     name,
-                      const std::string&     outPath,
-                      std::string*           error) {
-    Json root;
-    root["name"]     = name;
-    // version 1 = current schema. Absent that tag, jsonMigration1 fires and
-    // (per its legacy logic) discards everything not under a `solution` field.
-    root["version"]  = 1;
-    root["grounded"] = false;
-
-    // ----- types: faceTypes, edgeTypes, vertexTypes ------------------------
+Json buildTypesJson(const ExtractedTypes& types) {
     Json faceTypesJson = Json::array();
     for (const auto& ft : types.faceTypes) {
         Json j;
@@ -216,7 +204,32 @@ bool writeSeedGrammar(const HalfEdgeMesh&    mesh,
     typesJson["faceTypes"]   = faceTypesJson;
     typesJson["edgeTypes"]   = edgeTypesJson;
     typesJson["vertexTypes"] = vertexTypesJson;
-    root["types"] = typesJson;
+    return typesJson;
+}
+
+bool writeJsonFile(const Json& root, const std::string& outPath, std::string* error) {
+    std::ofstream out(outPath);
+    if (!out) {
+        if (error) *error = std::string("could not open for write: ") + outPath;
+        return false;
+    }
+    out << root.dump(2);
+    return true;
+}
+
+}  // namespace
+
+bool writeSeedGrammar(const HalfEdgeMesh&    mesh,
+                      const ExtractedTypes&  types,
+                      const std::string&     name,
+                      const std::string&     outPath,
+                      std::string*           error) {
+    Json root;
+    registerJsonMigrations();
+    root["name"]    = name;
+    root["version"] = JsonVersionManager::getLatestVersion();
+    root["grounded"] = false;
+    root["types"]    = buildTypesJson(types);
 
     // ----- rules: empty `rules` / `groundRules`, one starter rule ---------
     root["rules"]       = Json::array();
@@ -232,14 +245,19 @@ bool writeSeedGrammar(const HalfEdgeMesh&    mesh,
     // ----- emptyGraph -----------------------------------------------------
     root["emptyGraph"] = buildEmptyGraphJson(types);
 
-    // ----- write ----------------------------------------------------------
-    std::ofstream out(outPath);
-    if (!out) {
-        if (error) *error = std::string("could not open for write: ") + outPath;
-        return false;
-    }
-    out << root.dump(2);
-    return true;
+    return writeJsonFile(root, outPath, error);
+}
+
+bool writePrimitives(const ExtractedTypes& types,
+                     const std::string&    name,
+                     const std::string&    outPath,
+                     std::string*          error) {
+    Json root;
+    registerJsonMigrations();
+    root["name"]    = name;
+    root["version"] = JsonVersionManager::getLatestVersion();
+    root["types"]   = buildTypesJson(types);
+    return writeJsonFile(root, outPath, error);
 }
 
 }  // namespace mesh_extraction

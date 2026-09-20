@@ -21,4 +21,10 @@ bool writeSeedGrammar(const HalfEdgeMesh&    mesh,
                       const std::string&     outPath,
                       std::string*           error = nullptr);
 
+// Writes a primitives JSON to `outPath`. Returns false (and sets `error`) on I/O failure.
+bool writePrimitives(const ExtractedTypes& types,
+                     const std::string&    name,
+                     const std::string&    outPath,
+                     std::string*          error = nullptr);
+
 }  // namespace mesh_extraction

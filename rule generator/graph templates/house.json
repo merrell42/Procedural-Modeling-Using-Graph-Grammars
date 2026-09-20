@@ -1,0 +1,225 @@
+{
+  "includeGround": true,
+  "templates": [
+    {
+      "comment": "House",
+      "graphs": [
+        {
+          "vertices": [
+            {
+              "connections": [
+                3,
+                0,
+                4
+              ],
+              "boundaryId": "",
+              "position": {
+                "x": 223,
+                "y": 461.8125
+              },
+              "spliced": false
+            },
+            {
+              "connections": [
+                14,
+                0,
+                1
+              ],
+              "boundaryId": "",
+              "position": {
+                "x": 219,
+                "y": 213.8125
+              },
+              "spliced": false
+            },
+            {
+              "connections": [
+                2,
+                13,
+                1
+              ],
+              "boundaryId": "",
+              "position": {
+                "x": 643,
+                "y": 207.8125
+              },
+              "spliced": false
+            },
+            {
+              "connections": [
+                3,
+                5,
+                2
+              ],
+              "boundaryId": "",
+              "position": {
+                "x": 641,
+                "y": 466.8125
+              },
+              "spliced": false
+            },
+            {
+              "connections": [
+                8,
+                4,
+                6
+              ],
+              "boundaryId": "",
+              "position": {
+                "x": 307,
+                "y": 402.8125
+              },
+              "spliced": false
+            },
+            {
+              "connections": [
+                5,
+                8,
+                9
+              ],
+              "boundaryId": "",
+              "position": {
+                "x": 583,
+                "y": 403.8125
+              },
+              "spliced": false
+            },
+            {
+              "connections": [
+                12,
+                6,
+                7
+              ],
+              "boundaryId": "",
+              "position": {
+                "x": 339,
+                "y": 329.8125
+              },
+              "spliced": false
+            },
+            {
+              "connections": [
+                11,
+                7,
+                14
+              ],
+              "boundaryId": "",
+              "position": {
+                "x": 299,
+                "y": 273.8125
+              },
+              "spliced": false
+            },
+            {
+              "connections": [
+                10,
+                11,
+                13
+              ],
+              "boundaryId": "",
+              "position": {
+                "x": 579,
+                "y": 273.8125
+              },
+              "spliced": false
+            },
+            {
+              "connections": [
+                9,
+                12,
+                10
+              ],
+              "boundaryId": "",
+              "position": {
+                "x": 550,
+                "y": 336.8125
+              },
+              "spliced": false
+            }
+          ],
+          "edges": [
+            {
+              "start": 0,
+              "end": 1,
+              "spliced": false
+            },
+            {
+              "start": 1,
+              "end": 2,
+              "spliced": false
+            },
+            {
+              "start": 2,
+              "end": 3,
+              "spliced": false
+            },
+            {
+              "start": 3,
+              "end": 0,
+              "spliced": false
+            },
+            {
+              "start": 0,
+              "end": 4,
+              "spliced": false
+            },
+            {
+              "start": 3,
+              "end": 5,
+              "spliced": false
+            },
+            {
+              "start": 4,
+              "end": 6,
+              "spliced": false
+            },
+            {
+              "start": 6,
+              "end": 7,
+              "spliced": false
+            },
+            {
+              "start": 4,
+              "end": 5,
+              "spliced": false
+            },
+            {
+              "start": 5,
+              "end": 9,
+              "spliced": false
+            },
+            {
+              "start": 9,
+              "end": 8,
+              "spliced": false
+            },
+            {
+              "start": 7,
+              "end": 8,
+              "spliced": false
+            },
+            {
+              "start": 6,
+              "end": 9,
+              "spliced": false
+            },
+            {
+              "start": 8,
+              "end": 2,
+              "spliced": false
+            },
+            {
+              "start": 7,
+              "end": 1,
+              "spliced": false
+            }
+          ]
+        },
+        {
+          "vertices": [],
+          "edges": []
+        }
+      ]
+    }
+  ]
+}

@@ -44,8 +44,8 @@ struct ExtractedTypes {
     // Vertex types. One per unique canonical σ — the
     // cyclic CCW sequence of incident (edgeType, isAtStart) pairs around a
     // vertex. We pick the lexicographically smallest rotation as the canonical
-    // form. This is the closed-manifold simplification of the paper's σ
-    // (§3.3 end). Phase B (general 3D σ-graph) is a later TODO.
+    // form. Closed umbrellas and open (disk-like) fans are both handled;
+    // general non-manifold σ-graphs are a later TODO.
     struct HalfEdgeType {
         int  edgeType;   // index into edgeTypes
         bool isAtStart;  // true if this halfEdge originates at the vertex's "start"
@@ -66,9 +66,8 @@ struct TypeExtractionConfig {
     double dirEps    = 1e-4;   // quantization grid for edge directions
 };
 
-// Extracts primitives from the half-edge mesh. Currently implements Phase A
-// (closed manifold with single-fan vertices). Returns false on inputs that
-// require Phase B.
+// Extracts primitives from the half-edge mesh. Vertices must have a single
+// fan (closed or open). Returns false on non-manifold vertices.
 bool extractTypes(const HalfEdgeMesh&         mesh,
                   const ObjMesh&              obj,           // for material lookup
                   const TypeExtractionConfig& cfg,

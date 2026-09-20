@@ -12,4 +12,11 @@ namespace mesh_extraction {
 // written but could not be re-imported.
 int meshToGrammar(const char* objPath, const char* outPath);
 
+// Same pipeline as meshToGrammar, but writes a primitives JSON instead
+// of a seed grammar.
+int meshToPrimitives(const char* objPath, const char* outPath);
+
+// Convert every `.obj` in `meshesDir` to a primitives JSON in `outDir`.
+int meshesToPrimitives(const char* meshesDir, const char* outDir);
+
 }  // namespace mesh_extraction

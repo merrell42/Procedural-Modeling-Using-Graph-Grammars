@@ -78,38 +78,68 @@ struct EdgeTypeKeyHash {
     }
 };
 
-// Walk CCW around `vertex` to enumerate outgoing half-edges. Uses the
-// twin/next traversal: from any outgoing halfEdge h, the next outgoing
-// halfEdge is `h.prev.twin` (rotate to the previous edge of the face, then
-// flip across the shared edge to the next face). Requires a closed manifold.
-//
-// Returns the ordered list of outgoing-halfedge indices, or {} on failure
-// (open boundary at this vertex, non-manifold fan, etc.).
+// Walk around `vertex` to enumerate outgoing half-edges in order.
+// `h.prev.twin` and `h.twin.next` step opposite ways around the vertex.
+// A closed umbrella loops back to the start. An open fan (boundary vertex
+// after deleted faces, ProBoolean leftovers, etc.) hits a missing twin on
+// both ends; we concatenate the two walks. Returns {} if the incident
+// halves are not a single fan.
 std::vector<int> walkVertexFan(const HalfEdgeMesh& mesh, int vertexIdx) {
     const auto& outgoing = mesh.vertexHalves[vertexIdx];
     if (outgoing.empty()) return {};
+    const int n = (int)outgoing.size();
 
-    std::vector<int> fan;
-    int start = outgoing.front();
+    auto stepPrevTwin = [&](int h) -> int {
+        return mesh.halfEdges[mesh.halfEdges[h].prev].twin;
+    };
+    auto stepTwinNext = [&](int h) -> int {
+        int twin = mesh.halfEdges[h].twin;
+        return twin < 0 ? -1 : mesh.halfEdges[twin].next;
+    };
+
+    const int start = outgoing.front();
+    std::vector<char> seen(mesh.halfEdges.size(), 0);
+    seen[start] = 1;
+
+    std::vector<int> after;
     int cur = start;
-    fan.push_back(cur);
-    for (size_t guard = 0; guard < outgoing.size(); ++guard) {
-        const auto& he = mesh.halfEdges[cur];
-        // Step to previous edge of the same face, then cross via twin to the
-        // next face. The result originates from the same vertex.
-        int prev = he.prev;
-        int twinOfPrev = mesh.halfEdges[prev].twin;
-        if (twinOfPrev < 0) return {};  // open boundary — Phase B input
-        int next = twinOfPrev;
-        if (next == start) {
-            // Sanity check: we should have visited every outgoing half exactly once.
-            if (fan.size() != outgoing.size()) return {};
+    for (int i = 0; i < n; ++i) {
+        int nxt = stepPrevTwin(cur);
+        if (nxt < 0) break;
+        if (mesh.halfEdges[nxt].origin != vertexIdx) return {};
+        if (nxt == start) {
+            if ((int)after.size() + 1 != n) return {};
+            std::vector<int> fan;
+            fan.reserve(n);
+            fan.push_back(start);
+            fan.insert(fan.end(), after.begin(), after.end());
             return fan;
         }
-        fan.push_back(next);
-        cur = next;
+        if (seen[nxt]) return {};
+        seen[nxt] = 1;
+        after.push_back(nxt);
+        cur = nxt;
     }
-    return {};  // didn't close after |outgoing| steps — non-manifold
+
+    std::vector<int> before;
+    cur = start;
+    for (int i = 0; i < n; ++i) {
+        int nxt = stepTwinNext(cur);
+        if (nxt < 0) break;
+        if (mesh.halfEdges[nxt].origin != vertexIdx) return {};
+        if (nxt == start || seen[nxt]) return {};
+        seen[nxt] = 1;
+        before.push_back(nxt);
+        cur = nxt;
+    }
+
+    std::vector<int> fan;
+    fan.reserve(before.size() + 1 + after.size());
+    for (int i = (int)before.size() - 1; i >= 0; --i) fan.push_back(before[i]);
+    fan.push_back(start);
+    fan.insert(fan.end(), after.begin(), after.end());
+    if ((int)fan.size() != n) return {};
+    return fan;
 }
 
 }  // namespace
@@ -210,8 +240,7 @@ bool extractTypes(const HalfEdgeMesh&         mesh,
             if (error) {
                 char buf[160];
                 snprintf(buf, sizeof(buf),
-                         "vertex %d: cannot enumerate fan (open boundary or "
-                         "non-manifold) — Phase B canonicalizer needed", v);
+                         "vertex %d: cannot enumerate fan (non-manifold)", v);
                 *error = buf;
             }
             return false;

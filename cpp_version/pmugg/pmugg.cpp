@@ -22,6 +22,16 @@ int main(int argc, char** argv) {
 	if (argc >= 4 && std::string(argv[1]) == "--mesh-to-grammar") {
 		return mesh_extraction::meshToGrammar(argv[2], argv[3]);
 	}
+	if (argc >= 2 && std::string(argv[1]) == "--extract-primitives") {
+		const char* meshesDir = (argc >= 4) ? argv[2] : "../../rule generator/meshes";
+		const char* outDir    = (argc >= 4) ? argv[3] : "../../rule generator/mesh_primitives";
+		if (argc == 3) {
+			std::cerr << "Usage: " << argv[0]
+			          << " --extract-primitives [<meshesDir> <outDir>]\n";
+			return 2;
+		}
+		return mesh_extraction::meshesToPrimitives(meshesDir, outDir);
+	}
 
 	vector<string> filePaths = {
 		// "../../grammar data/2D Basic Shapes/square hollow.json",
