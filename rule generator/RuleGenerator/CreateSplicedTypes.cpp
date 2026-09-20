@@ -29,7 +29,8 @@ struct SplicedEdgeKey {
 };
 
 int horizontalOrVerticalBin(FaceType* face, const Vec3& dir) {
-	double angle = fabs(face->angle(dir));
+	// Add a small offset, so the dividing line isn't at a common angle like 45°.
+	double angle = fabs(face->angle(dir) + 0.13);
 	if (angle >= kPi / 4.0 && angle <= 3.0 * kPi / 4.0) {
 		return 90; // vertical
 	}
