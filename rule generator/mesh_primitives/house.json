@@ -395,32 +395,6 @@
       },
       {
         "dir": {
-          "x": 0.7071067811865475,
-          "y": -0.7071067811865475,
-          "z": 0.0
-        },
-        "edgeSettings": {
-          "Max Length": 4.0,
-          "Min Length": 0.1,
-          "Rigid Tiled": false,
-          "Tile Length": 1.0
-        },
-        "faceData": [
-          {
-            "onRight": false,
-            "type": 5
-          },
-          {
-            "onRight": true,
-            "type": 5
-          }
-        ],
-        "isRigid": false,
-        "isRigidTiled": false,
-        "spliced": false
-      },
-      {
-        "dir": {
           "x": 0.0,
           "y": 1.0,
           "z": 0.0
@@ -756,15 +730,6 @@
           },
           {
             "dir": {
-              "x": 0.7071067811865475,
-              "y": -0.7071067811865475,
-              "z": 0.0
-            },
-            "edge": 15,
-            "isAtStart": true
-          },
-          {
-            "dir": {
               "x": 0.0,
               "y": 1.0,
               "z": 0.0
@@ -907,20 +872,11 @@
         "halfEdgeTypes": [
           {
             "dir": {
-              "x": -0.7071067811865475,
-              "y": 0.7071067811865475,
-              "z": -0.0
-            },
-            "edge": 15,
-            "isAtStart": false
-          },
-          {
-            "dir": {
               "x": 0.0,
               "y": 1.0,
               "z": 0.0
             },
-            "edge": 16,
+            "edge": 15,
             "isAtStart": true
           }
         ],
@@ -934,7 +890,7 @@
               "y": 0.0,
               "z": 0.0
             },
-            "edge": 17,
+            "edge": 16,
             "isAtStart": true
           }
         ],
@@ -948,7 +904,7 @@
               "y": -1.0,
               "z": 0.0
             },
-            "edge": 18,
+            "edge": 17,
             "isAtStart": true
           }
         ],
@@ -962,7 +918,7 @@
               "y": 0.0,
               "z": 0.0
             },
-            "edge": 19,
+            "edge": 18,
             "isAtStart": true
           }
         ],

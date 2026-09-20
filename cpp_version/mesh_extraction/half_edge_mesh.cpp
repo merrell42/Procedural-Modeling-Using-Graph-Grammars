@@ -36,6 +36,34 @@ inline uint64_t directedKey(int from, int to) {
             static_cast<uint64_t>(static_cast<uint32_t>(to));
 }
 
+// ProBoolean / hole-with-a-bridge n-gons reuse vertices: they walk the outer
+// loop, cut across a slit, walk the hole, then return along the same slit
+// (house.obj: 1 7 6 11 … 14 11 6 2). Those extra visits create a fourth
+// outgoing half-edge at the cut vertex. Split at each repeated vertex and
+// drop loops with fewer than 3 corners (the slit).
+std::vector<std::vector<int>> splitPinchedLoops(const std::vector<int>& corners) {
+    const int n = (int)corners.size();
+    if (n < 3) {
+        return {};
+    }
+    for (int i = 0; i < n; ++i) {
+        for (int j = i + 1; j < n; ++j) {
+            if (corners[i] != corners[j]) {
+                continue;
+            }
+            std::vector<int> loopA(corners.begin() + i, corners.begin() + j);
+            std::vector<int> loopB;
+            loopB.insert(loopB.end(), corners.begin() + j, corners.end());
+            loopB.insert(loopB.end(), corners.begin(), corners.begin() + i);
+            auto loops = splitPinchedLoops(loopA);
+            auto more = splitPinchedLoops(loopB);
+            loops.insert(loops.end(), more.begin(), more.end());
+            return loops;
+        }
+    }
+    return {corners};
+}
+
 }  // namespace
 
 bool buildHalfEdgeMesh(const ObjMesh& obj,
@@ -90,21 +118,40 @@ bool buildHalfEdgeMesh(const ObjMesh& obj,
         dstFace.volAbove   = 0;
         dstFace.volBelow   = volInterior;
 
-        // Allocate half-edges in CCW order around the face.
-        int nCorners = (int)srcFace.corners.size();
-        int firstHE = (int)out.halfEdges.size();
-        for (int k = 0; k < nCorners; ++k) {
-            HalfEdgeMesh::HalfEdge he;
-            he.origin = srcFace.corners[k].vertexIndex;
-            he.dest   = srcFace.corners[(k + 1) % nCorners].vertexIndex;
-            he.face   = (int)fi;
-            he.twin   = -1;
-            he.next   = firstHE + (k + 1) % nCorners;
-            he.prev   = firstHE + (k - 1 + nCorners) % nCorners;
-            he.edge   = -1;  // populated in twin-matching pass
-            out.halfEdges.push_back(he);
-            dstFace.halfEdges.push_back(firstHE + k);
-            out.vertexHalves[he.origin].push_back(firstHE + k);
+        std::vector<int> vertexIds;
+        vertexIds.reserve(srcFace.corners.size());
+        for (const auto& corner : srcFace.corners) {
+            vertexIds.push_back(corner.vertexIndex);
+        }
+        const auto loops = splitPinchedLoops(vertexIds);
+
+        // One simple cycle per loop. A pinched n-gon becomes an outer cycle
+        // plus hole cycles, all on this face; the slit is discarded.
+        for (const auto& loop : loops) {
+            const int nCorners = (int)loop.size();
+            const int firstHE = (int)out.halfEdges.size();
+            for (int k = 0; k < nCorners; ++k) {
+                HalfEdgeMesh::HalfEdge he;
+                he.origin = loop[k];
+                he.dest   = loop[(k + 1) % nCorners];
+                he.face   = (int)fi;
+                he.twin   = -1;
+                he.next   = firstHE + (k + 1) % nCorners;
+                he.prev   = firstHE + (k - 1 + nCorners) % nCorners;
+                he.edge   = -1;
+                out.halfEdges.push_back(he);
+                dstFace.halfEdges.push_back(firstHE + k);
+                out.vertexHalves[he.origin].push_back(firstHE + k);
+            }
+        }
+        if (dstFace.halfEdges.empty()) {
+            if (error) {
+                char buf[128];
+                snprintf(buf, sizeof(buf),
+                         "face %zu has no loop with 3 or more corners", fi);
+                *error = buf;
+            }
+            return false;
         }
         out.faces.push_back(std::move(dstFace));
     }

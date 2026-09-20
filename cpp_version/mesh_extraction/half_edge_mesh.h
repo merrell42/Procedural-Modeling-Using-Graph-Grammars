@@ -27,7 +27,9 @@ struct HalfEdgeMesh {
     };
 
     struct Face {
-        std::vector<int> halfEdges;   // ordered CCW (matches OBJ winding)
+        // Half-edges of every boundary cycle (outer plus holes). Each cycle is
+        // linked through next/prev; the vector is concatenation, not one ring.
+        std::vector<int> halfEdges;
         Vec3d            normal;      // unit, area-weighted from the n-gon
         int              materialId;  // copy from ObjMesh::Face::materialId
         std::string      group;       // copy from ObjMesh::Face::groupName

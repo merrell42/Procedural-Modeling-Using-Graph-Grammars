@@ -142,6 +142,48 @@ std::vector<int> walkVertexFan(const HalfEdgeMesh& mesh, int vertexIdx) {
     return fan;
 }
 
+// ProBoolean hole-with-a-bridge n-gons walk a slit both ways (house.obj:
+// 1 7 6 11 … 14 11 6 2). That edge has the same face on both halves, so it
+// is not a real connection. Counting it gives a vertex four half-edges
+// when the mesh only has three.
+bool isSlitEdge(const HalfEdgeMesh& mesh, int edgeIdx) {
+    const auto& edge = mesh.edges[edgeIdx];
+    if (edge.halfB < 0) return false;
+    return mesh.halfEdges[edge.halfA].face == mesh.halfEdges[edge.halfB].face;
+}
+
+// Each incident face should contribute one outgoing half-edge. A pinched
+// n-gon lists the same face twice; keep the half whose twin is a different
+// face (the real adjacency) and drop the slit.
+std::vector<int> uniqueFaceFan(const HalfEdgeMesh& mesh, const std::vector<int>& fan) {
+    const int nFaces = (int)mesh.faces.size();
+    std::vector<int> bestHe(nFaces, -1);
+    std::vector<int> bestScore(nFaces, -2);
+    std::vector<int> order;
+    for (int he : fan) {
+        const int face = mesh.halfEdges[he].face;
+        if (face < 0 || face >= nFaces) continue;
+        const int twin = mesh.halfEdges[he].twin;
+        int score = 0;
+        if (twin >= 0) {
+            score = (mesh.halfEdges[twin].face == face) ? -1 : 1;
+        }
+        if (bestHe[face] < 0) {
+            order.push_back(face);
+        }
+        if (score > bestScore[face]) {
+            bestHe[face] = he;
+            bestScore[face] = score;
+        }
+    }
+    std::vector<int> kept;
+    kept.reserve(order.size());
+    for (int face : order) {
+        kept.push_back(bestHe[face]);
+    }
+    return kept;
+}
+
 }  // namespace
 
 bool extractTypes(const HalfEdgeMesh&         mesh,
@@ -177,6 +219,7 @@ bool extractTypes(const HalfEdgeMesh&         mesh,
     out.edgeTypeOfEdge.resize(mesh.edges.size(), -1);
     std::unordered_map<EdgeTypeKey, int, EdgeTypeKeyHash> edgeTypeMap;
     for (size_t ei = 0; ei < mesh.edges.size(); ++ei) {
+        if (isSlitEdge(mesh, (int)ei)) continue;
         const auto& edge = mesh.edges[ei];
         const auto& hA = mesh.halfEdges[edge.halfA];
         const auto& vO = obj.vertices[hA.origin];
@@ -245,18 +288,26 @@ bool extractTypes(const HalfEdgeMesh&         mesh,
             }
             return false;
         }
+        fan = uniqueFaceFan(mesh, fan);
 
-        // Build raw token sequence (edgeType, isAtStart).
+        // Build raw token sequence (edgeType, isAtStart). Skip slit halves so
+        // a pinched n-gon does not add a fourth connection at the cut vertex.
         struct Slot { int edgeType; int isAtStart; };
         std::vector<Slot> rawSlots;
+        std::vector<int> typedFan;
         rawSlots.reserve(fan.size());
+        typedFan.reserve(fan.size());
         for (int he : fan) {
             int edgeIdx = mesh.halfEdges[he].edge;
-            int etIdx   = out.edgeTypeOfEdge[edgeIdx];
+            if (isSlitEdge(mesh, edgeIdx)) continue;
+            int etIdx = out.edgeTypeOfEdge[edgeIdx];
+            if (etIdx < 0) continue;
             // isAtStart = "this half-edge is the canonical (halfA) direction"
             bool isAtStart = (mesh.edges[edgeIdx].halfA == he);
             rawSlots.push_back({etIdx, isAtStart ? 1 : 0});
+            typedFan.push_back(he);
         }
+        if (rawSlots.empty()) continue;
 
         // Find canonical rotation (lexicographically smallest).
         int n = (int)rawSlots.size();
@@ -305,7 +356,7 @@ bool extractTypes(const HalfEdgeMesh&         mesh,
         // halfEdgeSlotInVertex[he] = position of `he` after rotation.
         for (int k = 0; k < n; ++k) {
             int srcIdx = (best + k) % n;
-            int he     = fan[srcIdx];
+            int he     = typedFan[srcIdx];
             out.halfEdgeSlotInVertex[he] = k;
         }
     }
