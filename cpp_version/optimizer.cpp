@@ -19,6 +19,11 @@ Optimizer::Optimizer(const NodeStats& nodeStats)
     prevCost = computeCost();
 }
 
+void Optimizer::reset() {
+    prevCost = {};
+    prevCost = computeCost();
+}
+
 Optimizer::Cost Optimizer::computeCost() {
     Cost cost;
     cost.logLineDistances =

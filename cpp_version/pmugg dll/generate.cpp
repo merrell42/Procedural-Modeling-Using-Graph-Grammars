@@ -108,9 +108,9 @@ void initialize(const char* filePath, char* result, int len, int seed) {
 
 // Reset the model and mutator.
 void reset(int seed) {
+	resetRandom(seed);
 	model->reset();
 	mutator->reset();
-	resetRandom(seed);
 }
 
 // Iterate some number of steps.

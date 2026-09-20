@@ -19,6 +19,11 @@ Mutator::Mutator(Model* model, GraphGrammar* grammar)
 
 void Mutator::reset() {
     morphismFinder->reset();
+    nodeStats.resetCostChange();
+    optimizer.reset();
+    successRate[0] = 1.0;
+    successRate[1] = 1.0;
+    successRate[2] = 1.0;
 }
 
 void Mutator::iterate(int steps) {

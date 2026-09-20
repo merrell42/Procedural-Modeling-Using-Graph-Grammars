@@ -21,6 +21,7 @@ public:
     bool isAccepted(const Cost& cost);
     const Cost& getPrevCost() const;
     void verifyCost();
+    void reset();
 
     static bool detailedCost;
     static constexpr double costScale = 0.01;
