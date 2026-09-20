@@ -11,6 +11,7 @@ namespace mesh_extraction {
 
 struct ObjMesh {
     struct Vec3 { float x, y, z; };
+    struct Color { double x, y, z; };
 
     struct FaceCorner {
         int vertexIndex;    // 0-based
@@ -28,6 +29,7 @@ struct ObjMesh {
     std::vector<Vec3>         normals;
     std::vector<Face>         faces;
     std::vector<std::string>  materialNames;  // index = materialId
+    std::vector<Color>        materialColors; // Kd from the .mtl; white if absent
 };
 
 // Returns true on success. On failure, fills `error` (if non-null) with the

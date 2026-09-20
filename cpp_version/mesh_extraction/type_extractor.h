@@ -18,6 +18,7 @@ struct ExtractedTypes {
     // and the 3D extension from §7 (volume labels) of Merrell 2023.
     struct FaceType {
         std::string material;
+        Vec3d       color;    // Kd from the .mtl; white if the material has no color
         Vec3d       normal;
         int         volAbove;
         int         volBelow;

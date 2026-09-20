@@ -6,8 +6,11 @@
 #include "mesh_extraction/obj_loader.h"
 
 #include <fstream>
+#include <functional>
 #include <sstream>
+#include <unordered_map>
 #include <unordered_set>
+#include <vector>
 
 namespace mesh_extraction {
 
@@ -60,6 +63,82 @@ static std::string synthesizeMtlFromUsemtl(const std::string& objText) {
     return out;
 }
 
+static std::string directoryPrefix(const char* path) {
+    std::string s(path ? path : "");
+    size_t slash = s.find_last_of("/\\");
+    if (slash == std::string::npos) return {};
+    return s.substr(0, slash + 1);
+}
+
+// Rest of the line after a keyword such as `mtllib` / `newmtl` / `Kd`.
+static std::string restOfLine(const std::string& text, size_t keywordEnd, size_t lineEnd) {
+    size_t i = keywordEnd;
+    while (i < lineEnd && (text[i] == ' ' || text[i] == '\t')) ++i;
+    size_t end = lineEnd;
+    while (end > i && (text[end - 1] == ' ' || text[end - 1] == '\t')) --end;
+    if (end <= i) return {};
+    return std::string(text, i, end - i);
+}
+
+static void forEachContentLine(
+    const std::string& text,
+    const std::function<void(size_t start, size_t end)>& fn
+) {
+    size_t i = 0, n = text.size();
+    while (i < n) {
+        size_t lineStart = i;
+        while (lineStart < n && (text[lineStart] == ' ' || text[lineStart] == '\t'))
+            ++lineStart;
+        size_t lineEnd = lineStart;
+        while (lineEnd < n && text[lineEnd] != '\n' && text[lineEnd] != '\r')
+            ++lineEnd;
+        if (lineStart < lineEnd && text[lineStart] != '#') {
+            fn(lineStart, lineEnd);
+        }
+        i = lineEnd;
+        if (i < n && text[i] == '\r') ++i;
+        if (i < n && text[i] == '\n') ++i;
+    }
+}
+
+// Wavefront MTL stores diffuse color as `Kd`. We keep the synthetic-mtl path
+// for name resolution, and read Kd from the real file so extraction can write
+// it into face types.
+static std::unordered_map<std::string, ObjMesh::Color>
+loadDiffuseColors(const char* objPath, const std::string& objText) {
+    std::vector<std::string> libs;
+    forEachContentLine(objText, [&](size_t start, size_t end) {
+        if (end - start >= 6 && objText.compare(start, 6, "mtllib") == 0 &&
+            (start + 6 == end || objText[start + 6] == ' ' || objText[start + 6] == '\t')) {
+            std::string name = restOfLine(objText, start + 6, end);
+            if (!name.empty()) libs.push_back(std::move(name));
+        }
+    });
+
+    const std::string prefix = directoryPrefix(objPath);
+    std::unordered_map<std::string, ObjMesh::Color> colors;
+    for (const auto& lib : libs) {
+        std::string mtlText = slurpFile((prefix + lib).c_str());
+        if (mtlText.empty()) continue;
+        std::string current;
+        forEachContentLine(mtlText, [&](size_t start, size_t end) {
+            if (end - start >= 6 && mtlText.compare(start, 6, "newmtl") == 0 &&
+                (start + 6 == end || mtlText[start + 6] == ' ' || mtlText[start + 6] == '\t')) {
+                current = restOfLine(mtlText, start + 6, end);
+            } else if (!current.empty() && end - start >= 2 &&
+                       mtlText.compare(start, 2, "Kd") == 0 &&
+                       (start + 2 == end || mtlText[start + 2] == ' ' || mtlText[start + 2] == '\t')) {
+                std::istringstream iss(restOfLine(mtlText, start + 2, end));
+                double r = 1.0, g = 1.0, b = 1.0;
+                if (iss >> r >> g >> b) {
+                    colors[current] = {r, g, b};
+                }
+            }
+        });
+    }
+    return colors;
+}
+
 bool loadObj(const char* path, ObjMesh& out, std::string* error) {
     out = {};
 
@@ -72,6 +151,7 @@ bool loadObj(const char* path, ObjMesh& out, std::string* error) {
         if (error) *error = std::string("could not open file: ") + path;
         return false;
     }
+    auto diffuseColors = loadDiffuseColors(path, objText);
     std::string synthMtl = synthesizeMtlFromUsemtl(objText);
 
     // Strip any pre-existing `mtllib` directives. tinyobj's MaterialStreamReader
@@ -117,7 +197,13 @@ bool loadObj(const char* path, ObjMesh& out, std::string* error) {
     }
 
     out.materialNames.reserve(materials.size());
-    for (const auto& m : materials) out.materialNames.push_back(m.name);
+    out.materialColors.reserve(materials.size());
+    const ObjMesh::Color white{1.0, 1.0, 1.0};
+    for (const auto& m : materials) {
+        out.materialNames.push_back(m.name);
+        auto it = diffuseColors.find(m.name);
+        out.materialColors.push_back(it != diffuseColors.end() ? it->second : white);
+    }
 
     for (const auto& shape : shapes) {
         const auto& mesh = shape.mesh;

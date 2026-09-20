@@ -484,8 +484,12 @@
     ],
     "faceTypes": [
       {
-        "color": null,
-        "material": "wire_154215229",
+        "color": {
+          "x": 0.7961,
+          "y": 0.7961,
+          "z": 0.6157
+        },
+        "material": "Material__25",
         "normal": {
           "x": -1.0,
           "y": 0.0,
@@ -493,8 +497,12 @@
         }
       },
       {
-        "color": null,
-        "material": "wire_154215229",
+        "color": {
+          "x": 0.7961,
+          "y": 0.7961,
+          "z": 0.6157
+        },
+        "material": "Material__25",
         "normal": {
           "x": 1.0,
           "y": 0.0,
@@ -502,8 +510,12 @@
         }
       },
       {
-        "color": null,
-        "material": "wire_154215229",
+        "color": {
+          "x": 0.0,
+          "y": 0.7765,
+          "z": 1.0
+        },
+        "material": "Material__48",
         "normal": {
           "x": 0.7071067811865475,
           "y": 0.0,
@@ -511,8 +523,12 @@
         }
       },
       {
-        "color": null,
-        "material": "wire_154215229",
+        "color": {
+          "x": 0.7961,
+          "y": 0.7961,
+          "z": 0.6157
+        },
+        "material": "Material__25",
         "normal": {
           "x": 0.0,
           "y": -1.0,
@@ -520,8 +536,12 @@
         }
       },
       {
-        "color": null,
-        "material": "wire_154215229",
+        "color": {
+          "x": 1.0,
+          "y": 0.0,
+          "z": 0.3059
+        },
+        "material": "Material__71",
         "normal": {
           "x": -0.7071067811865475,
           "y": 0.0,
@@ -529,8 +549,12 @@
         }
       },
       {
-        "color": null,
-        "material": "wire_154215229",
+        "color": {
+          "x": 0.7961,
+          "y": 0.7961,
+          "z": 0.6157
+        },
+        "material": "Material__25",
         "normal": {
           "x": 0.0,
           "y": 0.0,
@@ -538,8 +562,12 @@
         }
       },
       {
-        "color": null,
-        "material": "wire_154215229",
+        "color": {
+          "x": 0.7961,
+          "y": 0.7961,
+          "z": 0.6157
+        },
+        "material": "Material__25",
         "normal": {
           "x": 0.0,
           "y": 1.0,

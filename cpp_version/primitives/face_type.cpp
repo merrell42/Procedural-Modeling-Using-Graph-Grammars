@@ -25,6 +25,7 @@ FaceType::FaceType(const string& mat, const Vec3& n)
     , normal(n) {
     maxDim = Util::maxDim(normal);
     orthonormalBasis(normal, u, v);
+    color = Vec3(1, 1, 1);
 }
 
 double FaceType::angle(const Vec3& dir) const {
@@ -48,7 +49,7 @@ FaceType* FaceType::import(const Json& json) {
         Vec3::import(json["normal"]) : Vec3(0, 0, 1);
     auto* result = new FaceType(material, normal);
     
-    if (json["color"] != nullptr) {
+    if (json.contains("color") && !json["color"].is_null()) {
         result->color = Vec3::import(json["color"]);
     }
     

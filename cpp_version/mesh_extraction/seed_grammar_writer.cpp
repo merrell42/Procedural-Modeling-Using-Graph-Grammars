@@ -148,7 +148,7 @@ Json buildTypesJson(const ExtractedTypes& types) {
         Json j;
         j["material"] = ft.material;
         j["normal"]   = vec3ToJson(ft.normal);
-        j["color"]    = nullptr;
+        j["color"]    = vec3ToJson(ft.color);
         faceTypesJson.push_back(std::move(j));
     }
 

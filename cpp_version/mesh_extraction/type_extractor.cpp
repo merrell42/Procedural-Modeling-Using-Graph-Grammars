@@ -227,15 +227,21 @@ bool extractTypes(const HalfEdgeMesh&         mesh,
     for (size_t fi = 0; fi < mesh.faces.size(); ++fi) {
         const auto& f = mesh.faces[fi];
         std::string mat;
-        if (f.materialId >= 0 && f.materialId < (int)obj.materialNames.size())
+        Vec3d color{1.0, 1.0, 1.0};
+        if (f.materialId >= 0 && f.materialId < (int)obj.materialNames.size()) {
             mat = obj.materialNames[f.materialId];
+            if (f.materialId < (int)obj.materialColors.size()) {
+                const auto& c = obj.materialColors[f.materialId];
+                color = {c.x, c.y, c.z};
+            }
+        }
 
         FaceTypeKey key{mat, f.volAbove, f.volBelow, q3(f.normal, cfg.normalEps)};
         auto it = faceTypeMap.find(key);
         int idx;
         if (it == faceTypeMap.end()) {
             idx = (int)out.faceTypes.size();
-            out.faceTypes.push_back({mat, f.normal, f.volAbove, f.volBelow});
+            out.faceTypes.push_back({mat, color, f.normal, f.volAbove, f.volBelow});
             faceTypeMap.emplace(std::move(key), idx);
         } else {
             idx = it->second;
