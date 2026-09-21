@@ -52,22 +52,30 @@ namespace Grammar {
             public int numSubmeshes;
         }
 
+        // Must match cpp_version/geometry/instance.h (Instance, InstanceList).
+        [StructLayout(LayoutKind.Sequential)]
+        private struct Instance {
+            public IntPtr assetId;
+            public Matrix4 transform;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct InstanceList {
+            public IntPtr instances;
+            public int count;
+        }
+
         [DllImport(pmuggDll, CallingConvention = CallingConvention.Cdecl)]
         private static extern MeshCpp getMesh();
 
         [DllImport(pmuggDll, CallingConvention = CallingConvention.Cdecl)]
         private static extern void destroyMesh(ref MeshCpp mesh);
 
-        private const int MaxInstances = 8;
-        private const int InstanceAssetIdLength = 64;
+        [DllImport(pmuggDll, CallingConvention = CallingConvention.Cdecl)]
+        private static extern InstanceList getInstances();
 
-        [DllImport(pmuggDll, CallingConvention = CallingConvention.Cdecl, EntryPoint = "pmuggCopyInstances")]
-        private static extern int CopyPmuggInstances(
-            IntPtr matrices,
-            IntPtr assetIds,
-            int maxInstances,
-            int assetIdLen
-        );
+        [DllImport(pmuggDll, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void destroyInstances(ref InstanceList instanceList);
 
         [DllImport(pmuggDll, CallingConvention = CallingConvention.Cdecl)]
         private static extern void initialize(string filePath, StringBuilder result, int len, int seed);
@@ -88,7 +96,6 @@ namespace Grammar {
         private static extern void setSize(float x, float y, float z);
 
         private static Material sharedLineMaterial = null;
-        private bool instancesUpdateInProgress = false;
 
         private void OnEnable() {
             titleContent = new GUIContent("Graph Grammar Generator");
@@ -259,7 +266,7 @@ namespace Grammar {
 
             Selection.activeGameObject = gameObject;
 
-            var creator = FindObjectOfType<GrammarCreator>();
+            var creator = FindFirstObjectByType<GrammarCreator>();
             if (creator) {
                 gameObject.transform.parent = creator.transform;
             }
@@ -306,67 +313,21 @@ namespace Grammar {
 
         private const string InstanceModelPath = "Assets/cone.obj";
 
-        private static string DecodeAssetId(byte[] assetIdBytes) {
-            int length = Array.IndexOf(assetIdBytes, (byte)0);
-            if (length < 0) {
-                length = assetIdBytes.Length;
-            }
-            if (length == 0) {
-                return "Instance";
-            }
-            return Encoding.ASCII.GetString(assetIdBytes, 0, length);
-        }
-
         private void UpdateInstances() {
-            if (instancesUpdateInProgress) {
-                return;
-            }
-
-            instancesUpdateInProgress = true;
-            try {
-                UpdateInstancesInternal();
-            } finally {
-                instancesUpdateInProgress = false;
-            }
-        }
-
-        private void UpdateInstancesInternal() {
             GameObject instancesContainer = GameObject.Find("Generated Instances");
             if (instancesContainer != null) {
                 DestroyImmediate(instancesContainer);
             }
 
-            const int floatSize = 4;
-            int matrixBytes = MaxInstances * 16 * floatSize;
-            int assetIdBufferBytes = MaxInstances * InstanceAssetIdLength;
-            IntPtr matricesPtr = Marshal.AllocHGlobal(matrixBytes);
-            IntPtr assetIdsPtr = Marshal.AllocHGlobal(assetIdBufferBytes);
-            int instanceCount = 0;
-            float[] matrices = null;
-            byte[] assetIds = null;
-            try {
-                instanceCount = CopyPmuggInstances(
-                    matricesPtr,
-                    assetIdsPtr,
-                    MaxInstances,
-                    InstanceAssetIdLength
-                );
-                if (instanceCount <= 0) {
-                    return;
-                }
-
-                matrices = new float[instanceCount * 16];
-                assetIds = new byte[instanceCount * InstanceAssetIdLength];
-                Marshal.Copy(matricesPtr, matrices, 0, matrices.Length);
-                Marshal.Copy(assetIdsPtr, assetIds, 0, assetIds.Length);
-            } finally {
-                Marshal.FreeHGlobal(matricesPtr);
-                Marshal.FreeHGlobal(assetIdsPtr);
+            InstanceList instanceList = getInstances();
+            if (instanceList.instances == IntPtr.Zero || instanceList.count <= 0) {
+                destroyInstances(ref instanceList);
+                return;
             }
 
             instancesContainer = new GameObject("Generated Instances");
 
-            var creator = FindObjectOfType<GrammarCreator>();
+            var creator = FindFirstObjectByType<GrammarCreator>();
             if (creator) {
                 instancesContainer.transform.SetParent(creator.transform, false);
             }
@@ -376,14 +337,14 @@ namespace Grammar {
                 Debug.LogWarning($"Could not load instance model at {InstanceModelPath}.");
             }
 
-            var assetIdBuffer = new byte[InstanceAssetIdLength];
-            var matrix = new float[16];
+            int instanceStructSize = Marshal.SizeOf<Instance>();
+            for (int instanceIndex = 0; instanceIndex < instanceList.count; instanceIndex++) {
+                IntPtr instancePtr = IntPtr.Add(instanceList.instances, instanceIndex * instanceStructSize);
+                Instance instance = Marshal.PtrToStructure<Instance>(instancePtr);
 
-            for (int instanceIndex = 0; instanceIndex < instanceCount; instanceIndex++) {
-                Array.Copy(assetIds, instanceIndex * InstanceAssetIdLength, assetIdBuffer, 0, InstanceAssetIdLength);
-                Array.Copy(matrices, instanceIndex * 16, matrix, 0, 16);
-
-                string assetId = DecodeAssetId(assetIdBuffer);
+                string assetId = instance.assetId != IntPtr.Zero
+                    ? Marshal.PtrToStringAnsi(instance.assetId)
+                    : "Instance";
 
                 GameObject instanceObject;
                 if (instanceModel != null) {
@@ -394,8 +355,10 @@ namespace Grammar {
                 }
 
                 instanceObject.name = assetId + " " + instanceIndex;
-                Matrix4.FromColumnMajor(matrix).ApplyTo(instanceObject.transform);
+                instance.transform.ApplyTo(instanceObject.transform);
             }
+
+            destroyInstances(ref instanceList);
         }
 
         private void ClearGeneratedObjects() {

@@ -25,10 +25,8 @@ extern "C" {
     GENERATE_API MeshCpp getMesh();
     GENERATE_API void setSize(float x, float y, float z);
     GENERATE_API void destroyMesh(MeshCpp& mesh);
-    // Copies instance transforms and asset ids into caller buffers.
-    // matrices must hold at least maxInstances * 16 floats.
-    // assetIds must hold at least maxInstances * assetIdLen bytes.
-    GENERATE_API int pmuggCopyInstances(float* matrices, char* assetIds, int maxInstances, int assetIdLen);
+    GENERATE_API InstanceList getInstances();
+    GENERATE_API void destroyInstances(InstanceList& instanceList);
 
     // Production rule categories: 0 = rules, 1 = starterRules, 2 = groundRules.
     GENERATE_API int getNumProductionRules(int category);

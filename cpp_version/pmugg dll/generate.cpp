@@ -60,6 +60,13 @@ void resetGenerationState() {
     grammar = nullptr;
 }
 
+char* copyCString(const char* value) {
+    size_t length = strlen(value) + 1;
+    char* copy = (char*)malloc(length);
+    memcpy(copy, value, length);
+    return copy;
+}
+
 } // namespace
 
 // Cross-platform safe string copy
@@ -163,32 +170,31 @@ void destroyMesh(MeshCpp& mesh) {
 	freeMeshMemory(mesh);
 }
 
-int pmuggCopyInstances(float* matrices, char* assetIds, int maxInstances, int assetIdLen) {
+InstanceList getInstances() {
 	const float positions[][3] = {
 		{10.0f, 10.0f, 10.0f},
 		{20.0f, 20.0f, 10.0f},
 		{40.0f, 40.0f, 20.0f},
 	};
 
-	int count = (int)(sizeof(positions) / sizeof(positions[0]));
-	if (maxInstances >= 0 && count > maxInstances) {
-		count = maxInstances;
+	InstanceList instanceList{};
+	instanceList.count = (int)(sizeof(positions) / sizeof(positions[0]));
+	instanceList.instances = (Instance*)malloc(instanceList.count * sizeof(Instance));
+
+	for (int i = 0; i < instanceList.count; i++) {
+		instanceList.instances[i].assetId = copyCString("cone");
+		instanceList.instances[i].transform = Matrix4::translation(
+			positions[i][0],
+			positions[i][1],
+			positions[i][2]
+		);
 	}
 
-	for (int i = 0; i < count; i++) {
-		if (matrices) {
-			Matrix4::translation(
-				positions[i][0],
-				positions[i][1],
-				positions[i][2]
-			).copyTo(matrices + i * 16);
-		}
-		if (assetIds && assetIdLen > 0) {
-			safeCopy(assetIds + i * assetIdLen, assetIdLen, "cone");
-		}
-	}
+	return instanceList;
+}
 
-	return count;
+void destroyInstances(InstanceList& instanceList) {
+	freeInstanceListMemory(instanceList);
 }
 
 int getNumProductionRules(int category) {
