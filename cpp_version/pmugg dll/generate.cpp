@@ -5,6 +5,7 @@
 #include <vector>
 #include <sstream>
 #include <chrono>
+#include <cstring>
 #include "../graph_grammar.h"
 #include "../mutator.h"
 #include "../primitives/primitives.h"
@@ -15,6 +16,7 @@
 #include "../util/diagnostics.h"
 #include "../graph/debug_mesh.h"
 #include "../grammar_rules/production_rule.h"
+#include "../geometry/matrix4.h"
 
 using namespace std;
 using Json = nlohmann::json;
@@ -159,6 +161,34 @@ void setSize(float x, float y, float z) {
 // Free memory for the mesh.
 void destroyMesh(MeshCpp& mesh) {
 	freeMeshMemory(mesh);
+}
+
+int pmuggCopyInstances(float* matrices, char* assetIds, int maxInstances, int assetIdLen) {
+	const float positions[][3] = {
+		{10.0f, 10.0f, 10.0f},
+		{20.0f, 20.0f, 10.0f},
+		{40.0f, 40.0f, 20.0f},
+	};
+
+	int count = (int)(sizeof(positions) / sizeof(positions[0]));
+	if (maxInstances >= 0 && count > maxInstances) {
+		count = maxInstances;
+	}
+
+	for (int i = 0; i < count; i++) {
+		if (matrices) {
+			Matrix4::translation(
+				positions[i][0],
+				positions[i][1],
+				positions[i][2]
+			).copyTo(matrices + i * 16);
+		}
+		if (assetIds && assetIdLen > 0) {
+			safeCopy(assetIds + i * assetIdLen, assetIdLen, "cone");
+		}
+	}
+
+	return count;
 }
 
 int getNumProductionRules(int category) {

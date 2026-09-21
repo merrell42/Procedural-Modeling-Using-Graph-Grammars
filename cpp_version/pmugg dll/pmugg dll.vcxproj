@@ -158,6 +158,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\geometry\intersector.h" />
+    <ClInclude Include="..\geometry\instance.h" />
+    <ClInclude Include="..\geometry\matrix4.h" />
     <ClInclude Include="..\geometry\mesh.h" />
     <ClInclude Include="..\geometry\plane.h" />
     <ClInclude Include="..\geometry\vec2.h" />
@@ -213,6 +215,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\geometry\intersector.cpp" />
+    <ClCompile Include="..\geometry\instance.cpp" />
+    <ClCompile Include="..\geometry\matrix4.cpp" />
     <ClCompile Include="..\geometry\mesh.cpp" />
     <ClCompile Include="..\geometry\vec2.cpp" />
     <ClCompile Include="..\geometry\vec3.cpp" />

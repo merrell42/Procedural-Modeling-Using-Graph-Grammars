@@ -58,6 +58,17 @@ namespace Grammar {
         [DllImport(pmuggDll, CallingConvention = CallingConvention.Cdecl)]
         private static extern void destroyMesh(ref MeshCpp mesh);
 
+        private const int MaxInstances = 8;
+        private const int InstanceAssetIdLength = 64;
+
+        [DllImport(pmuggDll, CallingConvention = CallingConvention.Cdecl, EntryPoint = "pmuggCopyInstances")]
+        private static extern int CopyPmuggInstances(
+            IntPtr matrices,
+            IntPtr assetIds,
+            int maxInstances,
+            int assetIdLen
+        );
+
         [DllImport(pmuggDll, CallingConvention = CallingConvention.Cdecl)]
         private static extern void initialize(string filePath, StringBuilder result, int len, int seed);
 
@@ -77,6 +88,7 @@ namespace Grammar {
         private static extern void setSize(float x, float y, float z);
 
         private static Material sharedLineMaterial = null;
+        private bool instancesUpdateInProgress = false;
 
         private void OnEnable() {
             titleContent = new GUIContent("Graph Grammar Generator");
@@ -199,6 +211,7 @@ namespace Grammar {
             if (vertices.Count == 0 && edgeVertices == null) {
                 DestroyMeshMaterials();
                 ClearGeneratedObjects();
+                UpdateInstances();
                 return;
             }
 
@@ -246,7 +259,7 @@ namespace Grammar {
 
             Selection.activeGameObject = gameObject;
 
-            var creator = FindFirstObjectByType<GrammarCreator>();
+            var creator = FindObjectOfType<GrammarCreator>();
             if (creator) {
                 gameObject.transform.parent = creator.transform;
             }
@@ -254,6 +267,8 @@ namespace Grammar {
             if (edgeVertices != null && edgeFaceIndices != null) {
                 DrawEdgeLines(edgeVertices, edgeFaceIndices);
             }
+
+            UpdateInstances();
 
             if (iterationCount % 20 == 0) {
                 GC.Collect();
@@ -289,7 +304,106 @@ namespace Grammar {
             lastMeshMaterials = null;
         }
 
+        private const string InstanceModelPath = "Assets/cone.obj";
+
+        private static string DecodeAssetId(byte[] assetIdBytes) {
+            int length = Array.IndexOf(assetIdBytes, (byte)0);
+            if (length < 0) {
+                length = assetIdBytes.Length;
+            }
+            if (length == 0) {
+                return "Instance";
+            }
+            return Encoding.ASCII.GetString(assetIdBytes, 0, length);
+        }
+
+        private void UpdateInstances() {
+            if (instancesUpdateInProgress) {
+                return;
+            }
+
+            instancesUpdateInProgress = true;
+            try {
+                UpdateInstancesInternal();
+            } finally {
+                instancesUpdateInProgress = false;
+            }
+        }
+
+        private void UpdateInstancesInternal() {
+            GameObject instancesContainer = GameObject.Find("Generated Instances");
+            if (instancesContainer != null) {
+                DestroyImmediate(instancesContainer);
+            }
+
+            const int floatSize = 4;
+            int matrixBytes = MaxInstances * 16 * floatSize;
+            int assetIdBufferBytes = MaxInstances * InstanceAssetIdLength;
+            IntPtr matricesPtr = Marshal.AllocHGlobal(matrixBytes);
+            IntPtr assetIdsPtr = Marshal.AllocHGlobal(assetIdBufferBytes);
+            int instanceCount = 0;
+            float[] matrices = null;
+            byte[] assetIds = null;
+            try {
+                instanceCount = CopyPmuggInstances(
+                    matricesPtr,
+                    assetIdsPtr,
+                    MaxInstances,
+                    InstanceAssetIdLength
+                );
+                if (instanceCount <= 0) {
+                    return;
+                }
+
+                matrices = new float[instanceCount * 16];
+                assetIds = new byte[instanceCount * InstanceAssetIdLength];
+                Marshal.Copy(matricesPtr, matrices, 0, matrices.Length);
+                Marshal.Copy(assetIdsPtr, assetIds, 0, assetIds.Length);
+            } finally {
+                Marshal.FreeHGlobal(matricesPtr);
+                Marshal.FreeHGlobal(assetIdsPtr);
+            }
+
+            instancesContainer = new GameObject("Generated Instances");
+
+            var creator = FindObjectOfType<GrammarCreator>();
+            if (creator) {
+                instancesContainer.transform.SetParent(creator.transform, false);
+            }
+
+            GameObject instanceModel = AssetDatabase.LoadAssetAtPath<GameObject>(InstanceModelPath);
+            if (instanceModel == null) {
+                Debug.LogWarning($"Could not load instance model at {InstanceModelPath}.");
+            }
+
+            var assetIdBuffer = new byte[InstanceAssetIdLength];
+            var matrix = new float[16];
+
+            for (int instanceIndex = 0; instanceIndex < instanceCount; instanceIndex++) {
+                Array.Copy(assetIds, instanceIndex * InstanceAssetIdLength, assetIdBuffer, 0, InstanceAssetIdLength);
+                Array.Copy(matrices, instanceIndex * 16, matrix, 0, 16);
+
+                string assetId = DecodeAssetId(assetIdBuffer);
+
+                GameObject instanceObject;
+                if (instanceModel != null) {
+                    instanceObject = (GameObject)Instantiate(instanceModel, instancesContainer.transform);
+                } else {
+                    instanceObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    instanceObject.transform.SetParent(instancesContainer.transform, false);
+                }
+
+                instanceObject.name = assetId + " " + instanceIndex;
+                Matrix4.FromColumnMajor(matrix).ApplyTo(instanceObject.transform);
+            }
+        }
+
         private void ClearGeneratedObjects() {
+            GameObject instancesContainer = GameObject.Find("Generated Instances");
+            if (instancesContainer != null) {
+                DestroyImmediate(instancesContainer);
+            }
+
             GameObject linesContainer = GameObject.Find("Generated Lines");
             if (linesContainer != null) {
                 DestroyImmediate(linesContainer);

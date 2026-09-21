@@ -54,6 +54,12 @@
     <ClInclude Include="..\geometry\intersector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\geometry\instance.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\geometry\matrix4.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="..\geometry\mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -201,6 +207,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\geometry\intersector.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\geometry\instance.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\geometry\matrix4.cpp">
       <Filter>Header Files</Filter>
     </ClCompile>
     <ClCompile Include="..\geometry\mesh.cpp">
