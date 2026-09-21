@@ -5,6 +5,8 @@
 #include "../geometry/vec3.h"
 
 class View;
+class Primitives;
+class FaceDecoration;
 
 class FaceType {
 public:
@@ -12,19 +14,22 @@ public:
     ~FaceType() = default;
 
     const string& getMaterial() const;
+    FaceDecoration* getDecoration() const;
+    void setDecoration(FaceDecoration* decoration);
     const Vec3& getNormal() const;
     const Vec3& getColor() const;
     int getMaxDim() const;
     double angle(const Vec3& dir) const;
 
-    static FaceType* import(const Json& json);
+    static FaceType* import(const Json& json, Primitives* shape);
     static FaceType* binaryDeserialize(std::istream& in);
-    Json exportJson() const;
+    Json exportJson(const Primitives* shape) const;
 
 private:
     static void orthonormalBasis(const Vec3& normal, Vec3& u, Vec3& v);
 
     string material;
+    FaceDecoration* decoration = nullptr;
     Vec3 normal;
     Vec3 u;
     Vec3 v;

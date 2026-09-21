@@ -58,6 +58,7 @@ public:
 
     // Get the number of dimensions of the graph.
     int getDims() const { return primitives->dims; }
+    const Primitives* getPrimitives() const { return primitives; }
 
 private:
     // The production rules.

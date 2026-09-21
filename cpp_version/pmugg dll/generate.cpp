@@ -16,14 +16,14 @@
 #include "../util/diagnostics.h"
 #include "../graph/debug_mesh.h"
 #include "../grammar_rules/production_rule.h"
-#include "../geometry/matrix4.h"
+#include "../decorations/getInstancesFromModel.h"
 
 using namespace std;
 using Json = nlohmann::json;
 
-Model* model;
-Mutator* mutator;
-GraphGrammar* grammar;
+Model* model = nullptr;
+Mutator* mutator = nullptr;
+GraphGrammar* grammar = nullptr;
 
 namespace {
 
@@ -58,13 +58,6 @@ void resetGenerationState() {
     model = nullptr;
     delete grammar;
     grammar = nullptr;
-}
-
-char* copyCString(const char* value) {
-    size_t length = strlen(value) + 1;
-    char* copy = (char*)malloc(length);
-    memcpy(copy, value, length);
-    return copy;
 }
 
 } // namespace
@@ -171,26 +164,7 @@ void destroyMesh(MeshCpp& mesh) {
 }
 
 InstanceList getInstances() {
-	const float positions[][3] = {
-		{10.0f, 10.0f, 10.0f},
-		{20.0f, 20.0f, 10.0f},
-		{40.0f, 40.0f, 20.0f},
-	};
-
-	InstanceList instanceList{};
-	instanceList.count = (int)(sizeof(positions) / sizeof(positions[0]));
-	instanceList.instances = (Instance*)malloc(instanceList.count * sizeof(Instance));
-
-	for (int i = 0; i < instanceList.count; i++) {
-		instanceList.instances[i].assetId = copyCString("cone");
-		instanceList.instances[i].transform = Matrix4::translation(
-			positions[i][0],
-			positions[i][1],
-			positions[i][2]
-		);
-	}
-
-	return instanceList;
+	return getInstancesFromModel(model);
 }
 
 void destroyInstances(InstanceList& instanceList) {

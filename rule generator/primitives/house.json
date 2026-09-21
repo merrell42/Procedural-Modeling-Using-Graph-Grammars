@@ -1,0 +1,1004 @@
+{
+  "name": "house",
+  "decorations": {
+	  "vertex": [{
+		  "id": "cone",
+		  "type": "place object",
+		  "object": "cone"
+	  }],
+	  "edge": [],
+	  "face": []
+  },
+  "types": {
+    "dims": 3,
+    "edgeTypes": [
+      {
+        "dir": {
+          "x": 0.0,
+          "y": -1.0,
+          "z": 0.0
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": false,
+            "type": 0
+          },
+          {
+            "onRight": true,
+            "type": 5
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 1.0
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": false,
+            "type": 0
+          },
+          {
+            "onRight": true,
+            "type": 3
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0.0,
+          "y": 1.0,
+          "z": 0.0
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": false,
+            "type": 0
+          },
+          {
+            "onRight": true,
+            "type": 4
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": -1.0
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": false,
+            "type": 0
+          },
+          {
+            "onRight": true,
+            "type": 6
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": -1.0
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": false,
+            "type": 1
+          },
+          {
+            "onRight": true,
+            "type": 3
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0.0,
+          "y": 1.0,
+          "z": 0.0
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": false,
+            "type": 1
+          },
+          {
+            "onRight": true,
+            "type": 5
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 1.0
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": false,
+            "type": 1
+          },
+          {
+            "onRight": true,
+            "type": 6
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0.0,
+          "y": -1.0,
+          "z": 0.0
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": false,
+            "type": 1
+          },
+          {
+            "onRight": true,
+            "type": 2
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": -0.7071067811865475,
+          "y": -0.0,
+          "z": 0.7071067811865475
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": false,
+            "type": 2
+          },
+          {
+            "onRight": true,
+            "type": 6
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0.0,
+          "y": -1.0,
+          "z": 0.0
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": false,
+            "type": 2
+          },
+          {
+            "onRight": true,
+            "type": 4
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0.7071067811865475,
+          "y": 0.0,
+          "z": -0.7071067811865475
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": false,
+            "type": 2
+          },
+          {
+            "onRight": true,
+            "type": 3
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 1.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": false,
+            "type": 3
+          },
+          {
+            "onRight": true,
+            "type": 5
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": -0.7071067811865475,
+          "y": 0.0,
+          "z": -0.7071067811865475
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": false,
+            "type": 3
+          },
+          {
+            "onRight": true,
+            "type": 4
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": -0.7071067811865475,
+          "y": 0.0,
+          "z": -0.7071067811865475
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": false,
+            "type": 4
+          },
+          {
+            "onRight": true,
+            "type": 6
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 1.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": false,
+            "type": 5
+          },
+          {
+            "onRight": true,
+            "type": 6
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0.0,
+          "y": 1.0,
+          "z": 0.0
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": false,
+            "type": 5
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": -1.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": false,
+            "type": 5
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0.0,
+          "y": -1.0,
+          "z": 0.0
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": false,
+            "type": 5
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 1.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": false,
+            "type": 5
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      }
+    ],
+    "faceTypes": [
+      {
+        "color": {
+          "x": 0.7961,
+          "y": 0.7961,
+          "z": 0.6157
+        },
+        "material": "Material__25",
+        "normal": {
+          "x": -1.0,
+          "y": 0.0,
+          "z": 0.0
+        }
+      },
+      {
+        "color": {
+          "x": 0.7961,
+          "y": 0.7961,
+          "z": 0.6157
+        },
+        "material": "Material__25",
+        "normal": {
+          "x": 1.0,
+          "y": 0.0,
+          "z": 0.0
+        }
+      },
+      {
+        "color": {
+          "x": 0.0,
+          "y": 0.7765,
+          "z": 1.0
+        },
+        "material": "Material__48",
+        "normal": {
+          "x": 0.7071067811865475,
+          "y": 0.0,
+          "z": 0.7071067811865475
+        }
+      },
+      {
+        "color": {
+          "x": 0.7961,
+          "y": 0.7961,
+          "z": 0.6157
+        },
+        "material": "Material__25",
+        "normal": {
+          "x": 0.0,
+          "y": -1.0,
+          "z": 0.0
+        }
+      },
+      {
+        "color": {
+          "x": 1.0,
+          "y": 0.0,
+          "z": 0.3059
+        },
+        "material": "Material__71",
+        "normal": {
+          "x": -0.7071067811865475,
+          "y": 0.0,
+          "z": 0.7071067811865475
+        }
+      },
+      {
+        "color": {
+          "x": 0.7961,
+          "y": 0.7961,
+          "z": 0.6157
+        },
+        "material": "Material__25",
+        "normal": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 1.0
+        }
+      },
+      {
+        "color": {
+          "x": 0.7961,
+          "y": 0.7961,
+          "z": 0.6157
+        },
+        "material": "Material__25",
+        "normal": {
+          "x": 0.0,
+          "y": 1.0,
+          "z": 0.0
+        }
+      }
+    ],
+    "vertexTypes": [
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 0.0,
+              "y": -1.0,
+              "z": 0.0
+            },
+            "edge": 0,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": -0.0,
+              "y": -0.0,
+              "z": 1.0
+            },
+            "edge": 3,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 1.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "edge": 14,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false,
+		    "decoration": "cone"
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": -0.0,
+              "y": 1.0,
+              "z": -0.0
+            },
+            "edge": 0,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 1.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "edge": 11,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 1.0
+            },
+            "edge": 1,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": -0.0,
+              "y": -0.0,
+              "z": -1.0
+            },
+            "edge": 1,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 0.7071067811865475,
+              "y": -0.0,
+              "z": 0.7071067811865475
+            },
+            "edge": 12,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 0.0,
+              "y": 1.0,
+              "z": 0.0
+            },
+            "edge": 2,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": -0.0,
+              "y": -1.0,
+              "z": -0.0
+            },
+            "edge": 2,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 0.7071067811865475,
+              "y": -0.0,
+              "z": 0.7071067811865475
+            },
+            "edge": 13,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": -1.0
+            },
+            "edge": 3,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": -1.0
+            },
+            "edge": 4,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": -0.0,
+              "y": 1.0,
+              "z": -0.0
+            },
+            "edge": 7,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": -0.7071067811865475,
+              "y": -0.0,
+              "z": 0.7071067811865475
+            },
+            "edge": 10,
+            "isAtStart": false
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": -0.0,
+              "y": -0.0,
+              "z": 1.0
+            },
+            "edge": 4,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": -1.0,
+              "y": -0.0,
+              "z": -0.0
+            },
+            "edge": 11,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 0.0,
+              "y": 1.0,
+              "z": 0.0
+            },
+            "edge": 5,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": -0.0,
+              "y": -1.0,
+              "z": -0.0
+            },
+            "edge": 5,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": -1.0,
+              "y": -0.0,
+              "z": -0.0
+            },
+            "edge": 14,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 1.0
+            },
+            "edge": 6,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": -0.0,
+              "y": -0.0,
+              "z": -1.0
+            },
+            "edge": 6,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": -0.7071067811865475,
+              "y": -0.0,
+              "z": 0.7071067811865475
+            },
+            "edge": 8,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": 0.0,
+              "y": -1.0,
+              "z": 0.0
+            },
+            "edge": 7,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 0.7071067811865475,
+              "y": 0.0,
+              "z": -0.7071067811865475
+            },
+            "edge": 8,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": -0.7071067811865475,
+              "y": 0.0,
+              "z": -0.7071067811865475
+            },
+            "edge": 13,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": 0.0,
+              "y": -1.0,
+              "z": 0.0
+            },
+            "edge": 9,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": -0.0,
+              "y": 1.0,
+              "z": -0.0
+            },
+            "edge": 9,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": -0.7071067811865475,
+              "y": 0.0,
+              "z": -0.7071067811865475
+            },
+            "edge": 12,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": 0.7071067811865475,
+              "y": 0.0,
+              "z": -0.7071067811865475
+            },
+            "edge": 10,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 0.0,
+              "y": 1.0,
+              "z": 0.0
+            },
+            "edge": 15,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": -1.0,
+              "y": -0.0,
+              "z": -0.0
+            },
+            "edge": 18,
+            "isAtStart": false
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": -0.0,
+              "y": -1.0,
+              "z": -0.0
+            },
+            "edge": 15,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": -1.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "edge": 16,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 1.0,
+              "y": -0.0,
+              "z": -0.0
+            },
+            "edge": 16,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 0.0,
+              "y": -1.0,
+              "z": 0.0
+            },
+            "edge": 17,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": -0.0,
+              "y": 1.0,
+              "z": -0.0
+            },
+            "edge": 17,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 1.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "edge": 18,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      }
+    ]
+  },
+  "version": 2
+}

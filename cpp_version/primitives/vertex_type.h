@@ -14,6 +14,7 @@ using namespace std;
 
 class EdgeType;
 class Primitives;
+class VertexDecoration;
 
 struct HalfEdgeType {
     HalfEdgeType(EdgeType* newEdge = nullptr, bool newIsAtStart = false);
@@ -50,6 +51,8 @@ public:
     void setHalfEdgeTypes(vector<HalfEdgeType> halfEdgeTypes);
     bool getSpliced() const;
     void setSpliced(bool spliced);
+    VertexDecoration* getDecoration() const;
+    void setDecoration(VertexDecoration* decoration);
 
     void addHalfEdge(EdgeType* edge, bool isAtStart);
 
@@ -66,6 +69,7 @@ public:
 private:
     vector<HalfEdgeType> halfEdgeTypes;
     bool spliced;
+    VertexDecoration* decoration = nullptr;
     // RuleGenerator fields.
     int ruleGeneratorId;
 };
