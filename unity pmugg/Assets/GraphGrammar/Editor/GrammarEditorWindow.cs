@@ -311,7 +311,19 @@ namespace Grammar {
             lastMeshMaterials = null;
         }
 
-        private const string InstanceModelPath = "Assets/cone.obj";
+        private GameObject LoadInstanceModel(string assetId, Dictionary<string, GameObject> modelCache) {
+            if (modelCache.TryGetValue(assetId, out GameObject cachedModel)) {
+                return cachedModel;
+            }
+
+            string modelPath = "Assets/" + assetId + ".obj";
+            GameObject instanceModel = AssetDatabase.LoadAssetAtPath<GameObject>(modelPath);
+            if (instanceModel == null) {
+                Debug.LogWarning($"Could not load instance model at {modelPath}.");
+            }
+            modelCache[assetId] = instanceModel;
+            return instanceModel;
+        }
 
         private void UpdateInstances() {
             GameObject instancesContainer = GameObject.Find("Generated Instances");
@@ -332,11 +344,7 @@ namespace Grammar {
                 instancesContainer.transform.SetParent(creator.transform, false);
             }
 
-            GameObject instanceModel = AssetDatabase.LoadAssetAtPath<GameObject>(InstanceModelPath);
-            if (instanceModel == null) {
-                Debug.LogWarning($"Could not load instance model at {InstanceModelPath}.");
-            }
-
+            var modelCache = new Dictionary<string, GameObject>();
             int instanceStructSize = Marshal.SizeOf<Instance>();
             for (int instanceIndex = 0; instanceIndex < instanceList.count; instanceIndex++) {
                 IntPtr instancePtr = IntPtr.Add(instanceList.instances, instanceIndex * instanceStructSize);
@@ -346,6 +354,7 @@ namespace Grammar {
                     ? Marshal.PtrToStringAnsi(instance.assetId)
                     : "Instance";
 
+                GameObject instanceModel = LoadInstanceModel(assetId, modelCache);
                 GameObject instanceObject;
                 if (instanceModel != null) {
                     instanceObject = (GameObject)Instantiate(instanceModel, instancesContainer.transform);

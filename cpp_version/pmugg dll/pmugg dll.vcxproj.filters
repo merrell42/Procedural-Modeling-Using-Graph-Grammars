@@ -66,6 +66,9 @@
     <ClInclude Include="..\decorations\place_object_decoration.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\decorations\union_decoration.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="..\decorations\vertex_decoration.h">
       <Filter>Header Files</Filter>
     </ClInclude>

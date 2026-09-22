@@ -5,6 +5,14 @@
 		  "id": "cone",
 		  "type": "place object",
 		  "object": "cone"
+	  },{
+		  "id": "arrow",
+		  "type": "place object",
+		  "object": "arrow"
+	  },{
+		  "id": "union test",
+		  "type": "union",
+		  "childIds": ["arrow", "cone"]
 	  }],
 	  "edge": [],
 	  "face": []
@@ -616,7 +624,7 @@
           }
         ],
         "spliced": false,
-		    "decoration": "cone"
+		    "decoration": "union test"
       },
       {
         "halfEdgeTypes": [

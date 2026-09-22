@@ -223,6 +223,7 @@
     <ClInclude Include="..\decorations\edge_decoration.h" />
     <ClInclude Include="..\decorations\face_decoration.h" />
     <ClInclude Include="..\decorations\place_object_decoration.h" />
+    <ClInclude Include="..\decorations\union_decoration.h" />
     <ClInclude Include="..\grammar_rules\production_rule.h" />
     <ClInclude Include="..\grammar_rules\rule_applier.h" />
     <ClInclude Include="..\grammar_rules\rule_applier_settings.h" />

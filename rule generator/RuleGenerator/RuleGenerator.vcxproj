@@ -168,6 +168,7 @@
     <ClInclude Include="..\..\cpp_version\decorations\edge_decoration.h" />
     <ClInclude Include="..\..\cpp_version\decorations\face_decoration.h" />
     <ClInclude Include="..\..\cpp_version\decorations\place_object_decoration.h" />
+    <ClInclude Include="..\..\cpp_version\decorations\union_decoration.h" />
     <ClInclude Include="..\..\cpp_version\graph\graph.h" />
     <ClInclude Include="..\..\cpp_version\graph\graph_edge.h" />
     <ClInclude Include="..\..\cpp_version\graph\graph_face.h" />
