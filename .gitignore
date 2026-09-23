@@ -57,3 +57,19 @@ ipch/
 *.pdb
 *.tlog
 
+# Editor and local tooling
+.cursor/
+.vscode/
+
+# Scratch and generated output
+unadded/
+rule generator/generatedRules.json
+
+# Unity local and generated files
+unity pmugg/Library/
+unity pmugg/Temp/
+unity pmugg/UserSettings/
+unity pmugg/Packages/
+unity pmugg/ProjectSettings/
+unity pmugg/**/*.meta
+
