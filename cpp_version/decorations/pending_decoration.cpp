@@ -30,11 +30,7 @@ void resolvePendingChildren(
     const map<string, Base*>& decorations
 ) {
     for (size_t i = 0; i < children.size(); i++) {
-        Base* child = resolvePendingChild<Base, Args...>(children[i], decorations);
-        children[i] = child;
-        if (child) {
-            child->resolveChildren(decorations);
-        }
+        children[i] = resolvePendingChild<Base, Args...>(children[i], decorations);
     }
 }
 

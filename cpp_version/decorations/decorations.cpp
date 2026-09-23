@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "decorations.h"
 #include "decorations_factory.h"
+#include <stdexcept>
 
 using namespace std;
 
@@ -29,6 +30,58 @@ void resolveAll(const map<string, Base*>& decorations) {
         if (entry.second) {
             entry.second->resolveChildren(decorations);
         }
+    }
+}
+
+enum class VisitState {
+    Unseen,
+    Visiting,
+    Visited
+};
+
+template <typename Base>
+void visitDecoration(
+    const Base* decoration,
+    vector<const Base*>& path,
+    map<const Base*, VisitState>& state
+) {
+    if (!decoration) {
+        return;
+    }
+    VisitState& visitState = state[decoration];
+    if (visitState == VisitState::Visited) {
+        return;
+    }
+    if (visitState == VisitState::Visiting) {
+        string cycle;
+        for (const Base* node : path) {
+            if (cycle.empty() && node != decoration) {
+                continue;
+            }
+            if (!cycle.empty()) {
+                cycle += " -> ";
+            }
+            cycle += node->getId();
+        }
+        cycle += " -> ";
+        cycle += decoration->getId();
+        throw runtime_error("Circular decoration dependency: " + cycle);
+    }
+    visitState = VisitState::Visiting;
+    path.push_back(decoration);
+    for (Base* child : decoration->getChildren()) {
+        visitDecoration(child, path, state);
+    }
+    path.pop_back();
+    visitState = VisitState::Visited;
+}
+
+template <typename Base>
+void checkForCycles(const map<string, Base*>& decorations) {
+    map<const Base*, VisitState> state;
+    for (const auto& entry : decorations) {
+        vector<const Base*> path;
+        visitDecoration(entry.second, path, state);
     }
 }
 
@@ -71,9 +124,17 @@ Decorations* Decorations::import(const Json& json) {
         importKind(json["face"], result->faceDecorations, DecorationsFactory::createFaceDecoration);
     }
 
-    resolveAll(result->vertexDecorations);
-    resolveAll(result->edgeDecorations);
-    resolveAll(result->faceDecorations);
+    try {
+        resolveAll(result->vertexDecorations);
+        resolveAll(result->edgeDecorations);
+        resolveAll(result->faceDecorations);
+        checkForCycles(result->vertexDecorations);
+        checkForCycles(result->edgeDecorations);
+        checkForCycles(result->faceDecorations);
+    } catch (...) {
+        delete result;
+        throw;
+    }
     return result;
 }
 
