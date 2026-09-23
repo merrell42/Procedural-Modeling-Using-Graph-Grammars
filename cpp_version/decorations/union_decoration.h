@@ -1,36 +1,29 @@
 #pragma once
+#include <map>
+#include <string>
 #include <vector>
+#include "decoration_template.h"
 #include "vertex_decoration.h"
 #include "edge_decoration.h"
 #include "face_decoration.h"
 
 using namespace std;
 
-template <typename Base, typename... Args>
+DECORATION_TEMPLATE
 class UnionDecoration : public Base {
-public:
-    void addChild(Base* child) {
-        if (child && child != this) {
-            children.push_back(child);
-        }
-    }
+    public:
+        void addChild(Base* child);
+        vector<Base*> getChildren() const override;
+        void resolveChildren(const map<string, Base*>& decorations) override;
+        vector<Instance> getInstances(Args... args) const override;
 
-    vector<Instance> getInstances(Args... args) const override {
-        vector<Instance> collected;
-        for (Base* child : children) {
-            if (!child) {
-                continue;
-            }
-            vector<Instance> instances = child->getInstances(args...);
-            collected.insert(collected.end(), instances.begin(), instances.end());
-        }
-        return collected;
-    }
-
-private:
-    vector<Base*> children;
+    private:
+        vector<Base*> children;
 };
 
-using VertexUnionDecoration = UnionDecoration<VertexDecoration, const Matrix4&>;
-using EdgeUnionDecoration = UnionDecoration<EdgeDecoration, const Vec3&, const Vec3&>;
-using FaceUnionDecoration = UnionDecoration<FaceDecoration, const Face&>;
+DECORATION_TEMPLATE
+using Union = UnionDecoration<Base, Args...>;
+
+using VertexUnionDecoration = Union<VertexDecoration, const Matrix4&>;
+using EdgeUnionDecoration = Union<EdgeDecoration, const Vec3&, const Vec3&>;
+using FaceUnionDecoration = Union<FaceDecoration, const Face&>;

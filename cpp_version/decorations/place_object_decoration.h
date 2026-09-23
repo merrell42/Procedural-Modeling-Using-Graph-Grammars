@@ -5,10 +5,10 @@
 using namespace std;
 
 class PlaceObjectDecoration : public VertexDecoration {
-public:
-    explicit PlaceObjectDecoration(const string& object);
-    vector<Instance> getInstances(const Matrix4& transform) const override;
+    public:
+        explicit PlaceObjectDecoration(const string& object);
+        vector<Instance> getInstances(const Matrix4& transform) const override;
 
-private:
-    string object;
+    private:
+        string object;
 };

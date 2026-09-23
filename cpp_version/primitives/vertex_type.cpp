@@ -119,7 +119,7 @@ Json VertexType::exportJson(const Primitives* shape) const {
         json["desirability"] = desirability;
     }
     if (decoration) {
-        json["decoration"] = shape->getDecorations()->getId(decoration);
+        json["decoration"] = decoration->getId();
     }
     Json halfEdgeTypesJson = Json::array();
     for (const auto& halfEdgeType : halfEdgeTypes) {

@@ -175,7 +175,7 @@ Json EdgeType::exportJson(const Primitives* shape) const {
     json["isRigid"] = isRigid;
     json["spliced"] = spliced;
     if (decoration) {
-        json["decoration"] = shape->getDecorations()->getId(decoration);
+        json["decoration"] = decoration->getId();
     }
     if (edgeSettings) {
         json["edgeSettings"] = edgeSettings->exportJson();

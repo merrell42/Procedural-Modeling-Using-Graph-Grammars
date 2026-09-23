@@ -105,7 +105,7 @@ Json FaceType::exportJson(const Primitives* shape) const {
     Json json;
     json["material"] = material;
     if (decoration) {
-        json["decoration"] = shape->getDecorations()->getId(decoration);
+        json["decoration"] = decoration->getId();
     }
     json["normal"] = normal.exportJson();
     json["color"] = color.exportJson();

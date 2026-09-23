@@ -163,10 +163,13 @@
     <ClInclude Include="..\..\cpp_version\geometry\vec3.h" />
     <ClInclude Include="..\..\cpp_version\geometry\matrix4.h" />
     <ClInclude Include="..\..\cpp_version\geometry\instance.h" />
+    <ClInclude Include="..\..\cpp_version\decorations\decoration_template.h" />
     <ClInclude Include="..\..\cpp_version\decorations\decorations.h" />
+    <ClInclude Include="..\..\cpp_version\decorations\decorations_factory.h" />
     <ClInclude Include="..\..\cpp_version\decorations\vertex_decoration.h" />
     <ClInclude Include="..\..\cpp_version\decorations\edge_decoration.h" />
     <ClInclude Include="..\..\cpp_version\decorations\face_decoration.h" />
+    <ClInclude Include="..\..\cpp_version\decorations\pending_decoration.h" />
     <ClInclude Include="..\..\cpp_version\decorations\pick_random_decoration.h" />
     <ClInclude Include="..\..\cpp_version\decorations\place_object_decoration.h" />
     <ClInclude Include="..\..\cpp_version\decorations\union_decoration.h" />
@@ -209,6 +212,10 @@
     <ClCompile Include="..\..\cpp_version\geometry\vec3.cpp" />
     <ClCompile Include="..\..\cpp_version\geometry\matrix4.cpp" />
     <ClCompile Include="..\..\cpp_version\decorations\decorations.cpp" />
+    <ClCompile Include="..\..\cpp_version\decorations\decorations_factory.cpp" />
+    <ClCompile Include="..\..\cpp_version\decorations\pending_decoration.cpp" />
+    <ClCompile Include="..\..\cpp_version\decorations\pick_random_decoration.cpp" />
+    <ClCompile Include="..\..\cpp_version\decorations\union_decoration.cpp" />
     <ClCompile Include="..\..\cpp_version\decorations\place_object_decoration.cpp" />
     <ClCompile Include="..\..\cpp_version\memory_counter.cpp" />
     <ClCompile Include="..\..\cpp_version\graph\edge_settings.cpp">

@@ -51,7 +51,13 @@
     <ClInclude Include="..\util\timer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\decorations\decoration_template.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="..\decorations\decorations.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\decorations\decorations_factory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\decorations\getInstancesFromModel.h">
@@ -61,6 +67,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\decorations\face_decoration.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\decorations\pending_decoration.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\decorations\pick_random_decoration.h">
@@ -197,7 +206,19 @@
     <ClCompile Include="..\decorations\decorations.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\decorations\decorations_factory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\decorations\getInstancesFromModel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\decorations\pending_decoration.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\decorations\pick_random_decoration.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\decorations\union_decoration.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\decorations\place_object_decoration.cpp">
