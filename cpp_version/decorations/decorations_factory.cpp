@@ -1,9 +1,11 @@
 #include "pch.h"
 #include "decorations_factory.h"
 #include "place_object_decoration.h"
+#include "rotate_decoration.h"
 #include "union_decoration.h"
 #include "pick_random_decoration.h"
 #include "pending_decoration.h"
+#include "../geometry/vec3.h"
 #include <iostream>
 #include <stdexcept>
 
@@ -65,6 +67,20 @@ VertexDecoration* DecorationsFactory::createVertexDecoration(const Json& json) {
     if (type == "place object") {
         return new PlaceObjectDecoration(json.at("object").get<string>());
     }
+    if (type == "rotate") {
+        Vec3 axis(0, 0, 1);
+        if (json.contains("axis")) {
+            axis = Vec3::import(json.at("axis"));
+        }
+        auto* decoration = new RotateDecoration(
+            json.at("minAngle").get<double>(),
+            json.at("maxAngle").get<double>(),
+            axis
+        );
+        decoration->setChild(new VertexPendingDecoration(json["child"].get<string>()));
+        return decoration;
+    }
+
     VertexDecoration* decoration = createCompositeDecoration<
         VertexUnionDecoration,
         VertexPickRandomDecoration,
@@ -79,6 +95,7 @@ VertexDecoration* DecorationsFactory::createVertexDecoration(const Json& json) {
 
 EdgeDecoration* DecorationsFactory::createEdgeDecoration(const Json& json) {
     const string type = json.at("type").get<string>();
+
     EdgeDecoration* decoration = createCompositeDecoration<
         EdgeUnionDecoration,
         EdgePickRandomDecoration,
@@ -93,6 +110,7 @@ EdgeDecoration* DecorationsFactory::createEdgeDecoration(const Json& json) {
 
 FaceDecoration* DecorationsFactory::createFaceDecoration(const Json& json) {
     const string type = json.at("type").get<string>();
+
     FaceDecoration* decoration = createCompositeDecoration<
         FaceUnionDecoration,
         FacePickRandomDecoration,

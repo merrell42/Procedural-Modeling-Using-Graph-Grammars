@@ -23,6 +23,34 @@ Matrix4 Matrix4::translation(float x, float y, float z) {
     return result;
 }
 
+Matrix4 Matrix4::rotation(float x, float y, float z, float angleRadians) {
+    float length = sqrtf(x * x + y * y + z * z);
+    if (length == 0.0f) {
+        return Matrix4::identity();
+    }
+    x /= length;
+    y /= length;
+    z /= length;
+
+    float c = cosf(angleRadians);
+    float s = sinf(angleRadians);
+    float t = 1.0f - c;
+
+    Matrix4 result;
+    result.m[0] = t * x * x + c;
+    result.m[1] = t * x * y + s * z;
+    result.m[2] = t * x * z - s * y;
+
+    result.m[4] = t * x * y - s * z;
+    result.m[5] = t * y * y + c;
+    result.m[6] = t * y * z + s * x;
+
+    result.m[8] = t * x * z + s * y;
+    result.m[9] = t * y * z - s * x;
+    result.m[10] = t * z * z + c;
+    return result;
+}
+
 Matrix4 Matrix4::operator*(const Matrix4& other) const {
     Matrix4 result;
     for (int col = 0; col < 4; col++) {

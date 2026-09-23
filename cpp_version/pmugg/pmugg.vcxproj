@@ -155,6 +155,7 @@
     <ClCompile Include="..\decorations\pick_random_decoration.cpp" />
     <ClCompile Include="..\decorations\union_decoration.cpp" />
     <ClCompile Include="..\decorations\place_object_decoration.cpp" />
+    <ClCompile Include="..\decorations\rotate_decoration.cpp" />
     <ClCompile Include="..\grammar_rules\production_rule.cpp" />
     <ClCompile Include="..\grammar_rules\rule_applier.cpp" />
     <ClCompile Include="..\grammar_rules\rule_applier_settings.cpp" />
@@ -231,6 +232,7 @@
     <ClInclude Include="..\decorations\pending_decoration.h" />
     <ClInclude Include="..\decorations\pick_random_decoration.h" />
     <ClInclude Include="..\decorations\place_object_decoration.h" />
+    <ClInclude Include="..\decorations\rotate_decoration.h" />
     <ClInclude Include="..\decorations\union_decoration.h" />
     <ClInclude Include="..\grammar_rules\production_rule.h" />
     <ClInclude Include="..\grammar_rules\rule_applier.h" />
