@@ -63,6 +63,9 @@
     <ClInclude Include="..\decorations\face_decoration.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\decorations\pick_random_decoration.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="..\decorations\place_object_decoration.h">
       <Filter>Header Files</Filter>
     </ClInclude>

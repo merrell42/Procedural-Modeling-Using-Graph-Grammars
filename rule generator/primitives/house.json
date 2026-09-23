@@ -13,6 +13,11 @@
 		  "id": "union test",
 		  "type": "union",
 		  "childIds": ["arrow", "cone"]
+	  },{
+		  "id": "pick test",
+		  "type": "pick random",
+		  "childIds": ["arrow", "cone"],
+		  "weight": [5, 1]
 	  }],
 	  "edge": [],
 	  "face": []

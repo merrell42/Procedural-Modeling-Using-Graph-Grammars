@@ -161,6 +161,7 @@
     <ClInclude Include="..\decorations\getInstancesFromModel.h" />
     <ClInclude Include="..\decorations\edge_decoration.h" />
     <ClInclude Include="..\decorations\face_decoration.h" />
+    <ClInclude Include="..\decorations\pick_random_decoration.h" />
     <ClInclude Include="..\decorations\place_object_decoration.h" />
     <ClInclude Include="..\decorations\union_decoration.h" />
     <ClInclude Include="..\decorations\vertex_decoration.h" />
