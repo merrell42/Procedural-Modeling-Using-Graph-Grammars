@@ -51,6 +51,14 @@ Matrix4 Matrix4::rotation(float x, float y, float z, float angleRadians) {
     return result;
 }
 
+Matrix4 Matrix4::scale(float x, float y, float z) {
+    Matrix4 result;
+    result.m[0] = x;
+    result.m[5] = y;
+    result.m[10] = z;
+    return result;
+}
+
 Matrix4 Matrix4::operator*(const Matrix4& other) const {
     Matrix4 result;
     for (int col = 0; col < 4; col++) {

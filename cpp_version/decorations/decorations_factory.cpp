@@ -2,6 +2,7 @@
 #include "decorations_factory.h"
 #include "place_object_decoration.h"
 #include "rotate_decoration.h"
+#include "scale_decoration.h"
 #include "union_decoration.h"
 #include "pick_random_decoration.h"
 #include "pending_decoration.h"
@@ -77,6 +78,25 @@ VertexDecoration* DecorationsFactory::createVertexDecoration(const Json& json) {
             json.at("maxAngle").get<double>(),
             axis
         );
+        decoration->setChild(new VertexPendingDecoration(json["child"].get<string>()));
+        return decoration;
+    }
+    if (type == "scale") {
+        const Json& minJson = json.at("min");
+        const Json& maxJson = json.at("max");
+        Vec3 minScale;
+        Vec3 maxScale;
+        bool uniform = !minJson.is_array();
+        if (uniform) {
+            double minValue = minJson.get<double>();
+            double maxValue = maxJson.get<double>();
+            minScale = Vec3(minValue, minValue, minValue);
+            maxScale = Vec3(maxValue, maxValue, maxValue);
+        } else {
+            minScale = Vec3::import(minJson);
+            maxScale = Vec3::import(maxJson);
+        }
+        auto* decoration = new ScaleDecoration(minScale, maxScale, uniform);
         decoration->setChild(new VertexPendingDecoration(json["child"].get<string>()));
         return decoration;
     }
