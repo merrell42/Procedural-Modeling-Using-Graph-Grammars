@@ -3,6 +3,7 @@
 #include "place_object_decoration.h"
 #include "rotate_decoration.h"
 #include "scale_decoration.h"
+#include "space_evenly_decoration.h"
 #include "union_decoration.h"
 #include "pick_random_decoration.h"
 #include "pending_decoration.h"
@@ -115,6 +116,11 @@ VertexDecoration* DecorationsFactory::createVertexDecoration(const Json& json) {
 
 EdgeDecoration* DecorationsFactory::createEdgeDecoration(const Json& json) {
     const string type = json.at("type").get<string>();
+    if (type == "space evenly") {
+        auto* decoration = new SpaceEvenlyDecoration(json.at("spacing").get<double>());
+        decoration->setChild(new VertexPendingDecoration(json["child"].get<string>()));
+        return decoration;
+    }
 
     EdgeDecoration* decoration = createCompositeDecoration<
         EdgeUnionDecoration,

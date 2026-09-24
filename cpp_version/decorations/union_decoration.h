@@ -1,5 +1,4 @@
 #pragma once
-#include <map>
 #include <string>
 #include <vector>
 #include "decoration_template.h"
@@ -9,12 +8,14 @@
 
 using namespace std;
 
+class Decorations;
+
 DECORATION_TEMPLATE
 class UnionDecoration : public Base {
     public:
         void addChild(Base* child);
         vector<Base*> getChildren() const override;
-        void resolveChildren(const map<string, Base*>& decorations) override;
+        void resolveChildren(const Decorations& decorations) override;
         vector<Instance> getInstances(Args... args) const override;
 
     private:

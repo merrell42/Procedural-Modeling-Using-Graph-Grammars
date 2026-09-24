@@ -1,5 +1,4 @@
 #pragma once
-#include <map>
 #include <string>
 #include <vector>
 #include "decoration_template.h"
@@ -8,6 +7,8 @@
 #include "face_decoration.h"
 
 using namespace std;
+
+class Decorations;
 
 DECORATION_TEMPLATE
 class PendingDecoration : public Base {
@@ -23,7 +24,7 @@ class PendingDecoration : public Base {
 DECORATION_TEMPLATE
 void resolvePendingChildren(
     vector<Base*>& children,
-    const map<string, Base*>& decorations
+    const Decorations& decorations
 );
 
 using VertexPendingDecoration = PendingDecoration<VertexDecoration, const Matrix4&>;

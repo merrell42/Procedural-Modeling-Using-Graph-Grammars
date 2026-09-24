@@ -9,7 +9,7 @@ class RotateDecoration : public VertexDecoration {
         RotateDecoration(double minAngle, double maxAngle, const Vec3& axis);
         void setChild(VertexDecoration* child);
         vector<VertexDecoration*> getChildren() const override;
-        void resolveChildren(const map<string, VertexDecoration*>& decorations) override;
+        void resolveChildren(const Decorations& decorations) override;
         vector<Instance> getInstances(const Matrix4& transform) const override;
 
     private:

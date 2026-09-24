@@ -25,10 +25,10 @@ T* findDecoration(const map<string, T*>& decorations, const string& id) {
 }
 
 template <typename Base>
-void resolveAll(const map<string, Base*>& decorations) {
+void resolveAll(const Decorations& all, const map<string, Base*>& decorations) {
     for (auto& entry : decorations) {
         if (entry.second) {
-            entry.second->resolveChildren(decorations);
+            entry.second->resolveChildren(all);
         }
     }
 }
@@ -125,9 +125,9 @@ Decorations* Decorations::import(const Json& json) {
     }
 
     try {
-        resolveAll(result->vertexDecorations);
-        resolveAll(result->edgeDecorations);
-        resolveAll(result->faceDecorations);
+        resolveAll(*result, result->vertexDecorations);
+        resolveAll(*result, result->edgeDecorations);
+        resolveAll(*result, result->faceDecorations);
         checkForCycles(result->vertexDecorations);
         checkForCycles(result->edgeDecorations);
         checkForCycles(result->faceDecorations);

@@ -15,7 +15,7 @@ vector<Base*> UnionDecoration<Base, Args...>::getChildren() const {
 }
 
 DECORATION_TEMPLATE
-void UnionDecoration<Base, Args...>::resolveChildren(const map<string, Base*>& decorations) {
+void UnionDecoration<Base, Args...>::resolveChildren(const Decorations& decorations) {
     resolvePendingChildren<Base, Args...>(children, decorations);
     vector<Base*> resolved;
     for (Base* child : children) {

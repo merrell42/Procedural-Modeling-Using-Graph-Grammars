@@ -21,7 +21,7 @@ vector<Base*> PickRandomDecoration<Base, Args...>::getChildren() const {
 }
 
 DECORATION_TEMPLATE
-void PickRandomDecoration<Base, Args...>::resolveChildren(const map<string, Base*>& decorations) {
+void PickRandomDecoration<Base, Args...>::resolveChildren(const Decorations& decorations) {
     resolvePendingChildren<Base, Args...>(children, decorations);
 }
 

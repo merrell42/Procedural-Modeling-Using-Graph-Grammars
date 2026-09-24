@@ -15,7 +15,7 @@ vector<VertexDecoration*> ScaleDecoration::getChildren() const {
     return { child };
 }
 
-void ScaleDecoration::resolveChildren(const map<string, VertexDecoration*>& decorations) {
+void ScaleDecoration::resolveChildren(const Decorations& decorations) {
     vector<VertexDecoration*> children = { child };
     resolvePendingChildren<VertexDecoration, const Matrix4&>(children, decorations);
     child = children[0];
