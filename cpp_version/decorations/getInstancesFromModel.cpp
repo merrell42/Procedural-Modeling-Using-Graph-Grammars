@@ -56,11 +56,7 @@ InstanceList getInstancesFromModel(Model* model) {
                 continue;
             }
             const Vec3 position = vertex->getPosition();
-            Matrix4 transform = Matrix4::translation(
-                (float)position.getX(),
-                (float)position.getY(),
-                (float)position.getZ()
-            );
+            Matrix4 transform = Matrix4::translation(position);
             appendInstances(decoration->getInstances(transform));
         }
 

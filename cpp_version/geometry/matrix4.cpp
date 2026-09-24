@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "matrix4.h"
+#include "vec3.h"
 
 Matrix4::Matrix4() {
     for (int i = 0; i < 16; i++) {
@@ -21,6 +22,14 @@ Matrix4 Matrix4::translation(float x, float y, float z) {
     result.m[13] = y;
     result.m[14] = z;
     return result;
+}
+
+Matrix4 Matrix4::translation(const Vec3& position) {
+    return translation(
+        (float)position.getX(),
+        (float)position.getY(),
+        (float)position.getZ()
+    );
 }
 
 Matrix4 Matrix4::rotation(float x, float y, float z, float angleRadians) {

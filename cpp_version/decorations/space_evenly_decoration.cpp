@@ -36,11 +36,7 @@ vector<Instance> SpaceEvenlyDecoration::getInstances(const Vec3& start, const Ve
     for (int i = 0; i < count; i++) {
         double distance = margin + i * spacing;
         Vec3 position = start + delta * (distance / length);
-        auto childInstances = child->getInstances(Matrix4::translation(
-            (float)position.getX(),
-            (float)position.getY(),
-            (float)position.getZ()
-        ));
+        auto childInstances = child->getInstances(Matrix4::translation(position));
         instances.insert(instances.end(), childInstances.begin(), childInstances.end());
     }
     return instances;

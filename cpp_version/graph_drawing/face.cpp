@@ -94,6 +94,7 @@ void Face::append(Face* faceB) {
         halfEdgeIds.push_back(halfEdgeB->getId());
         halfEdgeB->setFace(this);
     }
+    markDirty();
     // Destroy faceB.
     model->getCurrent()->removeFace(faceB);
     faceB->destroy();
@@ -157,6 +158,7 @@ void Face::split(HalfEdge* halfEdge) {
         vector<int> newOrder(halfEdgeIds.begin() + index, halfEdgeIds.end());
         newOrder.insert(newOrder.end(), halfEdgeIds.begin(), halfEdgeIds.begin() + index);
         halfEdgeIds = newOrder;
+        markDirty();
     } else {
         if (index == 0) {
             cout << "Should not be splitting off all of the halfEdges." << endl;
@@ -172,6 +174,7 @@ void Face::split(HalfEdge* halfEdge) {
             splitHalfEdge->setFace(newFace);
         }
         halfEdgeIds.erase(halfEdgeIds.begin() + index, halfEdgeIds.end());
+        markDirty();
         if (isHole()) {
             newFace->setHole(true);
         }
@@ -202,10 +205,12 @@ void Face::insert(HalfEdge* halfEdge, HalfEdge* prevHalfEdge) {
     int id = halfEdge->getId();
     halfEdgeIds.insert(halfEdgeIds.begin() + index + 1, id);
     halfEdge->setFace(this);
+    markDirty();
 }
 
 void Face::removeHalfEdge(HalfEdge* halfEdge) {
     Util::remove(halfEdgeIds, halfEdge->getId());
+    markDirty();
     if (halfEdgeIds.size() == 0) {
         destroy();
     }
@@ -242,7 +247,7 @@ void Face::exportMesh(
     for (int i = 0; i < facePositions.size(); i++) {
         normals.push_back(normal);
     }
-    auto indices = getTriangleIndices();
+    const vector<int>& indices = getTriangleIndices();
     if (indices.size() >= 3) {
         auto v10 = facePositions[indices[1]].copy().minus(facePositions[indices[0]]);
         auto v21 = facePositions[indices[2]].copy().minus(facePositions[indices[1]]);
@@ -265,14 +270,17 @@ void Face::exportMesh(
     faceIndices.push_back((int)positions.size());
 }
 
-vector<int> Face::getTriangleIndices() const {
+const vector<int>& Face::getTriangleIndices() const {
+    if (!triangleIndicesDirty) {
+        return triangleIndices;
+    }
+
     using Point = array<double, 2>;
     vector<vector<Point>> polygons;
     vector<Point> polygon;
 
     auto positions = getPositions();
     auto maxDim = faceType->getMaxDim();
-    vector<array<double, 2>> positions2D;
     for (const auto& p : positions) {
         const Vec2 point = p.dropDim(maxDim);
         polygon.push_back({ point.x, point.y });
@@ -280,7 +288,13 @@ vector<int> Face::getTriangleIndices() const {
     polygons.push_back(polygon);
 
     auto indices = mapbox::earcut(polygons);
-    return vector<int>(indices.begin(), indices.end());
+    triangleIndices.assign(indices.begin(), indices.end());
+    triangleIndicesDirty = false;
+    return triangleIndices;
+}
+
+void Face::markDirty() {
+    triangleIndicesDirty = true;
 }
 
 void Face::removeFromBsp() {

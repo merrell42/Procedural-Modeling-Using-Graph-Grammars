@@ -95,6 +95,12 @@ Vec3 Vertex::getPosition() const {
 
 void Vertex::setPosition(Vec3 newPosition) {
 	position = newPosition;
+	for (HalfEdge* halfEdge : getHalfEdges()) {
+		Face* face = halfEdge ? halfEdge->getFace() : nullptr;
+		if (face) {
+			face->markDirty();
+		}
+	}
 }
 
 VertexType* Vertex::getType() const {

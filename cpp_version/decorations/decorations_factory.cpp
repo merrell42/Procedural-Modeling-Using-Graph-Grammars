@@ -4,6 +4,7 @@
 #include "rotate_decoration.h"
 #include "scale_decoration.h"
 #include "space_evenly_decoration.h"
+#include "scatter_decoration.h"
 #include "union_decoration.h"
 #include "pick_random_decoration.h"
 #include "pending_decoration.h"
@@ -136,6 +137,11 @@ EdgeDecoration* DecorationsFactory::createEdgeDecoration(const Json& json) {
 
 FaceDecoration* DecorationsFactory::createFaceDecoration(const Json& json) {
     const string type = json.at("type").get<string>();
+    if (type == "scatter") {
+        auto* decoration = new ScatterDecoration(json.at("density").get<double>());
+        decoration->setChild(new VertexPendingDecoration(json["child"].get<string>()));
+        return decoration;
+    }
 
     FaceDecoration* decoration = createCompositeDecoration<
         FaceUnionDecoration,
