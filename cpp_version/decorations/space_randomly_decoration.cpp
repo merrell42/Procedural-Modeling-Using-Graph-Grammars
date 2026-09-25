@@ -18,7 +18,7 @@ void SpaceRandomlyDecoration::resolveChildren(const Decorations& decorations) {
     child = children[0];
 }
 
-vector<Instance> SpaceRandomlyDecoration::getInstances(const Vec3& start, const Vec3& end) const {
+DecorationOutput SpaceRandomlyDecoration::getOutput(const Vec3& start, const Vec3& end) const {
     if (!child || spacing <= 0.0) {
         return {};
     }
@@ -28,11 +28,10 @@ vector<Instance> SpaceRandomlyDecoration::getInstances(const Vec3& start, const 
         return {};
     }
     int count = Util::randomPoisson(length / spacing);
-    vector<Instance> instances;
+    DecorationOutput output;
     for (int i = 0; i < count; i++) {
         Vec3 position = start + delta * randomValue();
-        auto childInstances = child->getInstances(Matrix4::translation(position));
-        instances.insert(instances.end(), childInstances.begin(), childInstances.end());
+        output.append(child->getOutput(Matrix4::translation(position)));
     }
-    return instances;
+    return output;
 }

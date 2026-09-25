@@ -25,7 +25,7 @@ void RotateDecoration::resolveChildren(const Decorations& decorations) {
     child = children[0];
 }
 
-vector<Instance> RotateDecoration::getInstances(const Matrix4& transform) const {
+DecorationOutput RotateDecoration::getOutput(const Matrix4& transform) const {
     double radians = Util::randomUniform(minAngle, maxAngle) * degreesToRadians;
     Matrix4 rotation = Matrix4::rotation(
         (float)axis.getX(),
@@ -33,5 +33,5 @@ vector<Instance> RotateDecoration::getInstances(const Matrix4& transform) const 
         (float)axis.getZ(),
         (float)radians
     );
-    return child->getInstances(transform * rotation);
+    return child->getOutput(transform * rotation);
 }

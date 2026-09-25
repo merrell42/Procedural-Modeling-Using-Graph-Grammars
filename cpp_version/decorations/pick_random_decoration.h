@@ -17,7 +17,7 @@ class PickRandomDecoration : public Base {
         void setWeights(const vector<double>& newWeights);
         vector<Base*> getChildren() const override;
         void resolveChildren(const Decorations& decorations) override;
-        vector<Instance> getInstances(Args... args) const override;
+        DecorationOutput getOutput(Args... args) const override;
 
     private:
         vector<Base*> children;

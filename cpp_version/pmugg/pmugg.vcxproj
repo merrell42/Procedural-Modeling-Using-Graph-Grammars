@@ -150,6 +150,7 @@
     <ClCompile Include="..\geometry\vec3.cpp" />
     <ClCompile Include="..\geometry\matrix4.cpp" />
     <ClCompile Include="..\decorations\decorations.cpp" />
+    <ClCompile Include="..\decorations\extrude_decoration.cpp" />
     <ClCompile Include="..\decorations\decorations_factory.cpp" />
     <ClCompile Include="..\decorations\pending_decoration.cpp" />
     <ClCompile Include="..\decorations\pick_random_decoration.cpp" />
@@ -227,11 +228,13 @@
     <ClInclude Include="..\geometry\vec3.h" />
     <ClInclude Include="..\geometry\matrix4.h" />
     <ClInclude Include="..\geometry\instance.h" />
+    <ClInclude Include="..\decorations\decoration_output.h" />
     <ClInclude Include="..\decorations\decoration_template.h" />
     <ClInclude Include="..\decorations\decorations.h" />
     <ClInclude Include="..\decorations\decorations_factory.h" />
     <ClInclude Include="..\decorations\vertex_decoration.h" />
     <ClInclude Include="..\decorations\edge_decoration.h" />
+    <ClInclude Include="..\decorations\extrude_decoration.h" />
     <ClInclude Include="..\decorations\face_decoration.h" />
     <ClInclude Include="..\decorations\pending_decoration.h" />
     <ClInclude Include="..\decorations\pick_random_decoration.h" />

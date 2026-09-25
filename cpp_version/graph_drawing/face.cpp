@@ -216,18 +216,8 @@ void Face::removeHalfEdge(HalfEdge* halfEdge) {
     }
 }
 
-// Find the signed area using the shoelace formula.
 double Face::signedArea() const {
-    auto positions2D = getPositions2D();
-    double sum = 0.0f;
-    size_t n = positions2D.size();
-    for (size_t i = 0; i < n; i++) {
-        double xi = positions2D[i].x;
-        double yp = positions2D[(i + 1) % n].y;
-        double yn = positions2D[(i + n - 1) % n].y;
-        sum += xi * (yn - yp);
-    }
-    return -sum / 2.0f;
+    return Util::signedArea(getPositions2D());
 }
 
 void Face::exportMesh(
@@ -241,7 +231,7 @@ void Face::exportMesh(
     }
     int startIndex = (int)positions.size();
     auto facePositions = getPositions();
-    positions.insert(positions.end(), facePositions.begin(), facePositions.end());
+    Util::append(positions, facePositions);
 
     auto normal = faceType->getNormal();
     for (int i = 0; i < facePositions.size(); i++) {

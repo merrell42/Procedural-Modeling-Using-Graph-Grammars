@@ -18,7 +18,7 @@ void SpaceEvenlyDecoration::resolveChildren(const Decorations& decorations) {
     child = children[0];
 }
 
-vector<Instance> SpaceEvenlyDecoration::getInstances(const Vec3& start, const Vec3& end) const {
+DecorationOutput SpaceEvenlyDecoration::getOutput(const Vec3& start, const Vec3& end) const {
     if (!child || spacing <= 0.0) {
         return {};
     }
@@ -32,12 +32,11 @@ vector<Instance> SpaceEvenlyDecoration::getInstances(const Vec3& start, const Ve
         return {};
     }
     double margin = (length - (count - 1) * spacing) / 2.0;
-    vector<Instance> instances;
+    DecorationOutput output;
     for (int i = 0; i < count; i++) {
         double distance = margin + i * spacing;
         Vec3 position = start + delta * (distance / length);
-        auto childInstances = child->getInstances(Matrix4::translation(position));
-        instances.insert(instances.end(), childInstances.begin(), childInstances.end());
+        output.append(child->getOutput(Matrix4::translation(position)));
     }
-    return instances;
+    return output;
 }

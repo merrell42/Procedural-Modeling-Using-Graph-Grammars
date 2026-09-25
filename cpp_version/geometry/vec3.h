@@ -35,6 +35,7 @@ public:
     Json exportJson() const;
 
     static Vec3 lerp(const Vec3& start, const Vec3& end, double s);
+    static void orthonormalBasis(const Vec3& n, Vec3& u, Vec3& v);
 
     Vec3 operator+(const Vec3& v) const { return Vec3(x + v.x, y + v.y, z + v.z); }
     Vec3 operator-(const Vec3& v) const { return Vec3(x - v.x, y - v.y, z - v.z); }

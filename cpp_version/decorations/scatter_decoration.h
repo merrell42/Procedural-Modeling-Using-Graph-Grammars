@@ -9,7 +9,7 @@ class ScatterDecoration : public FaceDecoration {
         explicit ScatterDecoration(double density);
         void setChild(VertexDecoration* child);
         void resolveChildren(const Decorations& decorations) override;
-        vector<Instance> getInstances(const Face& face) const override;
+        DecorationOutput getOutput(const Face& face) const override;
 
     private:
         double density;

@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
-#include "../geometry/instance.h"
+#include "decoration_output.h"
 
 using namespace std;
 
@@ -13,7 +13,7 @@ class FaceDecoration {
         virtual ~FaceDecoration() = default;
         const string& getId() const { return id; }
         void setId(const string& id) { this->id = id; }
-        virtual vector<Instance> getInstances(const Face& face) const = 0;
+        virtual DecorationOutput getOutput(const Face& face) const = 0;
         virtual vector<FaceDecoration*> getChildren() const { return {}; }
         virtual void resolveChildren(const Decorations&) {}
 

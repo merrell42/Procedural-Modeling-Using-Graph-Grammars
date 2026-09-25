@@ -38,7 +38,7 @@ struct Triangle {
     double area;
 };
 
-vector<Instance> ScatterDecoration::getInstances(const Face& face) const {
+DecorationOutput ScatterDecoration::getOutput(const Face& face) const {
     if (!child || density <= 0.0 || face.isHole()) {
         return {};
     }
@@ -69,7 +69,7 @@ vector<Instance> ScatterDecoration::getInstances(const Face& face) const {
     }
 
     int count = Util::randomPoisson(density * totalArea);
-    vector<Instance> instances;
+    DecorationOutput output;
     for (int n = 0; n < count; n++) {
         double target = randomValue() * totalArea;
         auto it = lower_bound(cumulativeAreas.begin(), cumulativeAreas.end(), target);
@@ -79,8 +79,7 @@ vector<Instance> ScatterDecoration::getInstances(const Face& face) const {
         }
         const Triangle& triangle = triangles[index];
         Vec3 position = randomPointInTriangle(triangle.a, triangle.b, triangle.c);
-        auto childInstances = child->getInstances(Matrix4::translation(position));
-        instances.insert(instances.end(), childInstances.begin(), childInstances.end());
+        output.append(child->getOutput(Matrix4::translation(position)));
     }
-    return instances;
+    return output;
 }

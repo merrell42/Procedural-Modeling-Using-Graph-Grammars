@@ -9,7 +9,7 @@ class SpaceRandomlyDecoration : public EdgeDecoration {
         explicit SpaceRandomlyDecoration(double spacing);
         void setChild(VertexDecoration* child);
         void resolveChildren(const Decorations& decorations) override;
-        vector<Instance> getInstances(const Vec3& start, const Vec3& end) const override;
+        DecorationOutput getOutput(const Vec3& start, const Vec3& end) const override;
 
     private:
         double spacing;

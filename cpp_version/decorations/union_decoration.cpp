@@ -25,13 +25,12 @@ void UnionDecoration<Base, Args...>::resolveChildren(const Decorations& decorati
 }
 
 DECORATION_TEMPLATE
-vector<Instance> UnionDecoration<Base, Args...>::getInstances(Args... args) const {
-    vector<Instance> instances;
+DecorationOutput UnionDecoration<Base, Args...>::getOutput(Args... args) const {
+    DecorationOutput output;
     for (Base* child : children) {
-        auto childInstances = child->getInstances(args...);
-        instances.insert(instances.end(), childInstances.begin(), childInstances.end());
+        output.append(child->getOutput(args...));
     }
-    return instances;
+    return output;
 }
 
 template class UnionDecoration<VertexDecoration, const Matrix4&>;

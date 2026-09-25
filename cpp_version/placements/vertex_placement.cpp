@@ -55,7 +55,7 @@ void VertexPlacement::propagate() {
         // Constrain all the remaining free faces and colinear ones since the
         // vertex position is now fully constrained.
         auto freeIds = freeFaceIds;
-        freeIds.insert(freeIds.end(), colinearFaceIds.begin(), colinearFaceIds.end());
+        Util::append(freeIds, colinearFaceIds);
         for (int faceId : freeIds) {
             auto* fPlace = settings->getFace(faceId);
             if (!fPlace->isConstrained()) {
@@ -237,9 +237,9 @@ vector<int> VertexPlacement::getAllFaceIds() const {
     allFaceIds.reserve(constrainedFaceIds.size() + freeFaceIds.size() + colinearFaceIds.size());
 
     // Concatenate the vectors.
-    allFaceIds.insert(allFaceIds.end(), constrainedFaceIds.begin(), constrainedFaceIds.end());
-    allFaceIds.insert(allFaceIds.end(), freeFaceIds.begin(), freeFaceIds.end());
-    allFaceIds.insert(allFaceIds.end(), colinearFaceIds.begin(), colinearFaceIds.end());
+    Util::append(allFaceIds, constrainedFaceIds);
+    Util::append(allFaceIds, freeFaceIds);
+    Util::append(allFaceIds, colinearFaceIds);
 
     return allFaceIds;
 }

@@ -52,6 +52,7 @@ const Graph* getProductionRuleGraph(int category, int ruleIndex, int graphIndex)
 }
 
 void resetGenerationState() {
+    markOutputDirty();
     delete mutator;
     mutator = nullptr;
     delete model;
@@ -111,12 +112,14 @@ void initialize(const char* filePath, char* result, int len, int seed) {
 // Reset the model and mutator.
 void reset(int seed) {
 	resetRandom(seed);
+	markOutputDirty();
 	model->reset();
 	mutator->reset();
 }
 
 // Iterate some number of steps.
 void iterate(int steps) {
+	markOutputDirty();
 	try {
 		mutator->iterate(steps);
 	} catch (const exception& e) {
@@ -126,6 +129,7 @@ void iterate(int steps) {
 
 // Iterate until a certain amount of time has passed.
 int iterateToTime(float timeSeconds) {
+	markOutputDirty();
 	int steps = 0;
 	auto startTime = std::chrono::high_resolution_clock::now();
 	auto targetDuration = std::chrono::duration<float>(timeSeconds);
@@ -149,7 +153,9 @@ int getNumFaces() {
 
 // Return the current mesh.
 MeshCpp getMesh() {
-	return model->getCurrent()->exportMesh();
+	MeshCpp mesh = model->getCurrent()->exportMesh();
+	appendExtrusions(mesh, model);
+	return mesh;
 }
 
 // Set the size of the model.

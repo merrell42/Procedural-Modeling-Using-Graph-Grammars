@@ -3,6 +3,7 @@
 #include <functional>
 #include <string>
 #include <unordered_set>
+#include "../geometry/vec2.h"
 #include "../geometry/vec3.h"
 
 // Find the index of an item in a vector.
@@ -37,6 +38,12 @@ public:
         array.erase(std::remove(array.begin(), array.end(), item), array.end());
     }
 
+    // Append every item from src onto dest.
+    template<typename T>
+    static inline void append(vector<T>& dest, const vector<T>& src) {
+        dest.insert(dest.end(), src.begin(), src.end());
+    }
+
     // Find the union of two vectors.
     template<typename T>
     static void union_(vector<T>& a, const vector<T>& b) {
@@ -56,6 +63,9 @@ public:
 
     // Find the dimension of the vector with the largest magnitude.
     static int maxDim(const Vec3& n);
+
+    // Find the signed area using the shoelace formula.
+    static double signedArea(const vector<Vec2>& polygon);
 
     // Pick a random item from a vector.
     template <typename T>

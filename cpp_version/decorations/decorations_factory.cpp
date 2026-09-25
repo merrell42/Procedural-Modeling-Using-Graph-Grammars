@@ -5,10 +5,12 @@
 #include "scale_decoration.h"
 #include "space_evenly_decoration.h"
 #include "space_randomly_decoration.h"
+#include "extrude_decoration.h"
 #include "scatter_decoration.h"
 #include "union_decoration.h"
 #include "pick_random_decoration.h"
 #include "pending_decoration.h"
+#include "../geometry/vec2.h"
 #include "../geometry/vec3.h"
 #include <iostream>
 #include <stdexcept>
@@ -127,6 +129,17 @@ EdgeDecoration* DecorationsFactory::createEdgeDecoration(const Json& json) {
         auto* decoration = new SpaceRandomlyDecoration(json.at("spacing").get<double>());
         decoration->setChild(new VertexPendingDecoration(json["child"].get<string>()));
         return decoration;
+    }
+    if (type == "extrude") {
+        vector<Vec2> polygon;
+        for (const auto& point : json.at("polygon")) {
+            polygon.emplace_back(point.at(0).get<double>(), point.at(1).get<double>());
+        }
+        Vec3 color(1, 1, 1);
+        if (json.contains("color") && !json["color"].is_null()) {
+            color = Vec3::import(json["color"]);
+        }
+        return new ExtrudeDecoration(polygon, color);
     }
 
     EdgeDecoration* decoration = createCompositeDecoration<

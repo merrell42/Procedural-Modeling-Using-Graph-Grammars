@@ -26,8 +26,6 @@ public:
     Json exportJson(const Primitives* shape) const;
 
 private:
-    static void orthonormalBasis(const Vec3& normal, Vec3& u, Vec3& v);
-
     string material;
     FaceDecoration* decoration = nullptr;
     Vec3 normal;

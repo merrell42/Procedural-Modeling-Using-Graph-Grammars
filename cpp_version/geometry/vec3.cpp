@@ -81,6 +81,17 @@ double Vec3::dot(const Vec3& v) const {
     return x * v.x + y * v.y + z * v.z;
 }
 
+void Vec3::orthonormalBasis(const Vec3& n, Vec3& u, Vec3& v) {
+    Vec3 q = Vec3::X_AXIS;
+    if (fabs(n.dot(q)) > 0.9) {
+        q = Vec3::Y_AXIS;
+    }
+    v = n.cross(q);
+    u = v.cross(n);
+    u.normalize();
+    v.normalize();
+}
+
 Vec3 Vec3::cross(const Vec3& v) const {
     return Vec3(
         y * v.z - z * v.y,

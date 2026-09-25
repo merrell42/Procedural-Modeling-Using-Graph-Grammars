@@ -26,7 +26,7 @@ void PickRandomDecoration<Base, Args...>::resolveChildren(const Decorations& dec
 }
 
 DECORATION_TEMPLATE
-vector<Instance> PickRandomDecoration<Base, Args...>::getInstances(Args... args) const {
+DecorationOutput PickRandomDecoration<Base, Args...>::getOutput(Args... args) const {
     int index = -1;
     if (weights.empty()) {
         index = Util::randomInt((int)children.size());
@@ -36,7 +36,7 @@ vector<Instance> PickRandomDecoration<Base, Args...>::getInstances(Args... args)
     if (index < 0 || index >= (int)children.size() || !children[index]) {
         return {};
     }
-    return children[index]->getInstances(args...);
+    return children[index]->getOutput(args...);
 }
 
 template class PickRandomDecoration<VertexDecoration, const Matrix4&>;

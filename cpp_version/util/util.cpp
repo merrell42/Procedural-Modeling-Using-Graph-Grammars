@@ -34,6 +34,18 @@ int Util::randomInt(int count) {
     return static_cast<int>(randomValue() * count);
 }
 
+double Util::signedArea(const vector<Vec2>& polygon) {
+    double sum = 0.0;
+    size_t n = polygon.size();
+    for (size_t i = 0; i < n; i++) {
+        double xi = polygon[i].x;
+        double yp = polygon[(i + 1) % n].y;
+        double yn = polygon[(i + n - 1) % n].y;
+        sum += xi * (yn - yp);
+    }
+    return -sum / 2.0;
+}
+
 int Util::maxDim(const Vec3& n) {
     array<pair<double, int>, 3> coords = {
         make_pair(abs(n.getX()), 0),

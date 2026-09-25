@@ -51,6 +51,9 @@
     <ClInclude Include="..\util\timer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\decorations\decoration_output.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="..\decorations\decoration_template.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -64,6 +67,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\decorations\edge_decoration.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\decorations\extrude_decoration.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\decorations\face_decoration.h">
@@ -219,6 +225,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\decorations\decorations.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\decorations\extrude_decoration.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\decorations\decorations_factory.cpp">

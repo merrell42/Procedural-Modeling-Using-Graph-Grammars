@@ -21,7 +21,7 @@ void ScaleDecoration::resolveChildren(const Decorations& decorations) {
     child = children[0];
 }
 
-vector<Instance> ScaleDecoration::getInstances(const Matrix4& transform) const {
+DecorationOutput ScaleDecoration::getOutput(const Matrix4& transform) const {
     float x;
     float y;
     float z;
@@ -35,5 +35,5 @@ vector<Instance> ScaleDecoration::getInstances(const Matrix4& transform) const {
         y = (float)Util::randomUniform(minScale.getY(), maxScale.getY());
         z = (float)Util::randomUniform(minScale.getZ(), maxScale.getZ());
     }
-    return child->getInstances(transform * Matrix4::scale(x, y, z));
+    return child->getOutput(transform * Matrix4::scale(x, y, z));
 }

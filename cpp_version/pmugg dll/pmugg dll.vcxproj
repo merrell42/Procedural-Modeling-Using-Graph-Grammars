@@ -157,11 +157,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\decorations\decoration_output.h" />
     <ClInclude Include="..\decorations\decoration_template.h" />
     <ClInclude Include="..\decorations\decorations.h" />
     <ClInclude Include="..\decorations\decorations_factory.h" />
     <ClInclude Include="..\decorations\getInstancesFromModel.h" />
     <ClInclude Include="..\decorations\edge_decoration.h" />
+    <ClInclude Include="..\decorations\extrude_decoration.h" />
     <ClInclude Include="..\decorations\face_decoration.h" />
     <ClInclude Include="..\decorations\pending_decoration.h" />
     <ClInclude Include="..\decorations\pick_random_decoration.h" />
@@ -231,6 +233,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\decorations\decorations.cpp" />
+    <ClCompile Include="..\decorations\extrude_decoration.cpp" />
     <ClCompile Include="..\decorations\decorations_factory.cpp" />
     <ClCompile Include="..\decorations\getInstancesFromModel.cpp" />
     <ClCompile Include="..\decorations\pending_decoration.cpp" />

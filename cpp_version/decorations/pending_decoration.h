@@ -16,7 +16,7 @@ class PendingDecoration : public Base {
         explicit PendingDecoration(const string& id) {
             this->setId(id);
         }
-        vector<Instance> getInstances(Args...) const override {
+        DecorationOutput getOutput(Args...) const override {
             return {};
         }
 };
