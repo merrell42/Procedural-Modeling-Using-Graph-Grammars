@@ -99,6 +99,9 @@
     <ClInclude Include="..\decorations\scatter_decoration.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\decorations\grid_decoration.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="..\decorations\slice_decoration.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -267,6 +270,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\decorations\scatter_decoration.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\decorations\grid_decoration.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\decorations\slice_decoration.cpp">

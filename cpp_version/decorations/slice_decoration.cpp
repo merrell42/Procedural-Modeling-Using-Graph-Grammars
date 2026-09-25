@@ -5,7 +5,7 @@
 #include "../geometry/matrix4.h"
 #include "../geometry/plane.h"
 #include "../primitives/face_type.h"
-#include <cmath>
+#include "../util/util.h"
 #include <utility>
 
 namespace {
@@ -56,17 +56,14 @@ DecorationOutput SliceDecoration::getOutput(const Face& face) const {
     }
 
     Range bounds = face.dirBounds(direction);
-    double length = bounds.getHigh() - bounds.getLow();
-    int count = static_cast<int>(floor(length / spacing + 1e-9));
-    if (count < 1) {
+    vector<double> offsets = Util::evenlySpaced(bounds.getLow(), bounds.getHigh(), spacing);
+    if (offsets.empty()) {
         return {};
     }
 
-    double margin = (length - (count - 1) * spacing) / 2.0;
     Vec3 cutDir = cutDirection(face, direction);
     DecorationOutput output;
-    for (int i = 0; i < count; i++) {
-        double offset = bounds.getLow() + margin + i * spacing;
+    for (double offset : offsets) {
         Plane plane(direction, offset);
         vector<Vec3> intersections = face.getIntersections(&plane);
         for (size_t n = 0; n + 1 < intersections.size(); n += 2) {

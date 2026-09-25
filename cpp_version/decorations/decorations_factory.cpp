@@ -7,6 +7,7 @@
 #include "space_randomly_decoration.h"
 #include "extrude_decoration.h"
 #include "scatter_decoration.h"
+#include "grid_decoration.h"
 #include "slice_decoration.h"
 #include "union_decoration.h"
 #include "pick_random_decoration.h"
@@ -182,6 +183,11 @@ FaceDecoration* DecorationsFactory::createFaceDecoration(const Json& json) {
     const string type = json.at("type").get<string>();
     if (type == "scatter") {
         auto* decoration = new ScatterDecoration(json.at("density").get<double>());
+        decoration->setChild(new VertexPendingDecoration(json["child"].get<string>()));
+        return decoration;
+    }
+    if (type == "grid") {
+        auto* decoration = new GridDecoration(json.at("spacing").get<double>());
         decoration->setChild(new VertexPendingDecoration(json["child"].get<string>()));
         return decoration;
     }

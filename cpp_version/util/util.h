@@ -67,6 +67,9 @@ public:
     // Find the signed area using the shoelace formula.
     static double signedArea(const vector<Vec2>& polygon);
 
+    // Evenly spaced samples from low to high, centered in the range.
+    static vector<double> evenlySpaced(double low, double high, double spacing);
+
     // Pick a random item from a vector.
     template <typename T>
     static const T& pick(const vector<T>& vec) {

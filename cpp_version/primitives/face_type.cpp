@@ -83,6 +83,14 @@ const Vec3& FaceType::getNormal() const {
     return normal;
 }
 
+const Vec3& FaceType::getU() const {
+    return u;
+}
+
+const Vec3& FaceType::getV() const {
+    return v;
+}
+
 const Vec3& FaceType::getColor() const {
     return color;
 }

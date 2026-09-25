@@ -34,6 +34,21 @@ int Util::randomInt(int count) {
     return static_cast<int>(randomValue() * count);
 }
 
+vector<double> Util::evenlySpaced(double low, double high, double spacing) {
+    double length = high - low;
+    int count = static_cast<int>(floor(length / spacing + 1e-9));
+    vector<double> coordinates;
+    if (count < 1) {
+        return coordinates;
+    }
+    double margin = (length - (count - 1) * spacing) / 2.0;
+    coordinates.reserve(count);
+    for (int i = 0; i < count; i++) {
+        coordinates.push_back(low + margin + i * spacing);
+    }
+    return coordinates;
+}
+
 double Util::signedArea(const vector<Vec2>& polygon) {
     double sum = 0.0;
     size_t n = polygon.size();

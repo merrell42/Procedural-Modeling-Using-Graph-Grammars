@@ -2,7 +2,7 @@
 #include "space_evenly_decoration.h"
 #include "pending_decoration.h"
 #include "../geometry/matrix4.h"
-#include <cmath>
+#include "../util/util.h"
 
 SpaceEvenlyDecoration::SpaceEvenlyDecoration(double spacing)
     : spacing(spacing) {
@@ -27,14 +27,8 @@ DecorationOutput SpaceEvenlyDecoration::getOutput(const Vec3& start, const Vec3&
     if (length <= 0.0) {
         return {};
     }
-    int count = static_cast<int>(floor(length / spacing + 1e-9));
-    if (count < 1) {
-        return {};
-    }
-    double margin = (length - (count - 1) * spacing) / 2.0;
     DecorationOutput output;
-    for (int i = 0; i < count; i++) {
-        double distance = margin + i * spacing;
+    for (double distance : Util::evenlySpaced(0.0, length, spacing)) {
         Vec3 position = start + delta * (distance / length);
         output.append(child->getOutput(Matrix4::translation(position)));
     }

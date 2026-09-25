@@ -17,6 +17,8 @@ public:
     FaceDecoration* getDecoration() const;
     void setDecoration(FaceDecoration* decoration);
     const Vec3& getNormal() const;
+    const Vec3& getU() const;
+    const Vec3& getV() const;
     const Vec3& getColor() const;
     int getMaxDim() const;
     double angle(const Vec3& dir) const;

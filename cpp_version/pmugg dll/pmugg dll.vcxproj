@@ -172,6 +172,7 @@
     <ClInclude Include="..\decorations\rotate_decoration.h" />
     <ClInclude Include="..\decorations\scale_decoration.h" />
     <ClInclude Include="..\decorations\scatter_decoration.h" />
+    <ClInclude Include="..\decorations\grid_decoration.h" />
     <ClInclude Include="..\decorations\slice_decoration.h" />
     <ClInclude Include="..\decorations\space_evenly_decoration.h" />
     <ClInclude Include="..\decorations\space_randomly_decoration.h" />
@@ -247,6 +248,7 @@
     <ClCompile Include="..\decorations\rotate_decoration.cpp" />
     <ClCompile Include="..\decorations\scale_decoration.cpp" />
     <ClCompile Include="..\decorations\scatter_decoration.cpp" />
+    <ClCompile Include="..\decorations\grid_decoration.cpp" />
     <ClCompile Include="..\decorations\slice_decoration.cpp" />
     <ClCompile Include="..\decorations\space_evenly_decoration.cpp" />
     <ClCompile Include="..\decorations\space_randomly_decoration.cpp" />
