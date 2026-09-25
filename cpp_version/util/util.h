@@ -69,6 +69,9 @@ public:
     // Pick a random number between two values.
     static double randomUniform(double lower, double upper);
 
+    // Sample a Poisson random variable with the given mean.
+    static int randomPoisson(double lambda);
+
     static double fixAngle(double angle);
     static int angleWedges(double prev, double next);
     static int wedgeTurns(const vector<double>& angles);

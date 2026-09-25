@@ -73,6 +73,23 @@ double Util::randomUniform(double lower, double upper) {
     return s * (upper - lower) + lower;
 }
 
+int Util::randomPoisson(double lambda) {
+    if (lambda <= 0.0) {
+        return 0;
+    }
+    int count = 0;
+    double logProduct = 0.0;
+    do {
+        count++;
+        double u = randomValue();
+        if (u <= 0.0) {
+            break;
+        }
+        logProduct += log(u);
+    } while (logProduct > -lambda);
+    return count - 1;
+}
+
 double Util::fixAngle(double angle) {
     while (angle > M_PI) {
         angle -= 2 * M_PI;

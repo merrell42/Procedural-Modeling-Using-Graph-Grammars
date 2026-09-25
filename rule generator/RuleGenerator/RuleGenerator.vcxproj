@@ -176,6 +176,7 @@
     <ClInclude Include="..\..\cpp_version\decorations\scale_decoration.h" />
     <ClInclude Include="..\..\cpp_version\decorations\scatter_decoration.h" />
     <ClInclude Include="..\..\cpp_version\decorations\space_evenly_decoration.h" />
+    <ClInclude Include="..\..\cpp_version\decorations\space_randomly_decoration.h" />
     <ClInclude Include="..\..\cpp_version\decorations\union_decoration.h" />
     <ClInclude Include="..\..\cpp_version\graph\graph.h" />
     <ClInclude Include="..\..\cpp_version\graph\graph_edge.h" />
@@ -225,6 +226,7 @@
     <ClCompile Include="..\..\cpp_version\decorations\scale_decoration.cpp" />
     <ClCompile Include="..\..\cpp_version\decorations\scatter_decoration.cpp" />
     <ClCompile Include="..\..\cpp_version\decorations\space_evenly_decoration.cpp" />
+    <ClCompile Include="..\..\cpp_version\decorations\space_randomly_decoration.cpp" />
     <ClCompile Include="..\..\cpp_version\memory_counter.cpp" />
     <ClCompile Include="..\..\cpp_version\graph\edge_settings.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>

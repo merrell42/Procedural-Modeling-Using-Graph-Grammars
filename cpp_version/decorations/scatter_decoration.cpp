@@ -9,23 +9,6 @@
 
 namespace {
 
-int samplePoisson(double lambda) {
-    if (lambda <= 0.0) {
-        return 0;
-    }
-    int count = 0;
-    double logProduct = 0.0;
-    do {
-        count++;
-        double u = randomValue();
-        if (u <= 0.0) {
-            break;
-        }
-        logProduct += log(u);
-    } while (logProduct > -lambda);
-    return count - 1;
-}
-
 double triangleArea(const Vec3& a, const Vec3& b, const Vec3& c) {
     return (b - a).cross(c - a).length() * 0.5;
 }
@@ -85,7 +68,7 @@ vector<Instance> ScatterDecoration::getInstances(const Face& face) const {
         return {};
     }
 
-    int count = samplePoisson(density * totalArea);
+    int count = Util::randomPoisson(density * totalArea);
     vector<Instance> instances;
     for (int n = 0; n < count; n++) {
         double target = randomValue() * totalArea;

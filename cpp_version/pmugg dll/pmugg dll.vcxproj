@@ -170,6 +170,7 @@
     <ClInclude Include="..\decorations\scale_decoration.h" />
     <ClInclude Include="..\decorations\scatter_decoration.h" />
     <ClInclude Include="..\decorations\space_evenly_decoration.h" />
+    <ClInclude Include="..\decorations\space_randomly_decoration.h" />
     <ClInclude Include="..\decorations\union_decoration.h" />
     <ClInclude Include="..\decorations\vertex_decoration.h" />
     <ClInclude Include="..\geometry\intersector.h" />
@@ -240,6 +241,7 @@
     <ClCompile Include="..\decorations\scale_decoration.cpp" />
     <ClCompile Include="..\decorations\scatter_decoration.cpp" />
     <ClCompile Include="..\decorations\space_evenly_decoration.cpp" />
+    <ClCompile Include="..\decorations\space_randomly_decoration.cpp" />
     <ClCompile Include="..\geometry\intersector.cpp" />
     <ClCompile Include="..\geometry\instance.cpp" />
     <ClCompile Include="..\geometry\matrix4.cpp" />
