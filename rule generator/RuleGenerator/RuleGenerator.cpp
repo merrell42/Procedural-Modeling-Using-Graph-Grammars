@@ -165,7 +165,10 @@ int GenerateRules(
 ) {
 	try {
 		Json parsed = readJsonFile(primitivesPath);
-		Primitives* primitives = Primitives::import(parsed["types"]);
+		Primitives* primitives = Primitives::import(
+			parsed["types"],
+			parsed.contains("decorations") ? parsed["decorations"] : Json()
+		);
 
 		filterSplicedTypes(primitives);
 		vector<VertexType*> vertexTypes = primitives->vertexTypes;

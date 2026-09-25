@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "mesh_extraction/half_edge_mesh.h"
+#include "util/util.h"
 
 #include <algorithm>
 #include <cmath>
@@ -57,7 +58,7 @@ std::vector<std::vector<int>> splitPinchedLoops(const std::vector<int>& corners)
             loopB.insert(loopB.end(), corners.begin(), corners.begin() + i);
             auto loops = splitPinchedLoops(loopA);
             auto more = splitPinchedLoops(loopB);
-            loops.insert(loops.end(), more.begin(), more.end());
+            Util::append(loops, more);
             return loops;
         }
     }

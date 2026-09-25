@@ -5,6 +5,7 @@
 #include <vector>
 #include <sstream>
 #include <chrono>
+#include <cstring>
 #include "../graph_grammar.h"
 #include "../mutator.h"
 #include "../primitives/primitives.h"
@@ -15,13 +16,14 @@
 #include "../util/diagnostics.h"
 #include "../graph/debug_mesh.h"
 #include "../grammar_rules/production_rule.h"
+#include "../decorations/getInstancesFromModel.h"
 
 using namespace std;
 using Json = nlohmann::json;
 
-Model* model;
-Mutator* mutator;
-GraphGrammar* grammar;
+Model* model = nullptr;
+Mutator* mutator = nullptr;
+GraphGrammar* grammar = nullptr;
 
 namespace {
 
@@ -50,6 +52,7 @@ const Graph* getProductionRuleGraph(int category, int ruleIndex, int graphIndex)
 }
 
 void resetGenerationState() {
+    markOutputDirty();
     delete mutator;
     mutator = nullptr;
     delete model;
@@ -90,7 +93,10 @@ void initialize(const char* filePath, char* result, int len, int seed) {
 
 	try {
 		Json parsed = readJsonFile(filePath);
-		grammar = GraphGrammar::import(parsed);
+		string path = filePath ? filePath : "";
+		size_t slash = path.find_last_of("/\\");
+		string assetDirectory = slash == string::npos ? "" : path.substr(0, slash);
+		grammar = GraphGrammar::import(parsed, assetDirectory);
 		logDllWarningFromGrammar(grammar);
 		model = new Model();
 		mutator = new Mutator(model, grammar);
@@ -109,12 +115,14 @@ void initialize(const char* filePath, char* result, int len, int seed) {
 // Reset the model and mutator.
 void reset(int seed) {
 	resetRandom(seed);
+	markOutputDirty();
 	model->reset();
 	mutator->reset();
 }
 
 // Iterate some number of steps.
 void iterate(int steps) {
+	markOutputDirty();
 	try {
 		mutator->iterate(steps);
 	} catch (const exception& e) {
@@ -124,6 +132,7 @@ void iterate(int steps) {
 
 // Iterate until a certain amount of time has passed.
 int iterateToTime(float timeSeconds) {
+	markOutputDirty();
 	int steps = 0;
 	auto startTime = std::chrono::high_resolution_clock::now();
 	auto targetDuration = std::chrono::duration<float>(timeSeconds);
@@ -147,7 +156,9 @@ int getNumFaces() {
 
 // Return the current mesh.
 MeshCpp getMesh() {
-	return model->getCurrent()->exportMesh();
+	MeshCpp mesh = model->getCurrent()->exportMesh();
+	appendExtrusions(mesh, model);
+	return mesh;
 }
 
 // Set the size of the model.
@@ -159,6 +170,14 @@ void setSize(float x, float y, float z) {
 // Free memory for the mesh.
 void destroyMesh(MeshCpp& mesh) {
 	freeMeshMemory(mesh);
+}
+
+InstanceList getInstances() {
+	return getInstancesFromModel(model);
+}
+
+void destroyInstances(InstanceList& instanceList) {
+	freeInstanceListMemory(instanceList);
 }
 
 int getNumProductionRules(int category) {

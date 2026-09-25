@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "mesh_extraction/type_extractor.h"
+#include "util/util.h"
 
 #include <algorithm>
 #include <cmath>
@@ -156,7 +157,7 @@ std::vector<int> walkVertexFan(const HalfEdgeMesh& mesh, int vertexIdx) {
             std::vector<int> fan;
             fan.reserve(n);
             fan.push_back(start);
-            fan.insert(fan.end(), after.begin(), after.end());
+            Util::append(fan, after);
             return fan;
         }
         if (seen[nxt]) return {};
@@ -181,7 +182,7 @@ std::vector<int> walkVertexFan(const HalfEdgeMesh& mesh, int vertexIdx) {
     fan.reserve(before.size() + 1 + after.size() + 2);
     for (int i = (int)before.size() - 1; i >= 0; --i) fan.push_back(before[i]);
     fan.push_back(start);
-    fan.insert(fan.end(), after.begin(), after.end());
+    Util::append(fan, after);
     if ((int)fan.size() != n) return {};
     addIncomingBoundaryHalves(mesh, vertexIdx, fan);
     return fan;

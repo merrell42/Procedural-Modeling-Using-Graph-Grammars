@@ -157,7 +157,30 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\decorations\decoration_output.h" />
+    <ClInclude Include="..\decorations\decoration_template.h" />
+    <ClInclude Include="..\decorations\decorations.h" />
+    <ClInclude Include="..\decorations\decorations_factory.h" />
+    <ClInclude Include="..\decorations\getInstancesFromModel.h" />
+    <ClInclude Include="..\decorations\edge_decoration.h" />
+    <ClInclude Include="..\decorations\extrude_decoration.h" />
+    <ClInclude Include="..\decorations\svg_profile.h" />
+    <ClInclude Include="..\decorations\face_decoration.h" />
+    <ClInclude Include="..\decorations\pending_decoration.h" />
+    <ClInclude Include="..\decorations\pick_random_decoration.h" />
+    <ClInclude Include="..\decorations\place_object_decoration.h" />
+    <ClInclude Include="..\decorations\rotate_decoration.h" />
+    <ClInclude Include="..\decorations\scale_decoration.h" />
+    <ClInclude Include="..\decorations\scatter_decoration.h" />
+    <ClInclude Include="..\decorations\grid_decoration.h" />
+    <ClInclude Include="..\decorations\slice_decoration.h" />
+    <ClInclude Include="..\decorations\space_evenly_decoration.h" />
+    <ClInclude Include="..\decorations\space_randomly_decoration.h" />
+    <ClInclude Include="..\decorations\union_decoration.h" />
+    <ClInclude Include="..\decorations\vertex_decoration.h" />
     <ClInclude Include="..\geometry\intersector.h" />
+    <ClInclude Include="..\geometry\instance.h" />
+    <ClInclude Include="..\geometry\matrix4.h" />
     <ClInclude Include="..\geometry\mesh.h" />
     <ClInclude Include="..\geometry\plane.h" />
     <ClInclude Include="..\geometry\vec2.h" />
@@ -207,12 +230,31 @@
     <ClInclude Include="..\util\timer.h" />
     <ClInclude Include="..\util\diagnostics.h" />
     <ClInclude Include="..\util\util.h" />
+    <ClInclude Include="..\util\json_field.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="generate.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\decorations\decorations.cpp" />
+    <ClCompile Include="..\decorations\extrude_decoration.cpp" />
+    <ClCompile Include="..\decorations\svg_profile.cpp" />
+    <ClCompile Include="..\decorations\decorations_factory.cpp" />
+    <ClCompile Include="..\decorations\getInstancesFromModel.cpp" />
+    <ClCompile Include="..\decorations\pending_decoration.cpp" />
+    <ClCompile Include="..\decorations\pick_random_decoration.cpp" />
+    <ClCompile Include="..\decorations\union_decoration.cpp" />
+    <ClCompile Include="..\decorations\place_object_decoration.cpp" />
+    <ClCompile Include="..\decorations\rotate_decoration.cpp" />
+    <ClCompile Include="..\decorations\scale_decoration.cpp" />
+    <ClCompile Include="..\decorations\scatter_decoration.cpp" />
+    <ClCompile Include="..\decorations\grid_decoration.cpp" />
+    <ClCompile Include="..\decorations\slice_decoration.cpp" />
+    <ClCompile Include="..\decorations\space_evenly_decoration.cpp" />
+    <ClCompile Include="..\decorations\space_randomly_decoration.cpp" />
     <ClCompile Include="..\geometry\intersector.cpp" />
+    <ClCompile Include="..\geometry\instance.cpp" />
+    <ClCompile Include="..\geometry\matrix4.cpp" />
     <ClCompile Include="..\geometry\mesh.cpp" />
     <ClCompile Include="..\geometry\vec2.cpp" />
     <ClCompile Include="..\geometry\vec3.cpp" />

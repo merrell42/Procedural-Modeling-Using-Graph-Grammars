@@ -161,6 +161,28 @@
   <ItemGroup>
     <ClInclude Include="..\..\cpp_version\geometry\vec2.h" />
     <ClInclude Include="..\..\cpp_version\geometry\vec3.h" />
+    <ClInclude Include="..\..\cpp_version\geometry\matrix4.h" />
+    <ClInclude Include="..\..\cpp_version\geometry\instance.h" />
+    <ClInclude Include="..\..\cpp_version\decorations\decoration_output.h" />
+    <ClInclude Include="..\..\cpp_version\decorations\decoration_template.h" />
+    <ClInclude Include="..\..\cpp_version\decorations\decorations.h" />
+    <ClInclude Include="..\..\cpp_version\decorations\decorations_factory.h" />
+    <ClInclude Include="..\..\cpp_version\decorations\vertex_decoration.h" />
+    <ClInclude Include="..\..\cpp_version\decorations\edge_decoration.h" />
+    <ClInclude Include="..\..\cpp_version\decorations\extrude_decoration.h" />
+    <ClInclude Include="..\..\cpp_version\decorations\svg_profile.h" />
+    <ClInclude Include="..\..\cpp_version\decorations\face_decoration.h" />
+    <ClInclude Include="..\..\cpp_version\decorations\pending_decoration.h" />
+    <ClInclude Include="..\..\cpp_version\decorations\pick_random_decoration.h" />
+    <ClInclude Include="..\..\cpp_version\decorations\place_object_decoration.h" />
+    <ClInclude Include="..\..\cpp_version\decorations\rotate_decoration.h" />
+    <ClInclude Include="..\..\cpp_version\decorations\scale_decoration.h" />
+    <ClInclude Include="..\..\cpp_version\decorations\scatter_decoration.h" />
+    <ClInclude Include="..\..\cpp_version\decorations\grid_decoration.h" />
+    <ClInclude Include="..\..\cpp_version\decorations\slice_decoration.h" />
+    <ClInclude Include="..\..\cpp_version\decorations\space_evenly_decoration.h" />
+    <ClInclude Include="..\..\cpp_version\decorations\space_randomly_decoration.h" />
+    <ClInclude Include="..\..\cpp_version\decorations\union_decoration.h" />
     <ClInclude Include="..\..\cpp_version\graph\graph.h" />
     <ClInclude Include="..\..\cpp_version\graph\graph_edge.h" />
     <ClInclude Include="..\..\cpp_version\graph\graph_face.h" />
@@ -175,6 +197,7 @@
     <ClInclude Include="..\..\cpp_version\grammar_rules\production_rule.h" />
     <ClInclude Include="..\..\cpp_version\util\diagnostics.h" />
     <ClInclude Include="..\..\cpp_version\util\util.h" />
+    <ClInclude Include="..\..\cpp_version\util\json_field.h" />
     <ClInclude Include="..\..\cpp_version\json versioning\read_json_file.h" />
     <ClInclude Include="..\..\cpp_version\json versioning\json_version_manager.h" />
     <ClInclude Include="..\..\cpp_version\mesh_extraction\half_edge_mesh.h" />
@@ -198,6 +221,22 @@
   <ItemGroup>
     <ClCompile Include="..\..\cpp_version\geometry\vec2.cpp" />
     <ClCompile Include="..\..\cpp_version\geometry\vec3.cpp" />
+    <ClCompile Include="..\..\cpp_version\geometry\matrix4.cpp" />
+    <ClCompile Include="..\..\cpp_version\decorations\decorations.cpp" />
+    <ClCompile Include="..\..\cpp_version\decorations\extrude_decoration.cpp" />
+    <ClCompile Include="..\..\cpp_version\decorations\svg_profile.cpp" />
+    <ClCompile Include="..\..\cpp_version\decorations\decorations_factory.cpp" />
+    <ClCompile Include="..\..\cpp_version\decorations\pending_decoration.cpp" />
+    <ClCompile Include="..\..\cpp_version\decorations\pick_random_decoration.cpp" />
+    <ClCompile Include="..\..\cpp_version\decorations\union_decoration.cpp" />
+    <ClCompile Include="..\..\cpp_version\decorations\place_object_decoration.cpp" />
+    <ClCompile Include="..\..\cpp_version\decorations\rotate_decoration.cpp" />
+    <ClCompile Include="..\..\cpp_version\decorations\scale_decoration.cpp" />
+    <ClCompile Include="..\..\cpp_version\decorations\scatter_decoration.cpp" />
+    <ClCompile Include="..\..\cpp_version\decorations\grid_decoration.cpp" />
+    <ClCompile Include="..\..\cpp_version\decorations\slice_decoration.cpp" />
+    <ClCompile Include="..\..\cpp_version\decorations\space_evenly_decoration.cpp" />
+    <ClCompile Include="..\..\cpp_version\decorations\space_randomly_decoration.cpp" />
     <ClCompile Include="..\..\cpp_version\memory_counter.cpp" />
     <ClCompile Include="..\..\cpp_version\graph\edge_settings.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>

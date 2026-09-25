@@ -2,10 +2,14 @@
 #include "vertex_type.h"
 #include "edge_type.h"
 #include "primitives.h"
+#include "../decorations/decorations.h"
+#include "../decorations/vertex_decoration.h"
 #include "../util/util.h"
+#include "../util/json_field.h"
 #include "../util/binary_stream.h"
+#include <iostream>
 
-VertexType::VertexType() : spliced(false), ruleGeneratorId(0) {
+VertexType::VertexType() : spliced(false), decoration(nullptr), ruleGeneratorId(0) {
 }
 
 const vector<HalfEdgeType>& VertexType::getHalfEdgeTypes() const {
@@ -22,6 +26,14 @@ bool VertexType::getSpliced() const {
 
 void VertexType::setSpliced(bool spliced) {
     this->spliced = spliced;
+}
+
+VertexDecoration* VertexType::getDecoration() const {
+    return decoration;
+}
+
+void VertexType::setDecoration(VertexDecoration* decoration) {
+    this->decoration = decoration;
 }
 
 void VertexType::addHalfEdge(EdgeType* edge, bool isAtStart) {
@@ -44,6 +56,13 @@ VertexType* VertexType::import(const Json& json, Primitives* shape) {
     result->spliced = spliced;
     if (json.contains("desirability")) {
         result->desirability = json["desirability"].get<double>();
+    }
+    if (hasString(json, "decoration")) {
+        const string id = json["decoration"].get<string>();
+        result->decoration = shape->getDecorations()->getVertexDecoration(id);
+        if (!result->decoration) {
+            cerr << "Warning: Unknown vertex decoration: " << id << endl;
+        }
     }
 
     for (const auto& halfEdgeTypeJson : json["halfEdgeTypes"]) {
@@ -99,6 +118,9 @@ Json VertexType::exportJson(const Primitives* shape) const {
     json["spliced"] = spliced;
     if (desirability != 0.0) {
         json["desirability"] = desirability;
+    }
+    if (decoration) {
+        json["decoration"] = decoration->getId();
     }
     Json halfEdgeTypesJson = Json::array();
     for (const auto& halfEdgeType : halfEdgeTypes) {

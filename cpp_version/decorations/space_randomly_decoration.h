@@ -1,0 +1,17 @@
+#pragma once
+#include "edge_decoration.h"
+#include "vertex_decoration.h"
+
+using namespace std;
+
+class SpaceRandomlyDecoration : public EdgeDecoration {
+    public:
+        explicit SpaceRandomlyDecoration(double spacing);
+        void setChild(VertexDecoration* child);
+        void resolveChildren(const Decorations& decorations) override;
+        DecorationOutput getOutput(const Vec3& start, const Vec3& end) const override;
+
+    private:
+        double spacing;
+        VertexDecoration* child = nullptr;
+};

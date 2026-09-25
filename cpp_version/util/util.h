@@ -3,6 +3,7 @@
 #include <functional>
 #include <string>
 #include <unordered_set>
+#include "../geometry/vec2.h"
 #include "../geometry/vec3.h"
 
 // Find the index of an item in a vector.
@@ -37,6 +38,12 @@ public:
         array.erase(std::remove(array.begin(), array.end(), item), array.end());
     }
 
+    // Append every item from src onto dest.
+    template<typename T>
+    static inline void append(vector<T>& dest, const vector<T>& src) {
+        dest.insert(dest.end(), src.begin(), src.end());
+    }
+
     // Find the union of two vectors.
     template<typename T>
     static void union_(vector<T>& a, const vector<T>& b) {
@@ -57,6 +64,12 @@ public:
     // Find the dimension of the vector with the largest magnitude.
     static int maxDim(const Vec3& n);
 
+    // Find the signed area using the shoelace formula.
+    static double signedArea(const vector<Vec2>& polygon);
+
+    // Evenly spaced samples from low to high, centered in the range.
+    static vector<double> evenlySpaced(double low, double high, double spacing);
+
     // Pick a random item from a vector.
     template <typename T>
     static const T& pick(const vector<T>& vec) {
@@ -68,6 +81,9 @@ public:
 
     // Pick a random number between two values.
     static double randomUniform(double lower, double upper);
+
+    // Sample a Poisson random variable with the given mean.
+    static int randomPoisson(double lambda);
 
     static double fixAngle(double angle);
     static int angleWedges(double prev, double next);

@@ -101,5 +101,5 @@ void MorphismPath::expandForward() {
 void MorphismPath::merge(MorphismPath* pathB) {
     halfEdges[1] = pathB->halfEdges[1];
     extendable[1] = pathB->extendable[1];
-    pathEdges.insert(pathEdges.end(), pathB->pathEdges.begin(), pathB->pathEdges.end());
+    Util::append(pathEdges, pathB->pathEdges);
 }

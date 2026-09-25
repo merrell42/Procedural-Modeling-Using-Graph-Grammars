@@ -10,6 +10,7 @@
 #include "primitives/edge_type.h"
 #include "primitives/face_type.h"
 #include "primitives/vertex_type.h"
+#include "decorations/decorations.h"
 #include "settings.h"
 #include "util/util.h"
 #include "util/diagnostics.h"
@@ -131,9 +132,13 @@ Production GraphGrammar::getRemovalProduction() {
     
 }
 
-GraphGrammar* GraphGrammar::import(const Json& json) {
+GraphGrammar* GraphGrammar::import(const Json& json, const string& assetDirectory) {
     auto* grammar = new GraphGrammar();
-    grammar->primitives = Primitives::import(json["types"]);
+    grammar->primitives = Primitives::import(
+        json["types"],
+        json.contains("decorations") ? json["decorations"] : Json(),
+        assetDirectory
+    );
     
     auto importRule = [&](const Json& transJson) {
         return ProductionRule::import(transJson, grammar->primitives);
@@ -179,6 +184,7 @@ Json GraphGrammar::exportJson() const {
     json["groundRules"] = groundRulesJson;
 
     json["types"] = primitives->exportJson();
+    json["decorations"] = primitives->getDecorations()->exportJson();
     json["grounded"] = grounded;
     json["emptyGraph"] = emptyGraph->exportJson(primitives);
     return json;

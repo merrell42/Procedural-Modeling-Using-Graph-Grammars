@@ -48,6 +48,8 @@ class Face {
 			vector<int>& triangles,
 			vector<int>& faceIndices
 		) const;
+		const vector<int>& getTriangleIndices() const;
+		void markDirty();
 
 		// Add a face to the end of this face.
 		void append(Face* faceB);
@@ -69,6 +71,6 @@ class Face {
 		// A face group representing an outer face with holes.
 		int groupId;
 		bool hole;
-
-		vector<int> getTriangleIndices() const;
+		mutable vector<int> triangleIndices;
+		mutable bool triangleIndicesDirty = true;
 };

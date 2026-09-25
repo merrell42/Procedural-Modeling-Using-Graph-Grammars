@@ -52,11 +52,30 @@ namespace Grammar {
             public int numSubmeshes;
         }
 
+        // Must match cpp_version/geometry/instance.h (Instance, InstanceList).
+        [StructLayout(LayoutKind.Sequential)]
+        private struct Instance {
+            public IntPtr assetId;
+            public Matrix4 transform;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct InstanceList {
+            public IntPtr instances;
+            public int count;
+        }
+
         [DllImport(pmuggDll, CallingConvention = CallingConvention.Cdecl)]
         private static extern MeshCpp getMesh();
 
         [DllImport(pmuggDll, CallingConvention = CallingConvention.Cdecl)]
         private static extern void destroyMesh(ref MeshCpp mesh);
+
+        [DllImport(pmuggDll, CallingConvention = CallingConvention.Cdecl)]
+        private static extern InstanceList getInstances();
+
+        [DllImport(pmuggDll, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void destroyInstances(ref InstanceList instanceList);
 
         [DllImport(pmuggDll, CallingConvention = CallingConvention.Cdecl)]
         private static extern void initialize(string filePath, StringBuilder result, int len, int seed);
@@ -199,6 +218,7 @@ namespace Grammar {
             if (vertices.Count == 0 && edgeVertices == null) {
                 DestroyMeshMaterials();
                 ClearGeneratedObjects();
+                UpdateInstances();
                 return;
             }
 
@@ -255,6 +275,8 @@ namespace Grammar {
                 DrawEdgeLines(edgeVertices, edgeFaceIndices);
             }
 
+            UpdateInstances();
+
             if (iterationCount % 20 == 0) {
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
@@ -289,7 +311,71 @@ namespace Grammar {
             lastMeshMaterials = null;
         }
 
+        private GameObject LoadInstanceModel(string assetId, Dictionary<string, GameObject> modelCache) {
+            if (modelCache.TryGetValue(assetId, out GameObject cachedModel)) {
+                return cachedModel;
+            }
+
+            string modelPath = "Assets/" + assetId + ".obj";
+            GameObject instanceModel = AssetDatabase.LoadAssetAtPath<GameObject>(modelPath);
+            if (instanceModel == null) {
+                Debug.LogWarning($"Could not load instance model at {modelPath}.");
+            }
+            modelCache[assetId] = instanceModel;
+            return instanceModel;
+        }
+
+        private void UpdateInstances() {
+            GameObject instancesContainer = GameObject.Find("Generated Instances");
+            if (instancesContainer != null) {
+                DestroyImmediate(instancesContainer);
+            }
+
+            InstanceList instanceList = getInstances();
+            if (instanceList.instances == IntPtr.Zero || instanceList.count <= 0) {
+                destroyInstances(ref instanceList);
+                return;
+            }
+
+            instancesContainer = new GameObject("Generated Instances");
+
+            var creator = FindFirstObjectByType<GrammarCreator>();
+            if (creator) {
+                instancesContainer.transform.SetParent(creator.transform, false);
+            }
+
+            var modelCache = new Dictionary<string, GameObject>();
+            int instanceStructSize = Marshal.SizeOf<Instance>();
+            for (int instanceIndex = 0; instanceIndex < instanceList.count; instanceIndex++) {
+                IntPtr instancePtr = IntPtr.Add(instanceList.instances, instanceIndex * instanceStructSize);
+                Instance instance = Marshal.PtrToStructure<Instance>(instancePtr);
+
+                string assetId = instance.assetId != IntPtr.Zero
+                    ? Marshal.PtrToStringAnsi(instance.assetId)
+                    : "Instance";
+
+                GameObject instanceModel = LoadInstanceModel(assetId, modelCache);
+                GameObject instanceObject;
+                if (instanceModel != null) {
+                    instanceObject = (GameObject)Instantiate(instanceModel, instancesContainer.transform);
+                } else {
+                    instanceObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    instanceObject.transform.SetParent(instancesContainer.transform, false);
+                }
+
+                instanceObject.name = assetId + " " + instanceIndex;
+                instance.transform.ApplyTo(instanceObject.transform);
+            }
+
+            destroyInstances(ref instanceList);
+        }
+
         private void ClearGeneratedObjects() {
+            GameObject instancesContainer = GameObject.Find("Generated Instances");
+            if (instancesContainer != null) {
+                DestroyImmediate(instancesContainer);
+            }
+
             GameObject linesContainer = GameObject.Find("Generated Lines");
             if (linesContainer != null) {
                 DestroyImmediate(linesContainer);

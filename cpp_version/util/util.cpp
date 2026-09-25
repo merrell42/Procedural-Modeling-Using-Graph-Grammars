@@ -34,6 +34,33 @@ int Util::randomInt(int count) {
     return static_cast<int>(randomValue() * count);
 }
 
+vector<double> Util::evenlySpaced(double low, double high, double spacing) {
+    double length = high - low;
+    int count = static_cast<int>(floor(length / spacing + 1e-9));
+    vector<double> coordinates;
+    if (count < 1) {
+        return coordinates;
+    }
+    double margin = (length - (count - 1) * spacing) / 2.0;
+    coordinates.reserve(count);
+    for (int i = 0; i < count; i++) {
+        coordinates.push_back(low + margin + i * spacing);
+    }
+    return coordinates;
+}
+
+double Util::signedArea(const vector<Vec2>& polygon) {
+    double sum = 0.0;
+    size_t n = polygon.size();
+    for (size_t i = 0; i < n; i++) {
+        double xi = polygon[i].x;
+        double yp = polygon[(i + 1) % n].y;
+        double yn = polygon[(i + n - 1) % n].y;
+        sum += xi * (yn - yp);
+    }
+    return -sum / 2.0;
+}
+
 int Util::maxDim(const Vec3& n) {
     array<pair<double, int>, 3> coords = {
         make_pair(abs(n.getX()), 0),
@@ -71,6 +98,23 @@ double Util::randomUniform(double lower, double upper) {
     }
     double s = randomValue();
     return s * (upper - lower) + lower;
+}
+
+int Util::randomPoisson(double lambda) {
+    if (lambda <= 0.0) {
+        return 0;
+    }
+    int count = 0;
+    double logProduct = 0.0;
+    do {
+        count++;
+        double u = randomValue();
+        if (u <= 0.0) {
+            break;
+        }
+        logProduct += log(u);
+    } while (logProduct > -lambda);
+    return count - 1;
 }
 
 double Util::fixAngle(double angle) {

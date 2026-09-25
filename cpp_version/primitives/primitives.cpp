@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "primitives.h"
+#include "../decorations/decorations.h"
 
 Primitives::Primitives(const vector<VertexType*>& vTypes,
                  const vector<EdgeType*>& eTypes,
@@ -10,20 +11,31 @@ Primitives::Primitives(const vector<VertexType*>& vTypes,
     , edgeTypes(eTypes)
     , faceTypes(fTypes)
     , xml(xmlData)
-    , dims(dims) {}
+    , dims(dims)
+    , decorations(new Decorations()) {}
 
 Primitives::Primitives(int dims) : Primitives({}, {}, {}, "", dims) {}
 
-Primitives* Primitives::import(const Json& json) {
+Primitives::~Primitives() {
+    delete decorations;
+}
+
+Decorations* Primitives::getDecorations() const {
+    return decorations;
+}
+
+Primitives* Primitives::import(const Json& json, const Json& decorationsJson, const string& assetDirectory) {
     int dims = 3;
     if (json.contains("dims")) {
         dims = json.at("dims");
     }
     auto primitives = new Primitives(dims);
+    delete primitives->decorations;
+    primitives->decorations = Decorations::import(decorationsJson, assetDirectory);
 
     vector<FaceType*> faceTypes;
     for (const auto& type : json.at("faceTypes")) {
-        faceTypes.push_back(FaceType::import(type));
+        faceTypes.push_back(FaceType::import(type, primitives));
     }
     primitives->faceTypes = faceTypes;
 
@@ -47,7 +59,7 @@ Json Primitives::exportJson() const {
     json["dims"] = dims;
     Json faceTypesJson = Json::array();
     for (const auto* faceType : faceTypes) {
-        faceTypesJson.push_back(faceType->exportJson());
+        faceTypesJson.push_back(faceType->exportJson(this));
     }
     json["faceTypes"] = faceTypesJson;
     Json edgeTypesJson = Json::array();

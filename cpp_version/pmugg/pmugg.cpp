@@ -54,7 +54,9 @@ int main(int argc, char** argv) {
 			// Import the grammar JSON file then iterate 100 steps.
 			Json parsed = readJsonFile(filePath, false);
 			cout << endl << parsed["name"] << endl;
-			auto grammar = GraphGrammar::import(parsed);
+			size_t slash = filePath.find_last_of("/\\");
+			string assetDirectory = slash == string::npos ? "" : filePath.substr(0, slash);
+			auto grammar = GraphGrammar::import(parsed, assetDirectory);
 			auto model = new Model();
 			auto mutator = new Mutator(model, grammar);
 			mutator->iterate(100);

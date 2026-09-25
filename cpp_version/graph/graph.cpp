@@ -477,9 +477,9 @@ void Graph::merge(Graph* other) {
     for (auto* f : other->faces) {
         f->connectGraph(this);
     }
-    bVertices.insert(bVertices.end(), other->bVertices.begin(), other->bVertices.end());
-    bHalfEdges.insert(bHalfEdges.end(), other->bHalfEdges.begin(), other->bHalfEdges.end());
-    bFaces.insert(bFaces.end(), other->bFaces.begin(), other->bFaces.end());
+    Util::append(bVertices, other->bVertices);
+    Util::append(bHalfEdges, other->bHalfEdges);
+    Util::append(bFaces, other->bFaces);
     other->vertices.clear();
     other->edges.clear();
     other->halfEdges.clear();

@@ -2,10 +2,14 @@
 #include "edge_type.h"
 #include "face_type.h"
 #include "primitives.h"
+#include "../decorations/decorations.h"
+#include "../decorations/edge_decoration.h"
 #include "..\graph\edge_settings.h"
 #include "..\util\util.h"
+#include "..\util\json_field.h"
 #include "..\util\binary_stream.h"
 #include <string>
+#include <iostream>
 #define _USE_MATH_DEFINES
 #include <math.h>
 using namespace std;
@@ -19,6 +23,7 @@ EdgeType::EdgeType(const vector<FaceData>& fData, const Vec3& direction, bool ri
     , isRigid(rigid)
     , spliced(false)
     , id(nextId++)
+    , decoration(nullptr)
     , ruleGeneratorId("") {}
 
 void EdgeType::setSpliced(bool newSpliced) {
@@ -46,12 +51,19 @@ EdgeType* EdgeType::import(const Json& json, Primitives* shape) {
     auto* result = new EdgeType(fData, direction, json["isRigid"]);
 
     // TODO: Edge Settings are often repeated. Save one copy and use an index to it.
-    if (json.contains("edgeSettings") && !json["edgeSettings"].is_null()) {
+    if (hasJson(json, "edgeSettings")) {
         result->edgeSettings = EdgeSettings::import(json["edgeSettings"]);
     }
     // I think edge length is only needed for old grammars that have no edgeSettings.
     // result->edgeLength = json["edgeLength"].is_null() ? Util::INF : json["edgeLength"].get<double>();
     result->setSpliced(json["spliced"]);
+    if (hasString(json, "decoration")) {
+        const string id = json["decoration"].get<string>();
+        result->decoration = shape->getDecorations()->getEdgeDecoration(id);
+        if (!result->decoration) {
+            cerr << "Warning: Unknown edge decoration: " << id << endl;
+        }
+    }
 
     return result;
 }
@@ -142,6 +154,14 @@ void EdgeType::setRuleGeneratorId(const string& id) {
     ruleGeneratorId = id;
 }
 
+EdgeDecoration* EdgeType::getDecoration() const {
+    return decoration;
+}
+
+void EdgeType::setDecoration(EdgeDecoration* decoration) {
+    this->decoration = decoration;
+}
+
 Json EdgeType::exportJson(const Primitives* shape) const {
     Json json;
     Json faceDataJson = Json::array();
@@ -155,6 +175,9 @@ Json EdgeType::exportJson(const Primitives* shape) const {
     json["dir"] = dir.exportJson();
     json["isRigid"] = isRigid;
     json["spliced"] = spliced;
+    if (decoration) {
+        json["decoration"] = decoration->getId();
+    }
     if (edgeSettings) {
         json["edgeSettings"] = edgeSettings->exportJson();
     } else {

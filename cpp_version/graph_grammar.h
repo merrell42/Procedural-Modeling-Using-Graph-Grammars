@@ -30,7 +30,7 @@ public:
     GraphGrammar();
     GraphGrammar(Primitives* primitives);
     ~GraphGrammar();
-    static GraphGrammar* import(const Json& json);
+    static GraphGrammar* import(const Json& json, const string& assetDirectory = "");
     Json exportJson() const;
 
     // Add a production rule. Takes ownership of the rule.
@@ -58,6 +58,7 @@ public:
 
     // Get the number of dimensions of the graph.
     int getDims() const { return primitives->dims; }
+    const Primitives* getPrimitives() const { return primitives; }
 
 private:
     // The production rules.

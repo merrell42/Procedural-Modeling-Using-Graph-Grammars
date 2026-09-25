@@ -12,6 +12,7 @@
 
 #include <string>
 #include "../geometry/mesh.h"
+#include "../geometry/instance.h"
 
 // The functions that are exported from the DLL.
 extern "C" {
@@ -24,6 +25,8 @@ extern "C" {
     GENERATE_API MeshCpp getMesh();
     GENERATE_API void setSize(float x, float y, float z);
     GENERATE_API void destroyMesh(MeshCpp& mesh);
+    GENERATE_API InstanceList getInstances();
+    GENERATE_API void destroyInstances(InstanceList& instanceList);
 
     // Production rule categories: 0 = rules, 1 = starterRules, 2 = groundRules.
     GENERATE_API int getNumProductionRules(int category);

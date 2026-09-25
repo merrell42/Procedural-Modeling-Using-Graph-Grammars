@@ -14,6 +14,7 @@ using namespace std;
 
 class FaceType;
 class Primitives;
+class EdgeDecoration;
 
 // A face type and a boolean for if the face is on the right or left side of the edge.
 struct FaceData {
@@ -38,6 +39,8 @@ public:
     bool getIsRigid() const;
     bool getSpliced() const;
     int getId() const;
+    EdgeDecoration* getDecoration() const;
+    void setDecoration(EdgeDecoration* decoration);
 
     // RuleGenerator support.
     const string& getRuleGeneratorId() const;
@@ -53,6 +56,7 @@ private:
     bool isRigid;
     bool spliced;
     int id;
+    EdgeDecoration* decoration = nullptr;
     // RuleGenerator string id.
     string ruleGeneratorId;
 

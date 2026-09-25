@@ -2,6 +2,7 @@
 #include <mutex>
 #include "json_version_manager.h"
 #include "../geometry/vec3.h"
+#include "../util/json_field.h"
 
 void edgeTypesMigration1(Json& json) {
     for (auto& edgeType : json["edgeTypes"]) {
@@ -160,7 +161,7 @@ void graphMigration1(Json& json) {
 }
 
 void productionRuleMigration1(Json& json) {
-    if (json.contains("n") && json["n"].is_array()) {
+    if (hasArray(json, "n")) {
         for (auto& element : json["n"]) {
             graphMigration1(element);
         }
@@ -178,7 +179,7 @@ void transitionArraysMigration(Json& json) {
     
     // Process each transition array and rename it
     for (const auto& [oldName, newName] : arrayRenames) {
-        if (json.contains(oldName) && json[oldName].is_array()) {
+        if (hasArray(json, oldName)) {
             json[newName] = json[oldName];
             for (auto& element : json[newName]) {
                 productionRuleMigration1(element);
@@ -195,7 +196,7 @@ void jsonMigration1(Json& json) {
     }
     
     // If solution exists and is an object, promote all its fields to root level
-    if (json.contains("solution") && json["solution"].is_object()) {
+    if (hasObject(json, "solution")) {
         for (auto& [key, value] : json["solution"].items()) {
             newJson[key] = value;
         }
