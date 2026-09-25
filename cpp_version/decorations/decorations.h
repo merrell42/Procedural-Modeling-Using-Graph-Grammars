@@ -14,7 +14,7 @@ class Decorations {
         Decorations() = default;
         ~Decorations();
 
-        static Decorations* import(const Json& json);
+        static Decorations* import(const Json& json, const string& assetDirectory = "");
         Json exportJson() const;
 
         VertexDecoration* getVertexDecoration(const string& id) const;

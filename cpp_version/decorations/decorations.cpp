@@ -25,10 +25,10 @@ T* findDecoration(const map<string, T*>& decorations, const string& id) {
 }
 
 template <typename Base>
-void resolveAll(const Decorations& all, const map<string, Base*>& decorations) {
-    for (auto& entry : decorations) {
+void resolveAll(const Decorations& decorations, const map<string, Base*>& decorationsMap) {
+    for (auto& entry : decorationsMap) {
         if (entry.second) {
-            entry.second->resolveChildren(all);
+            entry.second->resolveChildren(decorations);
         }
     }
 }
@@ -102,7 +102,8 @@ Decorations::~Decorations() {
     deleteDecorations(faceDecorations);
 }
 
-Decorations* Decorations::import(const Json& json) {
+Decorations* Decorations::import(const Json& json, const string& assetDirectory) {
+    DecorationsFactory::setAssetDirectory(assetDirectory);
     auto* result = new Decorations();
     if (json.is_null() || json.empty()) {
         result->sourceJson = Json{

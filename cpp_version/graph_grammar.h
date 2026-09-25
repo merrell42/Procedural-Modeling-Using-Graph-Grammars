@@ -30,7 +30,7 @@ public:
     GraphGrammar();
     GraphGrammar(Primitives* primitives);
     ~GraphGrammar();
-    static GraphGrammar* import(const Json& json);
+    static GraphGrammar* import(const Json& json, const string& assetDirectory = "");
     Json exportJson() const;
 
     // Add a production rule. Takes ownership of the rule.

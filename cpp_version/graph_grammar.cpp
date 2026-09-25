@@ -132,11 +132,12 @@ Production GraphGrammar::getRemovalProduction() {
     
 }
 
-GraphGrammar* GraphGrammar::import(const Json& json) {
+GraphGrammar* GraphGrammar::import(const Json& json, const string& assetDirectory) {
     auto* grammar = new GraphGrammar();
     grammar->primitives = Primitives::import(
         json["types"],
-        json.contains("decorations") ? json["decorations"] : Json()
+        json.contains("decorations") ? json["decorations"] : Json(),
+        assetDirectory
     );
     
     auto importRule = [&](const Json& transJson) {

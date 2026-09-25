@@ -24,7 +24,7 @@ public:
             const string& xml,
             int dims);
     ~Primitives();
-    static Primitives* import(const Json& json, const Json& decorationsJson = Json());
+    static Primitives* import(const Json& json, const Json& decorationsJson = Json(), const string& assetDirectory = "");
     Json exportJson() const;
 
     vector<VertexType*> vertexTypes;

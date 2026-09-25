@@ -10,6 +10,7 @@
 #include "union_decoration.h"
 #include "pick_random_decoration.h"
 #include "pending_decoration.h"
+#include "svg_profile.h"
 #include "../geometry/vec2.h"
 #include "../geometry/vec3.h"
 #include <iostream>
@@ -18,6 +19,22 @@
 using namespace std;
 
 namespace {
+
+string assetDirectory;
+
+vector<Vec2> readExtrudeProfile(const Json& json) {
+    if (json.contains("svg") && !json["svg"].is_null()) {
+        return loadSvgProfile(json["svg"].get<string>(), assetDirectory);
+    }
+    if (json.contains("profile") && json["profile"].is_array()) {
+        vector<Vec2> polygon;
+        for (const auto& point : json["profile"]) {
+            polygon.emplace_back(point.at(0).get<double>(), point.at(1).get<double>());
+        }
+        return polygon;
+    }
+    throw runtime_error("Extrude decoration requires \"svg\" or \"profile\"");
+}
 
 vector<string> readChildIds(const Json& json) {
     vector<string> childIds;
@@ -118,6 +135,10 @@ VertexDecoration* DecorationsFactory::createVertexDecoration(const Json& json) {
     throw runtime_error("Unknown vertex decoration type: " + type);
 }
 
+void DecorationsFactory::setAssetDirectory(const string& directory) {
+    assetDirectory = directory;
+}
+
 EdgeDecoration* DecorationsFactory::createEdgeDecoration(const Json& json) {
     const string type = json.at("type").get<string>();
     if (type == "space evenly") {
@@ -131,10 +152,7 @@ EdgeDecoration* DecorationsFactory::createEdgeDecoration(const Json& json) {
         return decoration;
     }
     if (type == "extrude") {
-        vector<Vec2> polygon;
-        for (const auto& point : json.at("polygon")) {
-            polygon.emplace_back(point.at(0).get<double>(), point.at(1).get<double>());
-        }
+        vector<Vec2> polygon = readExtrudeProfile(json);
         Vec3 color(1, 1, 1);
         if (json.contains("color") && !json["color"].is_null()) {
             color = Vec3::import(json["color"]);

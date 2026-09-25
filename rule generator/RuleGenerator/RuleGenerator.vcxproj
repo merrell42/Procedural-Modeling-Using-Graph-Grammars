@@ -170,6 +170,7 @@
     <ClInclude Include="..\..\cpp_version\decorations\vertex_decoration.h" />
     <ClInclude Include="..\..\cpp_version\decorations\edge_decoration.h" />
     <ClInclude Include="..\..\cpp_version\decorations\extrude_decoration.h" />
+    <ClInclude Include="..\..\cpp_version\decorations\svg_profile.h" />
     <ClInclude Include="..\..\cpp_version\decorations\face_decoration.h" />
     <ClInclude Include="..\..\cpp_version\decorations\pending_decoration.h" />
     <ClInclude Include="..\..\cpp_version\decorations\pick_random_decoration.h" />
@@ -220,6 +221,7 @@
     <ClCompile Include="..\..\cpp_version\geometry\matrix4.cpp" />
     <ClCompile Include="..\..\cpp_version\decorations\decorations.cpp" />
     <ClCompile Include="..\..\cpp_version\decorations\extrude_decoration.cpp" />
+    <ClCompile Include="..\..\cpp_version\decorations\svg_profile.cpp" />
     <ClCompile Include="..\..\cpp_version\decorations\decorations_factory.cpp" />
     <ClCompile Include="..\..\cpp_version\decorations\pending_decoration.cpp" />
     <ClCompile Include="..\..\cpp_version\decorations\pick_random_decoration.cpp" />

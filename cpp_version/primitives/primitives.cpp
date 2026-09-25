@@ -24,14 +24,14 @@ Decorations* Primitives::getDecorations() const {
     return decorations;
 }
 
-Primitives* Primitives::import(const Json& json, const Json& decorationsJson) {
+Primitives* Primitives::import(const Json& json, const Json& decorationsJson, const string& assetDirectory) {
     int dims = 3;
     if (json.contains("dims")) {
         dims = json.at("dims");
     }
     auto primitives = new Primitives(dims);
     delete primitives->decorations;
-    primitives->decorations = Decorations::import(decorationsJson);
+    primitives->decorations = Decorations::import(decorationsJson, assetDirectory);
 
     vector<FaceType*> faceTypes;
     for (const auto& type : json.at("faceTypes")) {

@@ -93,7 +93,10 @@ void initialize(const char* filePath, char* result, int len, int seed) {
 
 	try {
 		Json parsed = readJsonFile(filePath);
-		grammar = GraphGrammar::import(parsed);
+		string path = filePath ? filePath : "";
+		size_t slash = path.find_last_of("/\\");
+		string assetDirectory = slash == string::npos ? "" : path.substr(0, slash);
+		grammar = GraphGrammar::import(parsed, assetDirectory);
 		logDllWarningFromGrammar(grammar);
 		model = new Model();
 		mutator = new Mutator(model, grammar);
