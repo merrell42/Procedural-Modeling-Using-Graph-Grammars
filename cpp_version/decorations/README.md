@@ -42,13 +42,13 @@ Scales its child by a random amount.
 
 Runs every child.
 
-- `childIds` — Optional. Ids of the vertex decorations to run. If omitted, the union does nothing.
+- `childIds` — Ids of the vertex decorations to run.
 
 ### Pick random
 
 Runs one child, chosen at random.
 
-- `childIds` — Optional. Ids of the vertex decorations to choose from. If omitted, nothing is placed.
+- `childIds` — Ids of the vertex decorations to choose from.
 - `weight` — Optional. One weight per child, in the same order as `childIds`. If omitted, each child is equally likely.
 
 ## Edge decorations
@@ -82,14 +82,14 @@ Extrudes a 2D profile along the edge and adds the resulting mesh. Provide either
 
 Runs every child.
 
-- `childIds` — Optional. Ids of the edge decorations to run. If omitted, the union does nothing.
+- `childIds` — Ids of the edge decorations to run.
 
 ### Pick random
 
 Runs one child, chosen at random.
 
-- `childIds` — Optional. Ids of the edge decorations to choose from. If omitted, nothing is placed.
-- `weight` — Optional. One weight per child, in the same order as `childIds`. If omitted, each child is equally likely.
+- `childIds` — Ids of the edge decorations to choose from.
+- `weight` — One weight per child, in the same order as `childIds`.likely.
 
 ## Face decorations
 
@@ -131,5 +131,5 @@ Runs every child.
 
 Runs one child, chosen at random.
 
-- `childIds` — Optional. Ids of the face decorations to choose from. If omitted, nothing is placed.
+- `childIds` — Ids of the face decorations to choose from.
 - `weight` — Optional. One weight per child, in the same order as `childIds`. If omitted, each child is equally likely.
