@@ -89,6 +89,9 @@ template <typename Base>
 void importKind(const Json& items, map<string, Base*>& decorations, Base* (*create)(const Json&)) {
     for (const auto& item : items) {
         Base* decoration = create(item);
+        if (!decoration) {
+            continue;
+        }
         decoration->setId(item.at("id").get<string>());
         decorations[decoration->getId()] = decoration;
     }

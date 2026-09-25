@@ -32,10 +32,19 @@ vector<Vec2> orientedProfile(const vector<Vec2>& polygon) {
     return profile;
 }
 
+vector<Vec2> scaledProfile(const vector<Vec2>& polygon, double scale) {
+    vector<Vec2> scaled;
+    scaled.reserve(polygon.size());
+    for (const Vec2& point : polygon) {
+        scaled.push_back(point * scale);
+    }
+    return orientedProfile(scaled);
+}
+
 } // namespace
 
-ExtrudeDecoration::ExtrudeDecoration(const vector<Vec2>& polygon, const Vec3& color)
-    : profile(orientedProfile(polygon)),
+ExtrudeDecoration::ExtrudeDecoration(const vector<Vec2>& polygon, const Vec3& color, double scale)
+    : profile(scaledProfile(polygon, scale)),
       color{ (float)color.getX(), (float)color.getY(), (float)color.getZ() } {
     using Point = array<double, 2>;
     vector<vector<Point>> polygons(1);

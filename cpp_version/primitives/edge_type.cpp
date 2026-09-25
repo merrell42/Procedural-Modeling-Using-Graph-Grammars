@@ -6,6 +6,7 @@
 #include "../decorations/edge_decoration.h"
 #include "..\graph\edge_settings.h"
 #include "..\util\util.h"
+#include "..\util\json_field.h"
 #include "..\util\binary_stream.h"
 #include <string>
 #include <iostream>
@@ -50,13 +51,13 @@ EdgeType* EdgeType::import(const Json& json, Primitives* shape) {
     auto* result = new EdgeType(fData, direction, json["isRigid"]);
 
     // TODO: Edge Settings are often repeated. Save one copy and use an index to it.
-    if (json.contains("edgeSettings") && !json["edgeSettings"].is_null()) {
+    if (hasJson(json, "edgeSettings")) {
         result->edgeSettings = EdgeSettings::import(json["edgeSettings"]);
     }
     // I think edge length is only needed for old grammars that have no edgeSettings.
     // result->edgeLength = json["edgeLength"].is_null() ? Util::INF : json["edgeLength"].get<double>();
     result->setSpliced(json["spliced"]);
-    if (json.contains("decoration") && json["decoration"].is_string()) {
+    if (hasString(json, "decoration")) {
         const string id = json["decoration"].get<string>();
         result->decoration = shape->getDecorations()->getEdgeDecoration(id);
         if (!result->decoration) {

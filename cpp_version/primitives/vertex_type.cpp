@@ -5,6 +5,7 @@
 #include "../decorations/decorations.h"
 #include "../decorations/vertex_decoration.h"
 #include "../util/util.h"
+#include "../util/json_field.h"
 #include "../util/binary_stream.h"
 #include <iostream>
 
@@ -56,7 +57,7 @@ VertexType* VertexType::import(const Json& json, Primitives* shape) {
     if (json.contains("desirability")) {
         result->desirability = json["desirability"].get<double>();
     }
-    if (json.contains("decoration") && json["decoration"].is_string()) {
+    if (hasString(json, "decoration")) {
         const string id = json["decoration"].get<string>();
         result->decoration = shape->getDecorations()->getVertexDecoration(id);
         if (!result->decoration) {

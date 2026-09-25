@@ -7,10 +7,12 @@
 #include "space_randomly_decoration.h"
 #include "extrude_decoration.h"
 #include "scatter_decoration.h"
+#include "slice_decoration.h"
 #include "union_decoration.h"
 #include "pick_random_decoration.h"
 #include "pending_decoration.h"
 #include "svg_profile.h"
+#include "../util/json_field.h"
 #include "../geometry/vec2.h"
 #include "../geometry/vec3.h"
 #include <iostream>
@@ -23,10 +25,10 @@ namespace {
 string assetDirectory;
 
 vector<Vec2> readExtrudeProfile(const Json& json) {
-    if (json.contains("svg") && !json["svg"].is_null()) {
+    if (hasString(json, "svg")) {
         return loadSvgProfile(json["svg"].get<string>(), assetDirectory);
     }
-    if (json.contains("profile") && json["profile"].is_array()) {
+    if (hasArray(json, "profile")) {
         vector<Vec2> polygon;
         for (const auto& point : json["profile"]) {
             polygon.emplace_back(point.at(0).get<double>(), point.at(1).get<double>());
@@ -38,7 +40,7 @@ vector<Vec2> readExtrudeProfile(const Json& json) {
 
 vector<string> readChildIds(const Json& json) {
     vector<string> childIds;
-    if (json.contains("childIds") && json["childIds"].is_array()) {
+    if (hasArray(json, "childIds")) {
         for (const auto& childId : json["childIds"]) {
             childIds.push_back(childId.get<string>());
         }
@@ -48,7 +50,7 @@ vector<string> readChildIds(const Json& json) {
 
 vector<double> readWeights(const Json& json) {
     vector<double> weights;
-    if (json.contains("weight") && json["weight"].is_array()) {
+    if (hasArray(json, "weight")) {
         for (const auto& weight : json["weight"]) {
             weights.push_back(weight.get<double>());
         }
@@ -92,7 +94,7 @@ VertexDecoration* DecorationsFactory::createVertexDecoration(const Json& json) {
     }
     if (type == "rotate") {
         Vec3 axis(0, 0, 1);
-        if (json.contains("axis")) {
+        if (hasJson(json, "axis")) {
             axis = Vec3::import(json.at("axis"));
         }
         auto* decoration = new RotateDecoration(
@@ -154,10 +156,14 @@ EdgeDecoration* DecorationsFactory::createEdgeDecoration(const Json& json) {
     if (type == "extrude") {
         vector<Vec2> polygon = readExtrudeProfile(json);
         Vec3 color(1, 1, 1);
-        if (json.contains("color") && !json["color"].is_null()) {
+        if (hasJson(json, "color")) {
             color = Vec3::import(json["color"]);
         }
-        return new ExtrudeDecoration(polygon, color);
+        double scale = 1.0;
+        if (hasNumber(json, "scale")) {
+            scale = json["scale"].get<double>();
+        }
+        return new ExtrudeDecoration(polygon, color, scale);
     }
 
     EdgeDecoration* decoration = createCompositeDecoration<
@@ -178,6 +184,33 @@ FaceDecoration* DecorationsFactory::createFaceDecoration(const Json& json) {
         auto* decoration = new ScatterDecoration(json.at("density").get<double>());
         decoration->setChild(new VertexPendingDecoration(json["child"].get<string>()));
         return decoration;
+    }
+    if (type == "slice") {
+        bool hasEdge = hasString(json, "edge");
+        bool hasStartVertex = hasString(json, "startVertex");
+        bool hasEndVertex = hasString(json, "endVertex");
+        if (!hasEdge && !hasStartVertex && !hasEndVertex) {
+            return nullptr;
+        }
+        EdgeDecoration* edge = nullptr;
+        VertexDecoration* startVertex = nullptr;
+        VertexDecoration* endVertex = nullptr;
+        if (hasEdge) {
+            edge = new EdgePendingDecoration(json["edge"].get<string>());
+        }
+        if (hasStartVertex) {
+            startVertex = new VertexPendingDecoration(json["startVertex"].get<string>());
+        }
+        if (hasEndVertex) {
+            endVertex = new VertexPendingDecoration(json["endVertex"].get<string>());
+        }
+        return new SliceDecoration(
+            Vec3::import(json.at("direction")),
+            json.at("spacing").get<double>(),
+            edge,
+            startVertex,
+            endVertex
+        );
     }
 
     FaceDecoration* decoration = createCompositeDecoration<

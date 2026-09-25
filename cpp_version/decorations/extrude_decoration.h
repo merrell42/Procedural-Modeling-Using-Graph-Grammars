@@ -7,7 +7,7 @@ using namespace std;
 
 class ExtrudeDecoration : public EdgeDecoration {
     public:
-        ExtrudeDecoration(const vector<Vec2>& polygon, const Vec3& color);
+        ExtrudeDecoration(const vector<Vec2>& polygon, const Vec3& color, double scale = 1.0);
         DecorationOutput getOutput(const Vec3& start, const Vec3& end) const override;
 
     private:

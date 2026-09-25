@@ -160,6 +160,7 @@
     <ClCompile Include="..\decorations\rotate_decoration.cpp" />
     <ClCompile Include="..\decorations\scale_decoration.cpp" />
     <ClCompile Include="..\decorations\scatter_decoration.cpp" />
+    <ClCompile Include="..\decorations\slice_decoration.cpp" />
     <ClCompile Include="..\decorations\space_evenly_decoration.cpp" />
     <ClCompile Include="..\decorations\space_randomly_decoration.cpp" />
     <ClCompile Include="..\grammar_rules\production_rule.cpp" />
@@ -244,6 +245,7 @@
     <ClInclude Include="..\decorations\rotate_decoration.h" />
     <ClInclude Include="..\decorations\scale_decoration.h" />
     <ClInclude Include="..\decorations\scatter_decoration.h" />
+    <ClInclude Include="..\decorations\slice_decoration.h" />
     <ClInclude Include="..\decorations\space_evenly_decoration.h" />
     <ClInclude Include="..\decorations\space_randomly_decoration.h" />
     <ClInclude Include="..\decorations\union_decoration.h" />
@@ -298,6 +300,7 @@
     <ClInclude Include="..\util\timer.h" />
     <ClInclude Include="..\util\diagnostics.h" />
     <ClInclude Include="..\util\util.h" />
+    <ClInclude Include="..\util\json_field.h" />
     <ClInclude Include="minmax.h" />
     <ClInclude Include="..\pch.h" />
   </ItemGroup>

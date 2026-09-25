@@ -4,6 +4,7 @@
 #include "../decorations/decorations.h"
 #include "../decorations/face_decoration.h"
 #include "../util/util.h"
+#include "../util/json_field.h"
 #include "../util/binary_stream.h"
 #include "../geometry/vec2.h"
 #define _USE_MATH_DEFINES
@@ -36,17 +37,17 @@ double FaceType::angle(const Vec3& dir) const {
 
 FaceType* FaceType::import(const Json& json, Primitives* shape) {
     string material = "";
-    if (json.contains("material") && json["material"].is_string()) {
+    if (hasString(json, "material")) {
         material = json["material"].get<string>();
     }
     auto normal = json.contains("normal") ?
         Vec3::import(json["normal"]) : Vec3(0, 0, 1);
     auto* result = new FaceType(material, normal);
     
-    if (json.contains("color") && !json["color"].is_null()) {
+    if (hasJson(json, "color")) {
         result->color = Vec3::import(json["color"]);
     }
-    if (json.contains("decoration") && json["decoration"].is_string()) {
+    if (hasString(json, "decoration")) {
         const string id = json["decoration"].get<string>();
         result->decoration = shape->getDecorations()->getFaceDecoration(id);
         if (!result->decoration) {

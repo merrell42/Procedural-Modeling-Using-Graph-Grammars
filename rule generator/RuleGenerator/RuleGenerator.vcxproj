@@ -178,6 +178,7 @@
     <ClInclude Include="..\..\cpp_version\decorations\rotate_decoration.h" />
     <ClInclude Include="..\..\cpp_version\decorations\scale_decoration.h" />
     <ClInclude Include="..\..\cpp_version\decorations\scatter_decoration.h" />
+    <ClInclude Include="..\..\cpp_version\decorations\slice_decoration.h" />
     <ClInclude Include="..\..\cpp_version\decorations\space_evenly_decoration.h" />
     <ClInclude Include="..\..\cpp_version\decorations\space_randomly_decoration.h" />
     <ClInclude Include="..\..\cpp_version\decorations\union_decoration.h" />
@@ -195,6 +196,7 @@
     <ClInclude Include="..\..\cpp_version\grammar_rules\production_rule.h" />
     <ClInclude Include="..\..\cpp_version\util\diagnostics.h" />
     <ClInclude Include="..\..\cpp_version\util\util.h" />
+    <ClInclude Include="..\..\cpp_version\util\json_field.h" />
     <ClInclude Include="..\..\cpp_version\json versioning\read_json_file.h" />
     <ClInclude Include="..\..\cpp_version\json versioning\json_version_manager.h" />
     <ClInclude Include="..\..\cpp_version\mesh_extraction\half_edge_mesh.h" />
@@ -230,6 +232,7 @@
     <ClCompile Include="..\..\cpp_version\decorations\rotate_decoration.cpp" />
     <ClCompile Include="..\..\cpp_version\decorations\scale_decoration.cpp" />
     <ClCompile Include="..\..\cpp_version\decorations\scatter_decoration.cpp" />
+    <ClCompile Include="..\..\cpp_version\decorations\slice_decoration.cpp" />
     <ClCompile Include="..\..\cpp_version\decorations\space_evenly_decoration.cpp" />
     <ClCompile Include="..\..\cpp_version\decorations\space_randomly_decoration.cpp" />
     <ClCompile Include="..\..\cpp_version\memory_counter.cpp" />
