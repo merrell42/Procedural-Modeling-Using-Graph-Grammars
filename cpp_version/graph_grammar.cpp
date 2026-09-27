@@ -15,6 +15,7 @@
 #include "util/util.h"
 #include "util/diagnostics.h"
 #include "util/binary_stream.h"
+#include "util/json_field.h"
 #include "json versioning/json_version_manager.h"
 #include "json versioning/json_migrations.h"
 #include <algorithm>
@@ -133,6 +134,14 @@ Production GraphGrammar::getRemovalProduction() {
 }
 
 GraphGrammar* GraphGrammar::import(const Json& json, const string& assetDirectory) {
+    if (hasObject(json, "settings")) {
+        for (const auto& [key, value] : json["settings"].items()) {
+            if (globalSettings.contains(key)) {
+                globalSettings[key] = value;
+            }
+        }
+    }
+
     auto* grammar = new GraphGrammar();
     grammar->primitives = Primitives::import(
         json["types"],
@@ -268,6 +277,9 @@ void serializePrimitives(std::ostream& out, const Primitives* p) {
         bsWriteStr(out,  ft->getMaterial());
         bsWriteVec3(out, ft->getNormal());
         bsWriteVec3(out, ft->getColor());
+        bsWrite<double>(out, ft->getGridSpacing());
+        bsWrite<double>(out, ft->getNoiseScale());
+        bsWrite<double>(out, ft->getNoiseIntensity());
     }
 
     bsWrite<int32_t>(out, (int32_t)p->edgeTypes.size());

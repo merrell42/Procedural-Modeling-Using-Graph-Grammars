@@ -7,6 +7,7 @@
 #include "../util/json_field.h"
 #include "../util/binary_stream.h"
 #include "../geometry/vec2.h"
+#include "../settings.h"
 #define _USE_MATH_DEFINES
 #include <cmath>
 #include <math.h>
@@ -54,6 +55,15 @@ FaceType* FaceType::import(const Json& json, Primitives* shape) {
             cerr << "Warning: Unknown face decoration: " << id << endl;
         }
     }
+    if (hasNumber(json, "spacing") && json["spacing"].get<double>() > 0.0) {
+        result->gridSpacing = json["spacing"].get<double>();
+    }
+    if (hasNumber(json, "noiseScale") && json["noiseScale"].get<double>() > 0.0) {
+        result->noiseScale = json["noiseScale"].get<double>();
+    }
+    if (hasNumber(json, "noiseIntensity")) {
+        result->noiseIntensity = json["noiseIntensity"].get<double>();
+    }
     
     return result;
 }
@@ -64,6 +74,9 @@ FaceType* FaceType::binaryDeserialize(std::istream& in) {
     Vec3 color = bsReadVec3(in);
     auto* result = new FaceType(material, normal);
     result->color = color;
+    result->gridSpacing = bsRead<double>(in);
+    result->noiseScale = bsRead<double>(in);
+    result->noiseIntensity = bsRead<double>(in);
     return result;
 }
 
@@ -95,6 +108,18 @@ const Vec3& FaceType::getColor() const {
     return color;
 }
 
+double FaceType::getGridSpacing() const {
+    return gridSpacing.value_or(globalSettings["Face Grid Spacing"].get<double>());
+}
+
+double FaceType::getNoiseScale() const {
+    return noiseScale.value_or(globalSettings["Face Noise Scale"].get<double>());
+}
+
+double FaceType::getNoiseIntensity() const {
+    return noiseIntensity.value_or(globalSettings["Face Noise Intensity"].get<double>());
+}
+
 int FaceType::getMaxDim() const {
     return maxDim;
 }
@@ -107,5 +132,14 @@ Json FaceType::exportJson(const Primitives* shape) const {
     }
     json["normal"] = normal.exportJson();
     json["color"] = color.exportJson();
+    if (gridSpacing) {
+        json["spacing"] = *gridSpacing;
+    }
+    if (noiseScale) {
+        json["noiseScale"] = *noiseScale;
+    }
+    if (noiseIntensity) {
+        json["noiseIntensity"] = *noiseIntensity;
+    }
     return json;
 }

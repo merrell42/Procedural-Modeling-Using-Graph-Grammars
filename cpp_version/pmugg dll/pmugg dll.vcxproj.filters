@@ -30,6 +30,9 @@
     <ClInclude Include="..\graph_drawing\face.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\graph_drawing\face_subdivision.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="..\graph_drawing\face_group.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -297,6 +300,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\graph_drawing\face.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\graph_drawing\face_subdivision.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\graph_drawing\face_group.cpp">

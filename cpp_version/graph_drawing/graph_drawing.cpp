@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "graph_drawing.h"
+#include "face_subdivision.h"
 #include <fstream>
 #include <unordered_map>
 
@@ -127,6 +128,8 @@ MeshCpp GraphDrawing::exportMesh() {
 	mesh.numSubmeshes = (int)materialGroups.size();
 	mesh.submeshes = (SubmeshCpp*)malloc(mesh.numSubmeshes * sizeof(SubmeshCpp));
 	
+	FaceSubdivider subdivider(faceMap);
+
 	// Create submeshes for each material group
 	int submeshIndex = 0;
 	for (const auto& [materialName, faces] : materialGroups) {
@@ -134,9 +137,7 @@ MeshCpp GraphDrawing::exportMesh() {
 		vector<Vec3> normals;
 		vector<int> triangles;
 		vector<int> faceIndices;
-		for (Face* face : faces) {
-			face->exportMesh(positions, normals, triangles, faceIndices);
-		}
+		subdivider.append(faces, positions, normals, triangles, faceIndices);
 		if (!positions.empty()) {
 			// Parse the color from the material name (which is actually a color key)
 			// Format: "r:1.0,g:0.0,b:0.0"

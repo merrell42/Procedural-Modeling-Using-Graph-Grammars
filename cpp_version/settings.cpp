@@ -4,6 +4,11 @@
 // TODO: Remove the unused settings.
 // Most of these settings are no longer used.
 Json globalSettings = {
+    // Face subdivision defaults. A grammar "settings" object can override these.
+    {"Face Grid Spacing", 1.0},
+    {"Face Noise Scale", 1.0},
+    {"Face Noise Intensity", 0.2},
+
     {"Extents", vector<int>{30, 20, 10}},
     {"Incremental Mutation", true},
     {"Use Boundary Cells", false},

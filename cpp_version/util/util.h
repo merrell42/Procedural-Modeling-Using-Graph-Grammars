@@ -30,6 +30,9 @@ double randomValue();
 // Reset the random number generator to a specific seed.
 void resetRandom(int seed);
 
+// The seed last passed to resetRandom. Does not advance the generator.
+int getRandomSeed();
+
 class Util {
 public:
     // Remove an item from a vector.

@@ -176,6 +176,7 @@
     <ClCompile Include="..\graph_drawing\bsp_node.cpp" />
     <ClCompile Include="..\graph_drawing\edge.cpp" />
     <ClCompile Include="..\graph_drawing\face.cpp" />
+    <ClCompile Include="..\graph_drawing\face_subdivision.cpp" />
     <ClCompile Include="..\graph_drawing\face_group.cpp" />
     <ClCompile Include="..\graph_drawing\graph_drawing.cpp" />
     <ClCompile Include="..\graph_drawing\half_edge.cpp" />
@@ -263,6 +264,7 @@
     <ClInclude Include="..\graph_drawing\bsp_node.h" />
     <ClInclude Include="..\graph_drawing\edge.h" />
     <ClInclude Include="..\graph_drawing\face.h" />
+    <ClInclude Include="..\graph_drawing\face_subdivision.h" />
     <ClInclude Include="..\graph_drawing\face_group.h" />
     <ClInclude Include="..\graph_drawing\graph_drawing.h" />
     <ClInclude Include="..\graph_drawing\half_edge.h" />
