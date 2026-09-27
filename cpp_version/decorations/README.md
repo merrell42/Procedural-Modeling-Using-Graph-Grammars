@@ -1,5 +1,8 @@
 # Decorations
 
+Decorations allow us to take simple polygonal shapes and add artistic embellishments. We can place
+and extrude objects and apply different 3D transformations to them.
+
 Decorations are listed in the grammar JSON under `decorations`, in the `vertex`, `edge`, and `face` arrays. A vertex, edge, or face type uses one by setting `"decoration"` to that decoration's `id`.
 
 Every decoration has these parameters:
@@ -48,7 +51,7 @@ Runs every child.
 
 Runs one child, chosen at random.
 
-- `childIds` — Ids of the vertex decorations to choose from.
+- `childIds` — Ids of the vertex decorations to chooqse from.
 - `weight` — Optional. One weight per child, in the same order as `childIds`. If omitted, each child is equally likely.
 
 ## Edge decorations
