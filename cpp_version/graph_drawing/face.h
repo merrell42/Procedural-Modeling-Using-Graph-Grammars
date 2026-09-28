@@ -41,6 +41,8 @@ class Face {
 		void removeFromBsp();
 		double signedArea() const;
 		bool containsPoint(Vec3 point) const;
+		double distanceToPoint(const Vec3& point) const;
+		static double distanceToPolygon(const Vec3& point, const Vec3& normal, const vector<Vec3>& positions);
 		vector<Vec3> getIntersections(Plane* plane) const;
 		void exportMesh(
 			vector<Vec3>& positions,

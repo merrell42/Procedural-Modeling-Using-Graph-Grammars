@@ -144,6 +144,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\geometry\kd_tree.cpp" />
     <ClCompile Include="..\geometry\intersector.cpp" />
     <ClCompile Include="..\geometry\mesh.cpp" />
     <ClCompile Include="..\geometry\vec2.cpp" />
@@ -225,6 +226,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\geometry\kd_tree.h" />
     <ClInclude Include="..\geometry\intersector.h" />
     <ClInclude Include="..\geometry\mesh.h" />
     <ClInclude Include="..\geometry\plane.h" />

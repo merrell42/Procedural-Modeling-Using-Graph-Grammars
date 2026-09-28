@@ -120,6 +120,9 @@
     <ClInclude Include="..\decorations\vertex_decoration.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\geometry\kd_tree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="..\geometry\intersector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -325,6 +328,9 @@
     </ClCompile>
     <ClCompile Include="..\util\timer.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\geometry\kd_tree.cpp">
+      <Filter>Header Files</Filter>
     </ClCompile>
     <ClCompile Include="..\geometry\intersector.cpp">
       <Filter>Header Files</Filter>

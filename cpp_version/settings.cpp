@@ -8,6 +8,7 @@ Json globalSettings = {
     {"Face Grid Spacing", 1.0},
     {"Face Noise Scale", 1.0},
     {"Face Noise Intensity", 0.2},
+    {"Face Noise Decay", 2.0},
 
     {"Extents", vector<int>{30, 20, 10}},
     {"Incremental Mutation", true},

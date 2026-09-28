@@ -178,6 +178,7 @@
     <ClInclude Include="..\decorations\space_randomly_decoration.h" />
     <ClInclude Include="..\decorations\union_decoration.h" />
     <ClInclude Include="..\decorations\vertex_decoration.h" />
+    <ClInclude Include="..\geometry\kd_tree.h" />
     <ClInclude Include="..\geometry\intersector.h" />
     <ClInclude Include="..\geometry\instance.h" />
     <ClInclude Include="..\geometry\matrix4.h" />
@@ -253,6 +254,7 @@
     <ClCompile Include="..\decorations\slice_decoration.cpp" />
     <ClCompile Include="..\decorations\space_evenly_decoration.cpp" />
     <ClCompile Include="..\decorations\space_randomly_decoration.cpp" />
+    <ClCompile Include="..\geometry\kd_tree.cpp" />
     <ClCompile Include="..\geometry\intersector.cpp" />
     <ClCompile Include="..\geometry\instance.cpp" />
     <ClCompile Include="..\geometry\matrix4.cpp" />

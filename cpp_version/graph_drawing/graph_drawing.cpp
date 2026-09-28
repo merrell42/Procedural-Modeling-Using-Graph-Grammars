@@ -113,7 +113,9 @@ void GraphDrawing::save(string suffix) {
 	cout << "OBJ file successfully written to " << filename << endl;
 }
 
-MeshCpp GraphDrawing::exportMesh() {
+MeshCpp GraphDrawing::exportMesh(FaceSubdivider& subdivider, bool deform) {
+	subdivider.sync(faceMap, deform);
+
 	unordered_map<string, vector<Face*>> materialGroups;
 
 	// Group faces according to their material or color.
@@ -127,8 +129,6 @@ MeshCpp GraphDrawing::exportMesh() {
 	MeshCpp mesh;
 	mesh.numSubmeshes = (int)materialGroups.size();
 	mesh.submeshes = (SubmeshCpp*)malloc(mesh.numSubmeshes * sizeof(SubmeshCpp));
-	
-	FaceSubdivider subdivider(faceMap);
 
 	// Create submeshes for each material group
 	int submeshIndex = 0;
@@ -137,7 +137,7 @@ MeshCpp GraphDrawing::exportMesh() {
 		vector<Vec3> normals;
 		vector<int> triangles;
 		vector<int> faceIndices;
-		subdivider.append(faces, positions, normals, triangles, faceIndices);
+		subdivider.append(faces, positions, normals, triangles, faceIndices, deform);
 		if (!positions.empty()) {
 			// Parse the color from the material name (which is actually a color key)
 			// Format: "r:1.0,g:0.0,b:0.0"

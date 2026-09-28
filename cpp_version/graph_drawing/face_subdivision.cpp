@@ -8,10 +8,17 @@
 #include "../third_party/earcut/earcut.h"
 #include "../util/util.h"
 #include "../geometry/intersector.h"
+#include "../geometry/kd_tree.h"
 #include "../settings.h"
 #include <array>
+#include <cmath>
 #include <cstdint>
+#include <cstring>
+#include <functional>
 #include <limits>
+#include <map>
+#include <unordered_map>
+#include <unordered_set>
 
 struct FaceSubdivisionData {
     struct Key {
@@ -35,21 +42,42 @@ struct FaceSubdivisionData {
 
     struct Sample {
         Vec3 base;
-        Vec3 normalSum;
         Vec3 displaced;
         vector<int> faceIds;
-        double noiseScaleSum;
-        double noiseIntensitySum;
     };
 
     struct EdgeInfo {
         int vertexA;
         int vertexB;
         int segments;
+        vector<int> faceIds;
+    };
+
+    struct Tri {
+        int a, b, c;
+    };
+
+    struct CachedFace {
+        uint64_t signature = 0;
+        Vec3 normal;
+        double intensity = 0.0;
+        double scale = 1.0;
+        double decay = 0.0;
+        double planeD = 0.0;
+        Aabb aabb;
+        vector<Vec3> positions;
+        vector<int> edgeIds;
+        vector<Key> boundaryKeys;
+        vector<Key> interiorKeys;
+        vector<Tri> triangles;
     };
 
     unordered_map<Key, Sample, KeyHash> samples;
     unordered_map<int, EdgeInfo> edges;
+    unordered_map<int, CachedFace> faces;
+    SampleKdTree tree;
+    bool treeValid = false;
+    bool fieldsApplied = false;
 };
 
 namespace {
@@ -57,18 +85,17 @@ namespace {
 using Key = FaceSubdivisionData::Key;
 using Sample = FaceSubdivisionData::Sample;
 using EdgeInfo = FaceSubdivisionData::EdgeInfo;
+using Tri = FaceSubdivisionData::Tri;
+using CachedFace = FaceSubdivisionData::CachedFace;
 
 struct BoundaryPoint {
     Key key;
     Vec2 uv;
 };
 
-struct Tri {
-    int a, b, c;
-};
-
 constexpr int VERTEX_KEY = 0;
 constexpr int EDGE_KEY = 1;
+constexpr int INTERIOR_KEY = 2;
 
 Key vertexKey(int vertexId) {
     return Key{VERTEX_KEY, vertexId, 0};
@@ -76,6 +103,10 @@ Key vertexKey(int vertexId) {
 
 Key edgeKey(int edgeId, int index) {
     return Key{EDGE_KEY, edgeId, index};
+}
+
+Key interiorKey(int faceId, int index) {
+    return Key{INTERIOR_KEY, faceId, index};
 }
 
 uint32_t hashBits(int a, int b, int c) {
@@ -214,11 +245,21 @@ double edgeSpacing(Edge* edge) {
 Sample makeSample(const Vec3& position) {
     Sample sample;
     sample.base = position;
-    sample.normalSum = Vec3(0, 0, 0);
     sample.displaced = position;
-    sample.noiseScaleSum = 0.0;
-    sample.noiseIntensitySum = 0.0;
     return sample;
+}
+
+void addFaceRef(vector<int>& faceIds, int faceId) {
+    for (int id : faceIds) {
+        if (id == faceId) {
+            return;
+        }
+    }
+    faceIds.push_back(faceId);
+}
+
+void removeFaceRef(vector<int>& faceIds, int faceId) {
+    Util::remove(faceIds, faceId);
 }
 
 void ensureVertex(FaceSubdivisionData& data, Vertex* vertex) {
@@ -232,11 +273,12 @@ void ensureVertex(FaceSubdivisionData& data, Vertex* vertex) {
     data.samples.emplace(key, makeSample(vertex->getPosition()));
 }
 
-EdgeInfo ensureEdge(FaceSubdivisionData& data, HalfEdge* halfEdge) {
+EdgeInfo& ensureEdge(FaceSubdivisionData& data, HalfEdge* halfEdge, int faceId) {
     Edge* edge = halfEdge->getEdge();
     int edgeId = edge->getId();
     auto found = data.edges.find(edgeId);
     if (found != data.edges.end()) {
+        addFaceRef(found->second.faceIds, faceId);
         return found->second;
     }
 
@@ -262,21 +304,8 @@ EdgeInfo ensureEdge(FaceSubdivisionData& data, HalfEdge* halfEdge) {
         data.samples.emplace(edgeKey(edgeId, i), makeSample(Vec3::lerp(from, to, t)));
     }
 
-    EdgeInfo info{vertexA->getId(), vertexB->getId(), segments};
-    data.edges.emplace(edgeId, info);
-    return info;
-}
-
-void addNormal(Sample& sample, int faceId, const Vec3& normal, double scale, double intensity) {
-    for (int id : sample.faceIds) {
-        if (id == faceId) {
-            return;
-        }
-    }
-    sample.faceIds.push_back(faceId);
-    sample.normalSum += normal;
-    sample.noiseScaleSum += scale;
-    sample.noiseIntensitySum += intensity;
+    EdgeInfo info{vertexA->getId(), vertexB->getId(), segments, {faceId}};
+    return data.edges.emplace(edgeId, info).first->second;
 }
 
 void emitEdgePoints(
@@ -306,7 +335,6 @@ vector<BoundaryPoint> traceBoundary(
     FaceSubdivisionData& data,
     Face* face,
     const Vec3& u,
-    const Vec3& normal,
     bool create
 ) {
     vector<BoundaryPoint> boundary;
@@ -316,14 +344,7 @@ vector<BoundaryPoint> traceBoundary(
             return;
         }
         if (create) {
-            FaceType* faceType = face->getFaceType();
-            addNormal(
-                found->second,
-                face->getId(),
-                normal,
-                faceType->getNoiseScale(),
-                faceType->getNoiseIntensity()
-            );
+            addFaceRef(found->second.faceIds, face->getId());
         }
         const Vec3& base = found->second.base;
         if (!boundary.empty()) {
@@ -352,10 +373,11 @@ vector<BoundaryPoint> traceBoundary(
         }
         HalfEdge* next = halfEdge->next();
         if (!next || !next->getVertex()) {
+            ensureVertex(data, halfEdge->getVertex());
             pushPoint(vertexKey(startId));
             continue;
         }
-        EdgeInfo info = ensureEdge(data, halfEdge);
+        EdgeInfo& info = ensureEdge(data, halfEdge, face->getId());
         emitEdgePoints(info, edgeId, startId, pushPoint);
     }
 
@@ -368,27 +390,6 @@ vector<BoundaryPoint> traceBoundary(
         }
     }
     return boundary;
-}
-
-void finalizeSamples(FaceSubdivisionData& data) {
-    for (auto& entry : data.samples) {
-        Sample& sample = entry.second;
-        Vec3 direction = sample.normalSum;
-        if (direction.length2() < 1e-20) {
-            sample.displaced = sample.base;
-            continue;
-        }
-        direction.normalize();
-        double scale = globalSettings["Face Noise Scale"].get<double>();
-        double intensity = globalSettings["Face Noise Intensity"].get<double>();
-        if (!sample.faceIds.empty()) {
-            double count = static_cast<double>(sample.faceIds.size());
-            scale = sample.noiseScaleSum / count;
-            intensity = sample.noiseIntensitySum / count;
-        }
-        double amount = intensity * fractalNoise(sample.base, scale);
-        sample.displaced = sample.base + direction * amount;
-    }
 }
 
 vector<Vec2> boundaryUv(const vector<BoundaryPoint>& boundary) {
@@ -497,13 +498,13 @@ void stitchBoundary(
 // and the face boundary is stitched to the perimeter so it stays a band.
 void buildGridMesh(
     Face* face,
+    FaceSubdivisionData& data,
+    CachedFace& cached,
     const vector<Vec2>& polygon,
     const Vec3& axisU,
     const Vec3& axisV,
     const Vec3& normal,
-    double plane,
-    vector<Vec3>& interior,
-    vector<Tri>& triangles
+    double plane
 ) {
     int boundaryCount = static_cast<int>(polygon.size());
     if (boundaryCount < 3) {
@@ -534,7 +535,7 @@ void buildGridMesh(
         }
         auto indices = mapbox::earcut(ring);
         for (size_t i = 0; i + 2 < indices.size(); i += 3) {
-            triangles.push_back(Tri{
+            cached.triangles.push_back(Tri{
                 static_cast<int>(indices[i]),
                 static_cast<int>(indices[i + 1]),
                 static_cast<int>(indices[i + 2])
@@ -591,10 +592,10 @@ void buildGridMesh(
         Vec3 jitteredWorld = axisU * jittered.x + axisV * jittered.y + normal * plane;
         Vec2 placed = face->containsPoint(jitteredWorld) ? jittered : point;
         Vec3 base = axisU * placed.x + axisV * placed.y + normal * plane;
-        FaceType* faceType = face->getFaceType();
-        double amount = faceType->getNoiseIntensity() * fractalNoise(base, faceType->getNoiseScale());
-        int local = boundaryCount + static_cast<int>(interior.size());
-        interior.push_back(base + normal * amount);
+        int local = boundaryCount + static_cast<int>(cached.interiorKeys.size());
+        Key key = interiorKey(face->getId(), static_cast<int>(cached.interiorKeys.size()));
+        data.samples.emplace(key, makeSample(base));
+        cached.interiorKeys.push_back(key);
         interiorUv.push_back(point);
         gridIndex[index] = local;
         return local;
@@ -607,8 +608,8 @@ void buildGridMesh(
         int i10 = addGridPoint(iu + 1, iv);
         int i11 = addGridPoint(iu + 1, iv + 1);
         int i01 = addGridPoint(iu, iv + 1);
-        triangles.push_back(Tri{i00, i10, i11});
-        triangles.push_back(Tri{i00, i11, i01});
+        cached.triangles.push_back(Tri{i00, i10, i11});
+        cached.triangles.push_back(Tri{i00, i11, i01});
     }
 
     map<pair<int, int>, int> perimeter;
@@ -695,7 +696,7 @@ void buildGridMesh(
         if (loopArea(hole) * outerArea < 0.0) {
             std::reverse(hole.begin(), hole.end());
         }
-        stitchBoundary(polygon, interiorUv, boundaryCount, hole, triangles);
+        stitchBoundary(polygon, interiorUv, boundaryCount, hole, cached.triangles);
         return;
     }
 
@@ -737,99 +738,381 @@ void buildGridMesh(
             || i2 >= static_cast<int>(earcutToLocal.size())) {
             continue;
         }
-        triangles.push_back(Tri{earcutToLocal[i0], earcutToLocal[i1], earcutToLocal[i2]});
+        cached.triangles.push_back(Tri{earcutToLocal[i0], earcutToLocal[i1], earcutToLocal[i2]});
     }
+}
+
+uint64_t faceSignature(Face* face) {
+    uint64_t h = 1469598103934665603ull;
+    auto mix = [&](uint64_t value) {
+        h ^= value;
+        h *= 1099511628211ull;
+    };
+    auto bits = [](double value) {
+        uint64_t packed = 0;
+        static_assert(sizeof(double) == sizeof(uint64_t), "double size");
+        std::memcpy(&packed, &value, sizeof(packed));
+        return packed;
+    };
+    for (HalfEdge* halfEdge : face->getHalfEdges()) {
+        if (!halfEdge || !halfEdge->getVertex()) {
+            continue;
+        }
+        mix(static_cast<uint64_t>(static_cast<uint32_t>(halfEdge->getId())));
+        mix(static_cast<uint64_t>(static_cast<uint32_t>(halfEdge->getVertex()->getId())));
+        Vec3 position = halfEdge->getPosition();
+        mix(bits(position.getX()));
+        mix(bits(position.getY()));
+        mix(bits(position.getZ()));
+    }
+    return h;
+}
+
+void fillFaceField(CachedFace& cached, Face* face) {
+    FaceType* faceType = face->getFaceType();
+    cached.normal = faceType->getNormal();
+    cached.intensity = faceType->getNoiseIntensity();
+    cached.scale = faceType->getNoiseScale();
+    cached.decay = faceType->getNoiseDecay();
+    cached.positions = face->getPositions();
+    cached.aabb = Aabb();
+    if (!cached.positions.empty()) {
+        cached.aabb = Aabb(cached.positions[0]);
+        cached.planeD = cached.normal.dot(cached.positions[0]);
+        for (size_t i = 1; i < cached.positions.size(); i++) {
+            cached.aabb.expand(cached.positions[i]);
+        }
+    }
+}
+
+void addFaceGeometry(FaceSubdivisionData& data, Face* face) {
+    CachedFace cached;
+    cached.signature = faceSignature(face);
+    fillFaceField(cached, face);
+
+    const Vec3& u = face->getFaceType()->getU();
+    const Vec3& v = face->getFaceType()->getV();
+    vector<BoundaryPoint> boundary = traceBoundary(data, face, u, true);
+    for (const BoundaryPoint& point : boundary) {
+        cached.boundaryKeys.push_back(point.key);
+    }
+    for (HalfEdge* halfEdge : face->getHalfEdges()) {
+        if (halfEdge && halfEdge->getEdge()) {
+            cached.edgeIds.push_back(halfEdge->getEdge()->getId());
+        }
+    }
+
+    if (boundary.size() >= 3 && !cached.positions.empty()) {
+        vector<Vec2> polygon = boundaryUv(boundary);
+        buildGridMesh(face, data, cached, polygon, u, v, cached.normal, cached.planeD);
+    }
+
+    data.faces[face->getId()] = std::move(cached);
+    data.treeValid = false;
+}
+
+void dropFaceGeometry(FaceSubdivisionData& data, int faceId) {
+    auto found = data.faces.find(faceId);
+    if (found == data.faces.end()) {
+        return;
+    }
+    CachedFace& cached = found->second;
+    for (const Key& key : cached.interiorKeys) {
+        data.samples.erase(key);
+    }
+    for (const Key& key : cached.boundaryKeys) {
+        auto sample = data.samples.find(key);
+        if (sample == data.samples.end()) {
+            continue;
+        }
+        removeFaceRef(sample->second.faceIds, faceId);
+        if (sample->second.faceIds.empty()) {
+            data.samples.erase(sample);
+        }
+    }
+    for (int edgeId : cached.edgeIds) {
+        auto edge = data.edges.find(edgeId);
+        if (edge == data.edges.end()) {
+            continue;
+        }
+        removeFaceRef(edge->second.faceIds, faceId);
+        if (edge->second.faceIds.empty()) {
+            for (int i = 1; i < edge->second.segments; i++) {
+                data.samples.erase(edgeKey(edgeId, i));
+            }
+            data.edges.erase(edge);
+        }
+    }
+    data.faces.erase(found);
+    data.treeValid = false;
+}
+
+void rebuildTree(FaceSubdivisionData& data) {
+    vector<SampleKdTree::Point> points;
+    points.reserve(data.samples.size());
+    for (auto& entry : data.samples) {
+        points.push_back({entry.second.base, &entry.second});
+    }
+    data.tree.build(points);
+    data.treeValid = true;
+}
+
+void resetDisplacements(FaceSubdivisionData& data) {
+    for (auto& entry : data.samples) {
+        entry.second.displaced = entry.second.base;
+    }
+}
+
+void applyFace(
+    FaceSubdivisionData& data,
+    const CachedFace& face,
+    double sign,
+    const unordered_set<Sample*>* filter
+) {
+    if (std::abs(face.intensity) <= FACE_NOISE_EPSILON && face.decay > 1e-12) {
+        return;
+    }
+    if (!data.treeValid) {
+        rebuildTree(data);
+    }
+
+    SampleKdTree::ProximityQuery query;
+    query.bounds = face.aabb;
+    query.planeNormal = face.normal;
+    query.planeD = face.planeD;
+    query.decay = face.decay;
+    query.intensity = face.intensity;
+    query.epsilon = FACE_NOISE_EPSILON;
+
+    data.tree.visit(query, [&](void* payload) {
+        Sample* sample = static_cast<Sample*>(payload);
+        if (filter && filter->find(sample) == filter->end()) {
+            return;
+        }
+        double distance = Face::distanceToPolygon(sample->base, face.normal, face.positions);
+        double weight = 0.0;
+        if (face.decay <= 1e-12) {
+            weight = distance <= 1e-8 ? 1.0 : 0.0;
+        } else {
+            weight = std::exp(-face.decay * distance);
+        }
+        double amount = face.intensity * fractalNoise(sample->base, face.scale) * weight;
+        if (std::abs(amount) < FACE_NOISE_EPSILON) {
+            return;
+        }
+        sample->displaced += face.normal * (sign * amount);
+    });
+}
+
+void applyAllFaces(FaceSubdivisionData& data) {
+    resetDisplacements(data);
+    rebuildTree(data);
+    for (const auto& entry : data.faces) {
+        applyFace(data, entry.second, 1.0, nullptr);
+    }
+    data.fieldsApplied = true;
 }
 
 }  // namespace
 
-FaceSubdivider::FaceSubdivider(const map<int, Face*>& faces)
+FaceSubdivider::FaceSubdivider()
     : data(std::make_unique<FaceSubdivisionData>()) {
+}
+
+FaceSubdivider::~FaceSubdivider() = default;
+
+void FaceSubdivider::clear() {
+    data->samples.clear();
+    data->edges.clear();
+    data->faces.clear();
+    data->tree.clear();
+    data->treeValid = false;
+    data->fieldsApplied = false;
+}
+
+void FaceSubdivider::sync(const map<int, Face*>& faces, bool deform) {
+    unordered_map<int, Face*> live;
     for (const auto& entry : faces) {
         Face* face = entry.second;
         if (!face || face->isHole()) {
             continue;
         }
-        Vec3 normal = face->getFaceType()->getNormal();
-        const Vec3& u = face->getFaceType()->getU();
-        traceBoundary(*data, face, u, normal, true);
+        live[entry.first] = face;
     }
-    finalizeSamples(*data);
-}
 
-FaceSubdivider::~FaceSubdivider() = default;
+    vector<int> removed;
+    for (const auto& entry : data->faces) {
+        auto found = live.find(entry.first);
+        if (found == live.end() || faceSignature(found->second) != entry.second.signature) {
+            removed.push_back(entry.first);
+        }
+    }
+
+    if (!removed.empty()) {
+        if (data->fieldsApplied) {
+            if (!data->treeValid) {
+                rebuildTree(*data);
+            }
+            for (int faceId : removed) {
+                applyFace(*data, data->faces[faceId], -1.0, nullptr);
+            }
+        }
+        for (int faceId : removed) {
+            dropFaceGeometry(*data, faceId);
+        }
+    }
+
+    vector<Face*> added;
+    for (const auto& entry : live) {
+        if (data->faces.find(entry.first) == data->faces.end()) {
+            added.push_back(entry.second);
+        }
+    }
+
+    if (!deform) {
+        for (Face* face : added) {
+            addFaceGeometry(*data, face);
+        }
+        data->fieldsApplied = false;
+        return;
+    }
+
+    if (!data->fieldsApplied) {
+        for (Face* face : added) {
+            addFaceGeometry(*data, face);
+        }
+        applyAllFaces(*data);
+        return;
+    }
+
+    if (added.empty()) {
+        if (!data->treeValid) {
+            rebuildTree(*data);
+        }
+        return;
+    }
+
+    unordered_set<Key, FaceSubdivisionData::KeyHash> before;
+    before.reserve(data->samples.size());
+    for (const auto& entry : data->samples) {
+        before.insert(entry.first);
+    }
+    for (Face* face : added) {
+        addFaceGeometry(*data, face);
+    }
+    unordered_set<Sample*> created;
+    for (auto& entry : data->samples) {
+        if (before.find(entry.first) == before.end()) {
+            created.insert(&entry.second);
+        }
+    }
+    rebuildTree(*data);
+
+    unordered_set<int> addedIds;
+    for (Face* face : added) {
+        addedIds.insert(face->getId());
+    }
+    for (const auto& entry : data->faces) {
+        if (addedIds.count(entry.first)) {
+            applyFace(*data, entry.second, 1.0, nullptr);
+        } else {
+            applyFace(*data, entry.second, 1.0, &created);
+        }
+    }
+}
 
 void FaceSubdivider::append(
     const vector<Face*>& faces,
     vector<Vec3>& positions,
     vector<Vec3>& normals,
     vector<int>& triangles,
-    vector<int>& faceIndices
+    vector<int>& faceIndices,
+    bool deform
 ) const {
     struct BuiltFace {
         int boundaryStart;
         int boundaryCount;
-        Vec3 normal;
-        vector<BoundaryPoint> boundary;
-        vector<Vec3> interior;
-        vector<Tri> triangles;
+        const CachedFace* item;
     };
     vector<BuiltFace> built;
 
+    auto hasSample = [&](const Key& key) {
+        return data->samples.find(key) != data->samples.end();
+    };
+    auto emit = [&](const Key& key, bool deformPositions, const Vec3& normal) {
+        const Sample& sample = data->samples.at(key);
+        positions.push_back(deformPositions ? sample.displaced : sample.base);
+        normals.push_back(normal);
+    };
+
+    // Emit every boundary first so faceIndices stays a partition of outline
+    // loops. Interiors come after that; otherwise edge overlays stitch through
+    // the grid.
     for (Face* face : faces) {
         if (!face || face->isHole()) {
             continue;
         }
-        Vec3 normal = face->getFaceType()->getNormal();
-        vector<Vec3> facePositions = face->getPositions();
-        if (facePositions.empty()) {
+        auto found = data->faces.find(face->getId());
+        if (found == data->faces.end()) {
             continue;
         }
-        const Vec3& u = face->getFaceType()->getU();
-        const Vec3& v = face->getFaceType()->getV();
-        vector<BoundaryPoint> boundary = traceBoundary(*data, face, u, normal, false);
-        if (boundary.size() < 2) {
+        const CachedFace& item = found->second;
+        int boundaryCount = static_cast<int>(item.boundaryKeys.size());
+        if (boundaryCount < 2) {
+            continue;
+        }
+        bool complete = true;
+        for (const Key& key : item.boundaryKeys) {
+            if (!hasSample(key)) {
+                complete = false;
+                break;
+            }
+        }
+        if (complete) {
+            for (const Key& key : item.interiorKeys) {
+                if (!hasSample(key)) {
+                    complete = false;
+                    break;
+                }
+            }
+        }
+        if (!complete) {
             continue;
         }
 
-        BuiltFace item;
-        item.boundaryStart = static_cast<int>(positions.size());
-        item.normal = normal;
-        item.boundary = boundary;
-        for (const BoundaryPoint& point : boundary) {
-            positions.push_back(data->samples.at(point.key).displaced);
-            normals.push_back(normal);
+        BuiltFace builtFace;
+        builtFace.boundaryStart = static_cast<int>(positions.size());
+        builtFace.boundaryCount = boundaryCount;
+        builtFace.item = &item;
+        for (const Key& key : item.boundaryKeys) {
+            emit(key, deform, item.normal);
         }
-        item.boundaryCount = static_cast<int>(boundary.size());
         faceIndices.push_back(static_cast<int>(positions.size()));
-
-        vector<Vec2> polygon = boundaryUv(boundary);
-        double plane = normal.dot(facePositions[0]);
-        buildGridMesh(face, polygon, u, v, normal, plane, item.interior, item.triangles);
-        built.push_back(std::move(item));
+        built.push_back(builtFace);
     }
 
-    for (BuiltFace& item : built) {
+    for (BuiltFace& builtFace : built) {
+        const CachedFace& item = *builtFace.item;
         int interiorStart = static_cast<int>(positions.size());
-        for (const Vec3& position : item.interior) {
-            positions.push_back(position);
-            normals.push_back(item.normal);
+        for (const Key& key : item.interiorKeys) {
+            emit(key, deform, item.normal);
+        }
+        int interiorCount = static_cast<int>(item.interiorKeys.size());
+
+        for (int index = builtFace.boundaryStart; index < builtFace.boundaryStart + builtFace.boundaryCount; index++) {
+            normals[index] = Vec3(0, 0, 0);
+        }
+        for (int index = interiorStart; index < interiorStart + interiorCount; index++) {
+            normals[index] = Vec3(0, 0, 0);
         }
 
         auto mapIndex = [&](int local) {
-            if (local < item.boundaryCount) {
-                return item.boundaryStart + local;
+            if (local < builtFace.boundaryCount) {
+                return builtFace.boundaryStart + local;
             }
-            return interiorStart + (local - item.boundaryCount);
+            return interiorStart + (local - builtFace.boundaryCount);
         };
-        for (int index = item.boundaryStart; index < item.boundaryStart + item.boundaryCount; index++) {
-            normals[index] = Vec3(0, 0, 0);
-        }
-        for (int index = interiorStart; index < interiorStart + static_cast<int>(item.interior.size()); index++) {
-            normals[index] = Vec3(0, 0, 0);
-        }
-
-        int localCount = item.boundaryCount + static_cast<int>(item.interior.size());
+        int localCount = builtFace.boundaryCount + interiorCount;
         for (const Tri& triangle : item.triangles) {
             if (triangle.a < 0 || triangle.b < 0 || triangle.c < 0
                 || triangle.a >= localCount || triangle.b >= localCount || triangle.c >= localCount) {
@@ -864,10 +1147,10 @@ void FaceSubdivider::append(
                 normals[index].normalize();
             }
         };
-        for (int index = item.boundaryStart; index < item.boundaryStart + item.boundaryCount; index++) {
+        for (int index = builtFace.boundaryStart; index < builtFace.boundaryStart + builtFace.boundaryCount; index++) {
             finishNormal(index);
         }
-        for (int index = interiorStart; index < interiorStart + static_cast<int>(item.interior.size()); index++) {
+        for (int index = interiorStart; index < interiorStart + interiorCount; index++) {
             finishNormal(index);
         }
     }

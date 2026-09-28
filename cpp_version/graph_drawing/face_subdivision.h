@@ -13,22 +13,30 @@ constexpr int FACE_NOISE_OCTAVES = 4;
 // Fraction of the grid spacing used to nudge samples off the lattice.
 constexpr double FACE_GRID_JITTER = 0.25;
 
-// Subdivides faces into a grid of triangles and displaces the vertices.
-// Samples along a shared edge are built once, so both faces get the same positions.
+// Skip a tree branch when the conservative field bound is below this.
+constexpr double FACE_NOISE_EPSILON = 1e-4;
+
+// Subdivides faces into a grid of triangles. Each face adds an independent
+// displacement field along its normal; nearby samples (in original space)
+// receive the sum. Shared edge samples stay watertight.
 class FaceSubdivider {
 public:
-    explicit FaceSubdivider(const map<int, Face*>& faces);
+    FaceSubdivider();
     ~FaceSubdivider();
 
     FaceSubdivider(const FaceSubdivider&) = delete;
     FaceSubdivider& operator=(const FaceSubdivider&) = delete;
+
+    void clear();
+    void sync(const map<int, Face*>& faces, bool deform);
 
     void append(
         const vector<Face*>& faces,
         vector<Vec3>& positions,
         vector<Vec3>& normals,
         vector<int>& triangles,
-        vector<int>& faceIndices
+        vector<int>& faceIndices,
+        bool deform
     ) const;
 
 private:

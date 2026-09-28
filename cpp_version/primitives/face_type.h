@@ -24,6 +24,7 @@ public:
     double getGridSpacing() const;
     double getNoiseScale() const;
     double getNoiseIntensity() const;
+    double getNoiseDecay() const;
     int getMaxDim() const;
     double angle(const Vec3& dir) const;
 
@@ -44,4 +45,5 @@ private:
     std::optional<double> gridSpacing;
     std::optional<double> noiseScale;
     std::optional<double> noiseIntensity;
+    std::optional<double> noiseDecay;
 };

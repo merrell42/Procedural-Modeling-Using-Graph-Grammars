@@ -9,6 +9,7 @@
 #include "bsp_node.h"
 #include "../geometry/mesh.h"
 
+class FaceSubdivider;
 class HalfEdge;
 class Face;
 class Edge;
@@ -58,7 +59,7 @@ class GraphDrawing {
 
 		// Save the mesh to an OBJ file.
 		void save(string suffix);
-		MeshCpp exportMesh();
+		MeshCpp exportMesh(FaceSubdivider& subdivider, bool deform);
 
 		// BSP functions.
 		bool bspAddEdge(Edge* edge);

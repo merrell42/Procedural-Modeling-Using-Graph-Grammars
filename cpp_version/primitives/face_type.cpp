@@ -64,6 +64,9 @@ FaceType* FaceType::import(const Json& json, Primitives* shape) {
     if (hasNumber(json, "noiseIntensity")) {
         result->noiseIntensity = json["noiseIntensity"].get<double>();
     }
+    if (hasNumber(json, "noiseDecay")) {
+        result->noiseDecay = json["noiseDecay"].get<double>();
+    }
     
     return result;
 }
@@ -77,6 +80,7 @@ FaceType* FaceType::binaryDeserialize(std::istream& in) {
     result->gridSpacing = bsRead<double>(in);
     result->noiseScale = bsRead<double>(in);
     result->noiseIntensity = bsRead<double>(in);
+    result->noiseDecay = bsRead<double>(in);
     return result;
 }
 
@@ -120,6 +124,10 @@ double FaceType::getNoiseIntensity() const {
     return noiseIntensity.value_or(globalSettings["Face Noise Intensity"].get<double>());
 }
 
+double FaceType::getNoiseDecay() const {
+    return noiseDecay.value_or(globalSettings["Face Noise Decay"].get<double>());
+}
+
 int FaceType::getMaxDim() const {
     return maxDim;
 }
@@ -140,6 +148,9 @@ Json FaceType::exportJson(const Primitives* shape) const {
     }
     if (noiseIntensity) {
         json["noiseIntensity"] = *noiseIntensity;
+    }
+    if (noiseDecay) {
+        json["noiseDecay"] = *noiseDecay;
     }
     return json;
 }

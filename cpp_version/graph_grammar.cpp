@@ -280,6 +280,7 @@ void serializePrimitives(std::ostream& out, const Primitives* p) {
         bsWrite<double>(out, ft->getGridSpacing());
         bsWrite<double>(out, ft->getNoiseScale());
         bsWrite<double>(out, ft->getNoiseIntensity());
+        bsWrite<double>(out, ft->getNoiseDecay());
     }
 
     bsWrite<int32_t>(out, (int32_t)p->edgeTypes.size());
