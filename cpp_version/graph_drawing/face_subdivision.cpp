@@ -72,9 +72,25 @@ struct FaceSubdivisionData {
         vector<Tri> triangles;
     };
 
+    struct CachedRound {
+        Vec3 start;
+        Vec3 end;
+        Vec3 dir;
+        Vec3 bisector;
+        Vec3 tangent1;
+        Vec3 tangent2;
+        int faceIdA = -1;
+        int faceIdB = -1;
+        double radius = 0.0;
+        double centerDistance = 0.0;
+        double influenceRadius = 0.0;
+        Aabb aabb;
+    };
+
     unordered_map<Key, Sample, KeyHash> samples;
     unordered_map<int, EdgeInfo> edges;
     unordered_map<int, CachedFace> faces;
+    unordered_map<int, CachedRound> rounds;
     SampleKdTree tree;
     bool treeValid = false;
     bool fieldsApplied = false;
@@ -87,6 +103,7 @@ using Sample = FaceSubdivisionData::Sample;
 using EdgeInfo = FaceSubdivisionData::EdgeInfo;
 using Tri = FaceSubdivisionData::Tri;
 using CachedFace = FaceSubdivisionData::CachedFace;
+using CachedRound = FaceSubdivisionData::CachedRound;
 
 struct BoundaryPoint {
     Key key;
@@ -594,7 +611,9 @@ void buildGridMesh(
         Vec3 base = axisU * placed.x + axisV * placed.y + normal * plane;
         int local = boundaryCount + static_cast<int>(cached.interiorKeys.size());
         Key key = interiorKey(face->getId(), static_cast<int>(cached.interiorKeys.size()));
-        data.samples.emplace(key, makeSample(base));
+        Sample sample = makeSample(base);
+        addFaceRef(sample.faceIds, face->getId());
+        data.samples.emplace(key, sample);
         cached.interiorKeys.push_back(key);
         interiorUv.push_back(point);
         gridIndex[index] = local;
@@ -904,11 +923,257 @@ void applyFace(
     });
 }
 
-void applyAllFaces(FaceSubdivisionData& data) {
+Vec3 closestOnSegment(const Vec3& a, const Vec3& b, const Vec3& point) {
+    Vec3 ab = b - a;
+    double ab2 = ab.length2();
+    if (ab2 < 1e-20) {
+        return a;
+    }
+    double t = std::clamp((point - a).dot(ab) / ab2, 0.0, 1.0);
+    return a + ab * t;
+}
+
+Vec3 rejectAxis(const Vec3& v, const Vec3& axis) {
+    return v - axis * axis.dot(v);
+}
+
+double angleAround(const Vec3& v, const Vec3& xAxis, const Vec3& yAxis) {
+    return std::atan2(v.dot(yAxis), v.dot(xAxis));
+}
+
+bool angleInArc(double angle, double start, double end, double include) {
+    const double twoPi = 6.28318530717958647692;
+    auto ccw = [twoPi](double from, double to, double x) {
+        double span = std::fmod(to - from + twoPi, twoPi);
+        double delta = std::fmod(x - from + twoPi, twoPi);
+        return delta <= span + 1e-9;
+    };
+    if (ccw(start, end, include)) {
+        return ccw(start, end, angle);
+    }
+    return ccw(end, start, angle);
+}
+
+Vec3 intoFaceFromEdge(Face* face, const Vec3& start, const Vec3& end, const Vec3& dir) {
+    Vec3 n = face->getFaceType()->getNormal();
+    Vec3 side = dir.cross(n);
+    if (side.length2() < 1e-20) {
+        return Vec3(0, 0, 0);
+    }
+    side.normalize();
+    Vec3 mid = Vec3::lerp(start, end, 0.5);
+    double spacing = face->getFaceType()->getGridSpacing();
+    if (spacing <= 1e-8) {
+        spacing = 1.0;
+    }
+    Vec3 probe = mid + side * (0.25 * spacing);
+    if (face->containsPoint(probe)) {
+        return side;
+    }
+    return side * -1.0;
+}
+
+bool fillRound(
+    CachedRound& round,
+    Edge* edge,
+    const unordered_map<int, Face*>& live
+) {
+    if (!edge || !edge->getEdgeType()) {
+        return false;
+    }
+    double radius = edge->getEdgeType()->getRoundRadius();
+    if (radius <= 1e-8) {
+        return false;
+    }
+
+    vector<Face*> adjacent;
+    for (HalfEdge* halfEdge : edge->getHalfEdges()) {
+        if (!halfEdge) {
+            continue;
+        }
+        Face* face = halfEdge->getFace();
+        if (!face || face->isHole() || live.find(face->getId()) == live.end()) {
+            continue;
+        }
+        bool seen = false;
+        for (Face* existing : adjacent) {
+            if (existing == face) {
+                seen = true;
+                break;
+            }
+        }
+        if (!seen) {
+            adjacent.push_back(face);
+        }
+    }
+    if (adjacent.size() != 2) {
+        return false;
+    }
+
+    vector<HalfEdge*> halfEdges = edge->getHalfEdges();
+    if (halfEdges.empty() || !halfEdges[0] || !halfEdges[0]->next()) {
+        return false;
+    }
+    Vec3 start = halfEdges[0]->getPosition();
+    Vec3 end = halfEdges[0]->next()->getPosition();
+    Vec3 dir = end - start;
+    if (dir.length2() < 1e-20) {
+        return false;
+    }
+    dir.normalize();
+
+    Vec3 n1 = adjacent[0]->getFaceType()->getNormal();
+    Vec3 n2 = adjacent[1]->getFaceType()->getNormal();
+    n1 = rejectAxis(n1, dir);
+    n2 = rejectAxis(n2, dir);
+    if (n1.length2() < 1e-20 || n2.length2() < 1e-20) {
+        return false;
+    }
+    n1.normalize();
+    n2.normalize();
+
+    Vec3 bisector = n1 + n2;
+    bisector = rejectAxis(bisector, dir);
+    if (bisector.length2() < 1e-20) {
+        return false;
+    }
+    bisector.normalize();
+
+    Vec3 into = intoFaceFromEdge(adjacent[0], start, end, dir)
+        + intoFaceFromEdge(adjacent[1], start, end, dir);
+    into = rejectAxis(into, dir);
+    if (into.length2() > 1e-20 && into.dot(bisector) < 0.0) {
+        bisector = bisector * -1.0;
+    }
+
+    double nDot = std::abs(n1.dot(bisector));
+    if (nDot < 1e-6) {
+        return false;
+    }
+    double centerDistance = radius / nDot;
+
+    Vec3 t1 = n1 * -n1.dot(bisector);
+    Vec3 t2 = n2 * -n2.dot(bisector);
+    if (t1.length2() < 1e-20 || t2.length2() < 1e-20) {
+        return false;
+    }
+    t1.normalize();
+    t2.normalize();
+
+    Vec3 toTangent1 = bisector * centerDistance + t1 * radius;
+    Vec3 toTangent2 = bisector * centerDistance + t2 * radius;
+    double influenceRadius = std::max(toTangent1.length(), toTangent2.length());
+
+    round.start = start;
+    round.end = end;
+    round.dir = dir;
+    round.bisector = bisector;
+    round.tangent1 = t1;
+    round.tangent2 = t2;
+    round.faceIdA = adjacent[0]->getId();
+    round.faceIdB = adjacent[1]->getId();
+    round.radius = radius;
+    round.centerDistance = centerDistance;
+    round.influenceRadius = influenceRadius;
+    round.aabb = Aabb(start);
+    round.aabb.expand(end);
+    round.aabb.expandRadius(influenceRadius);
+    return true;
+}
+
+void rebuildRounds(FaceSubdivisionData& data, const unordered_map<int, Face*>& live) {
+    data.rounds.clear();
+    unordered_set<int> seen;
+    for (const auto& entry : live) {
+        Face* face = entry.second;
+        if (!face) {
+            continue;
+        }
+        for (HalfEdge* halfEdge : face->getHalfEdges()) {
+            if (!halfEdge || !halfEdge->getEdge()) {
+                continue;
+            }
+            Edge* edge = halfEdge->getEdge();
+            if (!seen.insert(edge->getId()).second) {
+                continue;
+            }
+            CachedRound round;
+            if (fillRound(round, edge, live)) {
+                data.rounds[edge->getId()] = round;
+            }
+        }
+    }
+}
+
+void applyRound(
+    FaceSubdivisionData& data,
+    const CachedRound& round,
+    double sign,
+    const unordered_set<Sample*>* filter
+) {
+    if (round.radius <= 1e-8) {
+        return;
+    }
+    if (!data.treeValid) {
+        rebuildTree(data);
+    }
+
+    Vec3 yAxis = round.dir.cross(round.bisector);
+    if (yAxis.length2() < 1e-20) {
+        return;
+    }
+    yAxis.normalize();
+    double a1 = angleAround(round.tangent1, round.bisector, yAxis);
+    double a2 = angleAround(round.tangent2, round.bisector, yAxis);
+    double ac = angleAround(round.bisector * -1.0, round.bisector, yAxis);
+
+    data.tree.visitOverlapping(round.aabb, [&](void* payload) {
+        Sample* sample = static_cast<Sample*>(payload);
+        if (filter && filter->find(sample) == filter->end()) {
+            return;
+        }
+        bool onAdjacent = false;
+        for (int faceId : sample->faceIds) {
+            if (faceId == round.faceIdA || faceId == round.faceIdB) {
+                onAdjacent = true;
+                break;
+            }
+        }
+        if (!onAdjacent) {
+            return;
+        }
+        Vec3 closest = closestOnSegment(round.start, round.end, sample->base);
+        double edgeDistance = (sample->base - closest).length();
+        if (edgeDistance > round.influenceRadius) {
+            return;
+        }
+        Vec3 center = closest + round.bisector * round.centerDistance;
+        Vec3 fromCenter = sample->base - center;
+        Vec3 along = round.dir * round.dir.dot(fromCenter);
+        Vec3 perp = fromCenter - along;
+        double dist = perp.length();
+        if (dist < round.radius - 1e-8) {
+            return;
+        }
+        if (dist < 1e-12) {
+            return;
+        }
+        if (!angleInArc(angleAround(perp, round.bisector, yAxis), a1, a2, ac)) {
+            return;
+        }
+        Vec3 target = center + along + perp * (round.radius / dist);
+        sample->displaced += (target - sample->base) * sign;
+    });
+}
+
+void applyAllFields(FaceSubdivisionData& data) {
     resetDisplacements(data);
     rebuildTree(data);
     for (const auto& entry : data.faces) {
         applyFace(data, entry.second, 1.0, nullptr);
+    }
+    for (const auto& entry : data.rounds) {
+        applyRound(data, entry.second, 1.0, nullptr);
     }
     data.fieldsApplied = true;
 }
@@ -925,6 +1190,7 @@ void FaceSubdivider::clear() {
     data->samples.clear();
     data->edges.clear();
     data->faces.clear();
+    data->rounds.clear();
     data->tree.clear();
     data->treeValid = false;
     data->fieldsApplied = false;
@@ -947,19 +1213,8 @@ void FaceSubdivider::sync(const map<int, Face*>& faces, bool deform) {
             removed.push_back(entry.first);
         }
     }
-
-    if (!removed.empty()) {
-        if (data->fieldsApplied) {
-            if (!data->treeValid) {
-                rebuildTree(*data);
-            }
-            for (int faceId : removed) {
-                applyFace(*data, data->faces[faceId], -1.0, nullptr);
-            }
-        }
-        for (int faceId : removed) {
-            dropFaceGeometry(*data, faceId);
-        }
+    for (int faceId : removed) {
+        dropFaceGeometry(*data, faceId);
     }
 
     vector<Face*> added;
@@ -968,57 +1223,24 @@ void FaceSubdivider::sync(const map<int, Face*>& faces, bool deform) {
             added.push_back(entry.second);
         }
     }
+    for (Face* face : added) {
+        addFaceGeometry(*data, face);
+    }
 
+    bool changed = !removed.empty() || !added.empty();
     if (!deform) {
-        for (Face* face : added) {
-            addFaceGeometry(*data, face);
-        }
         data->fieldsApplied = false;
         return;
     }
-
-    if (!data->fieldsApplied) {
-        for (Face* face : added) {
-            addFaceGeometry(*data, face);
-        }
-        applyAllFaces(*data);
-        return;
-    }
-
-    if (added.empty()) {
+    if (!changed && data->fieldsApplied) {
         if (!data->treeValid) {
             rebuildTree(*data);
         }
         return;
     }
 
-    unordered_set<Key, FaceSubdivisionData::KeyHash> before;
-    before.reserve(data->samples.size());
-    for (const auto& entry : data->samples) {
-        before.insert(entry.first);
-    }
-    for (Face* face : added) {
-        addFaceGeometry(*data, face);
-    }
-    unordered_set<Sample*> created;
-    for (auto& entry : data->samples) {
-        if (before.find(entry.first) == before.end()) {
-            created.insert(&entry.second);
-        }
-    }
-    rebuildTree(*data);
-
-    unordered_set<int> addedIds;
-    for (Face* face : added) {
-        addedIds.insert(face->getId());
-    }
-    for (const auto& entry : data->faces) {
-        if (addedIds.count(entry.first)) {
-            applyFace(*data, entry.second, 1.0, nullptr);
-        } else {
-            applyFace(*data, entry.second, 1.0, &created);
-        }
-    }
+    rebuildRounds(*data, live);
+    applyAllFields(*data);
 }
 
 void FaceSubdivider::append(

@@ -18,7 +18,8 @@ constexpr double FACE_NOISE_EPSILON = 1e-4;
 
 // Subdivides faces into a grid of triangles. Each face adds an independent
 // displacement field along its normal; nearby samples (in original space)
-// receive the sum. Shared edge samples stay watertight.
+// receive the sum. Edges with two adjacent faces add a circular-arc rounding
+// field. Shared edge samples stay watertight.
 class FaceSubdivider {
 public:
     FaceSubdivider();

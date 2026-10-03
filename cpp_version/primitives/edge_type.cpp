@@ -8,6 +8,7 @@
 #include "..\util\util.h"
 #include "..\util\json_field.h"
 #include "..\util\binary_stream.h"
+#include "../settings.h"
 #include <string>
 #include <iostream>
 #define _USE_MATH_DEFINES
@@ -64,6 +65,9 @@ EdgeType* EdgeType::import(const Json& json, Primitives* shape) {
             cerr << "Warning: Unknown edge decoration: " << id << endl;
         }
     }
+    if (hasNumber(json, "roundRadius") && json["roundRadius"].get<double>() > 0.0) {
+        result->roundRadius = json["roundRadius"].get<double>();
+    }
 
     return result;
 }
@@ -115,6 +119,8 @@ EdgeType* EdgeType::binaryDeserialize(std::istream& in, Primitives* shape) {
         }
     }
 
+    result->roundRadius = bsRead<double>(in);
+
     return result;
 }
 
@@ -162,6 +168,10 @@ void EdgeType::setDecoration(EdgeDecoration* decoration) {
     this->decoration = decoration;
 }
 
+double EdgeType::getRoundRadius() const {
+    return roundRadius.value_or(globalSettings["Edge Round Radius"].get<double>());
+}
+
 Json EdgeType::exportJson(const Primitives* shape) const {
     Json json;
     Json faceDataJson = Json::array();
@@ -182,6 +192,9 @@ Json EdgeType::exportJson(const Primitives* shape) const {
         json["edgeSettings"] = edgeSettings->exportJson();
     } else {
         json["edgeSettings"] = nullptr;
+    }
+    if (roundRadius) {
+        json["roundRadius"] = *roundRadius;
     }
     return json;
 }

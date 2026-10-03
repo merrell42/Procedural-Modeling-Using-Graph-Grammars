@@ -14,6 +14,7 @@ struct Aabb {
 
     void expand(const Vec3& point);
     void expand(const Aabb& other);
+    void expandRadius(double radius);
     double minDistance(const Aabb& other) const;
     double minDistanceToPlane(const Vec3& normal, double planeD) const;
 };
@@ -38,6 +39,7 @@ public:
     void clear();
 
     void visit(const ProximityQuery& query, const std::function<void(void*)>& onPoint) const;
+    void visitOverlapping(const Aabb& bounds, const std::function<void(void*)>& onPoint) const;
 
 private:
     struct Node {
@@ -52,4 +54,5 @@ private:
     static unique_ptr<Node> buildNode(vector<Point>& points, int depth);
     static bool skipBranch(const Aabb& aabb, const ProximityQuery& query);
     static void visitNode(const Node* node, const ProximityQuery& query, const std::function<void(void*)>& onPoint);
+    static void visitOverlapNode(const Node* node, const Aabb& bounds, const std::function<void(void*)>& onPoint);
 };

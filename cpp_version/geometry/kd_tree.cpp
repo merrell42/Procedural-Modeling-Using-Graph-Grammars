@@ -54,6 +54,14 @@ void Aabb::expand(const Aabb& other) {
     expand(other.max);
 }
 
+void Aabb::expandRadius(double radius) {
+    if (radius <= 0.0) {
+        return;
+    }
+    min = Vec3(min.getX() - radius, min.getY() - radius, min.getZ() - radius, false);
+    max = Vec3(max.getX() + radius, max.getY() + radius, max.getZ() + radius, false);
+}
+
 double Aabb::minDistance(const Aabb& other) const {
     double dx = 0.0;
     if (max.getX() < other.min.getX()) {
@@ -174,4 +182,26 @@ void SampleKdTree::visitNode(
 
 void SampleKdTree::visit(const ProximityQuery& query, const std::function<void(void*)>& onPoint) const {
     visitNode(root.get(), query, onPoint);
+}
+
+void SampleKdTree::visitOverlapNode(
+    const Node* node,
+    const Aabb& bounds,
+    const std::function<void(void*)>& onPoint
+) {
+    if (!node || node->aabb.minDistance(bounds) > 0.0) {
+        return;
+    }
+    if (!node->left && !node->right) {
+        for (const Point& point : node->points) {
+            onPoint(point.payload);
+        }
+        return;
+    }
+    visitOverlapNode(node->left.get(), bounds, onPoint);
+    visitOverlapNode(node->right.get(), bounds, onPoint);
+}
+
+void SampleKdTree::visitOverlapping(const Aabb& bounds, const std::function<void(void*)>& onPoint) const {
+    visitOverlapNode(root.get(), bounds, onPoint);
 }

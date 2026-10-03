@@ -304,6 +304,7 @@ void serializePrimitives(std::ostream& out, const Primitives* p) {
         const EdgeSettings* es = et->getEdgeSettings();
         bsWrite<uint8_t>(out, es ? 1 : 0);
         if (es) serializeEdgeSettings(out, es);
+        bsWrite<double>(out, et->getRoundRadius());
     }
 
     bsWrite<int32_t>(out, (int32_t)p->vertexTypes.size());
