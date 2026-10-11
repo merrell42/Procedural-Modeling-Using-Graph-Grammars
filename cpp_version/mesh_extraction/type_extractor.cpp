@@ -276,9 +276,11 @@ bool extractTypes(const HalfEdgeMesh&         mesh,
             idx = (int)out.edgeTypes.size();
             ExtractedTypes::EdgeType et;
             et.dir = dir;
-            et.faceData.push_back({leftFaceType,  /*onRight*/ false});
-            if (rightFaceType >= 0)
+            // The right-hand face is first. That is the slot the rules use.
+            if (rightFaceType >= 0) {
                 et.faceData.push_back({rightFaceType, /*onRight*/ true});
+            }
+            et.faceData.push_back({leftFaceType,  /*onRight*/ false});
             out.edgeTypes.push_back(std::move(et));
             edgeTypeMap.emplace(std::move(key), idx);
         } else {
