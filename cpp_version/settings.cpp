@@ -4,6 +4,9 @@
 // TODO: Remove the unused settings.
 // Most of these settings are no longer used.
 Json globalSettings = {
+    // Mesh deformations are opt-in per grammar.
+    {"Deformations", false},
+
     // Face subdivision defaults. A grammar "settings" object can override these.
     {"Face Grid Spacing", 1.0},
     {"Face Noise Scale", 1.0},
