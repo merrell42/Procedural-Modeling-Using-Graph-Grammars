@@ -1,5 +1,6 @@
 {
   "name": "cube",
+  "obj": "# Closed unit cube centered at the origin. 8 vertices, 6 quad faces, all\r\n# CCW-wound when viewed from outside the cube. Single material 'solid'.\r\n# Used as the smoke-test input for mesh_extraction -> seed grammar.\r\n\r\nmtllib cube.mtl\r\no cube\r\n\r\nv -0.5 -0.5 -0.5\r\nv  0.5 -0.5 -0.5\r\nv  0.5  0.5 -0.5\r\nv -0.5  0.5 -0.5\r\nv -0.5 -0.5  0.5\r\nv  0.5 -0.5  0.5\r\nv  0.5  0.5  0.5\r\nv -0.5  0.5  0.5\r\n\r\nusemtl solid\r\n# back (-Z)\r\nf 4 3 2 1\r\n# front (+Z)\r\nf 5 6 7 8\r\n# left (-X)\r\nf 1 5 8 4\r\n# right (+X)\r\nf 2 3 7 6\r\n# bottom (-Y)\r\nf 1 2 6 5\r\n# top (+Y)\r\nf 4 8 7 3\r\n",
   "types": {
     "dims": 3,
     "edgeTypes": [

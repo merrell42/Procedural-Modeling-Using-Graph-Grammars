@@ -13,7 +13,7 @@ namespace mesh_extraction {
 int meshToGrammar(const char* objPath, const char* outPath);
 
 // Same pipeline as meshToGrammar, but writes a primitives JSON instead
-// of a seed grammar.
+// of a seed grammar. The source OBJ text is stored in the JSON `obj` field.
 int meshToPrimitives(const char* objPath, const char* outPath);
 
 // Convert every `.obj` in `meshesDir` to a primitives JSON in `outDir`.

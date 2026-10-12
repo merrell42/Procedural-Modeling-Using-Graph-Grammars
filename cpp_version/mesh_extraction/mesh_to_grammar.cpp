@@ -13,7 +13,9 @@
 #include <algorithm>
 #include <cctype>
 #include <filesystem>
+#include <fstream>
 #include <iostream>
+#include <sstream>
 #include <string>
 
 namespace mesh_extraction {
@@ -41,6 +43,17 @@ bool loadAndExtract(const char* objPath, HalfEdgeMesh& hem, ExtractedTypes& type
 
 std::string fileStem(const char* path) {
 	return std::filesystem::path(path).stem().string();
+}
+
+std::string readWholeFile(const char* path, std::string* err) {
+	std::ifstream in(path, std::ios::binary);
+	if (!in) {
+		if (err) *err = std::string("could not read ") + path;
+		return {};
+	}
+	std::ostringstream ss;
+	ss << in.rdbuf();
+	return ss.str();
 }
 
 bool isObjFile(const std::filesystem::path& path) {
@@ -90,7 +103,12 @@ int meshToPrimitives(const char* objPath, const char* outPath) {
 		return 1;
 	}
 	const std::string name = fileStem(objPath);
-	if (!writePrimitives(types, name, outPath, &err)) {
+	const std::string objText = readWholeFile(objPath, &err);
+	if (objText.empty()) {
+		std::cerr << "read obj failed: " << (err.empty() ? "empty file" : err) << std::endl;
+		return 1;
+	}
+	if (!writePrimitives(types, name, objText, outPath, &err)) {
 		std::cerr << "writePrimitives failed: " << err << std::endl;
 		return 1;
 	}
@@ -104,6 +122,12 @@ int meshToPrimitives(const char* objPath, const char* outPath) {
 		auto* primitives = Primitives::import(parsed["types"]);
 		std::cout << "  Round-trip: Primitives::import succeeded." << std::endl;
 		delete primitives;
+		if (!parsed.contains("obj") || !parsed["obj"].is_string() ||
+		    parsed["obj"].get<std::string>() != objText) {
+			std::cerr << "  Round-trip: embedded obj text does not match the source file."
+			          << std::endl;
+			return 2;
+		}
 	} catch (const std::exception& e) {
 		std::cerr << "  Round-trip: Primitives::import threw: " << e.what() << std::endl;
 		return 2;
