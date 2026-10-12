@@ -74,6 +74,61 @@ function clampSelection(sel, n) {
     return sel >= 0 && sel < n ? sel : null;
 }
 
+// Boundary ports are paired by the order they appear in each vertex list.
+// Keep that order the same on both graphs. Non-boundary vertices stay put;
+// boundary vertices are rearranged among the slots they already occupy.
+function alignBoundaryVertexOrder(sourceGraph, targetGraph) {
+    if (!sourceGraph || !targetGraph) return null;
+    const sourceIds = sourceGraph.vertices
+        .filter(v => v.boundaryId)
+        .map(v => v.boundaryId);
+    const target = targetGraph.vertices;
+    const slots = [];
+    const indexById = new Map();
+    target.forEach((vertex, index) => {
+        if (!vertex.boundaryId) return;
+        slots.push(index);
+        indexById.set(vertex.boundaryId, index);
+    });
+
+    const desired = [];
+    for (const id of sourceIds) {
+        if (indexById.has(id)) desired.push(indexById.get(id));
+    }
+    for (const slot of slots) {
+        if (!desired.includes(slot)) desired.push(slot);
+    }
+    if (desired.length !== slots.length) return null;
+
+    let changed = false;
+    for (let k = 0; k < slots.length; k++) {
+        if (desired[k] !== slots[k]) changed = true;
+    }
+    if (!changed) return null;
+
+    const oldToNew = new Map();
+    target.forEach((_, index) => oldToNew.set(index, index));
+    for (let k = 0; k < slots.length; k++) {
+        oldToNew.set(desired[k], slots[k]);
+    }
+
+    const nextVertices = target.slice();
+    for (let k = 0; k < slots.length; k++) {
+        nextVertices[slots[k]] = target[desired[k]];
+    }
+    targetGraph.vertices = nextVertices;
+    for (const edge of targetGraph.edges) {
+        edge.start = oldToNew.get(edge.start);
+        edge.end = oldToNew.get(edge.end);
+    }
+    return oldToNew;
+}
+
+function remapVertexIndex(index, oldToNew) {
+    if (index === null || index === undefined || !oldToNew) return index;
+    return oldToNew.has(index) ? oldToNew.get(index) : index;
+}
+
 function clampActive(idx, n) {
     if (n === 0) return -1;
     if (idx < 0) return -1;
@@ -99,7 +154,10 @@ function isTypingInTextInput(el) {
 function cloneGraphData(graph) {
     return {
         vertices: graph.vertices.map(v => ({
-            connections: v.connections || [],
+            // Copy the array. The editor mutates `connections` in place, and
+            // Export Library writes this snapshot. A shared array would pick
+            // up later connection edits while the copied edge list would not.
+            connections: [...(v.connections || [])],
             boundaryId: v.boundaryId || '',
             position: { ...v.position },
             spliced: v.spliced ?? false,
@@ -237,15 +295,27 @@ class TemplateEditor {
         );
     }
 
+    // Drop one incident-edge index. `indexOf` is -1 when the connection is
+    // already gone; splicing at -1 would delete a different connection.
+    removeConnection(vertex, edgeIndex) {
+        if (!vertex) return;
+        const connectionIndex = vertex.connections.indexOf(edgeIndex);
+        if (connectionIndex !== -1) {
+            vertex.connections.splice(connectionIndex, 1);
+        }
+    }
+
     // Remove an edge and renumber remaining connection indices.
-    removeEdgeFromGraph(edgeIndex) {
+    // skipBoundaryVertex is a vertex being deleted; updating its boundary
+    // state would try to delete the matching vertex on the other template.
+    removeEdgeFromGraph(edgeIndex, skipBoundaryVertex) {
         const edge = this.graphTemplate.edges[edgeIndex];
         if (!edge) return;
 
         const vStart = this.graphTemplate.vertices[edge.start];
         const vEnd = this.graphTemplate.vertices[edge.end];
-        vStart.connections.splice(vStart.connections.indexOf(edgeIndex), 1);
-        vEnd.connections.splice(vEnd.connections.indexOf(edgeIndex), 1);
+        this.removeConnection(vStart, edgeIndex);
+        this.removeConnection(vEnd, edgeIndex);
         this.graphTemplate.edges.splice(edgeIndex, 1);
 
         for (const vertex of this.graphTemplate.vertices) {
@@ -255,8 +325,8 @@ class TemplateEditor {
                 }
             }
         }
-        this.updateOnBoundaryForVertex(vStart);
-        this.updateOnBoundaryForVertex(vEnd);
+        if (vStart && vStart !== skipBoundaryVertex) this.updateOnBoundaryForVertex(vStart);
+        if (vEnd && vEnd !== skipBoundaryVertex) this.updateOnBoundaryForVertex(vEnd);
     }
 
     // Insert edge in counter-clockwise order around a vertex.
@@ -667,6 +737,11 @@ class TemplateEditor {
             position: { x: otherPosition.x, y: otherPosition.y }
         };
         otherEditor.graphTemplate.vertices.push(newVertex);
+        const oldToNew = alignBoundaryVertexOrder(this.graphTemplate, otherEditor.graphTemplate);
+        if (oldToNew) {
+            otherEditor.selectedVertexIndex = remapVertexIndex(otherEditor.selectedVertexIndex, oldToNew);
+            otherEditor.hoveredVertexIndex = remapVertexIndex(otherEditor.hoveredVertexIndex, oldToNew);
+        }
         otherEditor.refreshTemplate();
     }
     
@@ -683,16 +758,23 @@ class TemplateEditor {
             const vertex = otherEditor.graphTemplate.vertices[vertexIndex];
             const edgesToRemove = [...vertex.connections].sort((a, b) => b - a);
 
+            // Delete incident edges before the vertex. removeEdgeFromGraph
+            // reads edge.start / edge.end, which still have to be the current
+            // vertex indices. Edges to a boundary placeholder only exist on
+            // this template, so delete them entirely.
+            for (const edgeIndex of edgesToRemove) {
+                otherEditor.removeEdgeFromGraph(edgeIndex, vertex);
+            }
+
             otherEditor.graphTemplate.vertices.splice(vertexIndex, 1);
             if (otherEditor.selectedVertexIndex === vertexIndex) {
                 otherEditor.selectedVertexIndex = null;
             } else if (otherEditor.selectedVertexIndex > vertexIndex) {
                 otherEditor.selectedVertexIndex--;
             }
-
-            // Edges to a boundary placeholder only exist on this template; delete them entirely.
-            for (const edgeIndex of edgesToRemove) {
-                otherEditor.removeEdgeFromGraph(edgeIndex);
+            for (const edge of otherEditor.graphTemplate.edges) {
+                if (edge.start > vertexIndex) edge.start--;
+                if (edge.end > vertexIndex) edge.end--;
             }
 
             otherEditor.refreshTemplate();
@@ -791,6 +873,12 @@ function loadLibraryEntry(idx) {
         editor2.graphTemplate.vertices = [];
         editor2.graphTemplate.edges = [];
         editor2.selectedVertexIndex = null;
+        editor2.refreshTemplate();
+    }
+    const oldToNew = alignBoundaryVertexOrder(editor1.graphTemplate, editor2.graphTemplate);
+    if (oldToNew) {
+        editor2.selectedVertexIndex = remapVertexIndex(editor2.selectedVertexIndex, oldToNew);
+        editor2.hoveredVertexIndex = remapVertexIndex(editor2.hoveredVertexIndex, oldToNew);
         editor2.refreshTemplate();
     }
     window.activeIdx = idx;
@@ -911,7 +999,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     exportGraphWithSplices(editor2.graphTemplate),
                 ],
             }]
-            : window.library.map(serializeLibraryEntryForExport);
+            : window.library.map((entry, idx) => {
+                // The open canvases are the entry being edited. Export those,
+                // not the last saved copy, so an edge added on the left stays
+                // on the left.
+                if (idx !== window.activeIdx) {
+                    return serializeLibraryEntryForExport(entry);
+                }
+                return serializeLibraryEntryForExport({
+                    comment: entry.comment || '',
+                    graphs: [
+                        cloneGraphData(editor1.graphTemplate),
+                        cloneGraphData(editor2.graphTemplate),
+                    ],
+                });
+            });
         const out = {
             includeGround: !!window.includeGround,
             templates: entries,

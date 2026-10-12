@@ -17,12 +17,12 @@
         },
         "faceData": [
           {
-            "onRight": false,
-            "type": 0
-          },
-          {
             "onRight": true,
             "type": 5
+          },
+          {
+            "onRight": false,
+            "type": 0
           }
         ],
         "isRigid": false,
@@ -43,12 +43,12 @@
         },
         "faceData": [
           {
-            "onRight": false,
-            "type": 0
-          },
-          {
             "onRight": true,
             "type": 3
+          },
+          {
+            "onRight": false,
+            "type": 0
           }
         ],
         "isRigid": false,
@@ -68,39 +68,13 @@
           "Tile Length": 1.0
         },
         "faceData": [
-          {
-            "onRight": false,
-            "type": 0
-          },
           {
             "onRight": true,
             "type": 4
-          }
-        ],
-        "isRigid": false,
-        "isRigidTiled": false,
-        "spliced": false
-      },
-      {
-        "dir": {
-          "x": 0.0,
-          "y": 0.0,
-          "z": -1.0
-        },
-        "edgeSettings": {
-          "Max Length": 4.0,
-          "Min Length": 0.1,
-          "Rigid Tiled": false,
-          "Tile Length": 1.0
-        },
-        "faceData": [
+          },
           {
             "onRight": false,
             "type": 0
-          },
-          {
-            "onRight": true,
-            "type": 6
           }
         ],
         "isRigid": false,
@@ -121,12 +95,38 @@
         },
         "faceData": [
           {
-            "onRight": false,
-            "type": 1
+            "onRight": true,
+            "type": 6
           },
+          {
+            "onRight": false,
+            "type": 0
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": -1.0
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
           {
             "onRight": true,
             "type": 3
+          },
+          {
+            "onRight": false,
+            "type": 1
           }
         ],
         "isRigid": false,
@@ -147,12 +147,12 @@
         },
         "faceData": [
           {
-            "onRight": false,
-            "type": 1
-          },
-          {
             "onRight": true,
             "type": 5
+          },
+          {
+            "onRight": false,
+            "type": 1
           }
         ],
         "isRigid": false,
@@ -173,12 +173,12 @@
         },
         "faceData": [
           {
-            "onRight": false,
-            "type": 1
-          },
-          {
             "onRight": true,
             "type": 6
+          },
+          {
+            "onRight": false,
+            "type": 1
           }
         ],
         "isRigid": false,
@@ -199,12 +199,12 @@
         },
         "faceData": [
           {
-            "onRight": false,
-            "type": 1
-          },
-          {
             "onRight": true,
             "type": 2
+          },
+          {
+            "onRight": false,
+            "type": 1
           }
         ],
         "isRigid": false,
@@ -225,12 +225,12 @@
         },
         "faceData": [
           {
-            "onRight": false,
-            "type": 2
-          },
-          {
             "onRight": true,
             "type": 6
+          },
+          {
+            "onRight": false,
+            "type": 2
           }
         ],
         "isRigid": false,
@@ -251,12 +251,12 @@
         },
         "faceData": [
           {
-            "onRight": false,
-            "type": 2
-          },
-          {
             "onRight": true,
             "type": 4
+          },
+          {
+            "onRight": false,
+            "type": 2
           }
         ],
         "isRigid": false,
@@ -277,12 +277,12 @@
         },
         "faceData": [
           {
+            "onRight": true,
+            "type": 3
+          },
+          {
             "onRight": false,
             "type": 2
-          },
-          {
-            "onRight": true,
-            "type": 3
           }
         ],
         "isRigid": false,
@@ -303,38 +303,12 @@
         },
         "faceData": [
           {
-            "onRight": false,
-            "type": 3
-          },
-          {
             "onRight": true,
             "type": 5
-          }
-        ],
-        "isRigid": false,
-        "isRigidTiled": false,
-        "spliced": false
-      },
-      {
-        "dir": {
-          "x": -0.7071067811865475,
-          "y": 0.0,
-          "z": -0.7071067811865475
-        },
-        "edgeSettings": {
-          "Max Length": 4.0,
-          "Min Length": 0.1,
-          "Rigid Tiled": false,
-          "Tile Length": 1.0
-        },
-        "faceData": [
+          },
           {
             "onRight": false,
             "type": 3
-          },
-          {
-            "onRight": true,
-            "type": 4
           }
         ],
         "isRigid": false,
@@ -355,12 +329,38 @@
         },
         "faceData": [
           {
-            "onRight": false,
+            "onRight": true,
             "type": 4
           },
+          {
+            "onRight": false,
+            "type": 3
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": -0.7071067811865475,
+          "y": 0.0,
+          "z": -0.7071067811865475
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
           {
             "onRight": true,
             "type": 6
+          },
+          {
+            "onRight": false,
+            "type": 4
           }
         ],
         "isRigid": false,
@@ -381,12 +381,12 @@
         },
         "faceData": [
           {
-            "onRight": false,
-            "type": 5
-          },
-          {
             "onRight": true,
             "type": 6
+          },
+          {
+            "onRight": false,
+            "type": 5
           }
         ],
         "isRigid": false,

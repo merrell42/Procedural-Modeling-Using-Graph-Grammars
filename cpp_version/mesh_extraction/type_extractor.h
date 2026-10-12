@@ -28,9 +28,9 @@ struct ExtractedTypes {
 
     // Edge types. One per unique (faceL, faceR, dir_quantized).
     // `dir` is the unit vector from the canonical halfA's origin to its dest.
-    // `faceData[0]` is the face on the LEFT of `dir` (halfA's face) with
-    // onRight=false; `faceData[1]` is the RIGHT face (halfB's face) with
-    // onRight=true. Open-boundary edges omit the right-side entry.
+    // On a two-face edge, `faceData[0]` is the RIGHT face (halfB's face) with
+    // onRight=true, and `faceData[1]` is the LEFT face (halfA's face) with
+    // onRight=false. An open-boundary edge has only the left face.
     struct FaceData {
         int  faceType;   // index into faceTypes
         bool onRight;

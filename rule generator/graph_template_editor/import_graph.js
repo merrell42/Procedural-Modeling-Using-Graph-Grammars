@@ -66,11 +66,11 @@ function collapseSplicedVertex(vertices, edges, vertexIndex) {
     for (let i = 0; i < endpointBVertex.connections.length; i++) {
         if (endpointBVertex.connections[i] === removeEdgeIndex) {
             endpointBVertex.connections[i] = keepEdgeIndex;
-        } else if (endpointBVertex.connections[i] > removeEdgeIndex) {
-            endpointBVertex.connections[i]--;
         }
     }
 
+    // removeEdgeAtIndex renumbers every connection above removeEdgeIndex.
+    // Doing it here as well would point endpoint B at the wrong edge.
     removeEdgeAtIndex(vertices, edges, removeEdgeIndex);
 
     removeVertexAtIndex(vertices, edges, vertexIndex);

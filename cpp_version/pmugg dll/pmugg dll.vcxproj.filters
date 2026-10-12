@@ -30,6 +30,9 @@
     <ClInclude Include="..\graph_drawing\face.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\graph_drawing\face_subdivision.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="..\graph_drawing\face_group.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -115,6 +118,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\decorations\vertex_decoration.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\geometry\kd_tree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\geometry\intersector.h">
@@ -299,6 +305,9 @@
     <ClCompile Include="..\graph_drawing\face.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\graph_drawing\face_subdivision.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\graph_drawing\face_group.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -319,6 +328,9 @@
     </ClCompile>
     <ClCompile Include="..\util\timer.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\geometry\kd_tree.cpp">
+      <Filter>Header Files</Filter>
     </ClCompile>
     <ClCompile Include="..\geometry\intersector.cpp">
       <Filter>Header Files</Filter>

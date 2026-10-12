@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "model.h"
+#include "face_subdivision.h"
 #include "../util/timer.h"
 
 Model::Model() {
@@ -9,6 +10,11 @@ Model::Model() {
 	idCounter = 0;
 }
 
+Model::~Model() {
+	delete prev;
+	delete current;
+}
+
 void Model::reset() {
 	delete prev;
 	delete current;
@@ -16,6 +22,14 @@ void Model::reset() {
 	prev = new GraphDrawing();
 	numSteps = 0;
 	idCounter = 0;
+	subdivider.reset();
+}
+
+MeshCpp Model::exportMesh(bool deform) {
+	if (!subdivider) {
+		subdivider = std::make_unique<FaceSubdivider>();
+	}
+	return current->exportMesh(*subdivider, deform);
 }
 
 void Model::accept() {

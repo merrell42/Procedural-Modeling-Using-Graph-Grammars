@@ -4,6 +4,7 @@
 #include <string>
 #include <iosfwd>
 #include <atomic>
+#include <optional>
 #include "../geometry/vec3.h"
 #include "primitives.h"
 #include "../graph/edge_settings.h"
@@ -41,6 +42,7 @@ public:
     int getId() const;
     EdgeDecoration* getDecoration() const;
     void setDecoration(EdgeDecoration* decoration);
+    double getRoundRadius() const;
 
     // RuleGenerator support.
     const string& getRuleGeneratorId() const;
@@ -59,6 +61,7 @@ private:
     EdgeDecoration* decoration = nullptr;
     // RuleGenerator string id.
     string ruleGeneratorId;
+    std::optional<double> roundRadius;
 
     static std::atomic<int> nextId;
 };

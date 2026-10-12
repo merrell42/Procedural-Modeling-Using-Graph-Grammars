@@ -24,6 +24,7 @@ using Json = nlohmann::json;
 Model* model = nullptr;
 Mutator* mutator = nullptr;
 GraphGrammar* grammar = nullptr;
+bool deformMesh = true;
 
 namespace {
 
@@ -156,9 +157,13 @@ int getNumFaces() {
 
 // Return the current mesh.
 MeshCpp getMesh() {
-	MeshCpp mesh = model->getCurrent()->exportMesh();
+	MeshCpp mesh = model->exportMesh(deformMesh);
 	appendExtrusions(mesh, model);
 	return mesh;
+}
+
+void setDeformMesh(int enabled) {
+	deformMesh = enabled != 0;
 }
 
 // Set the size of the model.

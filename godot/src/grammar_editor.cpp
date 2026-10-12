@@ -235,6 +235,7 @@ void GrammarEditor::on_step_pressed() {
 		UtilityFunctions::print("No file selected!");
 		return;
 	}
+	setDeformMesh(1);
 	iterate(1);
 	log_dll_warning();
 	iteration_count++;
@@ -295,6 +296,7 @@ void GrammarEditor::on_animation_timer_timeout() {
 }
 
 void GrammarEditor::update_mesh() {
+	setDeformMesh(is_playing ? 0 : 1);
 	MeshCpp mesh = getMesh();
 	
 	// Get current scene.
@@ -615,6 +617,7 @@ void GrammarEditor::get_current_values() {
 void GrammarEditor::start_animation() {
     is_playing = true;
     play_button->set_text("Stop");
+	setDeformMesh(0);
 
 	// Create timer if it doesn't exist.
 	if (!animation_timer) {
@@ -630,8 +633,10 @@ void GrammarEditor::start_animation() {
 void GrammarEditor::stop_animation() {
     is_playing = false;
     play_button->set_text("Play");
+	setDeformMesh(1);
 
     if (animation_timer) {
         animation_timer->stop();
     }
+	update_mesh();
 }

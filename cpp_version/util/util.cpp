@@ -30,6 +30,10 @@ void resetRandom(int seed) {
     randomCount = 0;
 }
 
+int getRandomSeed() {
+    return randomSeed;
+}
+
 int Util::randomInt(int count) {
     return static_cast<int>(randomValue() * count);
 }

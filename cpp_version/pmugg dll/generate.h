@@ -23,6 +23,7 @@ extern "C" {
     GENERATE_API int iterateToTime(float timeSeconds);
     GENERATE_API int getNumFaces();
     GENERATE_API MeshCpp getMesh();
+    GENERATE_API void setDeformMesh(int enabled);
     GENERATE_API void setSize(float x, float y, float z);
     GENERATE_API void destroyMesh(MeshCpp& mesh);
     GENERATE_API InstanceList getInstances();

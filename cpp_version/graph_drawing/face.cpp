@@ -4,6 +4,7 @@
 #include "half_edge.h"
 #include <vector>
 #include <algorithm>
+#include <limits>
 #include "../primitives/face_type.h"
 #include "../third_party/earcut/earcut.h"
 #include "../util/util.h"
@@ -340,6 +341,69 @@ vector<Vec3> Face::getIntersections(Plane* plane) const {
         }
     }
     return intersections;
+}
+
+double Face::distanceToPolygon(const Vec3& point, const Vec3& normal, const vector<Vec3>& positions) {
+    if (positions.empty()) {
+        return std::numeric_limits<double>::infinity();
+    }
+
+    double planeD = normal.dot(positions[0]);
+    double signedDist = normal.dot(point) - planeD;
+    Vec3 projected = point - normal * signedDist;
+
+    int maxDim = Util::maxDim(normal);
+    Vec2 projected2D = projected.dropDim(maxDim);
+    vector<Vec2> polygon;
+    polygon.reserve(positions.size());
+    for (const Vec3& position : positions) {
+        polygon.push_back(position.dropDim(maxDim));
+    }
+
+    double y = projected2D.y;
+    double x = projected2D.x;
+    int count = 0;
+    size_t n = polygon.size();
+    for (size_t i = 0; i < n; i++) {
+        size_t i2 = (i + 1) % n;
+        double y1 = polygon[i].y;
+        double y2 = polygon[i2].y;
+        double x1 = polygon[i].x;
+        double x2 = polygon[i2].x;
+        bool isAbove1 = y1 > y;
+        bool isBelow2 = y2 < y;
+        bool isBelow1 = y1 < y;
+        bool isAbove2 = y2 > y;
+        if ((isAbove1 && isBelow2) || (isBelow1 && isAbove2)) {
+            double s = (y - y1) / (y2 - y1);
+            double xCross = x1 + (x2 - x1) * s;
+            if (x < xCross) {
+                count++;
+            }
+        }
+    }
+    if (count % 2 == 1) {
+        return std::abs(signedDist);
+    }
+
+    double best = std::numeric_limits<double>::infinity();
+    for (size_t i = 0; i < n; i++) {
+        const Vec3& a = positions[i];
+        const Vec3& b = positions[(i + 1) % n];
+        Vec3 ab = b - a;
+        double ab2 = ab.length2();
+        double t = 0.0;
+        if (ab2 > 1e-20) {
+            t = std::clamp((point - a).dot(ab) / ab2, 0.0, 1.0);
+        }
+        Vec3 closest = a + ab * t;
+        best = std::min(best, (point - closest).length());
+    }
+    return best;
+}
+
+double Face::distanceToPoint(const Vec3& point) const {
+    return distanceToPolygon(point, faceType->getNormal(), getPositions());
 }
 
 bool Face::containsPoint(Vec3 point) const {

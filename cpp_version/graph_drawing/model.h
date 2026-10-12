@@ -1,8 +1,10 @@
 #pragma once
 #include "../pmugg dll/pch.h"
 #include "graph_drawing.h"
+#include "../geometry/mesh.h"
 
 class GraphDrawing;
+class FaceSubdivider;
 
 // A model contains two graph drawings.
 // The current graph drawing is the one that is being edited.
@@ -10,6 +12,7 @@ class GraphDrawing;
 class Model {
 	public:
 		Model();
+		~Model();
 		// Save the current graph drawing.
 		void accept();
 		// Restore the previous graph drawing.
@@ -22,6 +25,7 @@ class Model {
 		// by the optimizer's cost machinery to diff edge lengths against the
 		// state before the current step's mutation.
 		GraphDrawing* getPrev();
+		MeshCpp exportMesh(bool deform);
 		int newId();
 		int numSteps;
 
@@ -29,6 +33,7 @@ class Model {
 		GraphDrawing* current;
 		GraphDrawing* prev;
 		int idCounter;
+		unique_ptr<FaceSubdivider> subdivider;
 
 		void copyToCurrent();
 };

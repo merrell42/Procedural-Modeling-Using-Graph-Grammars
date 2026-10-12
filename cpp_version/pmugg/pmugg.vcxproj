@@ -144,6 +144,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\geometry\kd_tree.cpp" />
     <ClCompile Include="..\geometry\intersector.cpp" />
     <ClCompile Include="..\geometry\mesh.cpp" />
     <ClCompile Include="..\geometry\vec2.cpp" />
@@ -176,6 +177,7 @@
     <ClCompile Include="..\graph_drawing\bsp_node.cpp" />
     <ClCompile Include="..\graph_drawing\edge.cpp" />
     <ClCompile Include="..\graph_drawing\face.cpp" />
+    <ClCompile Include="..\graph_drawing\face_subdivision.cpp" />
     <ClCompile Include="..\graph_drawing\face_group.cpp" />
     <ClCompile Include="..\graph_drawing\graph_drawing.cpp" />
     <ClCompile Include="..\graph_drawing\half_edge.cpp" />
@@ -224,6 +226,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\geometry\kd_tree.h" />
     <ClInclude Include="..\geometry\intersector.h" />
     <ClInclude Include="..\geometry\mesh.h" />
     <ClInclude Include="..\geometry\plane.h" />
@@ -263,6 +266,7 @@
     <ClInclude Include="..\graph_drawing\bsp_node.h" />
     <ClInclude Include="..\graph_drawing\edge.h" />
     <ClInclude Include="..\graph_drawing\face.h" />
+    <ClInclude Include="..\graph_drawing\face_subdivision.h" />
     <ClInclude Include="..\graph_drawing\face_group.h" />
     <ClInclude Include="..\graph_drawing\graph_drawing.h" />
     <ClInclude Include="..\graph_drawing\half_edge.h" />
