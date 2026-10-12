@@ -36,7 +36,7 @@ using namespace std;
 namespace {
 
 const char* kDefaultLibrary = "../graph templates/ramp.json";
-constexpr const char* kDefaultPrimitives = "../mesh_primitives/ramp2.json";
+constexpr const char* kDefaultPrimitives = "../mesh_primitives/ramp.json";
 
 // constexpr const char* kDefaultLibrary = "../graph templates/graph_template_diagonal.json";
 // constexpr const char* kDefaultPrimitives = "../primitives/diagonal box.json";

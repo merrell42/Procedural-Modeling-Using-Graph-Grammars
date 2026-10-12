@@ -74,6 +74,61 @@ function clampSelection(sel, n) {
     return sel >= 0 && sel < n ? sel : null;
 }
 
+// Boundary ports are paired by the order they appear in each vertex list.
+// Keep that order the same on both graphs. Non-boundary vertices stay put;
+// boundary vertices are rearranged among the slots they already occupy.
+function alignBoundaryVertexOrder(sourceGraph, targetGraph) {
+    if (!sourceGraph || !targetGraph) return null;
+    const sourceIds = sourceGraph.vertices
+        .filter(v => v.boundaryId)
+        .map(v => v.boundaryId);
+    const target = targetGraph.vertices;
+    const slots = [];
+    const indexById = new Map();
+    target.forEach((vertex, index) => {
+        if (!vertex.boundaryId) return;
+        slots.push(index);
+        indexById.set(vertex.boundaryId, index);
+    });
+
+    const desired = [];
+    for (const id of sourceIds) {
+        if (indexById.has(id)) desired.push(indexById.get(id));
+    }
+    for (const slot of slots) {
+        if (!desired.includes(slot)) desired.push(slot);
+    }
+    if (desired.length !== slots.length) return null;
+
+    let changed = false;
+    for (let k = 0; k < slots.length; k++) {
+        if (desired[k] !== slots[k]) changed = true;
+    }
+    if (!changed) return null;
+
+    const oldToNew = new Map();
+    target.forEach((_, index) => oldToNew.set(index, index));
+    for (let k = 0; k < slots.length; k++) {
+        oldToNew.set(desired[k], slots[k]);
+    }
+
+    const nextVertices = target.slice();
+    for (let k = 0; k < slots.length; k++) {
+        nextVertices[slots[k]] = target[desired[k]];
+    }
+    targetGraph.vertices = nextVertices;
+    for (const edge of targetGraph.edges) {
+        edge.start = oldToNew.get(edge.start);
+        edge.end = oldToNew.get(edge.end);
+    }
+    return oldToNew;
+}
+
+function remapVertexIndex(index, oldToNew) {
+    if (index === null || index === undefined || !oldToNew) return index;
+    return oldToNew.has(index) ? oldToNew.get(index) : index;
+}
+
 function clampActive(idx, n) {
     if (n === 0) return -1;
     if (idx < 0) return -1;
@@ -682,6 +737,11 @@ class TemplateEditor {
             position: { x: otherPosition.x, y: otherPosition.y }
         };
         otherEditor.graphTemplate.vertices.push(newVertex);
+        const oldToNew = alignBoundaryVertexOrder(this.graphTemplate, otherEditor.graphTemplate);
+        if (oldToNew) {
+            otherEditor.selectedVertexIndex = remapVertexIndex(otherEditor.selectedVertexIndex, oldToNew);
+            otherEditor.hoveredVertexIndex = remapVertexIndex(otherEditor.hoveredVertexIndex, oldToNew);
+        }
         otherEditor.refreshTemplate();
     }
     
@@ -813,6 +873,12 @@ function loadLibraryEntry(idx) {
         editor2.graphTemplate.vertices = [];
         editor2.graphTemplate.edges = [];
         editor2.selectedVertexIndex = null;
+        editor2.refreshTemplate();
+    }
+    const oldToNew = alignBoundaryVertexOrder(editor1.graphTemplate, editor2.graphTemplate);
+    if (oldToNew) {
+        editor2.selectedVertexIndex = remapVertexIndex(editor2.selectedVertexIndex, oldToNew);
+        editor2.hoveredVertexIndex = remapVertexIndex(editor2.hoveredVertexIndex, oldToNew);
         editor2.refreshTemplate();
     }
     window.activeIdx = idx;
