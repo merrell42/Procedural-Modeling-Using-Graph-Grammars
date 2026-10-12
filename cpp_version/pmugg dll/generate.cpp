@@ -157,7 +157,9 @@ int getNumFaces() {
 
 // Return the current mesh.
 MeshCpp getMesh() {
-	MeshCpp mesh = model->exportMesh(deformMesh);
+	const bool deformationsEnabled =
+		deformMesh && globalSettings["Deformations"].get<bool>();
+	MeshCpp mesh = model->exportMesh(deformationsEnabled);
 	appendExtrusions(mesh, model);
 	return mesh;
 }

@@ -134,6 +134,9 @@ Production GraphGrammar::getRemovalProduction() {
 }
 
 GraphGrammar* GraphGrammar::import(const Json& json, const string& assetDirectory) {
+    // Unlike process-wide tuning values, this opt-in belongs to the grammar
+    // being loaded and must not leak from a previously loaded grammar.
+    globalSettings["Deformations"] = false;
     if (hasObject(json, "settings")) {
         for (const auto& [key, value] : json["settings"].items()) {
             if (globalSettings.contains(key)) {
