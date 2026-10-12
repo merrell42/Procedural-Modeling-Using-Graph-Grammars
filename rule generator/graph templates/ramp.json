@@ -1,0 +1,728 @@
+{
+  "includeGround": true,
+  "templates": [
+    {
+      "comment": "Box",
+      "graphs": [
+        {
+          "vertices": [
+            {
+              "connections": [
+                3,
+                4,
+                2
+              ],
+              "boundaryId": "",
+              "position": {
+                "x": 179.33333206176758,
+                "y": 455.5
+              },
+              "spliced": false
+            },
+            {
+              "connections": [
+                0,
+                11,
+                3
+              ],
+              "boundaryId": "",
+              "position": {
+                "x": 185.33333206176758,
+                "y": 113.5
+              },
+              "spliced": false
+            },
+            {
+              "connections": [
+                10,
+                5,
+                4
+              ],
+              "boundaryId": "",
+              "position": {
+                "x": 255.33333206176758,
+                "y": 377.5
+              },
+              "spliced": false
+            },
+            {
+              "connections": [
+                11,
+                9,
+                10
+              ],
+              "boundaryId": "",
+              "position": {
+                "x": 259.3333320617676,
+                "y": 183.5
+              },
+              "spliced": false
+            },
+            {
+              "connections": [
+                8,
+                7,
+                9
+              ],
+              "boundaryId": "",
+              "position": {
+                "x": 437.3333320617676,
+                "y": 165.5
+              },
+              "spliced": false
+            },
+            {
+              "connections": [
+                7,
+                6,
+                5
+              ],
+              "boundaryId": "",
+              "position": {
+                "x": 435.3333320617676,
+                "y": 361.5
+              },
+              "spliced": false
+            },
+            {
+              "connections": [
+                2,
+                6,
+                1
+              ],
+              "boundaryId": "",
+              "position": {
+                "x": 521.3333320617676,
+                "y": 476.5
+              },
+              "spliced": false
+            },
+            {
+              "connections": [
+                1,
+                8,
+                0
+              ],
+              "boundaryId": "",
+              "position": {
+                "x": 548.3333320617676,
+                "y": 91.5
+              },
+              "spliced": false
+            }
+          ],
+          "edges": [
+            {
+              "start": 1,
+              "end": 7,
+              "spliced": false
+            },
+            {
+              "start": 7,
+              "end": 6,
+              "spliced": false
+            },
+            {
+              "start": 6,
+              "end": 0,
+              "spliced": false
+            },
+            {
+              "start": 0,
+              "end": 1,
+              "spliced": false
+            },
+            {
+              "start": 0,
+              "end": 2,
+              "spliced": false
+            },
+            {
+              "start": 2,
+              "end": 5,
+              "spliced": false
+            },
+            {
+              "start": 5,
+              "end": 6,
+              "spliced": false
+            },
+            {
+              "start": 5,
+              "end": 4,
+              "spliced": false
+            },
+            {
+              "start": 4,
+              "end": 7,
+              "spliced": false
+            },
+            {
+              "start": 4,
+              "end": 3,
+              "spliced": false
+            },
+            {
+              "start": 3,
+              "end": 2,
+              "spliced": false
+            },
+            {
+              "start": 1,
+              "end": 3,
+              "spliced": false
+            }
+          ]
+        },
+        {
+          "vertices": [],
+          "edges": []
+        }
+      ]
+    },
+    {
+      "comment": "Bend Wall",
+      "graphs": [
+        {
+          "vertices": [
+            {
+              "connections": [
+                0
+              ],
+              "boundaryId": "cbrdwr3tpyseqlmt7raa4",
+              "position": {
+                "x": 168.33333206176758,
+                "y": 384.5
+              },
+              "spliced": false
+            },
+            {
+              "connections": [
+                0,
+                6,
+                1
+              ],
+              "boundaryId": "",
+              "position": {
+                "x": 404.3333320617676,
+                "y": 386.5
+              },
+              "spliced": false
+            },
+            {
+              "connections": [
+                7,
+                2,
+                1
+              ],
+              "boundaryId": "",
+              "position": {
+                "x": 478.3333320617676,
+                "y": 296.5
+              },
+              "spliced": false
+            },
+            {
+              "connections": [
+                2
+              ],
+              "boundaryId": "1tfokhpbqz375407e26hcp",
+              "position": {
+                "x": 662.3333320617676,
+                "y": 302.5
+              },
+              "spliced": false
+            },
+            {
+              "connections": [
+                3
+              ],
+              "boundaryId": "a2axadxjxcq96ciaphwmjf",
+              "position": {
+                "x": 159.33333206176758,
+                "y": 131.5
+              },
+              "spliced": false
+            },
+            {
+              "connections": [
+                3,
+                4,
+                6
+              ],
+              "boundaryId": "",
+              "position": {
+                "x": 394.3333320617676,
+                "y": 137.5
+              },
+              "spliced": false
+            },
+            {
+              "connections": [
+                5,
+                7,
+                4
+              ],
+              "boundaryId": "",
+              "position": {
+                "x": 484.3333320617676,
+                "y": 80.5
+              },
+              "spliced": false
+            },
+            {
+              "connections": [
+                5
+              ],
+              "boundaryId": "ue8f92avp2c54ghdhh571f",
+              "position": {
+                "x": 681.3333320617676,
+                "y": 119.5
+              },
+              "spliced": false
+            }
+          ],
+          "edges": [
+            {
+              "start": 0,
+              "end": 1,
+              "spliced": false
+            },
+            {
+              "start": 1,
+              "end": 2,
+              "spliced": false
+            },
+            {
+              "start": 2,
+              "end": 3,
+              "spliced": false
+            },
+            {
+              "start": 4,
+              "end": 5,
+              "spliced": false
+            },
+            {
+              "start": 5,
+              "end": 6,
+              "spliced": false
+            },
+            {
+              "start": 6,
+              "end": 7,
+              "spliced": false
+            },
+            {
+              "start": 1,
+              "end": 5,
+              "spliced": false
+            },
+            {
+              "start": 2,
+              "end": 6,
+              "spliced": false
+            }
+          ]
+        },
+        {
+          "vertices": [
+            {
+              "connections": [
+                1
+              ],
+              "boundaryId": "cbrdwr3tpyseqlmt7raa4",
+              "position": {
+                "x": 168.33333206176758,
+                "y": 384.5
+              },
+              "spliced": false
+            },
+            {
+              "connections": [
+                3
+              ],
+              "boundaryId": "1tfokhpbqz375407e26hcp",
+              "position": {
+                "x": 662.3333320617676,
+                "y": 302.5
+              },
+              "spliced": false
+            },
+            {
+              "connections": [
+                0
+              ],
+              "boundaryId": "a2axadxjxcq96ciaphwmjf",
+              "position": {
+                "x": 159.33333206176758,
+                "y": 131.5
+              },
+              "spliced": false
+            },
+            {
+              "connections": [
+                2
+              ],
+              "boundaryId": "ue8f92avp2c54ghdhh571f",
+              "position": {
+                "x": 681.3333320617676,
+                "y": 119.5
+              },
+              "spliced": false
+            },
+            {
+              "connections": [
+                2,
+                4,
+                0
+              ],
+              "boundaryId": "",
+              "position": {
+                "x": 641.343897302311,
+                "y": 120.41929735079208
+              },
+              "spliced": false
+            },
+            {
+              "connections": [
+                4,
+                3,
+                1
+              ],
+              "boundaryId": "",
+              "position": {
+                "x": 622.8732658473018,
+                "y": 309.05005147689513
+              },
+              "spliced": false
+            }
+          ],
+          "edges": [
+            {
+              "start": 2,
+              "end": 4,
+              "spliced": false
+            },
+            {
+              "start": 0,
+              "end": 5,
+              "spliced": false
+            },
+            {
+              "start": 4,
+              "end": 3,
+              "spliced": false
+            },
+            {
+              "start": 5,
+              "end": 1,
+              "spliced": false
+            },
+            {
+              "start": 4,
+              "end": 5,
+              "spliced": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "Ramp",
+      "graphs": [
+        {
+          "vertices": [
+            {
+              "connections": [
+                10
+              ],
+              "boundaryId": "2hqide6nw5hm1i00jiwkf",
+              "position": {
+                "x": 190,
+                "y": 419.8125
+              },
+              "spliced": false
+            },
+            {
+              "connections": [
+                0
+              ],
+              "boundaryId": "a1zg7g7jxp51vcv9hi947sj",
+              "position": {
+                "x": 183,
+                "y": 268.8125
+              },
+              "spliced": false
+            },
+            {
+              "connections": [
+                8,
+                10,
+                9
+              ],
+              "boundaryId": "",
+              "position": {
+                "x": 362,
+                "y": 412.8125
+              },
+              "spliced": false
+            },
+            {
+              "connections": [
+                1,
+                9,
+                0,
+                11
+              ],
+              "boundaryId": "",
+              "position": {
+                "x": 356,
+                "y": 272.8125
+              },
+              "spliced": false
+            },
+            {
+              "connections": [
+                8,
+                1,
+                2
+              ],
+              "boundaryId": "",
+              "position": {
+                "x": 453,
+                "y": 477.8125
+              },
+              "spliced": false
+            },
+            {
+              "connections": [
+                2,
+                3,
+                7
+              ],
+              "boundaryId": "",
+              "position": {
+                "x": 602,
+                "y": 475.8125
+              },
+              "spliced": false
+            },
+            {
+              "connections": [
+                7,
+                6,
+                5
+              ],
+              "boundaryId": "",
+              "position": {
+                "x": 656,
+                "y": 395.8125
+              },
+              "spliced": false
+            },
+            {
+              "connections": [
+                6,
+                3,
+                11,
+                4
+              ],
+              "boundaryId": "",
+              "position": {
+                "x": 647,
+                "y": 257.8125
+              },
+              "spliced": false
+            },
+            {
+              "connections": [
+                5
+              ],
+              "boundaryId": "cktehwqyj9up456cxnv4",
+              "position": {
+                "x": 838,
+                "y": 393.8125
+              },
+              "spliced": false
+            },
+            {
+              "connections": [
+                4
+              ],
+              "boundaryId": "0oezsgyrum31bbax2ld1jv",
+              "position": {
+                "x": 840,
+                "y": 247.8125
+              },
+              "spliced": false
+            }
+          ],
+          "edges": [
+            {
+              "start": 1,
+              "end": 3,
+              "spliced": false
+            },
+            {
+              "start": 3,
+              "end": 4,
+              "spliced": false
+            },
+            {
+              "start": 4,
+              "end": 5,
+              "spliced": false
+            },
+            {
+              "start": 5,
+              "end": 7,
+              "spliced": false
+            },
+            {
+              "start": 7,
+              "end": 9,
+              "spliced": false
+            },
+            {
+              "start": 6,
+              "end": 8,
+              "spliced": false
+            },
+            {
+              "start": 6,
+              "end": 7,
+              "spliced": false
+            },
+            {
+              "start": 6,
+              "end": 5,
+              "spliced": false
+            },
+            {
+              "start": 4,
+              "end": 2,
+              "spliced": false
+            },
+            {
+              "start": 2,
+              "end": 3,
+              "spliced": false
+            },
+            {
+              "start": 2,
+              "end": 0,
+              "spliced": false
+            },
+            {
+              "start": 3,
+              "end": 7,
+              "spliced": false
+            }
+          ]
+        },
+        {
+          "vertices": [
+            {
+              "connections": [
+                1
+              ],
+              "boundaryId": "a1zg7g7jxp51vcv9hi947sj",
+              "position": {
+                "x": 183,
+                "y": 268.8125
+              },
+              "spliced": false
+            },
+            {
+              "connections": [
+                3
+              ],
+              "boundaryId": "0oezsgyrum31bbax2ld1jv",
+              "position": {
+                "x": 840,
+                "y": 247.8125
+              },
+              "spliced": false
+            },
+            {
+              "connections": [
+                2
+              ],
+              "boundaryId": "cktehwqyj9up456cxnv4",
+              "position": {
+                "x": 838,
+                "y": 393.81250000000006
+              },
+              "spliced": false
+            },
+            {
+              "connections": [
+                0
+              ],
+              "boundaryId": "2hqide6nw5hm1i00jiwkf",
+              "position": {
+                "x": 190,
+                "y": 419.81249999999994
+              },
+              "spliced": false
+            },
+            {
+              "connections": [
+                0,
+                4,
+                2
+              ],
+              "boundaryId": "",
+              "position": {
+                "x": 798.0321590115045,
+                "y": 395.41614794089645
+              },
+              "spliced": true
+            },
+            {
+              "connections": [
+                4,
+                1,
+                3
+              ],
+              "boundaryId": "",
+              "position": {
+                "x": 800.020417625073,
+                "y": 249.09038619463237
+              },
+              "spliced": true
+            }
+          ],
+          "edges": [
+            {
+              "start": 3,
+              "end": 4,
+              "spliced": false
+            },
+            {
+              "start": 0,
+              "end": 5,
+              "spliced": false
+            },
+            {
+              "start": 4,
+              "end": 2,
+              "spliced": false
+            },
+            {
+              "start": 5,
+              "end": 1,
+              "spliced": false
+            },
+            {
+              "start": 4,
+              "end": 5,
+              "spliced": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

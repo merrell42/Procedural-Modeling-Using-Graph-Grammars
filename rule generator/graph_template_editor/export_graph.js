@@ -135,7 +135,14 @@ function addSplitPoint(splitsPerEdge, edgeIndex, t, point, key) {
 }
 
 function exportGraphWithSplices(graphTemplate) {
-    const graph = cloneExportGraph(graphTemplate);
+    // Library entries are stored in exported form, with splice edges already
+    // inserted. Collapse those first. Otherwise the clone below clears the
+    // spliced flags while leaving the splice edge in place, and the next
+    // import treats that edge as a real connection on the other graph.
+    const source = graphHasSplicedTopology(graphTemplate)
+        ? importGraphWithSplices(graphTemplate)
+        : graphTemplate;
+    const graph = cloneExportGraph(source);
     const templateCopy = {
         vertices: graph.vertices,
         edges: graph.edges,
