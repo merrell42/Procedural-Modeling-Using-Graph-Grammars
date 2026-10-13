@@ -91,6 +91,33 @@ button:disabled:hover {
     min-width: 0;
 }
 
+.error-message {
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: #fdecea;
+    border: 1px solid #f5c2c0;
+    border-radius: 4px;
+    color: #b71c1c;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.error-text {
+    white-space: pre-line;
+}
+
+.error-dismiss {
+    flex: none;
+    background: none;
+    border: none;
+    color: #b71c1c;
+    font-size: 20px;
+    line-height: 1;
+    padding: 0 4px;
+    cursor: pointer;
+}
+
 .global-actions {
     margin: 10px 10px 10px 0;
 }

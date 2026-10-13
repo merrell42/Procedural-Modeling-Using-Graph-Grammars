@@ -446,8 +446,8 @@ class TemplateEditor {
                 
                 // Add boundary vertex at same position in other template.
                 this.addBoundaryVertexInOtherTemplate(position, vertex.boundaryId);
-            } else {
             }
+            syncCurrentEntry();
         }
     }
     
@@ -486,6 +486,7 @@ class TemplateEditor {
         // Delay the click handler to allow double-click detection.
         this.clickTimeout = setTimeout(() => {
             this.processCanvasClick(x, y);
+            syncCurrentEntry();
             this.clickTimeout = null;
         }, 200);
     }
@@ -798,26 +799,60 @@ let editor1, editor2;
 
 // Library state. Each entry: { comment, graphs: [graphTemplate, ...] }.
 // activeIdx === -1 means the canvas pair is a "scratch" not bound to any
-// library entry. cleanState is a JSON.stringify of the canvas pair at the
-// moment it was last saved/loaded, used to detect unsaved edits on nav.
+// library entry yet (empty canvases). The first edit creates an entry.
 window.library = [];
 window.activeIdx = -1;
 window.includeGround = false;
-let cleanState = null;
 
-function getPairSerialized() {
-    return JSON.stringify({
-        e1: window.editor1.graphTemplate,
-        e2: window.editor2.graphTemplate,
+// Always keep the active library entry equal to the canvas pair. Call after
+// every edit. With no active entry, the first edit creates one.
+function syncCurrentEntry() {
+    if (!window.editor1 || !window.editor2) return;
+    const n = window.library.length;
+    if (window.activeIdx >= 0 && window.activeIdx < n) {
+        const entry = snapshotCurrentPair();
+        entry.comment = window.library[window.activeIdx].comment || '';
+        window.library[window.activeIdx] = entry;
+    } else if (
+        editor1.graphTemplate.vertices.length > 0 ||
+        editor2.graphTemplate.vertices.length > 0
+    ) {
+        window.library.push(snapshotCurrentPair());
+        window.activeIdx = window.library.length - 1;
+    }
+    updateLibraryUI();
+}
+
+// Boundary vertices must each have an edge. Returns a list of problem
+// descriptions (empty when the library is valid).
+function findBoundaryEdgeErrors(entries) {
+    const errors = [];
+    entries.forEach((entry, entryIdx) => {
+        const sides = ['left', 'right'];
+        (entry.graphs || []).forEach((graph, graphIdx) => {
+            const count = (graph.vertices || []).filter(
+                v => v.boundaryId && (v.connections || []).length === 0
+            ).length;
+            if (count > 0) {
+                errors.push(
+                    `Entry ${entryIdx + 1}, ${sides[graphIdx] ?? 'graph ' + (graphIdx + 1)} graph: ` +
+                    `${count} boundary vertex${count === 1 ? ' has' : 'es have'} no edge`
+                );
+            }
+        });
     });
+    return errors;
 }
 
-function markClean() {
-    cleanState = getPairSerialized();
-}
-
-function hasUnsavedEdits() {
-    return cleanState !== null && cleanState !== getPairSerialized();
+function showError(message) {
+    const el = document.getElementById('errorMessage');
+    const text = document.getElementById('errorText');
+    if (!el || !text) {
+        window.alert(message);
+        return;
+    }
+    text.textContent = message;
+    el.style.display = message ? 'flex' : 'none';
 }
 
 function clearBothCanvases() {
@@ -882,7 +917,6 @@ function loadLibraryEntry(idx) {
         editor2.refreshTemplate();
     }
     window.activeIdx = idx;
-    markClean();
     updateLibraryUI();
 }
 
@@ -900,7 +934,7 @@ function updateLibraryUI() {
     if (n === 0) {
         status.textContent = 'Empty';
     } else if (idx < 0) {
-        status.textContent = `(unsaved) / ${n}`;
+        status.textContent = `(new) / ${n}`;
     } else {
         status.textContent = `Entry ${idx + 1} / ${n}`;
     }
@@ -948,11 +982,6 @@ function serializeLibraryEntryForExport(entry) {
     };
 }
 
-function confirmDiscardUnsaved() {
-    if (!hasUnsavedEdits()) return true;
-    return window.confirm('You have unsaved edits to the current entry. Discard them?');
-}
-
 // Initialize both template editors on page load.
 document.addEventListener('DOMContentLoaded', () => {
     editor1 = new TemplateEditor(1);
@@ -975,45 +1004,34 @@ document.addEventListener('DOMContentLoaded', () => {
     const redoBtn = document.getElementById('redoBtn');
     const libPrevBtn = document.getElementById('libPrevBtn');
     const libNextBtn = document.getElementById('libNextBtn');
-    const libSaveBtn = document.getElementById('libSaveBtn');
     const libNewBtn = document.getElementById('libNewBtn');
     const libDeleteBtn = document.getElementById('libDeleteBtn');
     const libComment = document.getElementById('libComment');
     const includeGround = document.getElementById('includeGround');
 
+    document.getElementById('errorDismissBtn').addEventListener('click', () => showError(''));
+
     clearAllBtn.addEventListener('click', () => {
         History.commit();
         clearBothCanvases();
+        syncCurrentEntry();
     });
 
-    // Export the whole library as a JSON array. If the user has an unsaved
-    // scratch pair (activeIdx === -1) and the library is empty, fall back to
-    // exporting just that pair as a one-entry library so the file is never
-    // empty when something useful is on the canvas.
+    // Export the whole library as a JSON array. The library always holds the
+    // current canvas pair in its active entry, so it is exported as is.
+    // Refuse to export when any boundary vertex has no edge.
     exportAllBtn.addEventListener('click', () => {
-        const entries = window.library.length === 0
-            ? [{
-                comment: '',
-                graphs: [
-                    exportGraphWithSplices(editor1.graphTemplate),
-                    exportGraphWithSplices(editor2.graphTemplate),
-                ],
-            }]
-            : window.library.map((entry, idx) => {
-                // The open canvases are the entry being edited. Export those,
-                // not the last saved copy, so an edge added on the left stays
-                // on the left.
-                if (idx !== window.activeIdx) {
-                    return serializeLibraryEntryForExport(entry);
-                }
-                return serializeLibraryEntryForExport({
-                    comment: entry.comment || '',
-                    graphs: [
-                        cloneGraphData(editor1.graphTemplate),
-                        cloneGraphData(editor2.graphTemplate),
-                    ],
-                });
-            });
+        if (window.library.length === 0) {
+            showError('Cannot export: the library is empty.');
+            return;
+        }
+        const errors = findBoundaryEdgeErrors(window.library);
+        if (errors.length > 0) {
+            showError('Library not exported. Every boundary vertex needs an edge.\n' + errors.join('\n'));
+            return;
+        }
+        showError('');
+        const entries = window.library.map(entry => serializeLibraryEntryForExport(entry));
         const out = {
             includeGround: !!window.includeGround,
             templates: entries,
@@ -1030,6 +1048,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Per-pair export.
     exportPairBtn.addEventListener('click', () => {
+        const errors = findBoundaryEdgeErrors([{
+            graphs: [
+                cloneGraphData(editor1.graphTemplate),
+                cloneGraphData(editor2.graphTemplate),
+            ],
+        }]);
+        if (errors.length > 0) {
+            showError('Pair not exported. Every boundary vertex needs an edge.\n' +
+                errors.map(e => e.replace(/^Entry \d+, /, '')).join('\n'));
+            return;
+        }
+        showError('');
         const combined = [
             exportGraphWithSplices(editor1.graphTemplate),
             exportGraphWithSplices(editor2.graphTemplate),
@@ -1072,9 +1102,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         } else {
                             clearBothCanvases();
                             window.activeIdx = -1;
-                            markClean();
                             updateLibraryUI();
                         }
+                        showError('');
                     } else if (shape === 'pair') {
                         window.library = [serializeLibraryEntry({
                             comment: '',
@@ -1118,14 +1148,12 @@ document.addEventListener('DOMContentLoaded', () => {
                             console.error('Error importing file 2:', error.message);
                         }
                         window.activeIdx = -1;
-                        markClean();
-                        updateLibraryUI();
+                        syncCurrentEntry();
                     };
                     reader2.readAsText(files[1]);
                 } else {
                     window.activeIdx = -1;
-                    markClean();
-                    updateLibraryUI();
+                    syncCurrentEntry();
                 }
             };
             reader1.readAsText(files[0]);
@@ -1138,10 +1166,9 @@ document.addEventListener('DOMContentLoaded', () => {
     undoBtn.addEventListener('click', () => History.undo());
     redoBtn.addEventListener('click', () => History.redo());
 
-    // Library navigation. Non-destructive; prompts on unsaved edits.
+    // Library navigation. Edits are already saved to the active entry.
     libPrevBtn.addEventListener('click', () => {
         if (window.library.length === 0) return;
-        if (!confirmDiscardUnsaved()) return;
         const n = window.library.length;
         const cur = window.activeIdx < 0 ? 0 : window.activeIdx;
         const next = (cur - 1 + n) % n;
@@ -1150,42 +1177,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     libNextBtn.addEventListener('click', () => {
         if (window.library.length === 0) return;
-        if (!confirmDiscardUnsaved()) return;
         const n = window.library.length;
         const cur = window.activeIdx < 0 ? -1 : window.activeIdx;
         const next = (cur + 1) % n;
         loadLibraryEntry(next);
     });
 
-    // Persist the canvas pair to the library. If we're on an active entry,
-    // overwrite it; if we're in scratch state (activeIdx === -1), push a
-    // new entry. Canvas stays so the user can keep editing; the "New entry"
-    // button is the explicit way to clear and start fresh.
-    libSaveBtn.addEventListener('click', () => {
-        History.commit();
-        const entry = snapshotCurrentPair();
-        if (window.activeIdx < 0) {
-            entry.comment = (libComment.value || '').trim();
-            window.library.push(entry);
-            window.activeIdx = window.library.length - 1;
-        } else {
-            const keepComment = window.library[window.activeIdx].comment || '';
-            entry.comment = (libComment.value || keepComment).trim();
-            window.library[window.activeIdx] = entry;
-        }
-        markClean();
-        updateLibraryUI();
-    });
-
-    // Clear the canvas to start a new entry. Prompts if there are unsaved
-    // edits on the current entry so the user doesn't lose work by accident.
+    // Clear the canvas to start a new entry. The current entry is already
+    // saved; the new one is created on the first edit.
     libNewBtn.addEventListener('click', () => {
-        if (!confirmDiscardUnsaved()) return;
         History.commit();
         clearBothCanvases();
         window.activeIdx = -1;
         libComment.value = '';
-        markClean();
         updateLibraryUI();
     });
 
@@ -1196,7 +1200,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (window.library.length === 0) {
             window.activeIdx = -1;
             clearBothCanvases();
-            markClean();
         } else {
             const next = Math.min(window.activeIdx, window.library.length - 1);
             loadLibraryEntry(next);
@@ -1230,7 +1233,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    markClean();
     updateLibraryUI();
     updateHistoryButtons();
 });
