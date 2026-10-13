@@ -9,6 +9,7 @@
     var workspace = document.getElementById('workspace');
     var matchWarning = document.getElementById('matchWarning');
     var typeSelect = document.getElementById('typeSelect');
+    var typePicker = typeSelect.parentNode;
     var summary = document.getElementById('summary');
     var fields = document.getElementById('fields');
     var backBtn = document.getElementById('backBtn');
@@ -39,6 +40,14 @@
     };
 
     var drag = null;
+
+    window.PrimitivesDecorations.init({
+        doc: function () { return state.doc; },
+        rerender: function () { renderFields(); },
+        open: openDecoration,
+        back: function () { stepSelection(-1); },
+        renamed: renameDecorationInHistory,
+    });
 
     function sub(a, b) {
         return { x: a.x - b.x, y: a.y - b.y, z: a.z - b.z };
@@ -598,10 +607,39 @@
             });
             typeSelect.appendChild(group);
         });
-        typeSelect.value = state.selection ? state.selection.kind + ':' + state.selection.typeIndex : '';
+        typeSelect.value = state.selection && !isDecorationSelection()
+            ? state.selection.kind + ':' + state.selection.typeIndex
+            : '';
+    }
+
+    // A decoration is not part of a type. Opening one selects it in place of the type.
+    function isDecorationSelection() {
+        return !!state.selection && state.selection.kind === 'decoration';
+    }
+
+    function openDecoration(kind, id) {
+        state.selection = { kind: 'decoration', decorationKind: kind, id: id, typeIndex: -1, elementIndex: -1 };
+        state.hover = null;
+        recordSelection();
+        refreshPanel();
+        draw();
+    }
+
+    function renameDecorationInHistory(kind, oldId, newId) {
+        function update(entry) {
+            if (entry && entry.kind === 'decoration' && entry.decorationKind === kind && entry.id === oldId) {
+                entry.id = newId;
+            }
+        }
+        update(state.selection);
+        if (selectionHistory) selectionHistory.stack.forEach(update);
     }
 
     function updateSummary() {
+        // A decoration is not a type, so the type picker and summary are not shown for it.
+        typePicker.hidden = isDecorationSelection();
+        summary.hidden = isDecorationSelection();
+        if (isDecorationSelection()) return;
         if (!state.selection || !currentType()) {
             summary.textContent = 'Click a face, edge, or vertex.';
             return;
@@ -799,9 +837,6 @@
         if (type.normal) addReadOnly(fields, 'Type normal', formatVec(type.normal));
         addText(fields, type, 'material', 'Material');
         addColor(fields, type);
-        ['decoration'].forEach(function (key) {
-            if (type[key] != null) addText(fields, type, key, 'Decoration');
-        });
         ['spacing', 'noiseScale', 'noiseIntensity', 'noiseDecay'].forEach(function (key) {
             if (type[key] != null) addNumber(fields, type, key, key);
         });
@@ -863,7 +898,6 @@
         addCheck(checks, type, 'isRigid', 'Rigid');
         fields.appendChild(checks);
         if (type.roundRadius != null) addNumber(fields, type, 'roundRadius', 'Round radius');
-        if (type.decoration != null) addText(fields, type, 'decoration', 'Decoration');
 
         var settings = el('fieldset');
         settings.appendChild(el('legend', null, 'Edge settings'));
@@ -879,7 +913,6 @@
 
     function renderVertexFields(type) {
         addReadOnlyCheck(fields, 'Spliced', type.spliced);
-        if (type.decoration != null) addText(fields, type, 'decoration', 'Decoration');
 
         var halfs = el('fieldset');
         halfs.appendChild(el('legend', null, 'Half-edge types'));
@@ -929,6 +962,12 @@
         // Record any edit that has not been committed yet before the inputs are rebuilt.
         commitChange();
         fields.innerHTML = '';
+        if (isDecorationSelection()) {
+            window.PrimitivesDecorations.renderPanel(fields, state.selection.decorationKind, state.selection.id);
+            absorbDefaults();
+            updateHistoryButtons();
+            return;
+        }
         var type = currentType();
         if (!type) {
             updateHistoryButtons();
@@ -937,6 +976,7 @@
         if (state.selection.kind === 'face') renderFaceFields(type);
         else if (state.selection.kind === 'edge') renderEdgeFields(type);
         else renderVertexFields(type);
+        window.PrimitivesDecorations.render(fields, state.selection.kind, type);
         // Rendering can add missing defaults, such as edge settings. That is not an edit.
         absorbDefaults();
         updateHistoryButtons();
@@ -944,7 +984,7 @@
 
     // ----- Undo and redo ------------------------------------------------
     // Two histories.
-    //  - The edit history covers every change to the JSON. It is driven by
+    //  - The edit history covers every change to the types and decorations. It is driven by
     //    Ctrl+Z, Ctrl+Y, and Shift+Ctrl+Z. Each entry is the JSON text of the
     //    types, so a restore never shares objects with the live document.
     //  - The selection history records which type was selected. The arrows at
@@ -952,18 +992,23 @@
     var whole = null;
     var selectionHistory = null;
 
+    // The part of the document the editor changes: the types and the decorations.
+    function editableText() {
+        return JSON.stringify({ types: state.doc.types, decorations: state.doc.decorations });
+    }
+
     function resetHistory() {
-        whole = { stack: [JSON.stringify(state.doc.types)], index: 0 };
+        whole = { stack: [editableText()], index: 0 };
         selectionHistory = { stack: [null], index: 0 };
     }
 
     function absorbDefaults() {
         if (!whole) return;
-        whole.stack[whole.index] = JSON.stringify(state.doc.types);
+        whole.stack[whole.index] = editableText();
     }
 
     function pushWhole() {
-        var text = JSON.stringify(state.doc.types);
+        var text = editableText();
         if (text === whole.stack[whole.index]) return false;
         whole.stack.length = whole.index + 1;
         whole.stack.push(text);
@@ -977,7 +1022,10 @@
     }
 
     function restoreWhole(text) {
-        state.doc.types = JSON.parse(text);
+        var restored = JSON.parse(text);
+        state.doc.types = restored.types;
+        if (restored.decorations === undefined) delete state.doc.decorations;
+        else state.doc.decorations = restored.decorations;
         refreshPanel();
         draw();
     }
@@ -1000,16 +1048,25 @@
 
     function sameType(a, b) {
         if (!a || !b) return !a && !b;
-        return a.kind === b.kind && a.typeIndex === b.typeIndex;
+        return a.kind === b.kind && a.typeIndex === b.typeIndex && a.id === b.id &&
+            a.decorationKind === b.decorationKind;
+    }
+
+    function copySelection(selection) {
+        return selection ? {
+            kind: selection.kind,
+            typeIndex: selection.typeIndex,
+            elementIndex: selection.elementIndex,
+            decorationKind: selection.decorationKind,
+            id: selection.id,
+        } : null;
     }
 
     // Call after state.selection changes because of something the user did.
     // Clicking another element of the type that is already selected is not a new step.
     function recordSelection() {
         if (!selectionHistory) return;
-        var selection = state.selection
-            ? { kind: state.selection.kind, typeIndex: state.selection.typeIndex, elementIndex: state.selection.elementIndex }
-            : null;
+        var selection = copySelection(state.selection);
         if (sameType(selection, selectionHistory.stack[selectionHistory.index])) {
             selectionHistory.stack[selectionHistory.index] = selection;
             return;
@@ -1024,10 +1081,7 @@
         var target = selectionHistory.index + direction;
         if (target < 0 || target >= selectionHistory.stack.length) return;
         selectionHistory.index = target;
-        var entry = selectionHistory.stack[target];
-        state.selection = entry
-            ? { kind: entry.kind, typeIndex: entry.typeIndex, elementIndex: entry.elementIndex }
-            : null;
+        state.selection = copySelection(selectionHistory.stack[target]);
         state.hover = null;
         refreshPanel();
         draw();

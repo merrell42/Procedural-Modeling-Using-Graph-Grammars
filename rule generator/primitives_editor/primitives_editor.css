@@ -156,6 +156,18 @@ aside .banner {
     width: 100%;
 }
 
+/* Number fields have no increment/decrement arrows. */
+input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
 .summary {
     margin: 10px 0;
     color: #333;
@@ -296,6 +308,64 @@ legend {
     margin: 6px 0;
     color: #666;
     font-size: 13px;
+}
+
+.field select,
+.deco-child-row select,
+.half-table input[type="number"],
+.deco-child-row input[type="number"] {
+    font: inherit;
+    font-weight: normal;
+    padding: 5px 6px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 100%;
+    background: white;
+}
+
+.half-table input[type="number"] {
+    padding: 2px 4px;
+}
+
+.deco-child-row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    margin: 6px 0;
+}
+
+.deco-child-row select {
+    flex: 1;
+    min-width: 0;
+}
+
+.deco-child-row input[type="number"] {
+    flex: 0 0 64px;
+    width: 64px;
+}
+
+button.small {
+    padding: 2px 8px;
+    font-size: 12px;
+    margin-top: 6px;
+}
+
+.deco-child-row button.small,
+.half-table button.small {
+    margin-top: 0;
+}
+
+button.plus,
+button.icon {
+    flex: 0 0 32px;
+    width: 32px;
+    padding: 4px 0;
+    font-size: 16px;
+    line-height: 1;
+}
+
+.warn-text {
+    color: #8a5a00;
 }
 
 .extra {
