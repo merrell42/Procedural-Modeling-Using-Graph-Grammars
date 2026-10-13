@@ -269,10 +269,27 @@ legend {
     white-space: nowrap;
 }
 
+.history-bar {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 10px;
+}
+
+.history-bar button {
+    min-width: 40px;
+}
+
+.type-row {
+    cursor: pointer;
+}
+
+.type-row:hover td {
+    background: #fff3c4;
+}
+
 .type-link {
     color: #1a5fb4;
     text-decoration: underline;
-    cursor: pointer;
 }
 
 .readonly {

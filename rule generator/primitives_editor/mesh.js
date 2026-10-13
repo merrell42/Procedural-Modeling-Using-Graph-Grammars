@@ -597,6 +597,14 @@
         return a.x * b.x + a.y * b.y + a.z * b.z;
     }
 
+    function countUnspliced(list) {
+        var count = 0;
+        for (var i = 0; i < list.length; i++) {
+            if (!list[i] || !list[i].spliced) count++;
+        }
+        return count;
+    }
+
     function countError(view, types) {
         if (!types || !Array.isArray(types.faceTypes) || !Array.isArray(types.edgeTypes) || !Array.isArray(types.vertexTypes)) {
             return 'JSON has no face, edge, and vertex types';
@@ -604,11 +612,16 @@
         if (view.faceTypeCount !== types.faceTypes.length) {
             return 'face type count is ' + view.faceTypeCount + ' in the OBJ and ' + types.faceTypes.length + ' in the JSON';
         }
-        if (view.edgeTypeCount !== types.edgeTypes.length) {
-            return 'edge type count is ' + view.edgeTypeCount + ' in the OBJ and ' + types.edgeTypes.length + ' in the JSON';
+        // The rule generator appends spliced edge and vertex types after the
+        // ones that come from the mesh. They have no element in the OBJ, so they
+        // are not part of the count.
+        var edgeCount = countUnspliced(types.edgeTypes);
+        if (view.edgeTypeCount !== edgeCount) {
+            return 'edge type count is ' + view.edgeTypeCount + ' in the OBJ and ' + edgeCount + ' in the JSON';
         }
-        if (view.vertexTypeCount !== types.vertexTypes.length) {
-            return 'vertex type count is ' + view.vertexTypeCount + ' in the OBJ and ' + types.vertexTypes.length + ' in the JSON';
+        var vertexCount = countUnspliced(types.vertexTypes);
+        if (view.vertexTypeCount !== vertexCount) {
+            return 'vertex type count is ' + view.vertexTypeCount + ' in the OBJ and ' + vertexCount + ' in the JSON';
         }
         return '';
     }

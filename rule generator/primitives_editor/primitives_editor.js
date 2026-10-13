@@ -11,6 +11,8 @@
     var typeSelect = document.getElementById('typeSelect');
     var summary = document.getElementById('summary');
     var fields = document.getElementById('fields');
+    var backBtn = document.getElementById('backBtn');
+    var forwardBtn = document.getElementById('forwardBtn');
 
     var gl = canvas.getContext('webgl', { antialias: true });
     var litProgram = null;
@@ -793,11 +795,10 @@
         if (hitIndex(state.selection, 'face') >= 0) {
             var face = state.view.faces[hitIndex(state.selection, 'face')];
             addReadOnly(fields, 'Mesh normal', formatVec(face.normal));
-            if (face.material) addReadOnly(fields, 'Mesh material', face.material);
         }
+        if (type.normal) addReadOnly(fields, 'Type normal', formatVec(type.normal));
         addText(fields, type, 'material', 'Material');
         addColor(fields, type);
-        addVec3(fields, type, 'normal', 'Type normal');
         ['decoration'].forEach(function (key) {
             if (type[key] != null) addText(fields, type, key, 'Decoration');
         });
@@ -805,6 +806,27 @@
             if (type[key] != null) addNumber(fields, type, key, key);
         });
         addExtra(fields, type, ['material', 'color', 'normal', 'decoration', 'spacing', 'noiseScale', 'noiseIntensity', 'noiseDecay']);
+    }
+
+    // A table row that refers to another type. Hovering anywhere on the row
+    // highlights that type on the canvas and clicking anywhere on it selects it.
+    function typeRow(kind, typeIndex) {
+        var row = el('tr', 'type-row');
+        row.title = 'Select ' + kindLabel(kind).toLowerCase() + ' ' + typeIndex;
+        row.addEventListener('mouseenter', function () {
+            state.hover = { kind: kind, typeIndex: typeIndex, elementIndex: -1 };
+            draw();
+        });
+        row.addEventListener('mouseleave', function () {
+            if (!state.hover || state.hover.elementIndex >= 0) return;
+            state.hover = null;
+            draw();
+        });
+        row.addEventListener('click', function () {
+            state.hover = null;
+            selectType(kind, typeIndex);
+        });
+        return row;
     }
 
     function renderEdgeFields(type) {
@@ -825,18 +847,9 @@
             });
             table.appendChild(head);
             faceList.forEach(function (entry, index) {
-                var row = el('tr');
+                var row = typeRow('face', Number(entry.type));
                 row.appendChild(el('td', null, String(index)));
-                var faceCell = el('td');
-                var link = el('a', 'type-link', String(entry.type));
-                link.href = '#';
-                link.title = 'Select face type ' + entry.type;
-                link.addEventListener('click', function (event) {
-                    event.preventDefault();
-                    selectType('face', Number(entry.type));
-                });
-                faceCell.appendChild(link);
-                row.appendChild(faceCell);
+                row.appendChild(el('td', 'type-link', String(entry.type)));
                 row.appendChild(el('td', null, entry.onRight ? 'right' : 'left'));
                 table.appendChild(row);
             });
@@ -881,18 +894,9 @@
             });
             table.appendChild(head);
             halfList.forEach(function (half, index) {
-                var row = el('tr');
+                var row = typeRow('edge', Number(half.edge));
                 row.appendChild(el('td', null, String(index)));
-                var edgeCell = el('td');
-                var link = el('a', 'type-link', String(half.edge));
-                link.href = '#';
-                link.title = 'Select edge type ' + half.edge;
-                link.addEventListener('click', function (event) {
-                    event.preventDefault();
-                    selectType('edge', Number(half.edge));
-                });
-                edgeCell.appendChild(link);
-                row.appendChild(edgeCell);
+                row.appendChild(el('td', 'type-link', String(half.edge)));
                 row.appendChild(el('td', null, half.isAtStart ? 'yes' : 'no'));
                 row.appendChild(el('td', 'mono', half.dir ? formatVec(half.dir) : ''));
                 table.appendChild(row);
@@ -922,13 +926,130 @@
     }
 
     function renderFields() {
+        // Record any edit that has not been committed yet before the inputs are rebuilt.
+        commitChange();
         fields.innerHTML = '';
         var type = currentType();
-        if (!type) return;
+        if (!type) {
+            updateHistoryButtons();
+            return;
+        }
         if (state.selection.kind === 'face') renderFaceFields(type);
         else if (state.selection.kind === 'edge') renderEdgeFields(type);
         else renderVertexFields(type);
+        // Rendering can add missing defaults, such as edge settings. That is not an edit.
+        absorbDefaults();
+        updateHistoryButtons();
     }
+
+    // ----- Undo and redo ------------------------------------------------
+    // Two histories.
+    //  - The edit history covers every change to the JSON. It is driven by
+    //    Ctrl+Z, Ctrl+Y, and Shift+Ctrl+Z. Each entry is the JSON text of the
+    //    types, so a restore never shares objects with the live document.
+    //  - The selection history records which type was selected. The arrows at
+    //    the top of the panel step back and forward through it.
+    var whole = null;
+    var selectionHistory = null;
+
+    function resetHistory() {
+        whole = { stack: [JSON.stringify(state.doc.types)], index: 0 };
+        selectionHistory = { stack: [null], index: 0 };
+    }
+
+    function absorbDefaults() {
+        if (!whole) return;
+        whole.stack[whole.index] = JSON.stringify(state.doc.types);
+    }
+
+    function pushWhole() {
+        var text = JSON.stringify(state.doc.types);
+        if (text === whole.stack[whole.index]) return false;
+        whole.stack.length = whole.index + 1;
+        whole.stack.push(text);
+        whole.index++;
+        return true;
+    }
+
+    function commitChange() {
+        if (!state.doc || !whole) return false;
+        return pushWhole();
+    }
+
+    function restoreWhole(text) {
+        state.doc.types = JSON.parse(text);
+        refreshPanel();
+        draw();
+    }
+
+    function undo() {
+        if (!state.doc || !whole) return;
+        commitChange();
+        if (whole.index <= 0) return;
+        whole.index--;
+        restoreWhole(whole.stack[whole.index]);
+    }
+
+    function redo() {
+        if (!state.doc || !whole) return;
+        commitChange();
+        if (whole.index + 1 >= whole.stack.length) return;
+        whole.index++;
+        restoreWhole(whole.stack[whole.index]);
+    }
+
+    function sameType(a, b) {
+        if (!a || !b) return !a && !b;
+        return a.kind === b.kind && a.typeIndex === b.typeIndex;
+    }
+
+    // Call after state.selection changes because of something the user did.
+    // Clicking another element of the type that is already selected is not a new step.
+    function recordSelection() {
+        if (!selectionHistory) return;
+        var selection = state.selection
+            ? { kind: state.selection.kind, typeIndex: state.selection.typeIndex, elementIndex: state.selection.elementIndex }
+            : null;
+        if (sameType(selection, selectionHistory.stack[selectionHistory.index])) {
+            selectionHistory.stack[selectionHistory.index] = selection;
+            return;
+        }
+        selectionHistory.stack.length = selectionHistory.index + 1;
+        selectionHistory.stack.push(selection);
+        selectionHistory.index++;
+    }
+
+    function stepSelection(direction) {
+        if (!state.doc || !selectionHistory) return;
+        var target = selectionHistory.index + direction;
+        if (target < 0 || target >= selectionHistory.stack.length) return;
+        selectionHistory.index = target;
+        var entry = selectionHistory.stack[target];
+        state.selection = entry
+            ? { kind: entry.kind, typeIndex: entry.typeIndex, elementIndex: entry.elementIndex }
+            : null;
+        state.hover = null;
+        refreshPanel();
+        draw();
+    }
+
+    function updateHistoryButtons() {
+        backBtn.disabled = !selectionHistory || selectionHistory.index <= 0;
+        forwardBtn.disabled = !selectionHistory || selectionHistory.index + 1 >= selectionHistory.stack.length;
+    }
+
+    fields.addEventListener('change', function () { commitChange(); });
+    backBtn.addEventListener('click', function () { stepSelection(-1); });
+    forwardBtn.addEventListener('click', function () { stepSelection(1); });
+    document.addEventListener('keydown', function (event) {
+        if (!(event.ctrlKey || event.metaKey) || event.altKey) return;
+        if (!state.doc || workspace.hidden) return;
+        var key = event.key.toLowerCase();
+        if (key === 'z' && !event.shiftKey) undo();
+        else if (key === 'y' || (key === 'z' && event.shiftKey)) redo();
+        else return;
+        event.preventDefault();
+    });
 
     function refreshPanel() {
         fillSelect();
@@ -955,6 +1076,7 @@
             typeIndex: typeIndex,
             elementIndex: firstIndex(kind, typeIndex),
         };
+        recordSelection();
         refreshPanel();
         draw();
     }
@@ -963,12 +1085,14 @@
         if (!hit) {
             if (!state.selection) return;
             state.selection = null;
+            recordSelection();
             refreshPanel();
             draw();
             return;
         }
         if (hit.typeIndex < 0) return;
         state.selection = hit;
+        recordSelection();
         refreshPanel();
         draw();
     }
@@ -1027,6 +1151,7 @@
         }
         var mismatch = window.PrimitivesMesh.countError(loaded.view, doc.types);
         state.doc = doc;
+        resetHistory();
         state.fileName = fileName || 'primitives.json';
         state.view = loaded.view;
         state.selection = null;
@@ -1092,6 +1217,7 @@
                 elementIndex: firstIndex(kind, typeIndex),
             };
         }
+        recordSelection();
         updateSummary();
         renderFields();
         draw();
@@ -1171,6 +1297,10 @@
 
     window.primitivesEditor = {
         loadText: loadText,
+        undo: undo,
+        redo: redo,
+        back: function () { stepSelection(-1); },
+        forward: function () { stepSelection(1); },
         snapshot: function () {
             var type = currentType();
             return {
