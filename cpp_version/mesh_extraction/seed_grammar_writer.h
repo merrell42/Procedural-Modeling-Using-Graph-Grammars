@@ -21,9 +21,12 @@ bool writeSeedGrammar(const HalfEdgeMesh&    mesh,
                       const std::string&     outPath,
                       std::string*           error = nullptr);
 
-// Writes a primitives JSON to `outPath`. Returns false (and sets `error`) on I/O failure.
+// Writes a primitives JSON to `outPath`. `objText` is the source Wavefront
+// file, stored as a string so a browser can load the mesh from this JSON alone.
+// Returns false (and sets `error`) on I/O failure.
 bool writePrimitives(const ExtractedTypes& types,
                      const std::string&    name,
+                     const std::string&    objText,
                      const std::string&    outPath,
                      std::string*          error = nullptr);
 

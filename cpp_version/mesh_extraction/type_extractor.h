@@ -26,11 +26,14 @@ struct ExtractedTypes {
     std::vector<FaceType> faceTypes;
     std::vector<int>      faceTypeOfFace;       // [faceIdx] = faceType index
 
-    // Edge types. One per unique (faceL, faceR, dir_quantized).
-    // `dir` is the unit vector from the canonical halfA's origin to its dest.
-    // On a two-face edge, `faceData[0]` is the RIGHT face (halfB's face) with
-    // onRight=true, and `faceData[1]` is the LEFT face (halfA's face) with
-    // onRight=false. An open-boundary edge has only the left face.
+    // Edge types. One per unique undirected (face pair, direction).
+    // Reversing `dir` and swapping the left and right faces is the same type.
+    // The stored direction is the lexicographically greater quantized
+    // direction. If the two quantized directions are equal, the orientation
+    // with the lexicographically smaller (left, right) face-type pair is kept.
+    // On a two-face edge, `faceData[0]` is the right face (onRight=true) and
+    // `faceData[1]` is the left face (onRight=false), both relative to `dir`.
+    // An open-boundary edge has only the one face, on the side `dir` puts it.
     struct FaceData {
         int  faceType;   // index into faceTypes
         bool onRight;
@@ -50,7 +53,7 @@ struct ExtractedTypes {
     // General non-manifold σ-graphs are a later TODO.
     struct HalfEdgeType {
         int  edgeType;   // index into edgeTypes
-        bool isAtStart;  // true if this halfEdge originates at the vertex's "start"
+        bool isAtStart;  // true if this vertex is the origin of the edge type's dir
     };
     struct VertexType {
         std::vector<HalfEdgeType> halfEdgeTypes;

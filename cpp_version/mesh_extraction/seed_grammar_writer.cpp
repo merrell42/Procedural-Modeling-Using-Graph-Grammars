@@ -250,12 +250,14 @@ bool writeSeedGrammar(const HalfEdgeMesh&    mesh,
 
 bool writePrimitives(const ExtractedTypes& types,
                      const std::string&    name,
+                     const std::string&    objText,
                      const std::string&    outPath,
                      std::string*          error) {
     Json root;
     registerJsonMigrations();
     root["name"]    = name;
     root["version"] = JsonVersionManager::getLatestVersion();
+    root["obj"]     = objText;
     root["types"]   = buildTypesJson(types);
     return writeJsonFile(root, outPath, error);
 }

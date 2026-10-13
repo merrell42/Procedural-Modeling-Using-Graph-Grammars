@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Primitives Editor</title>
+    <link rel="stylesheet" href="primitives_editor.css">
+</head>
+<body>
+    <header>
+        <h1>Primitives Editor</h1>
+        <div class="toolbar">
+            <button id="openBtn" type="button">Open JSON</button>
+            <button id="downloadBtn" type="button" disabled>Download JSON</button>
+            <input id="fileInput" type="file" accept=".json,application/json" hidden>
+            <span id="fileStatus"></span>
+        </div>
+    </header>
+
+    <p id="loadError" class="banner error" hidden></p>
+
+    <div id="empty" class="empty">
+        <p>Open a primitives JSON file. The mesh is read from the OBJ stored in the file.</p>
+    </div>
+
+    <div id="workspace" class="workspace" hidden>
+        <div class="viewport">
+            <canvas id="view"></canvas>
+            <p id="hint" class="hint">Drag to orbit. Scroll to zoom. Right-drag to pan. Hover to highlight.</p>
+        </div>
+        <aside>
+            <div class="history-bar">
+                <button id="backBtn" type="button" title="Go back to the previous selection" aria-label="Previous selection" disabled>&larr;</button>
+                <button id="forwardBtn" type="button" title="Go forward to the next selection" aria-label="Next selection" disabled>&rarr;</button>
+            </div>
+            <p id="matchWarning" class="banner warning" hidden></p>
+            <label class="type-picker">Type
+                <select id="typeSelect">
+                    <option value="">Choose a type</option>
+                </select>
+            </label>
+            <p id="summary" class="summary">Click a face, edge, or vertex.</p>
+            <div id="fields"></div>
+        </aside>
+    </div>
+
+    <script src="earcut.js"></script>
+    <script src="mesh.js"></script>
+    <script src="decorations_editor.js"></script>
+    <script src="primitives_editor.js"></script>
+</body>
+</html>

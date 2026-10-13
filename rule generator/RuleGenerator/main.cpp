@@ -16,7 +16,8 @@
 //                          arbitrary primitives JSON.
 //
 //   extract [<meshesDir> <outDir>]   Converts every .obj in meshesDir to a
-//                          primitives JSON in outDir. Defaults: the `meshes`
+//                          primitives JSON in outDir. The OBJ text is stored
+//                          in the JSON `obj` string. Defaults: the `meshes`
 //                          and `mesh_primitives` directories next to this
 //                          tool (found by walking up from cwd / the exe).
 //
@@ -36,7 +37,7 @@ using namespace std;
 namespace {
 
 const char* kDefaultLibrary = "../graph templates/ramp.json";
-constexpr const char* kDefaultPrimitives = "../mesh_primitives/ramp.json";
+constexpr const char* kDefaultPrimitives = "../mesh_primitives/cube.json";
 
 // constexpr const char* kDefaultLibrary = "../graph templates/graph_template_diagonal.json";
 // constexpr const char* kDefaultPrimitives = "../primitives/diagonal box.json";

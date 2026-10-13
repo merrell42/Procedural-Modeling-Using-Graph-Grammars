@@ -236,7 +236,11 @@ int GenerateRules(
 		}
 		cout << "  total     : " << totalMatches << " match(es) across "
 			 << templateGraphSets.size() << " entries" << endl;
-		writeStringToFile(outputPath, grammar.exportJson().dump(2));
+		Json exported = grammar.exportJson();
+		if (parsed.contains("obj") && parsed["obj"].is_string()) {
+			exported["obj"] = parsed["obj"].get<std::string>();
+		}
+		writeStringToFile(outputPath, exported.dump(2));
 		cout << "  output    : " << outputPath << "\n";
 		return 0;
 	} catch (const exception& e) {
