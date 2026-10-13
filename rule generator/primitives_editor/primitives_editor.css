@@ -1,0 +1,292 @@
+* {
+    box-sizing: border-box;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-family: Arial, sans-serif;
+    background: #f3f3f3;
+    color: #222;
+}
+
+header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 10px 14px;
+    background: white;
+    border-bottom: 1px solid #ddd;
+}
+
+h1 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.toolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+
+#fileStatus {
+    color: #555;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+button {
+    padding: 6px 10px;
+    border: 1px solid #bbb;
+    background: white;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+button:hover:not(:disabled) {
+    background: #f7f7f7;
+}
+
+button:disabled {
+    color: #999;
+    cursor: default;
+}
+
+.workspace {
+    flex: 1;
+    display: flex;
+    min-height: 0;
+}
+
+.viewport {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+}
+
+canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    background: #dfe3e8;
+    touch-action: none;
+}
+
+.hint {
+    position: absolute;
+    left: 12px;
+    bottom: 8px;
+    margin: 0;
+    color: #4d5560;
+    font-size: 12px;
+    pointer-events: none;
+}
+
+aside {
+    width: 360px;
+    overflow: auto;
+    background: white;
+    border-left: 1px solid #ddd;
+    padding: 12px 14px 28px;
+}
+
+.empty {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #555;
+    padding: 24px;
+    text-align: center;
+}
+
+.banner {
+    margin: 12px 14px 0;
+    padding: 8px 10px;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+aside .banner {
+    margin: 0 0 12px;
+}
+
+.error {
+    background: #fde8e8;
+    border: 1px solid #e7b4b4;
+    color: #7a1f1f;
+}
+
+.warning {
+    background: #fff6dd;
+    border: 1px solid #e6d39a;
+    color: #5c4a12;
+}
+
+.type-picker {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 13px;
+    color: #444;
+    font-weight: bold;
+}
+
+.type-picker select,
+.field input[type="text"],
+.field input[type="number"],
+.row input[type="number"] {
+    font: inherit;
+    font-weight: normal;
+    padding: 5px 6px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 100%;
+}
+
+.summary {
+    margin: 10px 0;
+    color: #333;
+    line-height: 1.4;
+}
+
+.note {
+    margin: 0 0 8px;
+    color: #666;
+    font-size: 13px;
+}
+
+.field {
+    margin: 10px 0;
+}
+
+.field > span,
+.row > span,
+.checks label {
+    display: block;
+    margin-bottom: 4px;
+    color: #444;
+    font-size: 13px;
+}
+
+.vec,
+.row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.vec label {
+    flex: 1;
+    min-width: 0;
+    font-size: 12px;
+    color: #666;
+}
+
+.color-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.color-row input[type="color"] {
+    width: 42px;
+    height: 28px;
+    padding: 0;
+    border: 1px solid #ccc;
+    background: white;
+}
+
+.checks label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 4px 0;
+}
+
+fieldset {
+    border: 1px solid #e4e4e4;
+    border-radius: 4px;
+    margin: 12px 0;
+    padding: 8px 10px 10px;
+}
+
+legend {
+    padding: 0 4px;
+    font-size: 13px;
+    color: #444;
+}
+
+.half-row,
+.face-data-row {
+    display: grid;
+    grid-template-columns: 72px 1fr;
+    gap: 6px 8px;
+    align-items: center;
+    margin: 8px 0;
+    padding-top: 8px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.half-row:first-of-type,
+.face-data-row:first-of-type {
+    border-top: 0;
+    padding-top: 0;
+}
+
+.half-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.half-table th,
+.half-table td {
+    padding: 2px 4px;
+    text-align: left;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.half-table th {
+    color: #666;
+    font-weight: normal;
+}
+
+.half-table .mono {
+    font-family: Consolas, monospace;
+    white-space: nowrap;
+}
+
+.type-link {
+    color: #1a5fb4;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.readonly {
+    margin: 6px 0;
+    color: #666;
+    font-size: 13px;
+}
+
+.extra {
+    margin: 8px 0 0;
+    padding: 8px;
+    background: #f7f7f7;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: pre-wrap;
+    word-break: break-word;
+}

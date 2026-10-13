@@ -58,9 +58,9 @@
       },
       {
         "dir": {
-          "x": 0.0,
-          "y": 0.0,
-          "z": -1.0
+          "x": -0.0,
+          "y": -0.0,
+          "z": 1.0
         },
         "edgeSettings": {
           "Max Length": 4.0,
@@ -71,11 +71,11 @@
         "faceData": [
           {
             "onRight": true,
-            "type": 1
+            "type": 0
           },
           {
             "onRight": false,
-            "type": 0
+            "type": 1
           }
         ],
         "isRigid": false,
@@ -84,9 +84,9 @@
       },
       {
         "dir": {
-          "x": -1.0,
-          "y": 0.0,
-          "z": 0.0
+          "x": 1.0,
+          "y": -0.0,
+          "z": -0.0
         },
         "edgeSettings": {
           "Max Length": 4.0,
@@ -97,11 +97,11 @@
         "faceData": [
           {
             "onRight": true,
-            "type": 4
+            "type": 0
           },
           {
             "onRight": false,
-            "type": 0
+            "type": 4
           }
         ],
         "isRigid": false,
@@ -136,9 +136,9 @@
       },
       {
         "dir": {
-          "x": 0.0,
-          "y": 0.0,
-          "z": -1.0
+          "x": -0.0,
+          "y": 1.0,
+          "z": -0.0
         },
         "edgeSettings": {
           "Max Length": 4.0,
@@ -149,37 +149,11 @@
         "faceData": [
           {
             "onRight": true,
-            "type": 0
-          },
-          {
-            "onRight": false,
             "type": 1
-          }
-        ],
-        "isRigid": false,
-        "isRigidTiled": false,
-        "spliced": false
-      },
-      {
-        "dir": {
-          "x": 0.0,
-          "y": -1.0,
-          "z": 0.0
-        },
-        "edgeSettings": {
-          "Max Length": 4.0,
-          "Min Length": 0.1,
-          "Rigid Tiled": false,
-          "Tile Length": 1.0
-        },
-        "faceData": [
+          },
           {
-            "onRight": true,
+            "onRight": false,
             "type": 4
-          },
-          {
-            "onRight": false,
-            "type": 1
           }
         ],
         "isRigid": false,
@@ -188,61 +162,9 @@
       },
       {
         "dir": {
-          "x": 0.0,
-          "y": 0.0,
-          "z": -1.0
-        },
-        "edgeSettings": {
-          "Max Length": 4.0,
-          "Min Length": 0.1,
-          "Rigid Tiled": false,
-          "Tile Length": 1.0
-        },
-        "faceData": [
-          {
-            "onRight": true,
-            "type": 2
-          },
-          {
-            "onRight": false,
-            "type": 0
-          }
-        ],
-        "isRigid": false,
-        "isRigidTiled": false,
-        "spliced": false
-      },
-      {
-        "dir": {
-          "x": 0.0,
-          "y": -1.0,
-          "z": 0.0
-        },
-        "edgeSettings": {
-          "Max Length": 4.0,
-          "Min Length": 0.1,
-          "Rigid Tiled": false,
-          "Tile Length": 1.0
-        },
-        "faceData": [
-          {
-            "onRight": true,
-            "type": 4
-          },
-          {
-            "onRight": false,
-            "type": 2
-          }
-        ],
-        "isRigid": false,
-        "isRigidTiled": false,
-        "spliced": false
-      },
-      {
-        "dir": {
-          "x": 0.0,
-          "y": 0.0,
-          "z": -1.0
+          "x": -0.0,
+          "y": -0.0,
+          "z": 1.0
         },
         "edgeSettings": {
           "Max Length": 4.0,
@@ -258,6 +180,58 @@
           {
             "onRight": false,
             "type": 2
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": -0.0,
+          "y": 1.0,
+          "z": -0.0
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 2
+          },
+          {
+            "onRight": false,
+            "type": 4
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": -0.0,
+          "y": -0.0,
+          "z": 1.0
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 2
+          },
+          {
+            "onRight": false,
+            "type": 0
           }
         ],
         "isRigid": false,
@@ -292,9 +266,35 @@
       },
       {
         "dir": {
-          "x": 0.0,
-          "y": 0.0,
-          "z": -1.0
+          "x": -0.0,
+          "y": -0.0,
+          "z": 1.0
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 2
+          },
+          {
+            "onRight": false,
+            "type": 3
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 1.0,
+          "y": -0.0,
+          "z": -0.0
         },
         "edgeSettings": {
           "Max Length": 4.0,
@@ -309,33 +309,7 @@
           },
           {
             "onRight": false,
-            "type": 2
-          }
-        ],
-        "isRigid": false,
-        "isRigidTiled": false,
-        "spliced": false
-      },
-      {
-        "dir": {
-          "x": -1.0,
-          "y": 0.0,
-          "z": 0.0
-        },
-        "edgeSettings": {
-          "Max Length": 4.0,
-          "Min Length": 0.1,
-          "Rigid Tiled": false,
-          "Tile Length": 1.0
-        },
-        "faceData": [
-          {
-            "onRight": true,
             "type": 4
-          },
-          {
-            "onRight": false,
-            "type": 3
           }
         ],
         "isRigid": false,
@@ -344,9 +318,9 @@
       },
       {
         "dir": {
-          "x": 0.0,
-          "y": 0.0,
-          "z": -1.0
+          "x": -0.0,
+          "y": -0.0,
+          "z": 1.0
         },
         "edgeSettings": {
           "Max Length": 4.0,
@@ -357,11 +331,11 @@
         "faceData": [
           {
             "onRight": true,
-            "type": 2
+            "type": 3
           },
           {
             "onRight": false,
-            "type": 3
+            "type": 2
           }
         ],
         "isRigid": false,
@@ -396,35 +370,9 @@
       },
       {
         "dir": {
-          "x": 0.0,
-          "y": 0.0,
-          "z": -1.0
-        },
-        "edgeSettings": {
-          "Max Length": 4.0,
-          "Min Length": 0.1,
-          "Rigid Tiled": false,
-          "Tile Length": 1.0
-        },
-        "faceData": [
-          {
-            "onRight": true,
-            "type": 1
-          },
-          {
-            "onRight": false,
-            "type": 3
-          }
-        ],
-        "isRigid": false,
-        "isRigidTiled": false,
-        "spliced": false
-      },
-      {
-        "dir": {
-          "x": 0.0,
-          "y": 0.0,
-          "z": -1.0
+          "x": -0.0,
+          "y": -0.0,
+          "z": 1.0
         },
         "edgeSettings": {
           "Max Length": 4.0,
@@ -448,9 +396,9 @@
       },
       {
         "dir": {
-          "x": 0.0,
-          "y": -1.0,
-          "z": 0.0
+          "x": -0.0,
+          "y": -0.0,
+          "z": 1.0
         },
         "edgeSettings": {
           "Max Length": 4.0,
@@ -460,7 +408,33 @@
         },
         "faceData": [
           {
+            "onRight": true,
+            "type": 1
+          },
+          {
             "onRight": false,
+            "type": 3
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": -0.0,
+          "y": 1.0,
+          "z": -0.0
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": true,
             "type": 4
           }
         ],
@@ -514,9 +488,9 @@
       },
       {
         "dir": {
-          "x": -1.0,
-          "y": 0.0,
-          "z": 0.0
+          "x": 1.0,
+          "y": -0.0,
+          "z": -0.0
         },
         "edgeSettings": {
           "Max Length": 4.0,
@@ -526,7 +500,7 @@
         },
         "faceData": [
           {
-            "onRight": false,
+            "onRight": true,
             "type": 4
           }
         ],
@@ -621,7 +595,7 @@
               "z": -0.0
             },
             "edge": 3,
-            "isAtStart": false
+            "isAtStart": true
           },
           {
             "dir": {
@@ -629,8 +603,8 @@
               "y": -1.0,
               "z": 0.0
             },
-            "edge": 6,
-            "isAtStart": true
+            "edge": 5,
+            "isAtStart": false
           }
         ],
         "spliced": false
@@ -694,7 +668,7 @@
               "z": -1.0
             },
             "edge": 2,
-            "isAtStart": true
+            "isAtStart": false
           }
         ],
         "spliced": false
@@ -708,56 +682,24 @@
               "z": 1.0
             },
             "edge": 2,
-            "isAtStart": false
+            "isAtStart": true
           },
           {
             "dir": {
               "x": -0.0,
               "y": 1.0,
               "z": -0.0
-            },
-            "edge": 6,
-            "isAtStart": false
-          },
-          {
-            "dir": {
-              "x": -1.0,
-              "y": 0.0,
-              "z": 0.0
-            },
-            "edge": 3,
-            "isAtStart": true
-          }
-        ],
-        "spliced": false
-      },
-      {
-        "halfEdgeTypes": [
-          {
-            "dir": {
-              "x": 1.0,
-              "y": 0.0,
-              "z": 0.0
-            },
-            "edge": 1,
-            "isAtStart": true
-          },
-          {
-            "dir": {
-              "x": 0.0,
-              "y": 0.0,
-              "z": -1.0
             },
             "edge": 5,
             "isAtStart": true
           },
           {
             "dir": {
-              "x": -0.0,
-              "y": -1.0,
-              "z": -0.0
+              "x": -1.0,
+              "y": 0.0,
+              "z": 0.0
             },
-            "edge": 4,
+            "edge": 3,
             "isAtStart": false
           }
         ],
@@ -767,11 +709,11 @@
         "halfEdgeTypes": [
           {
             "dir": {
-              "x": 1.0,
+              "x": -1.0,
               "y": -0.0,
               "z": -0.0
             },
-            "edge": 3,
+            "edge": 1,
             "isAtStart": false
           },
           {
@@ -779,6 +721,38 @@
               "x": 0.0,
               "y": -1.0,
               "z": 0.0
+            },
+            "edge": 7,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": -1.0
+            },
+            "edge": 6,
+            "isAtStart": false
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": -1.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "edge": 3,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": -0.0,
+              "y": -0.0,
+              "z": 1.0
             },
             "edge": 6,
             "isAtStart": true
@@ -786,136 +760,8 @@
           {
             "dir": {
               "x": -0.0,
-              "y": -0.0,
-              "z": 1.0
-            },
-            "edge": 5,
-            "isAtStart": false
-          }
-        ],
-        "spliced": false
-      },
-      {
-        "halfEdgeTypes": [
-          {
-            "dir": {
-              "x": -1.0,
-              "y": -0.0,
-              "z": -0.0
-            },
-            "edge": 1,
-            "isAtStart": false
-          },
-          {
-            "dir": {
-              "x": 0.0,
-              "y": -1.0,
-              "z": 0.0
-            },
-            "edge": 8,
-            "isAtStart": true
-          },
-          {
-            "dir": {
-              "x": 0.0,
-              "y": 0.0,
-              "z": -1.0
-            },
-            "edge": 7,
-            "isAtStart": true
-          }
-        ],
-        "spliced": false
-      },
-      {
-        "halfEdgeTypes": [
-          {
-            "dir": {
-              "x": -1.0,
-              "y": 0.0,
-              "z": 0.0
-            },
-            "edge": 3,
-            "isAtStart": true
-          },
-          {
-            "dir": {
-              "x": -0.0,
-              "y": -0.0,
-              "z": 1.0
-            },
-            "edge": 7,
-            "isAtStart": false
-          },
-          {
-            "dir": {
-              "x": -0.0,
               "y": -1.0,
               "z": -0.0
-            },
-            "edge": 10,
-            "isAtStart": false
-          }
-        ],
-        "spliced": false
-      },
-      {
-        "halfEdgeTypes": [
-          {
-            "dir": {
-              "x": 1.0,
-              "y": 0.0,
-              "z": 0.0
-            },
-            "edge": 1,
-            "isAtStart": true
-          },
-          {
-            "dir": {
-              "x": 0.0,
-              "y": 0.0,
-              "z": -1.0
-            },
-            "edge": 9,
-            "isAtStart": true
-          },
-          {
-            "dir": {
-              "x": -0.0,
-              "y": 1.0,
-              "z": -0.0
-            },
-            "edge": 8,
-            "isAtStart": false
-          }
-        ],
-        "spliced": false
-      },
-      {
-        "halfEdgeTypes": [
-          {
-            "dir": {
-              "x": 1.0,
-              "y": -0.0,
-              "z": -0.0
-            },
-            "edge": 3,
-            "isAtStart": false
-          },
-          {
-            "dir": {
-              "x": 0.0,
-              "y": 1.0,
-              "z": 0.0
-            },
-            "edge": 10,
-            "isAtStart": true
-          },
-          {
-            "dir": {
-              "x": -0.0,
-              "y": -0.0,
-              "z": 1.0
             },
             "edge": 9,
             "isAtStart": false
@@ -927,20 +773,11 @@
         "halfEdgeTypes": [
           {
             "dir": {
-              "x": -0.0,
-              "y": 1.0,
-              "z": -0.0
-            },
-            "edge": 8,
-            "isAtStart": false
-          },
-          {
-            "dir": {
-              "x": -1.0,
+              "x": 1.0,
               "y": 0.0,
               "z": 0.0
             },
-            "edge": 12,
+            "edge": 1,
             "isAtStart": true
           },
           {
@@ -949,8 +786,81 @@
               "y": 0.0,
               "z": -1.0
             },
-            "edge": 11,
+            "edge": 8,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": -0.0,
+              "y": 1.0,
+              "z": -0.0
+            },
+            "edge": 7,
             "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 1.0,
+              "y": -0.0,
+              "z": -0.0
+            },
+            "edge": 3,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": 0.0,
+              "y": 1.0,
+              "z": 0.0
+            },
+            "edge": 9,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": -0.0,
+              "y": -0.0,
+              "z": 1.0
+            },
+            "edge": 8,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": -0.0,
+              "y": 1.0,
+              "z": -0.0
+            },
+            "edge": 7,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": -1.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "edge": 11,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": -1.0
+            },
+            "edge": 10,
+            "isAtStart": false
           }
         ],
         "spliced": false
@@ -963,7 +873,7 @@
               "y": 1.0,
               "z": 0.0
             },
-            "edge": 10,
+            "edge": 9,
             "isAtStart": true
           },
           {
@@ -972,78 +882,14 @@
               "y": -0.0,
               "z": 1.0
             },
-            "edge": 11,
-            "isAtStart": false
+            "edge": 10,
+            "isAtStart": true
           },
           {
             "dir": {
               "x": -1.0,
               "y": -0.0,
               "z": -0.0
-            },
-            "edge": 14,
-            "isAtStart": false
-          }
-        ],
-        "spliced": false
-      },
-      {
-        "halfEdgeTypes": [
-          {
-            "dir": {
-              "x": 0.0,
-              "y": -1.0,
-              "z": 0.0
-            },
-            "edge": 8,
-            "isAtStart": true
-          },
-          {
-            "dir": {
-              "x": 0.0,
-              "y": 0.0,
-              "z": -1.0
-            },
-            "edge": 13,
-            "isAtStart": true
-          },
-          {
-            "dir": {
-              "x": 1.0,
-              "y": -0.0,
-              "z": -0.0
-            },
-            "edge": 12,
-            "isAtStart": false
-          }
-        ],
-        "spliced": false
-      },
-      {
-        "halfEdgeTypes": [
-          {
-            "dir": {
-              "x": -0.0,
-              "y": -1.0,
-              "z": -0.0
-            },
-            "edge": 10,
-            "isAtStart": false
-          },
-          {
-            "dir": {
-              "x": 1.0,
-              "y": 0.0,
-              "z": 0.0
-            },
-            "edge": 14,
-            "isAtStart": true
-          },
-          {
-            "dir": {
-              "x": -0.0,
-              "y": -0.0,
-              "z": 1.0
             },
             "edge": 13,
             "isAtStart": false
@@ -1056,6 +902,70 @@
           {
             "dir": {
               "x": 0.0,
+              "y": -1.0,
+              "z": 0.0
+            },
+            "edge": 7,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": -1.0
+            },
+            "edge": 12,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 1.0,
+              "y": -0.0,
+              "z": -0.0
+            },
+            "edge": 11,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": -0.0,
+              "y": -1.0,
+              "z": -0.0
+            },
+            "edge": 9,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 1.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "edge": 13,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": -0.0,
+              "y": -0.0,
+              "z": 1.0
+            },
+            "edge": 12,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 0.0,
               "y": 1.0,
               "z": 0.0
             },
@@ -1068,8 +978,8 @@
               "y": 0.0,
               "z": -1.0
             },
-            "edge": 15,
-            "isAtStart": true
+            "edge": 14,
+            "isAtStart": false
           },
           {
             "dir": {
@@ -1077,8 +987,8 @@
               "y": -0.0,
               "z": -0.0
             },
-            "edge": 12,
-            "isAtStart": false
+            "edge": 11,
+            "isAtStart": true
           }
         ],
         "spliced": false
@@ -1091,8 +1001,8 @@
               "y": 1.0,
               "z": -0.0
             },
-            "edge": 6,
-            "isAtStart": false
+            "edge": 5,
+            "isAtStart": true
           },
           {
             "dir": {
@@ -1100,7 +1010,7 @@
               "y": 0.0,
               "z": 0.0
             },
-            "edge": 14,
+            "edge": 13,
             "isAtStart": true
           },
           {
@@ -1109,8 +1019,8 @@
               "y": -0.0,
               "z": 1.0
             },
-            "edge": 15,
-            "isAtStart": false
+            "edge": 14,
+            "isAtStart": true
           }
         ],
         "spliced": false
@@ -1132,8 +1042,8 @@
               "y": 0.0,
               "z": 0.0
             },
-            "edge": 12,
-            "isAtStart": true
+            "edge": 11,
+            "isAtStart": false
           },
           {
             "dir": {
@@ -1141,8 +1051,8 @@
               "y": 0.0,
               "z": -1.0
             },
-            "edge": 16,
-            "isAtStart": true
+            "edge": 15,
+            "isAtStart": false
           }
         ],
         "spliced": false
@@ -1155,8 +1065,8 @@
               "y": -1.0,
               "z": 0.0
             },
-            "edge": 6,
-            "isAtStart": true
+            "edge": 5,
+            "isAtStart": false
           },
           {
             "dir": {
@@ -1164,40 +1074,40 @@
               "y": -0.0,
               "z": 1.0
             },
+            "edge": 15,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": -1.0,
+              "y": -0.0,
+              "z": -0.0
+            },
+            "edge": 13,
+            "isAtStart": false
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 0.0,
+              "y": -1.0,
+              "z": 0.0
+            },
             "edge": 16,
             "isAtStart": false
           },
           {
             "dir": {
-              "x": -1.0,
-              "y": -0.0,
-              "z": -0.0
-            },
-            "edge": 14,
-            "isAtStart": false
-          }
-        ],
-        "spliced": false
-      },
-      {
-        "halfEdgeTypes": [
-          {
-            "dir": {
-              "x": 0.0,
-              "y": -1.0,
-              "z": 0.0
-            },
-            "edge": 17,
-            "isAtStart": true
-          },
-          {
-            "dir": {
               "x": 1.0,
               "y": -0.0,
               "z": -0.0
             },
-            "edge": 20,
-            "isAtStart": false
+            "edge": 19,
+            "isAtStart": true
           }
         ],
         "spliced": false
@@ -1210,8 +1120,8 @@
               "y": 1.0,
               "z": -0.0
             },
-            "edge": 17,
-            "isAtStart": false
+            "edge": 16,
+            "isAtStart": true
           },
           {
             "dir": {
@@ -1219,7 +1129,7 @@
               "y": 0.0,
               "z": 0.0
             },
-            "edge": 18,
+            "edge": 17,
             "isAtStart": true
           }
         ],
@@ -1233,7 +1143,7 @@
               "y": -0.0,
               "z": -0.0
             },
-            "edge": 18,
+            "edge": 17,
             "isAtStart": false
           },
           {
@@ -1242,7 +1152,7 @@
               "y": 1.0,
               "z": 0.0
             },
-            "edge": 19,
+            "edge": 18,
             "isAtStart": true
           }
         ],
@@ -1256,7 +1166,7 @@
               "y": -1.0,
               "z": -0.0
             },
-            "edge": 19,
+            "edge": 18,
             "isAtStart": false
           },
           {
@@ -1265,8 +1175,8 @@
               "y": 0.0,
               "z": 0.0
             },
-            "edge": 20,
-            "isAtStart": true
+            "edge": 19,
+            "isAtStart": false
           }
         ],
         "spliced": false

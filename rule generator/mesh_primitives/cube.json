@@ -32,9 +32,9 @@
       },
       {
         "dir": {
-          "x": 0.0,
-          "y": -1.0,
-          "z": 0.0
+          "x": -0.0,
+          "y": 1.0,
+          "z": -0.0
         },
         "edgeSettings": {
           "Max Length": 4.0,
@@ -45,11 +45,11 @@
         "faceData": [
           {
             "onRight": true,
-            "type": 3
+            "type": 0
           },
           {
             "onRight": false,
-            "type": 0
+            "type": 3
           }
         ],
         "isRigid": false,
@@ -58,9 +58,9 @@
       },
       {
         "dir": {
-          "x": -1.0,
-          "y": 0.0,
-          "z": 0.0
+          "x": 1.0,
+          "y": -0.0,
+          "z": -0.0
         },
         "edgeSettings": {
           "Max Length": 4.0,
@@ -71,11 +71,11 @@
         "faceData": [
           {
             "onRight": true,
-            "type": 4
+            "type": 0
           },
           {
             "onRight": false,
-            "type": 0
+            "type": 4
           }
         ],
         "isRigid": false,
@@ -162,9 +162,9 @@
       },
       {
         "dir": {
-          "x": -1.0,
-          "y": 0.0,
-          "z": 0.0
+          "x": 1.0,
+          "y": -0.0,
+          "z": -0.0
         },
         "edgeSettings": {
           "Max Length": 4.0,
@@ -175,11 +175,11 @@
         "faceData": [
           {
             "onRight": true,
-            "type": 5
+            "type": 1
           },
           {
             "onRight": false,
-            "type": 1
+            "type": 5
           }
         ],
         "isRigid": false,
@@ -188,9 +188,9 @@
       },
       {
         "dir": {
-          "x": 0.0,
-          "y": -1.0,
-          "z": 0.0
+          "x": -0.0,
+          "y": 1.0,
+          "z": -0.0
         },
         "edgeSettings": {
           "Max Length": 4.0,
@@ -201,11 +201,11 @@
         "faceData": [
           {
             "onRight": true,
-            "type": 2
+            "type": 1
           },
           {
             "onRight": false,
-            "type": 1
+            "type": 2
           }
         ],
         "isRigid": false,
@@ -240,9 +240,9 @@
       },
       {
         "dir": {
-          "x": 0.0,
-          "y": 0.0,
-          "z": -1.0
+          "x": -0.0,
+          "y": -0.0,
+          "z": 1.0
         },
         "edgeSettings": {
           "Max Length": 4.0,
@@ -253,11 +253,11 @@
         "faceData": [
           {
             "onRight": true,
-            "type": 5
+            "type": 2
           },
           {
             "onRight": false,
-            "type": 2
+            "type": 5
           }
         ],
         "isRigid": false,
@@ -292,9 +292,9 @@
       },
       {
         "dir": {
-          "x": 0.0,
-          "y": 0.0,
-          "z": -1.0
+          "x": -0.0,
+          "y": -0.0,
+          "z": 1.0
         },
         "edgeSettings": {
           "Max Length": 4.0,
@@ -305,11 +305,11 @@
         "faceData": [
           {
             "onRight": true,
-            "type": 4
+            "type": 3
           },
           {
             "onRight": false,
-            "type": 3
+            "type": 4
           }
         ],
         "isRigid": false,
@@ -407,7 +407,7 @@
               "z": -0.0
             },
             "edge": 2,
-            "isAtStart": false
+            "isAtStart": true
           },
           {
             "dir": {
@@ -439,7 +439,7 @@
               "z": -0.0
             },
             "edge": 1,
-            "isAtStart": false
+            "isAtStart": true
           },
           {
             "dir": {
@@ -448,7 +448,7 @@
               "z": 1.0
             },
             "edge": 11,
-            "isAtStart": false
+            "isAtStart": true
           },
           {
             "dir": {
@@ -457,7 +457,7 @@
               "z": 0.0
             },
             "edge": 2,
-            "isAtStart": true
+            "isAtStart": false
           }
         ],
         "spliced": false
@@ -489,7 +489,7 @@
               "z": 0.0
             },
             "edge": 1,
-            "isAtStart": true
+            "isAtStart": false
           }
         ],
         "spliced": false
@@ -521,7 +521,7 @@
               "z": 1.0
             },
             "edge": 9,
-            "isAtStart": false
+            "isAtStart": true
           }
         ],
         "spliced": false
@@ -544,7 +544,7 @@
               "z": -0.0
             },
             "edge": 7,
-            "isAtStart": false
+            "isAtStart": true
           },
           {
             "dir": {
@@ -576,7 +576,7 @@
               "z": -1.0
             },
             "edge": 11,
-            "isAtStart": true
+            "isAtStart": false
           },
           {
             "dir": {
@@ -617,7 +617,7 @@
               "z": 0.0
             },
             "edge": 6,
-            "isAtStart": true
+            "isAtStart": false
           }
         ],
         "spliced": false
@@ -631,7 +631,7 @@
               "z": -0.0
             },
             "edge": 6,
-            "isAtStart": false
+            "isAtStart": true
           },
           {
             "dir": {
@@ -640,7 +640,7 @@
               "z": -1.0
             },
             "edge": 9,
-            "isAtStart": true
+            "isAtStart": false
           },
           {
             "dir": {
@@ -649,7 +649,7 @@
               "z": 0.0
             },
             "edge": 7,
-            "isAtStart": true
+            "isAtStart": false
           }
         ],
         "spliced": false

@@ -57,9 +57,25 @@ struct FaceTypeKeyHash {
     }
 };
 
-// Edge type key: ordered face-type pair (left, right) + quantized direction.
-// Left = halfA's face (canonical direction), right = halfB's face (or -1 for
-// open-boundary edges).
+int cmpQuant(const QuantVec3& a, const QuantVec3& b) {
+    if (a.x != b.x) return (a.x < b.x) ? -1 : 1;
+    if (a.y != b.y) return (a.y < b.y) ? -1 : 1;
+    if (a.z != b.z) return (a.z < b.z) ? -1 : 1;
+    return 0;
+}
+
+// Reversing an edge swaps its faces and negates its direction. Those two
+// readings are the same type. Keep the lexicographically greater quantized
+// direction. When the directions tie, keep the smaller (left, right) pair.
+bool reversedIsCanonical(int left, int right, const QuantVec3& qdir, const QuantVec3& qneg) {
+    int c = cmpQuant(qdir, qneg);
+    if (c != 0) return c < 0;
+    if (left != right) return right < left;
+    return false;
+}
+
+// Edge type key: ordered face-type pair (left, right) + quantized direction,
+// in the canonical orientation above. Right is -1 for an open boundary.
 struct EdgeTypeKey {
     int        leftFaceType;
     int        rightFaceType;  // -1 if boundary
@@ -252,6 +268,8 @@ bool extractTypes(const HalfEdgeMesh&         mesh,
 
     // --- Edge types ------------------------------------------------
     out.edgeTypeOfEdge.resize(mesh.edges.size(), -1);
+    // 1 when this edge's halfA direction is opposite the type's canonical dir.
+    std::vector<char> edgeReversed(mesh.edges.size(), 0);
     std::unordered_map<EdgeTypeKey, int, EdgeTypeKeyHash> edgeTypeMap;
     for (size_t ei = 0; ei < mesh.edges.size(); ++ei) {
         if (isSlitEdge(mesh, (int)ei)) continue;
@@ -263,24 +281,34 @@ bool extractTypes(const HalfEdgeMesh&         mesh,
         double dlen = std::sqrt(dx * dx + dy * dy + dz * dz);
         if (dlen > 0) { dx /= dlen; dy /= dlen; dz /= dlen; }
         Vec3d dir{dx, dy, dz};
+        Vec3d negDir{-dx, -dy, -dz};
 
         int leftFaceType  = out.faceTypeOfFace[hA.face];
         int rightFaceType = (edge.halfB >= 0)
             ? out.faceTypeOfFace[mesh.halfEdges[edge.halfB].face]
             : -1;
 
-        EdgeTypeKey key{leftFaceType, rightFaceType, q3(dir, cfg.dirEps)};
+        QuantVec3 qdir = q3(dir, cfg.dirEps);
+        QuantVec3 qneg = q3(negDir, cfg.dirEps);
+        bool reversed = reversedIsCanonical(leftFaceType, rightFaceType, qdir, qneg);
+        int keyLeft = reversed ? rightFaceType : leftFaceType;
+        int keyRight = reversed ? leftFaceType : rightFaceType;
+        edgeReversed[ei] = reversed ? 1 : 0;
+
+        EdgeTypeKey key{keyLeft, keyRight, reversed ? qneg : qdir};
         auto it = edgeTypeMap.find(key);
         int idx;
         if (it == edgeTypeMap.end()) {
             idx = (int)out.edgeTypes.size();
             ExtractedTypes::EdgeType et;
-            et.dir = dir;
+            et.dir = reversed ? negDir : dir;
             // The right-hand face is first. That is the slot the rules use.
-            if (rightFaceType >= 0) {
-                et.faceData.push_back({rightFaceType, /*onRight*/ true});
+            if (keyRight >= 0) {
+                et.faceData.push_back({keyRight, /*onRight*/ true});
             }
-            et.faceData.push_back({leftFaceType,  /*onRight*/ false});
+            if (keyLeft >= 0) {
+                et.faceData.push_back({keyLeft, /*onRight*/ false});
+            }
             out.edgeTypes.push_back(std::move(et));
             edgeTypeMap.emplace(std::move(key), idx);
         } else {
@@ -291,10 +319,9 @@ bool extractTypes(const HalfEdgeMesh&         mesh,
 
     // --- Vertex types ------------------------------------------------
     // For each input vertex, walk the fan and collect (edgeType, isAtStart).
-    // isAtStart = true iff this half-edge is the canonical (halfA) direction
-    // of its edge — equivalent to "the half-edge starts at this vertex in the
-    // edge's stored orientation". Canonicalize by lexicographically smallest
-    // cyclic rotation, then dedupe.
+    // isAtStart = true iff this vertex is the origin of the edge type's
+    // canonical direction. Canonicalize by lexicographically smallest cyclic
+    // rotation, then dedupe.
     out.vertexTypeOfVertex.resize(mesh.numVertices, -1);
     out.halfEdgeSlotInVertex.resize(mesh.halfEdges.size(), -1);
 
@@ -339,10 +366,11 @@ bool extractTypes(const HalfEdgeMesh&         mesh,
             if (isSlitEdge(mesh, edgeIdx)) continue;
             int etIdx = out.edgeTypeOfEdge[edgeIdx];
             if (etIdx < 0) continue;
-            // isAtStart = this vertex is the origin of the canonical (halfA)
-            // direction. Incoming boundary halves originate elsewhere.
-            bool isAtStart =
+            // isAtStart = this vertex is the origin of the type's canonical
+            // direction. halfA may point the other way; then the flag flips.
+            bool atHalfAOrigin =
                 (mesh.halfEdges[mesh.edges[edgeIdx].halfA].origin == v);
+            bool isAtStart = edgeReversed[edgeIdx] ? !atHalfAOrigin : atHalfAOrigin;
             rawSlots.push_back({etIdx, isAtStart ? 1 : 0});
             typedFan.push_back(he);
         }
