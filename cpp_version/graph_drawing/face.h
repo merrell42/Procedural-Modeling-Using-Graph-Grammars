@@ -50,6 +50,7 @@ class Face {
 			vector<int>& triangles,
 			vector<int>& faceIndices
 		) const;
+		vector<Vec3> getTrianglePositions() const;
 		const vector<int>& getTriangleIndices() const;
 		void markDirty();
 

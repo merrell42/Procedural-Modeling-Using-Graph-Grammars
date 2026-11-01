@@ -231,7 +231,7 @@ void Face::exportMesh(
         return;
     }
     int startIndex = (int)positions.size();
-    auto facePositions = getPositions();
+    auto facePositions = getTrianglePositions();
     Util::append(positions, facePositions);
 
     auto normal = faceType->getNormal();
@@ -261,25 +261,103 @@ void Face::exportMesh(
     faceIndices.push_back((int)positions.size());
 }
 
+vector<Vec3> Face::getTrianglePositions() const {
+    vector<Vec3> positions = getPositions();
+    if (hole) {
+        return positions;
+    }
+    FaceGroup* group = getGroup();
+    if (!group) {
+        return positions;
+    }
+    for (Face* other : group->getFaces()) {
+        if (!other || other == this || !other->isHole()) {
+            continue;
+        }
+        vector<HalfEdge*> halfEdges = other->getHalfEdges();
+        if (halfEdges.size() < 3) {
+            continue;
+        }
+        for (HalfEdge* halfEdge : halfEdges) {
+            positions.push_back(halfEdge->getPosition());
+        }
+    }
+    return positions;
+}
+
 const vector<int>& Face::getTriangleIndices() const {
     if (!triangleIndicesDirty) {
         return triangleIndices;
     }
 
     using Point = array<double, 2>;
-    vector<vector<Point>> polygons;
-    vector<Point> polygon;
-
-    auto positions = getPositions();
-    auto maxDim = faceType->getMaxDim();
-    for (const auto& p : positions) {
-        const Vec2 point = p.dropDim(maxDim);
-        polygon.push_back({ point.x, point.y });
+    auto positions = getTrianglePositions();
+    int maxDim = faceType->getMaxDim();
+    vector<int> ringSizes;
+    ringSizes.push_back(static_cast<int>(getPositions().size()));
+    if (!hole) {
+        FaceGroup* group = getGroup();
+        if (group) {
+            for (Face* other : group->getFaces()) {
+                if (!other || other == this || !other->isHole()) {
+                    continue;
+                }
+                int count = static_cast<int>(other->getHalfEdges().size());
+                if (count < 3) {
+                    continue;
+                }
+                ringSizes.push_back(count);
+            }
+        }
     }
-    polygons.push_back(polygon);
+
+    auto ringArea = [](const vector<Point>& ring) {
+        double sum = 0.0;
+        for (size_t i = 0; i < ring.size(); i++) {
+            const Point& a = ring[i];
+            const Point& b = ring[(i + 1) % ring.size()];
+            sum += a[0] * b[1] - b[0] * a[1];
+        }
+        return sum;
+    };
+
+    vector<vector<Point>> polygons;
+    vector<int> source;
+    int cursor = 0;
+    double outerArea = 0.0;
+    for (size_t ringIndex = 0; ringIndex < ringSizes.size(); ringIndex++) {
+        vector<Point> ring;
+        vector<int> ringSource;
+        int size = ringSizes[ringIndex];
+        ring.reserve(size);
+        ringSource.reserve(size);
+        for (int i = 0; i < size && cursor < static_cast<int>(positions.size()); i++) {
+            Vec2 point = positions[cursor].dropDim(maxDim);
+            ring.push_back({point.x, point.y});
+            ringSource.push_back(cursor);
+            cursor++;
+        }
+        if (ringIndex == 0) {
+            outerArea = ringArea(ring);
+        } else if (ringArea(ring) * outerArea > 0.0) {
+            std::reverse(ring.begin(), ring.end());
+            std::reverse(ringSource.begin(), ringSource.end());
+        }
+        for (int index : ringSource) {
+            source.push_back(index);
+        }
+        polygons.push_back(std::move(ring));
+    }
 
     auto indices = mapbox::earcut(polygons);
-    triangleIndices.assign(indices.begin(), indices.end());
+    triangleIndices.clear();
+    triangleIndices.reserve(indices.size());
+    for (auto index : indices) {
+        if (index >= source.size()) {
+            continue;
+        }
+        triangleIndices.push_back(source[index]);
+    }
     triangleIndicesDirty = false;
     return triangleIndices;
 }
@@ -435,7 +513,20 @@ bool Face::containsPoint(Vec3 point) const {
             }
         }
     }
-    return (count % 2) == 1;
+    bool inside = (count % 2) == 1;
+    if (!inside || hole) {
+        return inside;
+    }
+    FaceGroup* group = getGroup();
+    if (!group) {
+        return true;
+    }
+    for (Face* other : group->getFaces()) {
+        if (other && other != this && other->isHole() && other->containsPoint(point)) {
+            return false;
+        }
+    }
+    return true;
 }
 
 void Face::setLooped(bool newLooped) {

@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "face_subdivision.h"
 #include "face.h"
+#include "face_group.h"
 #include "half_edge.h"
 #include "edge.h"
 #include "vertex.h"
@@ -68,6 +69,7 @@ struct FaceSubdivisionData {
         vector<Vec3> positions;
         vector<int> edgeIds;
         vector<Key> boundaryKeys;
+        vector<Key> holeKeys;
         vector<Key> interiorKeys;
         vector<Tri> triangles;
     };
@@ -352,6 +354,8 @@ vector<BoundaryPoint> traceBoundary(
     FaceSubdivisionData& data,
     Face* face,
     const Vec3& u,
+    const Vec3& v,
+    int ownerId,
     bool create
 ) {
     vector<BoundaryPoint> boundary;
@@ -361,7 +365,7 @@ vector<BoundaryPoint> traceBoundary(
             return;
         }
         if (create) {
-            addFaceRef(found->second.faceIds, face->getId());
+            addFaceRef(found->second.faceIds, ownerId);
         }
         const Vec3& base = found->second.base;
         if (!boundary.empty()) {
@@ -370,7 +374,7 @@ vector<BoundaryPoint> traceBoundary(
                 return;
             }
         }
-        boundary.push_back(BoundaryPoint{key, Vec2(u.dot(base), face->getFaceType()->getV().dot(base))});
+        boundary.push_back(BoundaryPoint{key, Vec2(u.dot(base), v.dot(base))});
     };
 
     for (HalfEdge* halfEdge : face->getHalfEdges()) {
@@ -394,7 +398,7 @@ vector<BoundaryPoint> traceBoundary(
             pushPoint(vertexKey(startId));
             continue;
         }
-        EdgeInfo& info = ensureEdge(data, halfEdge, face->getId());
+        EdgeInfo& info = ensureEdge(data, halfEdge, ownerId);
         emitEdgePoints(info, edgeId, startId, pushPoint);
     }
 
@@ -443,6 +447,139 @@ bool boundaryCrossesCell(const vector<Vec2>& polygon, const Vec2 corners[4]) {
         }
     }
     return false;
+}
+
+bool pointInRing(const Vec2& point, const vector<Vec2>& ring) {
+    double x = point.x;
+    double y = point.y;
+    int count = 0;
+    size_t n = ring.size();
+    for (size_t i = 0; i < n; i++) {
+        double y1 = ring[i].y;
+        double y2 = ring[(i + 1) % n].y;
+        double x1 = ring[i].x;
+        double x2 = ring[(i + 1) % n].x;
+        if (!((y1 > y && y2 < y) || (y1 < y && y2 > y))) {
+            continue;
+        }
+        double s = (y - y1) / (y2 - y1);
+        double xCross = x1 + (x2 - x1) * s;
+        if (x < xCross) {
+            count++;
+        }
+    }
+    return (count % 2) == 1;
+}
+
+// True when any vertex or the centroid of `hole` lies inside `container`.
+bool ringContainsHole(const vector<Vec2>& container, const vector<Vec2>& hole) {
+    if (hole.empty() || container.size() < 3) {
+        return false;
+    }
+    Vec2 centroid(0, 0);
+    int inside = 0;
+    for (const Vec2& point : hole) {
+        centroid = Vec2(centroid.x + point.x, centroid.y + point.y);
+        if (pointInRing(point, container)) {
+            inside++;
+        }
+    }
+    if (inside > 0) {
+        return true;
+    }
+    double scale = 1.0 / static_cast<double>(hole.size());
+    return pointInRing(Vec2(centroid.x * scale, centroid.y * scale), container);
+}
+
+bool ringsCross(const vector<Vec2>& a, const vector<Vec2>& b) {
+    if (a.size() < 2 || b.size() < 2) {
+        return false;
+    }
+    for (size_t i = 0; i < a.size(); i++) {
+        const Vec2& a0 = a[i];
+        const Vec2& a1 = a[(i + 1) % a.size()];
+        for (size_t j = 0; j < b.size(); j++) {
+            if (Intersector::intersect(a0, a1, b[j], b[(j + 1) % b.size()])) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+// Outer ring plus hole rings. An empty outerLocals list means indices 0..n-1.
+// The outer ring is wound counterclockwise. Hole rings are wound the other way.
+void earcutSolid(
+    const vector<Vec2>& outer,
+    const vector<int>& outerLocals,
+    const vector<vector<Vec2>>& holeRings,
+    const vector<vector<int>>& holeLocals,
+    vector<Tri>& triangles
+) {
+    if (outer.size() < 3) {
+        return;
+    }
+    using Point = std::array<double, 2>;
+    vector<Vec2> outerRing = outer;
+    vector<int> outerIndex;
+    if (outerLocals.size() == outer.size()) {
+        outerIndex = outerLocals;
+    } else {
+        outerIndex.resize(outer.size());
+        for (int i = 0; i < static_cast<int>(outer.size()); i++) {
+            outerIndex[i] = i;
+        }
+    }
+    if (Util::signedArea(outerRing) < 0.0) {
+        std::reverse(outerRing.begin(), outerRing.end());
+        std::reverse(outerIndex.begin(), outerIndex.end());
+    }
+    double outerArea = Util::signedArea(outerRing);
+    vector<vector<Point>> rings(1);
+    vector<int> earcutToLocal;
+    rings[0].reserve(outerRing.size());
+    earcutToLocal.reserve(outerRing.size());
+    for (int i = 0; i < static_cast<int>(outerRing.size()); i++) {
+        rings[0].push_back({outerRing[i].x, outerRing[i].y});
+        earcutToLocal.push_back(outerIndex[i]);
+    }
+    for (size_t h = 0; h < holeRings.size(); h++) {
+        vector<Vec2> ring = holeRings[h];
+        vector<int> locals = h < holeLocals.size() ? holeLocals[h] : vector<int>{};
+        if (ring.size() < 3 || ring.size() != locals.size()) {
+            continue;
+        }
+        if (Util::signedArea(ring) * outerArea > 0.0) {
+            std::reverse(ring.begin(), ring.end());
+            std::reverse(locals.begin(), locals.end());
+        }
+        vector<Point> points;
+        points.reserve(ring.size());
+        for (size_t i = 0; i < ring.size(); i++) {
+            points.push_back({ring[i].x, ring[i].y});
+            earcutToLocal.push_back(locals[i]);
+        }
+        rings.push_back(std::move(points));
+    }
+    auto indices = mapbox::earcut(rings);
+    for (size_t i = 0; i + 2 < indices.size(); i += 3) {
+        int i0 = static_cast<int>(indices[i]);
+        int i1 = static_cast<int>(indices[i + 1]);
+        int i2 = static_cast<int>(indices[i + 2]);
+        if (i0 < 0 || i1 < 0 || i2 < 0
+            || i0 >= static_cast<int>(earcutToLocal.size())
+            || i1 >= static_cast<int>(earcutToLocal.size())
+            || i2 >= static_cast<int>(earcutToLocal.size())) {
+            continue;
+        }
+        int a = earcutToLocal[i0];
+        int b = earcutToLocal[i1];
+        int c = earcutToLocal[i2];
+        if (a == b || b == c || c == a) {
+            continue;
+        }
+        triangles.push_back(Tri{a, b, c});
+    }
 }
 
 // Walk the boundary and the grid perimeter together. Each step advances the
@@ -528,6 +665,52 @@ void buildGridMesh(
         return;
     }
 
+    // Hole faces in this group are contours cut out of this face. Their
+    // samples belong to this face so the cutout stays in the mesh.
+    struct FaceHole {
+        vector<Vec2> uv;
+        vector<int> local;
+        bool handled = false;
+    };
+    vector<FaceHole> faceHoles;
+    vector<Vec2> holeUv;
+    if (!face->isHole()) {
+        FaceGroup* group = face->getGroup();
+        if (group) {
+            for (Face* other : group->getFaces()) {
+                if (!other || other == face || !other->isHole()) {
+                    continue;
+                }
+                vector<BoundaryPoint> loop = traceBoundary(data, other, axisU, axisV, face->getId(), true);
+                if (loop.size() < 3) {
+                    continue;
+                }
+                FaceHole faceHole;
+                for (const BoundaryPoint& point : loop) {
+                    faceHole.local.push_back(boundaryCount + static_cast<int>(holeUv.size()));
+                    faceHole.uv.push_back(point.uv);
+                    holeUv.push_back(point.uv);
+                    cached.holeKeys.push_back(point.key);
+                }
+                faceHoles.push_back(std::move(faceHole));
+                for (HalfEdge* halfEdge : other->getHalfEdges()) {
+                    if (halfEdge && halfEdge->getEdge()) {
+                        cached.edgeIds.push_back(halfEdge->getEdge()->getId());
+                    }
+                }
+            }
+        }
+    }
+    int holeCount = static_cast<int>(holeUv.size());
+    auto inHole = [&](const Vec2& point) {
+        for (const FaceHole& faceHole : faceHoles) {
+            if (pointInRing(point, faceHole.uv)) {
+                return true;
+            }
+        }
+        return false;
+    };
+
     double spacing = faceSpacing(face);
     double uMin = std::numeric_limits<double>::infinity();
     double uMax = -uMin;
@@ -545,19 +728,13 @@ void buildGridMesh(
     int cols = static_cast<int>(uCoordinates.size());
     int rows = static_cast<int>(vCoordinates.size());
     if (cols < 2 || rows < 2) {
-        using Point = std::array<double, 2>;
-        vector<vector<Point>> ring(1);
-        for (const Vec2& point : polygon) {
-            ring[0].push_back({point.x, point.y});
+        vector<vector<Vec2>> holeRings;
+        vector<vector<int>> holeLocals;
+        for (const FaceHole& faceHole : faceHoles) {
+            holeRings.push_back(faceHole.uv);
+            holeLocals.push_back(faceHole.local);
         }
-        auto indices = mapbox::earcut(ring);
-        for (size_t i = 0; i + 2 < indices.size(); i += 3) {
-            cached.triangles.push_back(Tri{
-                static_cast<int>(indices[i]),
-                static_cast<int>(indices[i + 1]),
-                static_cast<int>(indices[i + 2])
-            });
-        }
+        earcutSolid(polygon, {}, holeRings, holeLocals, cached.triangles);
         return;
     }
 
@@ -569,7 +746,7 @@ void buildGridMesh(
         for (int iu = 0; iu < cols; iu++) {
             Vec2 sample(uCoordinates[iu], vCoordinates[iv]);
             Vec3 world = axisU * sample.x + axisV * sample.y + normal * plane;
-            if (face->containsPoint(world)) {
+            if (face->containsPoint(world) && !inHole(sample)) {
                 inside[slot(iu, iv)] = 1;
             }
         }
@@ -591,6 +768,23 @@ void buildGridMesh(
             if (boundaryCrossesCell(polygon, corners)) {
                 continue;
             }
+            Vec2 center(
+                (corners[0].x + corners[2].x) * 0.5,
+                (corners[0].y + corners[2].y) * 0.5
+            );
+            if (inHole(center)) {
+                continue;
+            }
+            bool holeCrosses = false;
+            for (const FaceHole& faceHole : faceHoles) {
+                if (boundaryCrossesCell(faceHole.uv, corners)) {
+                    holeCrosses = true;
+                    break;
+                }
+            }
+            if (holeCrosses) {
+                continue;
+            }
             cells.push_back({iu, iv});
         }
     }
@@ -607,9 +801,9 @@ void buildGridMesh(
         double jv = (hashUnit(face->getId(), iv, iu + 17) - 0.5) * FACE_GRID_JITTER * spacing;
         Vec2 jittered(point.x + ju, point.y + jv);
         Vec3 jitteredWorld = axisU * jittered.x + axisV * jittered.y + normal * plane;
-        Vec2 placed = face->containsPoint(jitteredWorld) ? jittered : point;
+        Vec2 placed = (face->containsPoint(jitteredWorld) && !inHole(jittered)) ? jittered : point;
         Vec3 base = axisU * placed.x + axisV * placed.y + normal * plane;
-        int local = boundaryCount + static_cast<int>(cached.interiorKeys.size());
+        int local = boundaryCount + holeCount + static_cast<int>(cached.interiorKeys.size());
         Key key = interiorKey(face->getId(), static_cast<int>(cached.interiorKeys.size()));
         Sample sample = makeSample(base);
         addFaceRef(sample.faceIds, face->getId());
@@ -653,6 +847,15 @@ void buildGridMesh(
         addDirected(i01, i00);
     }
 
+    auto uvAt = [&](int local) -> Vec2 {
+        if (local < boundaryCount) {
+            return polygon[local];
+        }
+        if (local < boundaryCount + holeCount) {
+            return holeUv[local - boundaryCount];
+        }
+        return interiorUv[local - boundaryCount - holeCount];
+    };
     map<int, vector<int>> outgoing;
     for (const auto& edge : perimeter) {
         outgoing[edge.first.first].push_back(edge.first.second);
@@ -682,10 +885,25 @@ void buildGridMesh(
             int next = -1;
             auto outs = outgoing.find(to);
             if (outs != outgoing.end()) {
+                // Solid sits to the left of each directed edge. At a vertex
+                // where two openings meet, take the sharpest right turn so
+                // each hole keeps its own loop.
+                double bestTurn = std::numeric_limits<double>::infinity();
+                Vec2 back = uvAt(from) - uvAt(to);
                 for (int candidate : outs->second) {
-                    if (unused.count({to, candidate})) {
+                    if (!unused.count({to, candidate})) {
+                        continue;
+                    }
+                    Vec2 out = uvAt(candidate) - uvAt(to);
+                    double cross = back.x * out.y - back.y * out.x;
+                    double dot = back.x * out.x + back.y * out.y;
+                    double angle = std::atan2(cross, dot);
+                    if (angle <= 1e-9) {
+                        angle += 6.28318530717958647692;
+                    }
+                    if (angle < bestTurn) {
+                        bestTurn = angle;
                         next = candidate;
-                        break;
                     }
                 }
             }
@@ -710,6 +928,124 @@ void buildGridMesh(
         return Util::signedArea(ring);
     };
     double outerArea = Util::signedArea(polygon);
+    if (!faceHoles.empty()) {
+        auto ringFrom = [&](const vector<int>& loop) {
+            vector<Vec2> ring;
+            ring.reserve(loop.size());
+            for (int index : loop) {
+                ring.push_back(uvAt(index));
+            }
+            return ring;
+        };
+        auto cutWholeFace = [&]() {
+            cached.triangles.clear();
+            vector<vector<Vec2>> holeRings;
+            vector<vector<int>> holeLocals;
+            for (const FaceHole& faceHole : faceHoles) {
+                holeRings.push_back(faceHole.uv);
+                holeLocals.push_back(faceHole.local);
+            }
+            earcutSolid(polygon, {}, holeRings, holeLocals, cached.triangles);
+        };
+
+        vector<vector<int>> outerLoops;
+        vector<vector<int>> innerLoops;
+        for (vector<int>& loop : holes) {
+            if (Util::signedArea(ringFrom(loop)) >= 0.0) {
+                outerLoops.push_back(std::move(loop));
+            } else {
+                innerLoops.push_back(std::move(loop));
+            }
+        }
+
+        // Several holes can share one grid opening when they sit closer
+        // together than the grid. Earcut that opening with every hole it holds.
+        vector<vector<int>> grouped(innerLoops.size());
+        for (int h = 0; h < static_cast<int>(faceHoles.size()); h++) {
+            int best = -1;
+            double bestArea = std::numeric_limits<double>::infinity();
+            for (int i = 0; i < static_cast<int>(innerLoops.size()); i++) {
+                vector<Vec2> cavity = ringFrom(innerLoops[i]);
+                if (!ringContainsHole(cavity, faceHoles[h].uv)) {
+                    continue;
+                }
+                double area = std::abs(Util::signedArea(cavity));
+                if (area < bestArea) {
+                    bestArea = area;
+                    best = i;
+                }
+            }
+            if (best >= 0) {
+                grouped[best].push_back(h);
+                faceHoles[h].handled = true;
+            }
+        }
+
+        bool nested = false;
+        for (const FaceHole& faceHole : faceHoles) {
+            if (faceHole.handled) {
+                continue;
+            }
+            for (const vector<int>& loop : outerLoops) {
+                vector<Vec2> ring = ringFrom(loop);
+                if (ringContainsHole(ring, faceHole.uv) || ringsCross(faceHole.uv, ring)) {
+                    nested = true;
+                    break;
+                }
+            }
+            if (nested) {
+                break;
+            }
+        }
+        if (nested) {
+            cutWholeFace();
+            return;
+        }
+
+        bool earcutFailed = false;
+        for (int i = 0; i < static_cast<int>(innerLoops.size()); i++) {
+            if (grouped[i].empty()) {
+                continue;
+            }
+            vector<vector<Vec2>> holeRings;
+            vector<vector<int>> holeLocals;
+            for (int h : grouped[i]) {
+                holeRings.push_back(faceHoles[h].uv);
+                holeLocals.push_back(faceHoles[h].local);
+            }
+            size_t before = cached.triangles.size();
+            earcutSolid(ringFrom(innerLoops[i]), innerLoops[i], holeRings, holeLocals, cached.triangles);
+            if (cached.triangles.size() == before) {
+                earcutFailed = true;
+            }
+        }
+        if (earcutFailed) {
+            cutWholeFace();
+            return;
+        }
+
+        vector<vector<Vec2>> holeRings;
+        vector<vector<int>> holeLocals;
+        for (const vector<int>& loop : outerLoops) {
+            holeRings.push_back(ringFrom(loop));
+            holeLocals.push_back(loop);
+        }
+        for (const FaceHole& faceHole : faceHoles) {
+            if (faceHole.handled) {
+                continue;
+            }
+            holeRings.push_back(faceHole.uv);
+            holeLocals.push_back(faceHole.local);
+        }
+        if (!holeRings.empty()) {
+            size_t before = cached.triangles.size();
+            earcutSolid(polygon, {}, holeRings, holeLocals, cached.triangles);
+            if (cached.triangles.size() == before) {
+                cutWholeFace();
+            }
+        }
+        return;
+    }
     if (holes.size() == 1) {
         vector<int>& hole = holes[0];
         if (loopArea(hole) * outerArea < 0.0) {
@@ -773,16 +1109,33 @@ uint64_t faceSignature(Face* face) {
         std::memcpy(&packed, &value, sizeof(packed));
         return packed;
     };
-    for (HalfEdge* halfEdge : face->getHalfEdges()) {
-        if (!halfEdge || !halfEdge->getVertex()) {
-            continue;
+    auto mixLoop = [&](Face* loopFace) {
+        if (!loopFace) {
+            return;
         }
-        mix(static_cast<uint64_t>(static_cast<uint32_t>(halfEdge->getId())));
-        mix(static_cast<uint64_t>(static_cast<uint32_t>(halfEdge->getVertex()->getId())));
-        Vec3 position = halfEdge->getPosition();
-        mix(bits(position.getX()));
-        mix(bits(position.getY()));
-        mix(bits(position.getZ()));
+        for (HalfEdge* halfEdge : loopFace->getHalfEdges()) {
+            if (!halfEdge || !halfEdge->getVertex()) {
+                continue;
+            }
+            mix(static_cast<uint64_t>(static_cast<uint32_t>(halfEdge->getId())));
+            mix(static_cast<uint64_t>(static_cast<uint32_t>(halfEdge->getVertex()->getId())));
+            Vec3 position = halfEdge->getPosition();
+            mix(bits(position.getX()));
+            mix(bits(position.getY()));
+            mix(bits(position.getZ()));
+        }
+    };
+    mixLoop(face);
+    if (!face->isHole()) {
+        FaceGroup* group = face->getGroup();
+        if (group) {
+            for (Face* other : group->getFaces()) {
+                if (other && other != face && other->isHole()) {
+                    mix(1);
+                    mixLoop(other);
+                }
+            }
+        }
     }
     return h;
 }
@@ -811,7 +1164,7 @@ void addFaceGeometry(FaceSubdivisionData& data, Face* face) {
 
     const Vec3& u = face->getFaceType()->getU();
     const Vec3& v = face->getFaceType()->getV();
-    vector<BoundaryPoint> boundary = traceBoundary(data, face, u, true);
+    vector<BoundaryPoint> boundary = traceBoundary(data, face, u, v, face->getId(), true);
     for (const BoundaryPoint& point : boundary) {
         cached.boundaryKeys.push_back(point.key);
     }
@@ -839,16 +1192,20 @@ void dropFaceGeometry(FaceSubdivisionData& data, int faceId) {
     for (const Key& key : cached.interiorKeys) {
         data.samples.erase(key);
     }
-    for (const Key& key : cached.boundaryKeys) {
-        auto sample = data.samples.find(key);
-        if (sample == data.samples.end()) {
-            continue;
+    auto dropShared = [&](const vector<Key>& keys) {
+        for (const Key& key : keys) {
+            auto sample = data.samples.find(key);
+            if (sample == data.samples.end()) {
+                continue;
+            }
+            removeFaceRef(sample->second.faceIds, faceId);
+            if (sample->second.faceIds.empty()) {
+                data.samples.erase(sample);
+            }
         }
-        removeFaceRef(sample->second.faceIds, faceId);
-        if (sample->second.faceIds.empty()) {
-            data.samples.erase(sample);
-        }
-    }
+    };
+    dropShared(cached.boundaryKeys);
+    dropShared(cached.holeKeys);
     for (int edgeId : cached.edgeIds) {
         auto edge = data.edges.find(edgeId);
         if (edge == data.edges.end()) {
@@ -1291,6 +1648,14 @@ void FaceSubdivider::append(
             }
         }
         if (complete) {
+            for (const Key& key : item.holeKeys) {
+                if (!hasSample(key)) {
+                    complete = false;
+                    break;
+                }
+            }
+        }
+        if (complete) {
             for (const Key& key : item.interiorKeys) {
                 if (!hasSample(key)) {
                     complete = false;
@@ -1315,11 +1680,16 @@ void FaceSubdivider::append(
 
     for (BuiltFace& builtFace : built) {
         const CachedFace& item = *builtFace.item;
+        int holeCount = static_cast<int>(item.holeKeys.size());
         int interiorStart = static_cast<int>(positions.size());
         for (const Key& key : item.interiorKeys) {
             emit(key, deform, item.normal);
         }
         int interiorCount = static_cast<int>(item.interiorKeys.size());
+        int holeStart = static_cast<int>(positions.size());
+        for (const Key& key : item.holeKeys) {
+            emit(key, deform, item.normal);
+        }
 
         for (int index = builtFace.boundaryStart; index < builtFace.boundaryStart + builtFace.boundaryCount; index++) {
             normals[index] = Vec3(0, 0, 0);
@@ -1327,14 +1697,20 @@ void FaceSubdivider::append(
         for (int index = interiorStart; index < interiorStart + interiorCount; index++) {
             normals[index] = Vec3(0, 0, 0);
         }
+        for (int index = holeStart; index < holeStart + holeCount; index++) {
+            normals[index] = Vec3(0, 0, 0);
+        }
 
         auto mapIndex = [&](int local) {
             if (local < builtFace.boundaryCount) {
                 return builtFace.boundaryStart + local;
             }
-            return interiorStart + (local - builtFace.boundaryCount);
+            if (local < builtFace.boundaryCount + holeCount) {
+                return holeStart + (local - builtFace.boundaryCount);
+            }
+            return interiorStart + (local - builtFace.boundaryCount - holeCount);
         };
-        int localCount = builtFace.boundaryCount + interiorCount;
+        int localCount = builtFace.boundaryCount + holeCount + interiorCount;
         for (const Tri& triangle : item.triangles) {
             if (triangle.a < 0 || triangle.b < 0 || triangle.c < 0
                 || triangle.a >= localCount || triangle.b >= localCount || triangle.c >= localCount) {
@@ -1373,6 +1749,9 @@ void FaceSubdivider::append(
             finishNormal(index);
         }
         for (int index = interiorStart; index < interiorStart + interiorCount; index++) {
+            finishNormal(index);
+        }
+        for (int index = holeStart; index < holeStart + holeCount; index++) {
             finishNormal(index);
         }
     }
