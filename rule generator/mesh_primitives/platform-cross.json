@@ -422,9 +422,9 @@
       },
       {
         "dir": {
-          "x": -0.0,
-          "y": 1.0,
-          "z": -0.0
+          "x": 0.0,
+          "y": -1.0,
+          "z": 0.0
         },
         "edgeSettings": {
           "Max Length": 4.0,
@@ -434,7 +434,7 @@
         },
         "faceData": [
           {
-            "onRight": true,
+            "onRight": false,
             "type": 4
           }
         ],
@@ -488,9 +488,9 @@
       },
       {
         "dir": {
-          "x": 1.0,
-          "y": -0.0,
-          "z": -0.0
+          "x": -1.0,
+          "y": 0.0,
+          "z": 0.0
         },
         "edgeSettings": {
           "Max Length": 4.0,
@@ -500,7 +500,7 @@
         },
         "faceData": [
           {
-            "onRight": true,
+            "onRight": false,
             "type": 4
           }
         ],
@@ -1098,7 +1098,7 @@
               "z": 0.0
             },
             "edge": 16,
-            "isAtStart": false
+            "isAtStart": true
           },
           {
             "dir": {
@@ -1107,7 +1107,7 @@
               "z": -0.0
             },
             "edge": 19,
-            "isAtStart": true
+            "isAtStart": false
           }
         ],
         "spliced": false
@@ -1121,7 +1121,7 @@
               "z": -0.0
             },
             "edge": 16,
-            "isAtStart": true
+            "isAtStart": false
           },
           {
             "dir": {
@@ -1176,7 +1176,7 @@
               "z": 0.0
             },
             "edge": 19,
-            "isAtStart": false
+            "isAtStart": true
           }
         ],
         "spliced": false

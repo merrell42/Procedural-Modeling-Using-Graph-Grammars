@@ -306,6 +306,9 @@
     function canonicalEdgeOrientation(left, right, dir) {
         var neg = { x: -dir.x, y: -dir.y, z: -dir.z };
         var qdir = [quantize(dir.x, DIR_EPS), quantize(dir.y, DIR_EPS), quantize(dir.z, DIR_EPS)];
+        if (right < 0) {
+            return { reversed: false, left: left, right: right, qdir: qdir.join(',') };
+        }
         var qneg = [quantize(neg.x, DIR_EPS), quantize(neg.y, DIR_EPS), quantize(neg.z, DIR_EPS)];
         var cmp = cmpQuant(qdir, qneg);
         var reversed = cmp < 0 || (cmp === 0 && right < left);

@@ -68,6 +68,7 @@ int cmpQuant(const QuantVec3& a, const QuantVec3& b) {
 // readings are the same type. Keep the lexicographically greater quantized
 // direction. When the directions tie, keep the smaller (left, right) pair.
 bool reversedIsCanonical(int left, int right, const QuantVec3& qdir, const QuantVec3& qneg) {
+    if (right < 0) return false;
     int c = cmpQuant(qdir, qneg);
     if (c != 0) return c < 0;
     if (left != right) return right < left;
