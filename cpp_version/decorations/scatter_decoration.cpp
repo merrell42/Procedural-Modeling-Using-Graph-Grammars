@@ -43,7 +43,7 @@ DecorationOutput ScatterDecoration::getOutput(const Face& face) const {
         return {};
     }
 
-    const vector<Vec3> positions = face.getPositions();
+    const vector<Vec3> positions = face.getTrianglePositions();
     const vector<int>& indices = face.getTriangleIndices();
     vector<Triangle> triangles;
     vector<double> cumulativeAreas;
