@@ -36,8 +36,8 @@ using namespace std;
 
 namespace {
 
-const char* kDefaultLibrary = "../graph templates/ramp.json";
-constexpr const char* kDefaultPrimitives = "../mesh_primitives/platform-cross.json";
+const char* kDefaultLibrary = "../graph templates/house2.json";
+constexpr const char* kDefaultPrimitives = "../mesh_primitives/house2.json";
 
 // constexpr const char* kDefaultLibrary = "../graph templates/graph_template_diagonal.json";
 // constexpr const char* kDefaultPrimitives = "../primitives/diagonal box.json";
@@ -60,10 +60,14 @@ std::filesystem::path findRuleGeneratorRootFrom(std::filesystem::path start) {
 
 std::filesystem::path findRuleGeneratorRoot(const char* exeArg) {
     std::filesystem::path root = findRuleGeneratorRootFrom(std::filesystem::current_path());
-    if (!root.empty()) return root;
+    if (!root.empty()) {
+        return root;
+    }
     std::error_code ec;
     std::filesystem::path exe = std::filesystem::absolute(exeArg, ec);
-    if (ec) return {};
+    if (ec) {
+        return {};
+    }
     return findRuleGeneratorRootFrom(exe.parent_path());
 }
 

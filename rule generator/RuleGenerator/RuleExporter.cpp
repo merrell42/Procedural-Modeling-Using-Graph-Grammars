@@ -723,6 +723,37 @@ bool loopsAreValid(Graph* graph) {
 	return true;
 }
 
+// Updates turns to record the number of turns between each boundary vertex.
+bool boundaryTurnCounts(Graph* graph, vector<int>& turns) {
+	const auto& bVertices = graph->getBVertices();
+	const int n = (int)bVertices.size();
+	turns.assign(n, 0);
+	if (n == 0) {
+		return true;
+	}
+	vector<bool> found(n, false);
+	for (auto* face : graph->getFaces()) {
+		auto* outerComponent = face->getOuterComponent();
+		if (!outerComponent || face->isLoopy()) {
+			continue;
+		}
+		auto halfs = GraphFace::getConnectedHalfEdges(outerComponent);
+		int start = indexOf(bVertices, halfs.front()->getVertex());
+		int end = indexOf(bVertices, halfs.back()->getVertex());
+		if (start < 0 || end < 0) {
+			continue;
+		}
+		turns[start] = face->computeTurns();
+		found[start] = true;
+	}
+	for (bool i : found) {
+		if (!i) {
+			return false;
+		}
+	}
+	return true;
+}
+
 GraphFace* findOuterLoopFace(Graph* graph) {
 	for (auto* face : graph->getFaces()) {
 		if (face->getOuterComponent() && face->isLoopy() && face->computeTurns() == 1) {
@@ -752,6 +783,15 @@ void maybeAddBFace(Graph*& graph, Graph* filledGraph, bool addBFaces) {
 			filledGraph->setBFaces({ outerFace });
 		}
 	}
+}
+
+// The two sides of a rule are substituted for each other, so they have to
+// expose the same boundary. Compare the turns on each open face between
+// boundary vertices.
+bool sameBoundaryTurns(Graph* a, Graph* b) {
+	vector<int> turnsA;
+	vector<int> turnsB;
+	return boundaryTurnCounts(a, turnsA) && boundaryTurnCounts(b, turnsB) && turnsA == turnsB;
 }
 
 void exportRule(
@@ -826,6 +866,10 @@ void RuleExporter::exportGroups(
 		// Assumes there are only two graphs in the template set.
 		for (const auto& left : graphs[0]) {
 			for (const auto& right : graphs[1]) {
+				if (!sameBoundaryTurns(left.get(), right.get())) {
+					cout << "    skipped rule: boundaries do not match\n";
+					continue;
+				}
 				exportRule(&grammar, left->copy(), right->copy());
 			}
 		}
