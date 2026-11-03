@@ -1,0 +1,1523 @@
+{
+  "name": "house3",
+  "obj": "# 3ds Max Wavefront OBJ Exporter v0.97b - (c)2007 guruware\r\n# File Created: 01.11.2026 09:23:23\r\n\r\nmtllib house3.mtl\r\n\r\n#\r\n# object Line001\r\n#\r\n\r\nv  40.0000 -0.0000 30.0000\r\nv  0.0000 -0.0000 70.0000\r\nv  0.0000 -100.0000 70.0000\r\nv  40.0000 -100.0000 30.0000\r\nv  -40.0000 -0.0000 30.0000\r\nv  -40.0000 -100.0000 30.0000\r\nv  20.0000 -0.0000 19.8438\r\nv  20.0000 20.0000 19.8438\r\nv  0.0000 20.0000 39.8438\r\nv  0.0000 -0.0000 39.8438\r\nv  -20.0000 20.0000 19.8438\r\nv  -20.0000 -0.0000 19.8438\r\nv  -20.0000 -100.0000 19.8438\r\nv  -20.0000 -120.0000 19.8438\r\nv  0.0000 -120.0000 39.8438\r\nv  -0.0000 -100.0000 39.8438\r\nv  20.0000 -120.0000 19.8438\r\nv  20.0000 -100.0000 19.8438\r\nv  -20.0000 0.0000 -0.0000\r\nv  -20.0000 20.0000 -0.0000\r\nv  20.0000 0.0000 -0.0000\r\nv  20.0000 20.0000 -0.0000\r\nv  -20.0000 -120.0000 0.0000\r\nv  -20.0000 -100.0000 0.0000\r\nv  40.0000 -100.0000 0.0000\r\nv  40.0000 0.0000 -0.0000\r\nv  -40.0000 -100.0000 0.0000\r\nv  -40.0000 0.0000 -0.0000\r\nv  20.0000 -120.0000 0.0000\r\nv  20.0000 -100.0000 0.0000\r\nv  -120.0000 -150.0000 0.0000\r\nv  110.0000 -150.0000 0.0000\r\nv  110.0000 80.0000 -0.0000\r\nv  -120.0000 80.0000 -0.0000\r\n# 34 vertices\r\n\r\nvn 0.7071 -0.0000 0.7071\r\nvn -0.7071 -0.0000 0.7071\r\nvn -1.0000 0.0000 0.0000\r\nvn 1.0000 0.0000 0.0000\r\nvn 0.0000 1.0000 0.0000\r\nvn 0.0000 -1.0000 -0.0000\r\nvn -0.0000 0.0000 1.0000\r\nvn 0.0000 0.0000 1.0000\r\n# 8 vertex normals\r\n\r\nvt 0.1464 0.0000 0.0000\r\nvt 0.3536 0.0000 0.0000\r\nvt 0.3536 1.0000 0.0000\r\nvt 0.1464 1.0000 0.0000\r\nvt 0.5607 0.0000 0.0000\r\nvt 0.5607 1.0000 0.0000\r\nvt 0.8193 0.1429 0.0000\r\nvt 0.8193 0.0000 0.0000\r\nvt 1.0000 0.0000 0.0000\r\nvt 1.0000 0.1429 0.0000\r\nvt 0.0000 0.0000 0.0000\r\nvt 0.1807 0.0000 0.0000\r\nvt 0.1807 0.1429 0.0000\r\nvt 0.0000 0.1429 0.0000\r\nvt 0.1807 0.8571 0.0000\r\nvt 0.1807 1.0000 0.0000\r\nvt 0.0000 1.0000 0.0000\r\nvt 0.0000 0.8571 0.0000\r\nvt 1.0000 0.8571 0.0000\r\nvt 1.0000 1.0000 0.0000\r\nvt 0.8193 1.0000 0.0000\r\nvt 0.8193 0.8571 0.0000\r\nvt 0.3074 0.1429 0.0000\r\nvt 0.3074 0.0000 0.0000\r\nvt 0.6926 0.1429 0.0000\r\nvt 0.6926 0.0000 0.0000\r\nvt 1.0000 0.6000 0.0000\r\nvt 1.0000 0.2031 0.0000\r\nvt 0.0000 0.2031 0.0000\r\nvt 0.0000 0.6000 0.0000\r\nvt 0.5000 1.0000 0.0000\r\nvt 0.3074 1.0000 0.0000\r\nvt 0.3074 0.8571 0.0000\r\nvt 0.0366 1.0000 0.0000\r\nvt 0.0366 0.0000 0.0000\r\nvt 0.6705 1.0000 0.0000\r\nvt 0.6705 0.0000 0.0000\r\nvt 0.6926 1.0000 0.0000\r\nvt 0.6926 0.8571 0.0000\r\nvt 1.0000 0.1250 0.0000\r\nvt 1.0000 0.5000 0.0000\r\nvt 0.0000 0.5000 0.0000\r\nvt 0.0000 0.1250 0.0000\r\nvt 0.2500 0.1250 0.0000\r\nvt 0.2500 0.3730 0.0000\r\nvt 0.5000 0.6230 0.0000\r\nvt 0.7500 0.3730 0.0000\r\nvt 0.7500 0.1250 0.0000\r\nvt 0.6957 0.6522 0.0000\r\nvt 0.6957 0.2174 0.0000\r\nvt 0.6087 0.2174 0.0000\r\nvt 0.6087 0.1304 0.0000\r\nvt 0.4348 0.1304 0.0000\r\nvt 0.4348 0.2174 0.0000\r\nvt 0.3478 0.2174 0.0000\r\nvt 0.3478 0.6522 0.0000\r\nvt 0.4348 0.6522 0.0000\r\nvt 0.4348 0.7391 0.0000\r\nvt 0.6087 0.7391 0.0000\r\nvt 0.6087 0.6522 0.0000\r\n# 60 texture coords\r\n\r\ng Line001\r\nusemtl wire_228184153\r\ns 4\r\nf 1/1/1 2/2/1 3/3/1 4/4/1 \r\ns 2\r\nf 2/2/2 5/5/2 6/6/2 3/3/2 \r\nf 7/7/1 8/8/1 9/9/1 10/10/1 \r\ns 1\r\nf 9/11/2 11/12/2 12/13/2 10/14/2 \r\nf 13/15/2 14/16/2 15/17/2 16/18/2 \r\ns 2\r\nf 16/19/1 15/20/1 17/21/1 18/22/1 \r\ns 4\r\nf 19/23/3 12/13/3 11/12/3 20/24/3 \r\ns 1\r\nf 21/25/4 22/26/4 8/8/4 7/7/4 \r\ns 8\r\nf 8/27/5 22/28/5 20/29/5 11/30/5 9/31/5 \r\ns 4\r\nf 23/32/3 14/16/3 13/15/3 24/33/3 \r\ns 1\r\nf 25/34/4 26/35/4 1/1/4 4/4/4 \r\ns 4\r\nf 27/36/3 6/6/3 5/5/3 28/37/3 \r\ns 1\r\nf 29/38/4 30/39/4 18/22/4 17/21/4 \r\ns 8\r\nf 17/27/6 15/31/6 14/30/6 23/29/6 29/28/6 \r\ns 16\r\nf 25/40/6 4/41/6 3/31/6 6/42/6 27/43/6 24/44/6 13/45/6 16/46/6 18/47/6 30/48/6 \r\nf 21/48/5 7/47/5 10/46/5 12/45/5 19/44/5 28/43/5 5/42/5 2/31/5 1/41/5 26/40/5 \r\ns 2\r\nf 26/49/7 25/50/7 30/51/8 29/52/7 31/11/7 32/9/8 33/20/7 34/17/8 31/11/7 29/52/7 23/53/8 24/54/8 27/55/8 28/56/8 19/57/8 20/58/8 22/59/7 21/60/8 \r\n# 17 polygons\r\n\r\n",
+  "types": {
+    "dims": 3,
+    "edgeTypes": [
+      {
+        "dir": {
+          "x": 0.7071067811865475,
+          "y": -0.0,
+          "z": -0.7071067811865475
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 0
+          },
+          {
+            "onRight": false,
+            "type": 4
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": -0.0,
+          "y": 1.0,
+          "z": -0.0
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 0
+          },
+          {
+            "onRight": false,
+            "type": 1
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0.7071067811865475,
+          "y": 0.0,
+          "z": -0.7071067811865475
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 5
+          },
+          {
+            "onRight": false,
+            "type": 0
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0.0,
+          "y": 1.0,
+          "z": 0.0
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 3
+          },
+          {
+            "onRight": false,
+            "type": 0
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0.7071067811865475,
+          "y": -0.0,
+          "z": 0.7071067811865475
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 1
+          },
+          {
+            "onRight": false,
+            "type": 4
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": -0.0,
+          "y": 1.0,
+          "z": -0.0
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 1
+          },
+          {
+            "onRight": false,
+            "type": 2
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0.7071067811865475,
+          "y": 0.0,
+          "z": 0.7071067811865475
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 5
+          },
+          {
+            "onRight": false,
+            "type": 1
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0.7071067811865475,
+          "y": 0.0,
+          "z": -0.7071067811865475
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 4
+          },
+          {
+            "onRight": false,
+            "type": 0
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0.7071067811865475,
+          "y": 0.0,
+          "z": 0.7071067811865475
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 4
+          },
+          {
+            "onRight": false,
+            "type": 1
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0.7071067811865475,
+          "y": -0.0,
+          "z": 0.7071067811865475
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 1
+          },
+          {
+            "onRight": false,
+            "type": 5
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0.7071067811865475,
+          "y": -0.0,
+          "z": -0.7071067811865475
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 0
+          },
+          {
+            "onRight": false,
+            "type": 5
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0.0,
+          "y": -0.0,
+          "z": 1.0
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 4
+          },
+          {
+            "onRight": false,
+            "type": 2
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": -0.0,
+          "y": -0.0,
+          "z": 1.0
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 2
+          },
+          {
+            "onRight": false,
+            "type": 4
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": -0.0,
+          "y": 1.0,
+          "z": -0.0
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 2
+          },
+          {
+            "onRight": false,
+            "type": 6
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0.0,
+          "y": 1.0,
+          "z": 0.0
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 6
+          },
+          {
+            "onRight": false,
+            "type": 3
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 1.0
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 4
+          },
+          {
+            "onRight": false,
+            "type": 3
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": -0.0,
+          "y": -0.0,
+          "z": 1.0
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 3
+          },
+          {
+            "onRight": false,
+            "type": 4
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 1.0,
+          "y": -0.0,
+          "z": -0.0
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 4
+          },
+          {
+            "onRight": false,
+            "type": 6
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 1.0
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 5
+          },
+          {
+            "onRight": false,
+            "type": 2
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": -0.0,
+          "y": -0.0,
+          "z": 1.0
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 2
+          },
+          {
+            "onRight": false,
+            "type": 5
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": -0.0,
+          "y": -0.0,
+          "z": 1.0
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 3
+          },
+          {
+            "onRight": false,
+            "type": 5
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 1.0
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 5
+          },
+          {
+            "onRight": false,
+            "type": 3
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 1.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 6
+          },
+          {
+            "onRight": false,
+            "type": 5
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 1.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": false,
+            "type": 6
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0.0,
+          "y": 1.0,
+          "z": -0.0
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": false,
+            "type": 6
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": -1.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": false,
+            "type": 6
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0.0,
+          "y": -1.0,
+          "z": 0.0
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": false,
+            "type": 6
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      }
+    ],
+    "faceTypes": [
+      {
+        "color": {
+          "x": 0.8941,
+          "y": 0.7216,
+          "z": 0.6
+        },
+        "material": "wire_228184153",
+        "normal": {
+          "x": 0.7071067811865475,
+          "y": 0.0,
+          "z": 0.7071067811865475
+        }
+      },
+      {
+        "color": {
+          "x": 0.8941,
+          "y": 0.7216,
+          "z": 0.6
+        },
+        "material": "wire_228184153",
+        "normal": {
+          "x": -0.7071067811865475,
+          "y": 0.0,
+          "z": 0.7071067811865475
+        }
+      },
+      {
+        "color": {
+          "x": 0.8941,
+          "y": 0.7216,
+          "z": 0.6
+        },
+        "material": "wire_228184153",
+        "normal": {
+          "x": -1.0,
+          "y": 0.0,
+          "z": 0.0
+        }
+      },
+      {
+        "color": {
+          "x": 0.8941,
+          "y": 0.7216,
+          "z": 0.6
+        },
+        "material": "wire_228184153",
+        "normal": {
+          "x": 1.0,
+          "y": 0.0,
+          "z": 0.0
+        }
+      },
+      {
+        "color": {
+          "x": 0.8941,
+          "y": 0.7216,
+          "z": 0.6
+        },
+        "material": "wire_228184153",
+        "normal": {
+          "x": 0.0,
+          "y": 1.0,
+          "z": 0.0
+        }
+      },
+      {
+        "color": {
+          "x": 0.8941,
+          "y": 0.7216,
+          "z": 0.6
+        },
+        "material": "wire_228184153",
+        "normal": {
+          "x": 0.0,
+          "y": -1.0,
+          "z": 0.0
+        }
+      },
+      {
+        "color": {
+          "x": 0.8941,
+          "y": 0.7216,
+          "z": 0.6
+        },
+        "material": "wire_228184153",
+        "normal": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 1.0
+        }
+      }
+    ],
+    "vertexTypes": [
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": -0.7071067811865475,
+              "y": 0.0,
+              "z": 0.7071067811865475
+            },
+            "edge": 0,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": -0.0,
+              "y": -1.0,
+              "z": -0.0
+            },
+            "edge": 3,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": -0.0,
+              "y": -0.0,
+              "z": -1.0
+            },
+            "edge": 15,
+            "isAtStart": false
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 0.7071067811865475,
+              "y": -0.0,
+              "z": -0.7071067811865475
+            },
+            "edge": 0,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": -0.7071067811865475,
+              "y": 0.0,
+              "z": -0.7071067811865475
+            },
+            "edge": 4,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 0.0,
+              "y": -1.0,
+              "z": 0.0
+            },
+            "edge": 1,
+            "isAtStart": false
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": -0.0,
+              "y": 1.0,
+              "z": -0.0
+            },
+            "edge": 1,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": -0.7071067811865475,
+              "y": -0.0,
+              "z": -0.7071067811865475
+            },
+            "edge": 6,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 0.7071067811865475,
+              "y": 0.0,
+              "z": -0.7071067811865475
+            },
+            "edge": 2,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": -0.7071067811865475,
+              "y": -0.0,
+              "z": 0.7071067811865475
+            },
+            "edge": 2,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": -1.0
+            },
+            "edge": 20,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 0.0,
+              "y": 1.0,
+              "z": 0.0
+            },
+            "edge": 3,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 0.7071067811865475,
+              "y": -0.0,
+              "z": 0.7071067811865475
+            },
+            "edge": 4,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": -1.0
+            },
+            "edge": 12,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 0.0,
+              "y": -1.0,
+              "z": 0.0
+            },
+            "edge": 5,
+            "isAtStart": false
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": -0.0,
+              "y": 1.0,
+              "z": -0.0
+            },
+            "edge": 5,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": -0.0,
+              "y": -0.0,
+              "z": -1.0
+            },
+            "edge": 18,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 0.7071067811865475,
+              "y": 0.0,
+              "z": 0.7071067811865475
+            },
+            "edge": 6,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 0.0,
+              "y": 1.0,
+              "z": 0.0
+            },
+            "edge": 3,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": -0.7071067811865475,
+              "y": -0.0,
+              "z": 0.7071067811865475
+            },
+            "edge": 7,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": -1.0
+            },
+            "edge": 16,
+            "isAtStart": false
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": -0.0,
+              "y": 1.0,
+              "z": -0.0
+            },
+            "edge": 1,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": -0.7071067811865475,
+              "y": -0.0,
+              "z": -0.7071067811865475
+            },
+            "edge": 8,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 0.7071067811865475,
+              "y": 0.0,
+              "z": -0.7071067811865475
+            },
+            "edge": 7,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": -0.0,
+              "y": 1.0,
+              "z": -0.0
+            },
+            "edge": 5,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": -0.0,
+              "y": 0.0,
+              "z": -1.0
+            },
+            "edge": 11,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 0.7071067811865475,
+              "y": 0.0,
+              "z": 0.7071067811865475
+            },
+            "edge": 8,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 0.0,
+              "y": -1.0,
+              "z": 0.0
+            },
+            "edge": 5,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 0.7071067811865475,
+              "y": -0.0,
+              "z": 0.7071067811865475
+            },
+            "edge": 9,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": -1.0
+            },
+            "edge": 19,
+            "isAtStart": false
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 0.0,
+              "y": -1.0,
+              "z": 0.0
+            },
+            "edge": 1,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 0.7071067811865475,
+              "y": -0.0,
+              "z": -0.7071067811865475
+            },
+            "edge": 10,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": -0.7071067811865475,
+              "y": 0.0,
+              "z": -0.7071067811865475
+            },
+            "edge": 9,
+            "isAtStart": false
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": -0.0,
+              "y": -1.0,
+              "z": -0.0
+            },
+            "edge": 3,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": -0.0,
+              "y": -0.0,
+              "z": -1.0
+            },
+            "edge": 21,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": -0.7071067811865475,
+              "y": 0.0,
+              "z": 0.7071067811865475
+            },
+            "edge": 10,
+            "isAtStart": false
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 0.0,
+              "y": -0.0,
+              "z": 1.0
+            },
+            "edge": 11,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": -0.0,
+              "y": 1.0,
+              "z": -0.0
+            },
+            "edge": 13,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": -1.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "edge": 17,
+            "isAtStart": false
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": -0.0,
+              "y": -0.0,
+              "z": 1.0
+            },
+            "edge": 12,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": 1.0,
+              "y": -0.0,
+              "z": -0.0
+            },
+            "edge": 17,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": 0.0,
+              "y": -1.0,
+              "z": 0.0
+            },
+            "edge": 13,
+            "isAtStart": false
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 0.0,
+              "y": 1.0,
+              "z": 0.0
+            },
+            "edge": 14,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": -0.0,
+              "y": -0.0,
+              "z": 1.0
+            },
+            "edge": 16,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": 1.0,
+              "y": -0.0,
+              "z": -0.0
+            },
+            "edge": 17,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": -0.0,
+              "y": -1.0,
+              "z": -0.0
+            },
+            "edge": 14,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": -1.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "edge": 17,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 1.0
+            },
+            "edge": 15,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": -0.0,
+              "y": 1.0,
+              "z": -0.0
+            },
+            "edge": 13,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": 1.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "edge": 22,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 1.0
+            },
+            "edge": 18,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 0.0,
+              "y": -1.0,
+              "z": 0.0
+            },
+            "edge": 13,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": -0.0,
+              "y": -0.0,
+              "z": 1.0
+            },
+            "edge": 19,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": -1.0,
+              "y": -0.0,
+              "z": -0.0
+            },
+            "edge": 22,
+            "isAtStart": false
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 0.0,
+              "y": 1.0,
+              "z": 0.0
+            },
+            "edge": 14,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": -0.0,
+              "y": -0.0,
+              "z": 1.0
+            },
+            "edge": 20,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": -1.0,
+              "y": -0.0,
+              "z": -0.0
+            },
+            "edge": 22,
+            "isAtStart": false
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": -0.0,
+              "y": -1.0,
+              "z": -0.0
+            },
+            "edge": 14,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 1.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "edge": 22,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 1.0
+            },
+            "edge": 21,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 1.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "edge": 23,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": -0.0,
+              "y": 1.0,
+              "z": -0.0
+            },
+            "edge": 26,
+            "isAtStart": false
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": -1.0,
+              "y": -0.0,
+              "z": -0.0
+            },
+            "edge": 23,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 0.0,
+              "y": 1.0,
+              "z": -0.0
+            },
+            "edge": 24,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": -0.0,
+              "y": -1.0,
+              "z": 0.0
+            },
+            "edge": 24,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": -1.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "edge": 25,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 1.0,
+              "y": -0.0,
+              "z": -0.0
+            },
+            "edge": 25,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 0.0,
+              "y": -1.0,
+              "z": 0.0
+            },
+            "edge": 26,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      }
+    ]
+  },
+  "version": 2
+}
