@@ -209,6 +209,7 @@
     <ClInclude Include="isIsomorphic.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="RoundtripCommand.h" />
+    <ClInclude Include="RegressionCommand.h" />
     <ClInclude Include="RuleExporter.h" />
     <ClInclude Include="RuleGenerator.h" />
     <ClInclude Include="State.h" />
@@ -294,6 +295,7 @@
     <ClCompile Include="decoration_ids.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="RoundtripCommand.cpp" />
+    <ClCompile Include="RegressionCommand.cpp" />
     <ClCompile Include="TemplateGraph.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

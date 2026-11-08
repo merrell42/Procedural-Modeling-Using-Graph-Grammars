@@ -15,6 +15,9 @@
 //   match <primitives> [<library>]   Runs the matcher pipeline against an
 //                          arbitrary primitives JSON.
 //
+//   regress                    Regenerates the recorded template/primitive
+//                          pairs and compares them to `regression/`.
+//
 //   extract [<meshesDir> <outDir>]   Converts every .obj in meshesDir to a
 //                          primitives JSON in outDir. The OBJ text is stored
 //                          in the JSON `obj` string. Defaults: the `meshes`
@@ -26,6 +29,7 @@
 #include "pch.h"
 #include "RuleGenerator.h"
 #include "RoundtripCommand.h"
+#include "RegressionCommand.h"
 #include "../../cpp_version/mesh_extraction/mesh_to_grammar.h"
 
 #include <filesystem>
@@ -36,8 +40,8 @@ using namespace std;
 
 namespace {
 
-const char* kDefaultLibrary = "../graph templates/house2.json";
-constexpr const char* kDefaultPrimitives = "../mesh_primitives/house2.json";
+const char* kDefaultLibrary = "../graph templates/graph_templates.json";
+constexpr const char* kDefaultPrimitives = "../mesh_primitives/rectangle.json";
 
 // constexpr const char* kDefaultLibrary = "../graph templates/graph_template_diagonal.json";
 // constexpr const char* kDefaultPrimitives = "../primitives/diagonal box.json";
@@ -77,6 +81,7 @@ int usage(const char* exe) {
          << "  " << exe << " smoke                        # default smoke\n"
          << "  " << exe << " roundtrip [<library.json>]   # TemplateGraph round-trip test\n"
          << "  " << exe << " match <primitives.json> [<library.json>]  # alternate input\n"
+         << "  " << exe << " regress                      # compare recorded grammars\n"
          << "  " << exe << " extract [<meshesDir> <outDir>]  # obj -> primitives JSON\n";
     return 2;
 }
@@ -93,6 +98,9 @@ int main(int argc, char* argv[]) {
     if (cmd == "roundtrip") {
         string libPath = (argc >= 3) ? argv[2] : kDefaultLibrary;
         return runRoundtrip(libPath);
+    }
+    if (cmd == "regress") {
+        return runRegression(exe);
     }
     if (cmd == "match") {
         if (argc < 3) return usage(exe);
