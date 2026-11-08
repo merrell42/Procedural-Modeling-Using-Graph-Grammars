@@ -1,0 +1,259 @@
+{
+  "name": "rectangle",
+  "obj": "# 3ds Max Wavefront OBJ Exporter v0.97b - (c)2007 guruware\r\n# File Created: 07.11.2026 17:02:53\r\n\r\nmtllib rectangle.mtl\r\n\r\n#\r\n# object Plane001\r\n#\r\n\r\nv  -90.0000 70.0000 0.0000\r\nv  -90.0000 -70.0000 0.0000\r\nv  90.0000 -70.0000 0.0000\r\nv  90.0000 70.0000 0.0000\r\n# 4 vertices\r\n\r\nvn 0.0000 0.0000 1.0000\r\n# 1 vertex normals\r\n\r\nvt 0.0000 1.0000 0.0000\r\nvt 0.0000 0.0000 0.0000\r\nvt 1.0000 0.0000 0.0000\r\nvt 1.0000 1.0000 0.0000\r\n# 4 texture coords\r\n\r\ng Plane001\r\nusemtl wire_006135006\r\ns 1\r\nf 1/1/1 2/2/1 3/3/1 4/4/1 \r\n# 1 polygons\r\n\r\n#\r\n# shape Line001\r\n#\r\n\r\nv  -20.0000 20.0000 0.0000\r\nv  -20.0000 -10.0000 0.0000\r\nv  20.0000 -10.0000 0.0000\r\nv  20.0000 20.0000 0.0000\r\n# 4 vertices\r\n\r\ng Line001\r\nusemtl wire_135006006\r\nl 5 6 7 8 5\r\n\r\n",
+  "types": {
+    "dims": 3,
+    "edgeTypes": [
+      {
+        "dir": {
+          "x": 0.0,
+          "y": -1.0,
+          "z": 0.0
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": false,
+            "type": 0
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 1.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": false,
+            "type": 0
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 0.0,
+          "y": 1.0,
+          "z": 0.0
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": false,
+            "type": 0
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": -1.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": false,
+            "type": 0
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": -0.0,
+          "y": 1.0,
+          "z": -0.0
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 0
+          },
+          {
+            "onRight": false,
+            "type": 0
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      },
+      {
+        "dir": {
+          "x": 1.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "edgeSettings": {
+          "Max Length": 4.0,
+          "Min Length": 0.1,
+          "Rigid Tiled": false,
+          "Tile Length": 1.0
+        },
+        "faceData": [
+          {
+            "onRight": true,
+            "type": 0
+          },
+          {
+            "onRight": false,
+            "type": 0
+          }
+        ],
+        "isRigid": false,
+        "isRigidTiled": false,
+        "spliced": false
+      }
+    ],
+    "faceTypes": [
+      {
+        "color": {
+          "x": 0.0235,
+          "y": 0.5294,
+          "z": 0.0235
+        },
+        "material": "wire_006135006",
+        "normal": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 1.0
+        }
+      }
+    ],
+    "vertexTypes": [
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": 0.0,
+              "y": -1.0,
+              "z": 0.0
+            },
+            "edge": 0,
+            "isAtStart": true
+          },
+          {
+            "dir": {
+              "x": 1.0,
+              "y": -0.0,
+              "z": -0.0
+            },
+            "edge": 3,
+            "isAtStart": false
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": -0.0,
+              "y": 1.0,
+              "z": -0.0
+            },
+            "edge": 0,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 1.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "edge": 1,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": -1.0,
+              "y": -0.0,
+              "z": -0.0
+            },
+            "edge": 1,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": 0.0,
+              "y": 1.0,
+              "z": 0.0
+            },
+            "edge": 2,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      },
+      {
+        "halfEdgeTypes": [
+          {
+            "dir": {
+              "x": -0.0,
+              "y": -1.0,
+              "z": -0.0
+            },
+            "edge": 2,
+            "isAtStart": false
+          },
+          {
+            "dir": {
+              "x": -1.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "edge": 3,
+            "isAtStart": true
+          }
+        ],
+        "spliced": false
+      }
+    ]
+  },
+  "version": 2
+}

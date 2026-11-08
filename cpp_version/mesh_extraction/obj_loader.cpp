@@ -221,6 +221,24 @@ bool loadObj(const char* path, ObjMesh& out, std::string* error) {
             out.faces.push_back(std::move(face));
             corner += n;
         }
+
+        const auto& lines = shape.lines;
+        size_t cursor = 0;
+        for (int n : lines.num_line_vertices) {
+            if (n < 2 || cursor + static_cast<size_t>(n) > lines.indices.size()) {
+                if (n > 0) cursor += static_cast<size_t>(n);
+                continue;
+            }
+            ObjMesh::Polyline poly;
+            poly.groupName = shape.name;
+            poly.vertexIndices.reserve(static_cast<size_t>(n));
+            for (int k = 0; k < n; ++k) {
+                poly.vertexIndices.push_back(
+                    lines.indices[cursor + static_cast<size_t>(k)].vertex_index);
+            }
+            out.polylines.push_back(std::move(poly));
+            cursor += static_cast<size_t>(n);
+        }
     }
     return true;
 }

@@ -1,8 +1,7 @@
 #pragma once
 // minimal .obj loader on top of tinyobjloader.
-// The smoke-test consumer only reads counts; the struct is
-// shaped to grow into the later type-derivation steps (vertex/edge/face
-// type buckets need the per-face material, group, and corner indices).
+// Faces stay n-gons. Polylines (`l`) stay vertex chains so type extraction
+// can label each segment with the face type on its left and its right.
 
 #include <string>
 #include <vector>
@@ -25,9 +24,17 @@ struct ObjMesh {
         std::string             groupName;   // most recent `g` / `o` tag
     };
 
+    // One `l` record. Indices are 0-based and keep the authored order,
+    // including a repeated first index when the polyline is closed.
+    struct Polyline {
+        std::vector<int> vertexIndices;
+        std::string      groupName;
+    };
+
     std::vector<Vec3>         vertices;
     std::vector<Vec3>         normals;
     std::vector<Face>         faces;
+    std::vector<Polyline>     polylines;
     std::vector<std::string>  materialNames;  // index = materialId
     std::vector<Color>        materialColors; // Kd from the .mtl; white if absent
 };

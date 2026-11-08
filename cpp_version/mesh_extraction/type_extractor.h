@@ -27,6 +27,12 @@ struct ExtractedTypes {
     std::vector<int>      faceTypeOfFace;       // [faceIdx] = faceType index
 
     // Edge types. One per unique undirected (face pair, direction).
+    // Mesh edges and OBJ polylines both contribute. A polyline segment is
+    // labeled with the face type on its left and the face type on its right.
+    // A segment drawn across a face, or across coplanar faces of that same
+    // type, has that type on both sides. A segment along a crease has one
+    // type per side. Polylines are not woven into vertex fans; the 2D
+    // regions they cut out of the mesh come later.
     // Reversing `dir` and swapping the left and right faces is the same type.
     // The stored direction is the lexicographically greater quantized
     // direction. If the two quantized directions are equal, the orientation
@@ -67,12 +73,14 @@ struct ExtractedTypes {
 };
 
 struct TypeExtractionConfig {
-    double normalEps = 1e-4;   // quantization grid for face normals
-    double dirEps    = 1e-4;   // quantization grid for edge directions
+    double normalEps   = 1e-4;   // quantization grid for face normals
+    double dirEps      = 1e-4;   // quantization grid for edge directions
+    double positionEps = 1e-4;   // world-space snap for a polyline on a face
 };
 
 // Extracts primitives from the half-edge mesh. Vertices must have a single
-// fan (closed or open). Returns false on non-manifold vertices.
+// fan (closed or open). Returns false on non-manifold vertices, or when a
+// polyline segment does not lie on the mesh with one face type per side.
 bool extractTypes(const HalfEdgeMesh&         mesh,
                   const ObjMesh&              obj,           // for material lookup
                   const TypeExtractionConfig& cfg,

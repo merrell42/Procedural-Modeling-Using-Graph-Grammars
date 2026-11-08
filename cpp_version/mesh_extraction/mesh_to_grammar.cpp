@@ -38,6 +38,16 @@ bool loadAndExtract(const char* objPath, HalfEdgeMesh& hem, ExtractedTypes& type
 		std::cerr << "extractTypes failed: " << (err ? *err : "") << std::endl;
 		return false;
 	}
+	if (!obj.polylines.empty()) {
+		int segments = 0;
+		for (const auto& poly : obj.polylines) {
+			if (poly.vertexIndices.size() >= 2) {
+				segments += (int)poly.vertexIndices.size() - 1;
+			}
+		}
+		std::cout << "  Polylines: " << obj.polylines.size()
+		          << " (" << segments << " segments)" << std::endl;
+	}
 	return true;
 }
 
