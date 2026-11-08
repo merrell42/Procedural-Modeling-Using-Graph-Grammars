@@ -564,16 +564,25 @@ SampledSide sampleSides(
     return {SampleKind::Ready, haveLeft ? left : -1, haveRight ? right : -1};
 }
 
+struct PolyCorner {
+    int   vertex;
+    int   edgeType;
+    bool  isAtStart;
+    Vec3d outward;
+    Vec3d normal;
+};
+
 // Label every OBJ polyline segment with the face types on its two sides and
 // intern that pair as an edge type. A segment may cross several coplanar
-// faces; the pair has to stay the same on every piece. Vertex fans are left
-// alone — wiring these edges into the 2D regions is a later step.
+// faces; the pair has to stay the same on every piece. `corners` records
+// each end so a polyline-only vertex can be given a type.
 bool addPolylineEdgeTypes(
     const HalfEdgeMesh& mesh,
     const ObjMesh& obj,
     const TypeExtractionConfig& cfg,
     ExtractedTypes& out,
     std::unordered_map<EdgeTypeKey, int, EdgeTypeKeyHash>& edgeTypeMap,
+    std::vector<PolyCorner>& corners,
     std::string* error
 ) {
     if (obj.polylines.empty()) return true;
@@ -705,15 +714,29 @@ bool addPolylineEdgeTypes(
             // A boundary mesh edge keeps its one face on the left of `dir`
             // and does not flip to the greater direction. Match that here so
             // a polyline traced along an open boundary reuses that edge type.
+            bool flipped = refLeft < 0 && refRight >= 0;
             Vec3d useDir = dir;
             int left = refLeft;
             int right = refRight;
-            if (left < 0 && right >= 0) {
+            if (flipped) {
                 left = right;
                 right = -1;
                 useDir = {-dir.x, -dir.y, -dir.z};
             }
-            internEdgeType(out, edgeTypeMap, left, right, useDir, cfg.dirEps);
+            InternedEdge interned = internEdgeType(
+                out, edgeTypeMap, left, right, useDir, cfg.dirEps);
+            bool aIsAtStart = flipped ? interned.reversed : !interned.reversed;
+            Vec3d normal{0, 0, 1};
+            Vec3d mid = atT(0.5);
+            for (const auto& geom : geoms) {
+                if (pointOnFace(geom, mid, tol)) {
+                    normal = geom.normal;
+                    break;
+                }
+            }
+            corners.push_back({va, interned.index, aIsAtStart, dir, normal});
+            corners.push_back({vb, interned.index, !aIsAtStart,
+                               Vec3d{-dir.x, -dir.y, -dir.z}, normal});
         }
     }
     return true;
@@ -783,7 +806,8 @@ bool extractTypes(const HalfEdgeMesh&         mesh,
         out.edgeTypeOfEdge[ei] = interned.index;
     }
 
-    if (!addPolylineEdgeTypes(mesh, obj, cfg, out, edgeTypeMap, error)) {
+    std::vector<PolyCorner> polyCorners;
+    if (!addPolylineEdgeTypes(mesh, obj, cfg, out, edgeTypeMap, polyCorners, error)) {
         return false;
     }
 
@@ -900,6 +924,85 @@ bool extractTypes(const HalfEdgeMesh&         mesh,
                 out.halfEdgeSlotInVertex[he] = k;
             }
         }
+    }
+
+    // Vertices that only a polyline touches have no mesh fan. Order the
+    // segments around the face normal, then use the same canonical rotation
+    // as a mesh vertex.
+    std::unordered_map<int, std::vector<PolyCorner>> byVertex;
+    std::vector<int> polyVerts;
+    for (const auto& corner : polyCorners) {
+        auto& list = byVertex[corner.vertex];
+        if (list.empty()) polyVerts.push_back(corner.vertex);
+        list.push_back(corner);
+    }
+    std::sort(polyVerts.begin(), polyVerts.end());
+    for (int v : polyVerts) {
+        if (v < 0 || v >= (int)out.vertexTypeOfVertex.size()) continue;
+        if (out.vertexTypeOfVertex[v] >= 0) continue;
+        const auto& incident = byVertex[v];
+        if (incident.empty()) continue;
+
+        Vec3d normal = incident.front().normal;
+        Vec3d axisU = tangentU(normal);
+        Vec3d axisV = cross3(normal, axisU);
+        double vlen = len3(axisV);
+        if (vlen > 1e-15) {
+            axisV.x /= vlen; axisV.y /= vlen; axisV.z /= vlen;
+        }
+
+        struct Slot { int edgeType; int isAtStart; double angle; };
+        std::vector<Slot> rawSlots;
+        rawSlots.reserve(incident.size());
+        for (const auto& corner : incident) {
+            double x = dot3(corner.outward, axisU);
+            double y = dot3(corner.outward, axisV);
+            rawSlots.push_back({corner.edgeType, corner.isAtStart ? 1 : 0, std::atan2(y, x)});
+        }
+        std::stable_sort(rawSlots.begin(), rawSlots.end(), [](const Slot& a, const Slot& b) {
+            return a.angle < b.angle;
+        });
+
+        int n = (int)rawSlots.size();
+        int best = 0;
+        for (int i = 1; i < n; ++i) {
+            for (int k = 0; k < n; ++k) {
+                const Slot& a = rawSlots[(best + k) % n];
+                const Slot& b = rawSlots[(i + k) % n];
+                if (a.edgeType != b.edgeType) {
+                    if (b.edgeType < a.edgeType) best = i;
+                    break;
+                }
+                if (a.isAtStart != b.isAtStart) {
+                    if (b.isAtStart < a.isAtStart) best = i;
+                    break;
+                }
+            }
+        }
+
+        CanonKey key;
+        key.tokens.reserve(n * 2);
+        for (int k = 0; k < n; ++k) {
+            const Slot& s = rawSlots[(best + k) % n];
+            key.tokens.push_back(s.edgeType);
+            key.tokens.push_back(s.isAtStart);
+        }
+        auto it = vertexTypeMap.find(key);
+        int vtIdx;
+        if (it == vertexTypeMap.end()) {
+            vtIdx = (int)out.vertexTypes.size();
+            ExtractedTypes::VertexType vt;
+            vt.halfEdgeTypes.reserve(n);
+            for (int k = 0; k < n; ++k) {
+                const Slot& s = rawSlots[(best + k) % n];
+                vt.halfEdgeTypes.push_back({s.edgeType, s.isAtStart != 0});
+            }
+            out.vertexTypes.push_back(std::move(vt));
+            vertexTypeMap.emplace(std::move(key), vtIdx);
+        } else {
+            vtIdx = it->second;
+        }
+        out.vertexTypeOfVertex[v] = vtIdx;
     }
 
     return true;

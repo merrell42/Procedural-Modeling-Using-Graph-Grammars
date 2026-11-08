@@ -3,7 +3,11 @@
 // Type indices follow cpp_version/mesh_extraction (half_edge_mesh.cpp and
 // type_extractor.cpp), with useGroupAsVolume = false. A primitives JSON does
 // not store which face, edge, or vertex uses which type, so a click has to
-// recover that assignment from the embedded OBJ.
+// recover that assignment from the embedded OBJ. OBJ polylines (`l`) are
+// included: each segment takes the face type on its left and its right, and
+// a segment drawn across a face has that face type on both sides. A corner
+// that only the polyline uses gets a vertex type from the segments that meet
+// there.
 
 (function (root, factory) {
     if (typeof module === 'object' && module.exports) {
@@ -14,6 +18,7 @@
 })(typeof self !== 'undefined' ? self : this, function (earcut) {
     var NORMAL_EPS = 1e-4;
     var DIR_EPS = 1e-4;
+    var POSITION_EPS = 1e-4;
 
     function llround(v) {
         return v >= 0 ? Math.round(v) : -Math.round(-v);
@@ -30,6 +35,7 @@
     function parseObj(text) {
         var vertices = [];
         var faces = [];
+        var polylines = [];
         var material = '';
         var lines = text.split(/\r?\n/);
         for (var li = 0; li < lines.length; li++) {
@@ -60,12 +66,24 @@
                     throw new Error('face ' + faces.length + ' has ' + corners.length + ' corners (< 3)');
                 }
                 faces.push({ corners: corners, material: material });
+            } else if (key === 'l' && parts.length >= 3) {
+                var chain = [];
+                for (var j = 1; j < parts.length; j++) {
+                    var lineToken = parts[j].split('/')[0];
+                    if (!lineToken) continue;
+                    var lineIndex = parseInt(lineToken, 10);
+                    if (lineIndex > 0) lineIndex = lineIndex - 1;
+                    else if (lineIndex < 0) lineIndex = vertices.length + lineIndex;
+                    else continue;
+                    chain.push(lineIndex);
+                }
+                if (chain.length >= 2) polylines.push(chain);
             }
         }
         if (!vertices.length || !faces.length) {
             throw new Error('OBJ has no vertices or faces');
         }
-        return { vertices: vertices, faces: faces };
+        return { vertices: vertices, faces: faces, polylines: polylines };
     }
 
     function newellNormal(vertices, corners) {
@@ -318,6 +336,374 @@
         return { reversed: true, left: right, right: left, qdir: qneg.join(',') };
     }
 
+    function cross3(a, b) {
+        return {
+            x: a.y * b.z - a.z * b.y,
+            y: a.z * b.x - a.x * b.z,
+            z: a.x * b.y - a.y * b.x,
+        };
+    }
+
+    function tangentU(n) {
+        var ax = Math.abs(n.x);
+        var ay = Math.abs(n.y);
+        var az = Math.abs(n.z);
+        var a = ax <= ay && ax <= az ? { x: 1, y: 0, z: 0 }
+            : ay <= az ? { x: 0, y: 1, z: 0 }
+            : { x: 0, y: 0, z: 1 };
+        var u = cross3(n, a);
+        var len = Math.hypot(u.x, u.y, u.z);
+        if (len <= 1e-15) return { x: 1, y: 0, z: 0 };
+        return { x: u.x / len, y: u.y / len, z: u.z / len };
+    }
+
+    function planeDist(geom, p) {
+        return dot(sub(p, geom.origin), geom.normal);
+    }
+
+    function projectFace(geom, p) {
+        var d = sub(p, geom.origin);
+        return { x: dot(d, geom.axisU), y: dot(d, geom.axisV) };
+    }
+
+    function buildFaceGeom(mesh, obj, faceIdx, tol) {
+        var geom = { valid: false, normal: mesh.faces[faceIdx].normal, loops: [], loopVerts: [] };
+        if (Math.hypot(geom.normal.x, geom.normal.y, geom.normal.z) <= 1e-8) return geom;
+        var loopVerts = loopsOfFace(mesh, faceIdx);
+        if (!loopVerts.length) return geom;
+        geom.origin = obj.vertices[loopVerts[0][0]];
+        geom.axisU = tangentU(geom.normal);
+        var axisV = cross3(geom.normal, geom.axisU);
+        var vlen = Math.hypot(axisV.x, axisV.y, axisV.z);
+        if (vlen <= 1e-15) return geom;
+        geom.axisV = { x: axisV.x / vlen, y: axisV.y / vlen, z: axisV.z / vlen };
+        geom.loopVerts = loopVerts;
+        var maxDev = 0;
+        for (var li = 0; li < loopVerts.length; li++) {
+            var verts = loopVerts[li];
+            var loop = [];
+            for (var i = 0; i < verts.length; i++) {
+                var v = verts[i];
+                if (v < 0 || v >= obj.vertices.length) return { valid: false, loops: [], loopVerts: [] };
+                var p = obj.vertices[v];
+                maxDev = Math.max(maxDev, Math.abs(planeDist(geom, p)));
+                loop.push(projectFace(geom, p));
+            }
+            geom.loops.push(loop);
+        }
+        // A bent face's own corners already leave the average plane.
+        geom.planeTol = maxDev + tol;
+        geom.valid = true;
+        return geom;
+    }
+
+    function distPointSeg2(p, a, b) {
+        var abx = b.x - a.x;
+        var aby = b.y - a.y;
+        var len2 = abx * abx + aby * aby;
+        if (len2 <= 1e-30) return Math.hypot(p.x - a.x, p.y - a.y);
+        var t = ((p.x - a.x) * abx + (p.y - a.y) * aby) / len2;
+        if (t < 0) t = 0;
+        else if (t > 1) t = 1;
+        return Math.hypot(p.x - (a.x + t * abx), p.y - (a.y + t * aby));
+    }
+
+    function onBoundary2D(geom, p, tol) {
+        for (var li = 0; li < geom.loops.length; li++) {
+            var loop = geom.loops[li];
+            for (var i = 0; i < loop.length; i++) {
+                if (distPointSeg2(p, loop[i], loop[(i + 1) % loop.length]) <= tol) return true;
+            }
+        }
+        return false;
+    }
+
+    function evenOddInside(geom, p) {
+        var crossings = 0;
+        for (var li = 0; li < geom.loops.length; li++) {
+            var loop = geom.loops[li];
+            for (var i = 0; i < loop.length; i++) {
+                var a = loop[i];
+                var b = loop[(i + 1) % loop.length];
+                if ((a.y > p.y) === (b.y > p.y)) continue;
+                var t = (p.y - a.y) / (b.y - a.y);
+                if (a.x + t * (b.x - a.x) > p.x) crossings++;
+            }
+        }
+        return (crossings & 1) === 1;
+    }
+
+    function pointOnFace(geom, p, tol) {
+        if (!geom.valid) return false;
+        if (Math.abs(planeDist(geom, p)) > geom.planeTol) return false;
+        var p2 = projectFace(geom, p);
+        if (onBoundary2D(geom, p2, tol)) return true;
+        return evenOddInside(geom, p2);
+    }
+
+    // 'left' / 'right': the point lies on a boundary half-edge parallel to dir.
+    // The face interior is on the left of that half-edge. 'both': interior.
+    function sideAt(geom, obj, p2, seg2, dir, tol) {
+        var onLeft = false;
+        var onRight = false;
+        var slen = Math.hypot(seg2.x, seg2.y);
+        for (var li = 0; li < geom.loopVerts.length; li++) {
+            var verts = geom.loopVerts[li];
+            var loop = geom.loops[li];
+            for (var i = 0; i < verts.length; i++) {
+                var c = loop[i];
+                var d = loop[(i + 1) % loop.length];
+                var elen = Math.hypot(d.x - c.x, d.y - c.y);
+                if (elen <= tol || slen <= tol) continue;
+                var cr = (d.x - c.x) * seg2.y - (d.y - c.y) * seg2.x;
+                if (Math.abs(cr) / (elen * slen) > 1e-3) continue;
+                if (distPointSeg2(p2, c, d) > tol) continue;
+                var e0 = obj.vertices[verts[i]];
+                var e1 = obj.vertices[verts[(i + 1) % verts.length]];
+                var edge = sub(e1, e0);
+                var el3 = Math.hypot(edge.x, edge.y, edge.z);
+                if (el3 <= tol) continue;
+                if (dot(edge, dir) / el3 >= 0) onLeft = true;
+                else onRight = true;
+            }
+        }
+        if (onLeft && onRight) return 'both';
+        if (onLeft) return 'left';
+        if (onRight) return 'right';
+        if (evenOddInside(geom, p2)) return 'both';
+        return 'none';
+    }
+
+    function addSegmentCuts(a, b, c, d, tol, ts) {
+        var r = { x: b.x - a.x, y: b.y - a.y };
+        var s = { x: d.x - c.x, y: d.y - c.y };
+        var rxs = r.x * s.y - r.y * s.x;
+        var rlen = Math.hypot(r.x, r.y);
+        var slen = Math.hypot(s.x, s.y);
+        if (rlen <= tol || slen <= tol) return;
+        var qp = { x: c.x - a.x, y: c.y - a.y };
+        if (Math.abs(rxs) <= tol * Math.max(rlen, slen)) {
+            var qpxr = qp.x * r.y - qp.y * r.x;
+            if (Math.abs(qpxr) > tol * rlen) return;
+            var rr = r.x * r.x + r.y * r.y;
+            var t0 = (qp.x * r.x + qp.y * r.y) / rr;
+            var t1 = ((d.x - a.x) * r.x + (d.y - a.y) * r.y) / rr;
+            var lo = Math.max(0, Math.min(t0, t1));
+            var hi = Math.min(1, Math.max(t0, t1));
+            if (hi > lo) {
+                ts.push(lo);
+                ts.push(hi);
+            }
+            return;
+        }
+        var t = (qp.x * s.y - qp.y * s.x) / rxs;
+        var u = (qp.x * r.y - qp.y * r.x) / rxs;
+        var tPad = tol / rlen;
+        var uPad = tol / slen;
+        if (t < -tPad || t > 1 + tPad || u < -uPad || u > 1 + uPad) return;
+        if (t < 0) t = 0;
+        if (t > 1) t = 1;
+        ts.push(t);
+    }
+
+    function sampleSides(obj, geoms, candidates, faceTypeOfFace, segA, segB, point, dir, tol) {
+        var haveLeft = false;
+        var haveRight = false;
+        var left = -1;
+        var right = -1;
+        var hit = false;
+        for (var ci = 0; ci < candidates.length; ci++) {
+            var fi = candidates[ci];
+            var geom = geoms[fi];
+            if (!pointOnFace(geom, point, tol)) continue;
+            var a2 = projectFace(geom, segA);
+            var b2 = projectFace(geom, segB);
+            var p2 = projectFace(geom, point);
+            var side = sideAt(geom, obj, p2, { x: b2.x - a2.x, y: b2.y - a2.y }, dir, tol);
+            if (side === 'none') continue;
+            hit = true;
+            var faceType = faceTypeOfFace[fi];
+            function take(have, slot) {
+                if (!have) return { have: true, slot: faceType, ok: true };
+                return { have: true, slot: slot, ok: slot === faceType };
+            }
+            if (side === 'left' || side === 'both') {
+                var takenL = take(haveLeft, left);
+                if (!takenL.ok) return { kind: 'conflict' };
+                haveLeft = takenL.have;
+                left = takenL.slot;
+            }
+            if (side === 'right' || side === 'both') {
+                var takenR = take(haveRight, right);
+                if (!takenR.ok) return { kind: 'conflict' };
+                haveRight = takenR.have;
+                right = takenR.slot;
+            }
+        }
+        if (!hit) return { kind: 'off' };
+        return { kind: 'ready', left: haveLeft ? left : -1, right: haveRight ? right : -1 };
+    }
+
+    // Intern each OBJ polyline segment. A segment may cross coplanar faces of
+    // one face type; the left/right pair has to stay the same on every piece.
+    function classifyPolylines(obj, mesh, faceTypeOfFace, edgeTypeMap, edgeTypeCount) {
+        var tol = POSITION_EPS;
+        var geoms = [];
+        for (var fi = 0; fi < mesh.faces.length; fi++) {
+            geoms.push(buildFaceGeom(mesh, obj, fi, tol));
+        }
+        var edges = [];
+        var corners = [];
+        function fail(pi, va, vb, why) {
+            throw new Error('polyline ' + pi + ' segment ' + (va + 1) + ' -> ' + (vb + 1) + ' ' + why);
+        }
+        for (var pi = 0; pi < obj.polylines.length; pi++) {
+            var poly = obj.polylines[pi];
+            for (var s = 0; s + 1 < poly.length; s++) {
+                var va = poly[s];
+                var vb = poly[s + 1];
+                if (va < 0 || vb < 0 || va >= obj.vertices.length || vb >= obj.vertices.length) {
+                    throw new Error('polyline ' + pi + ' references an out-of-range vertex');
+                }
+                if (va === vb) continue;
+                var A = obj.vertices[va];
+                var B = obj.vertices[vb];
+                var delta = sub(B, A);
+                var segLen = Math.hypot(delta.x, delta.y, delta.z);
+                if (segLen <= 1e-15) continue;
+                var dir = { x: delta.x / segLen, y: delta.y / segLen, z: delta.z / segLen };
+                var onA = false;
+                var onB = false;
+                for (var g = 0; g < geoms.length; g++) {
+                    if (!onA && pointOnFace(geoms[g], A, tol)) onA = true;
+                    if (!onB && pointOnFace(geoms[g], B, tol)) onB = true;
+                }
+                if (!onA || !onB) fail(pi, va, vb, 'does not lie on the mesh');
+
+                var candidates = [];
+                var ts = [0, 1];
+                for (var f = 0; f < geoms.length; f++) {
+                    var geom = geoms[f];
+                    if (!geom.valid) continue;
+                    if (Math.abs(planeDist(geom, A)) > geom.planeTol) continue;
+                    if (Math.abs(planeDist(geom, B)) > geom.planeTol) continue;
+                    candidates.push(f);
+                    var a2 = projectFace(geom, A);
+                    var b2 = projectFace(geom, B);
+                    for (var li = 0; li < geom.loops.length; li++) {
+                        var loop = geom.loops[li];
+                        for (var i = 0; i < loop.length; i++) {
+                            addSegmentCuts(a2, b2, loop[i], loop[(i + 1) % loop.length], tol, ts);
+                        }
+                    }
+                }
+                if (!candidates.length) fail(pi, va, vb, 'does not lie on the mesh');
+
+                var tTol = Math.max(tol / segLen, 1e-9);
+                ts.sort(function (p, q) { return p - q; });
+                var cuts = [];
+                for (var ti = 0; ti < ts.length; ti++) {
+                    var tcut = ts[ti];
+                    if (tcut < 0) tcut = 0;
+                    if (tcut > 1) tcut = 1;
+                    if (!cuts.length || tcut > cuts[cuts.length - 1] + tTol) cuts.push(tcut);
+                }
+                if (!cuts.length || cuts[0] > 0) cuts.unshift(0);
+                if (cuts[cuts.length - 1] < 1) cuts.push(1);
+
+                function atT(t) {
+                    return {
+                        x: A.x + delta.x * t,
+                        y: A.y + delta.y * t,
+                        z: A.z + delta.z * t,
+                    };
+                }
+                var haveRef = false;
+                var refLeft = -1;
+                var refRight = -1;
+                var sawSpan = false;
+                for (var span = 0; span + 1 < cuts.length; span++) {
+                    var t0 = cuts[span];
+                    var t1 = cuts[span + 1];
+                    if ((t1 - t0) * segLen <= tol) continue;
+                    sawSpan = true;
+                    var sample = sampleSides(
+                        obj, geoms, candidates, faceTypeOfFace,
+                        A, B, atT(0.5 * (t0 + t1)), dir, tol
+                    );
+                    if (sample.kind === 'conflict') {
+                        fail(pi, va, vb, 'has more than one face type on the same side');
+                    }
+                    if (sample.kind === 'off') fail(pi, va, vb, 'does not lie on the mesh');
+                    if (!haveRef) {
+                        refLeft = sample.left;
+                        refRight = sample.right;
+                        haveRef = true;
+                    } else if (sample.left !== refLeft || sample.right !== refRight) {
+                        fail(pi, va, vb, 'crosses more than one pair of face types');
+                    }
+                }
+                if (!sawSpan) {
+                    var midSample = sampleSides(
+                        obj, geoms, candidates, faceTypeOfFace, A, B, atT(0.5), dir, tol
+                    );
+                    if (midSample.kind !== 'ready') fail(pi, va, vb, 'does not lie on the mesh');
+                    refLeft = midSample.left;
+                    refRight = midSample.right;
+                    haveRef = true;
+                }
+                if (!haveRef) fail(pi, va, vb, 'does not lie on the mesh');
+
+                // A boundary mesh edge keeps its one face on the left of dir.
+                var flipped = refLeft < 0 && refRight >= 0;
+                var useDir = dir;
+                var left = refLeft;
+                var right = refRight;
+                if (flipped) {
+                    left = right;
+                    right = -1;
+                    useDir = { x: -dir.x, y: -dir.y, z: -dir.z };
+                }
+                var oriented = canonicalEdgeOrientation(left, right, useDir);
+                var edgeKey = oriented.left + '\0' + oriented.right + '\0' + oriented.qdir;
+                var typeIndex = edgeTypeMap.get(edgeKey);
+                if (typeIndex === undefined) {
+                    typeIndex = edgeTypeCount++;
+                    edgeTypeMap.set(edgeKey, typeIndex);
+                }
+                var storedDir = oriented.reversed
+                    ? { x: -useDir.x, y: -useDir.y, z: -useDir.z }
+                    : useDir;
+                edges.push({ a: va, b: vb, dir: storedDir, typeIndex: typeIndex });
+
+                var aIsAtStart = flipped ? oriented.reversed : !oriented.reversed;
+                var normal = { x: 0, y: 0, z: 1 };
+                var mid = atT(0.5);
+                for (var gi = 0; gi < geoms.length; gi++) {
+                    if (pointOnFace(geoms[gi], mid, tol)) {
+                        normal = geoms[gi].normal;
+                        break;
+                    }
+                }
+                corners.push({
+                    vertex: va,
+                    edgeType: typeIndex,
+                    isAtStart: aIsAtStart ? 1 : 0,
+                    outward: dir,
+                    normal: normal,
+                });
+                corners.push({
+                    vertex: vb,
+                    edgeType: typeIndex,
+                    isAtStart: aIsAtStart ? 0 : 1,
+                    outward: { x: -dir.x, y: -dir.y, z: -dir.z },
+                    normal: normal,
+                });
+            }
+        }
+        return { edgeTypeCount: edgeTypeCount, edges: edges, corners: corners };
+    }
+
     function extract(obj, mesh) {
         var faceTypeOfFace = new Array(mesh.faces.length);
         var faceTypeMap = new Map();
@@ -356,6 +742,15 @@
                 edgeTypeMap.set(edgeKey, edgeIdx);
             }
             edgeTypeOfEdge[ei] = edgeIdx;
+        }
+
+        var polylineEdges = [];
+        var polyCorners = [];
+        if (obj.polylines && obj.polylines.length) {
+            var classified = classifyPolylines(obj, mesh, faceTypeOfFace, edgeTypeMap, edgeTypeCount);
+            edgeTypeCount = classified.edgeTypeCount;
+            polylineEdges = classified.edges;
+            polyCorners = classified.corners;
         }
 
         var vertexTypeOfVertex = new Array(obj.vertices.length).fill(-1);
@@ -418,6 +813,72 @@
             vertexSignatures[v] = signature;
         }
 
+        var cornersByVertex = new Map();
+        var polyVerts = [];
+        for (var c = 0; c < polyCorners.length; c++) {
+            var corner = polyCorners[c];
+            var list = cornersByVertex.get(corner.vertex);
+            if (!list) {
+                list = [];
+                cornersByVertex.set(corner.vertex, list);
+                polyVerts.push(corner.vertex);
+            }
+            list.push(corner);
+        }
+        polyVerts.sort(function (a, b) { return a - b; });
+        for (var pv = 0; pv < polyVerts.length; pv++) {
+            var pvIndex = polyVerts[pv];
+            if (vertexTypeOfVertex[pvIndex] >= 0) continue;
+            var incident = cornersByVertex.get(pvIndex);
+            var normal = incident[0].normal;
+            var axisU = tangentU(normal);
+            var axisV = cross3(normal, axisU);
+            var vlen = Math.hypot(axisV.x, axisV.y, axisV.z);
+            if (vlen > 1e-15) {
+                axisV = { x: axisV.x / vlen, y: axisV.y / vlen, z: axisV.z / vlen };
+            }
+            var polySlots = incident.map(function (item) {
+                return {
+                    edgeType: item.edgeType,
+                    isAtStart: item.isAtStart,
+                    angle: Math.atan2(dot(item.outward, axisV), dot(item.outward, axisU)),
+                };
+            });
+            polySlots.sort(function (a, b) { return a.angle - b.angle; });
+
+            var polyCount = polySlots.length;
+            var polyBest = 0;
+            for (var prot = 1; prot < polyCount; prot++) {
+                for (var pk = 0; pk < polyCount; pk++) {
+                    var polyA = polySlots[(polyBest + pk) % polyCount];
+                    var polyB = polySlots[(prot + pk) % polyCount];
+                    if (polyA.edgeType !== polyB.edgeType) {
+                        if (polyB.edgeType < polyA.edgeType) polyBest = prot;
+                        break;
+                    }
+                    if (polyA.isAtStart !== polyB.isAtStart) {
+                        if (polyB.isAtStart < polyA.isAtStart) polyBest = prot;
+                        break;
+                    }
+                }
+            }
+            var polyTokens = [];
+            var polySignature = [];
+            for (var pt = 0; pt < polyCount; pt++) {
+                var polySlot = polySlots[(polyBest + pt) % polyCount];
+                polyTokens.push(polySlot.edgeType + ':' + polySlot.isAtStart);
+                polySignature.push({ edge: polySlot.edgeType, isAtStart: polySlot.isAtStart === 1 });
+            }
+            var polyCanon = polyTokens.join(',');
+            var polyVt = vertexTypeMap.get(polyCanon);
+            if (polyVt === undefined) {
+                polyVt = vertexTypeCount++;
+                vertexTypeMap.set(polyCanon, polyVt);
+            }
+            vertexTypeOfVertex[pvIndex] = polyVt;
+            vertexSignatures[pvIndex] = polySignature;
+        }
+
         return {
             faceTypeOfFace: faceTypeOfFace,
             edgeTypeOfEdge: edgeTypeOfEdge,
@@ -427,6 +888,7 @@
             faceTypeCount: faceTypeCount,
             edgeTypeCount: edgeTypeCount,
             vertexTypeCount: vertexTypeCount,
+            polylineEdges: polylineEdges,
         };
     }
 
@@ -572,6 +1034,8 @@
                     typeIndex: extracted.edgeTypeOfEdge[ei],
                 });
             }
+            var polyEdges = extracted.polylineEdges || [];
+            for (var pe = 0; pe < polyEdges.length; pe++) edges.push(polyEdges[pe]);
             var vertices = obj.vertices.map(function (v, index) {
                 return {
                     x: v.x,

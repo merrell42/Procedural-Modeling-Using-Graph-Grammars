@@ -31,8 +31,9 @@ struct ExtractedTypes {
     // labeled with the face type on its left and the face type on its right.
     // A segment drawn across a face, or across coplanar faces of that same
     // type, has that type on both sides. A segment along a crease has one
-    // type per side. Polylines are not woven into vertex fans; the 2D
-    // regions they cut out of the mesh come later.
+    // type per side. A vertex that only the polyline uses gets a vertex type
+    // from those segments, ordered around the face normal. Splicing a
+    // polyline into an existing mesh vertex fan comes later.
     // Reversing `dir` and swapping the left and right faces is the same type.
     // The stored direction is the lexicographically greater quantized
     // direction. If the two quantized directions are equal, the orientation
