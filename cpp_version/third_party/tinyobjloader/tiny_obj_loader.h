@@ -8624,7 +8624,7 @@ static bool LoadObjInternal(attrib_t *attrib, std::vector<shape_t> *shapes,
                                      triangulate, v, warn);
       (void)ret;
 
-      if (shape.mesh.indices.size() > 0) {
+      if (shape.mesh.indices.size() > 0 || shape.lines.indices.size() > 0) {
         shapes->push_back(shape);
       }
 

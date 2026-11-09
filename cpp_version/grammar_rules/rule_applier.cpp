@@ -402,7 +402,14 @@ void RuleApplier::constrainVertexIds(vector<int>& vertexIds, RuleApplierSettings
 
 // Connect a new face as an inner component or hole to this one.
 void RuleApplier::addFixedFace(Face* fixedFaceA, Face* fixedFaceB, double d) {
-    auto* fPlace = settings->getFace(fixedFaceB->getId());
+    int idB = fixedFaceB->getId();
+    // If fixedFaceB was already merged with a coplanar face, uniqueFaceMap
+    // holds the placement they share.
+    auto merged = settings->uniqueFaceMap.find(idB);
+    if (merged != settings->uniqueFaceMap.end()) {
+        idB = merged->second;
+    }
+    auto* fPlace = settings->getFace(idB);
 
     // Check if face is already fixed.
     auto it = find_if(fixedFaces.begin(), fixedFaces.end(),
