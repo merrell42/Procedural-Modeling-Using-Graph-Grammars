@@ -1,0 +1,263 @@
+{
+  "includeGround": true,
+  "templates": [
+    {
+      "comment": "Two turns to line",
+      "graphs": [
+        {
+          "vertices": [
+            {
+              "connections": [
+                0
+              ],
+              "boundaryId": "yum7v9nbjtgvmphwudwyln",
+              "position": {
+                "x": 260,
+                "y": 383.1875
+              },
+              "spliced": false
+            },
+            {
+              "connections": [
+                1,
+                0
+              ],
+              "boundaryId": "",
+              "position": {
+                "x": 455,
+                "y": 377.1875
+              },
+              "spliced": false
+            },
+            {
+              "connections": [
+                2,
+                1
+              ],
+              "boundaryId": "",
+              "position": {
+                "x": 424,
+                "y": 149.1875
+              },
+              "spliced": false
+            },
+            {
+              "connections": [
+                2
+              ],
+              "boundaryId": "2hixiphr7r6htvwfplogfr",
+              "position": {
+                "x": 657,
+                "y": 157.1875
+              },
+              "spliced": false
+            }
+          ],
+          "edges": [
+            {
+              "start": 0,
+              "end": 1,
+              "spliced": false
+            },
+            {
+              "start": 1,
+              "end": 2,
+              "spliced": false
+            },
+            {
+              "start": 2,
+              "end": 3,
+              "spliced": false
+            }
+          ]
+        },
+        {
+          "vertices": [
+            {
+              "connections": [
+                0
+              ],
+              "boundaryId": "yum7v9nbjtgvmphwudwyln",
+              "position": {
+                "x": 260,
+                "y": 383.1875
+              },
+              "spliced": false
+            },
+            {
+              "connections": [
+                0
+              ],
+              "boundaryId": "2hixiphr7r6htvwfplogfr",
+              "position": {
+                "x": 657,
+                "y": 157.1875
+              },
+              "spliced": false
+            }
+          ],
+          "edges": [
+            {
+              "start": 0,
+              "end": 1,
+              "spliced": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "Triangle",
+      "graphs": [
+        {
+          "vertices": [
+            {
+              "connections": [
+                0,
+                2
+              ],
+              "boundaryId": "",
+              "position": {
+                "x": 382,
+                "y": 492.1875
+              },
+              "spliced": false
+            },
+            {
+              "connections": [
+                1,
+                0
+              ],
+              "boundaryId": "",
+              "position": {
+                "x": 222,
+                "y": 263.1875
+              },
+              "spliced": false
+            },
+            {
+              "connections": [
+                2,
+                1
+              ],
+              "boundaryId": "",
+              "position": {
+                "x": 537,
+                "y": 242.1875
+              },
+              "spliced": false
+            }
+          ],
+          "edges": [
+            {
+              "start": 0,
+              "end": 1,
+              "spliced": false
+            },
+            {
+              "start": 1,
+              "end": 2,
+              "spliced": false
+            },
+            {
+              "start": 0,
+              "end": 2,
+              "spliced": false
+            }
+          ]
+        },
+        {
+          "vertices": [],
+          "edges": []
+        }
+      ]
+    },
+    {
+      "comment": "Rectangle",
+      "graphs": [
+        {
+          "vertices": [
+            {
+              "connections": [
+                0,
+                3
+              ],
+              "boundaryId": "",
+              "position": {
+                "x": 282,
+                "y": 403.1875
+              },
+              "spliced": false
+            },
+            {
+              "connections": [
+                1,
+                0
+              ],
+              "boundaryId": "",
+              "position": {
+                "x": 274,
+                "y": 181.1875
+              },
+              "spliced": false
+            },
+            {
+              "connections": [
+                2,
+                1
+              ],
+              "boundaryId": "",
+              "position": {
+                "x": 527,
+                "y": 173.1875
+              },
+              "spliced": false
+            },
+            {
+              "connections": [
+                2,
+                3
+              ],
+              "boundaryId": "",
+              "position": {
+                "x": 538,
+                "y": 403.1875
+              },
+              "spliced": false
+            }
+          ],
+          "edges": [
+            {
+              "start": 0,
+              "end": 1,
+              "spliced": false
+            },
+            {
+              "start": 1,
+              "end": 2,
+              "spliced": false
+            },
+            {
+              "start": 2,
+              "end": 3,
+              "spliced": false
+            },
+            {
+              "start": 0,
+              "end": 3,
+              "spliced": false
+            }
+          ]
+        },
+        {
+          "vertices": [],
+          "edges": []
+        }
+      ]
+    },
+    {
+      "comment": "Empty Template",
+      "graphs": []
+    }
+  ]
+}

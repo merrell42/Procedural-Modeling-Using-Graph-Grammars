@@ -25,6 +25,21 @@ bool halfEdgeIsSpliced(const VertexState& state, int hIndex) {
 	return edge && edge->getSpliced();
 }
 
+// One face on an edge means one half-edge. That edge is a ground boundary
+// and is only used by the ground rule.
+bool isGroundEdge(const EdgeType* edge) {
+	return edge && edge->getFaceData().size() == 1;
+}
+
+bool usesGroundEdge(const VertexType* vertex) {
+	for (const auto& halfEdge : vertex->getHalfEdgeTypes()) {
+		if (isGroundEdge(halfEdge.edge)) {
+			return true;
+		}
+	}
+	return false;
+}
+
 }
 
 TemplateMatcher::TemplateMatcher(
@@ -37,6 +52,9 @@ TemplateMatcher::TemplateMatcher(
 
 	for (int i = 0; i < (int)eTypes.size(); i++) {
 		EdgeType* eType = eTypes[i];
+		if (isGroundEdge(eType)) {
+			continue;
+		}
 		string id = eType->getRuleGeneratorId();
 		edgeStates.push_back(EdgeState(id + "S", i, 0));
 		edgeStates.push_back(EdgeState(id + "E", i, 1));
@@ -87,6 +105,9 @@ TemplateMatcher::TemplateMatcher(
 
 void TemplateMatcher::addVertexStates(const vector<VertexType*>& vTypes) {
 	for (VertexType* vType : vTypes) {
+		if (usesGroundEdge(vType)) {
+			continue;
+		}
 		const int typeValue = vType->getRuleGeneratorId();
 		const int n = (int)vType->getHalfEdgeTypes().size();
 		auto& states = vType->getSpliced() ? splicedVertexStates : vertexStates;
